@@ -1,0 +1,233 @@
+<?php
+// leads/create.php — New Lead Form
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+$pageTitle      = 'New Lead';
+$pageBreadcrumb = 'Leads / Create';
+
+// (Assignment fields are now handled in assign.php)
+$errors = [];
+$data   = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf()) { die('Invalid CSRF token'); }
+
+    $data = [
+        'lead_date'           => $_POST['lead_date'] ?? date('Y-m-d'),
+        'customer_name'       => trim($_POST['customer_name'] ?? ''),
+        'customer_mobile'     => trim($_POST['customer_mobile'] ?? ''),
+        'customer_mobile2'    => trim($_POST['customer_mobile2'] ?? ''),
+        'customer_address'    => trim($_POST['customer_address'] ?? ''),
+        'vehicle_make_model'  => trim($_POST['vehicle_make_model'] ?? ''),
+        'year_of_manufacture' => trim($_POST['year_of_manufacture'] ?? ''),
+        'registration_number' => trim($_POST['registration_number'] ?? ''),
+        'loan_amount'         => trim($_POST['loan_amount'] ?? ''),
+        'referred_by'         => trim($_POST['referred_by'] ?? ''),
+        'agent_id'            => null,
+        'financer_id'         => null,
+        'dealer_id'           => null,
+        'executive_id'        => null,
+        'status'              => $_POST['status'] ?? 'new',
+        'status_date'         => $_POST['status_date'] ?? null,
+        'query_notes'         => trim($_POST['query_notes'] ?? ''),
+        'rc_status'           => 'pending',
+        'insurance_status'    => 'pending',
+        'rto_status'          => 'pending',
+        'payout_amount'       => '',
+        'payout_status'       => 'pending',
+    ];
+
+    if (empty($data['customer_name']))   $errors[] = 'Customer name is required.';
+    if (empty($data['customer_mobile'])) $errors[] = 'Customer mobile is required.';
+    if (empty($data['lead_date']))       $errors[] = 'Lead date is required.';
+
+    if (!$errors) {
+        $leadId = generate_lead_id($conn);
+
+        $stmt = $conn->prepare("
+            INSERT INTO leads
+            (lead_id, lead_date, customer_name, customer_mobile, customer_mobile2,
+             customer_address, vehicle_make_model, year_of_manufacture, registration_number,
+             loan_amount, referred_by, agent_id, financer_id, dealer_id, executive_id,
+             status, status_date, query_notes, rc_status, insurance_status, rto_status,
+             payout_amount, payout_status, created_by)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        ");
+        $payout_amt = $data['payout_amount'] !== '' ? (float)$data['payout_amount'] : null;
+        $curr_user_id = current_user_id();
+
+        $stmt->bind_param('sssssssisssiiiiisssssdsi',
+            $leadId,
+            $data['lead_date'],
+            $data['customer_name'],
+            $data['customer_mobile'],
+            $data['customer_mobile2'],
+            $data['customer_address'],
+            $data['vehicle_make_model'],
+            $data['year_of_manufacture'],
+            $data['registration_number'],
+            $data['loan_amount'],
+            $data['referred_by'],
+            $data['agent_id'],
+            $data['financer_id'],
+            $data['dealer_id'],
+            $data['executive_id'],
+            $data['status'],
+            $data['status_date'],
+            $data['query_notes'],
+            $data['rc_status'],
+            $data['insurance_status'],
+            $data['rto_status'],
+            $payout_amt,
+            $data['payout_status'],
+            $curr_user_id
+        );
+
+        if ($stmt->execute()) {
+            $newId = $conn->insert_id;
+            log_lead_action($conn, $newId, 'Created', 'Lead created with ID ' . $leadId, current_user_id());
+            flash('success', 'Lead ' . $leadId . ' created successfully!');
+            header('Location: /lead-follow-up/leads/view.php?id=' . $leadId);
+            exit;
+        } else {
+            $errors[] = 'Database error: ' . $conn->error;
+        }
+    }
+}
+
+$headerActions = '<a href="/lead-follow-up/leads/index.php" class="btn btn-secondary btn-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Back to Leads
+</a>';
+
+require_once __DIR__ . '/../includes/header.php';
+?>
+
+<?php if ($errors): ?>
+<div class="bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl px-5 py-4 mb-6 text-sm">
+    <strong class="font-bold">Please fix the following errors:</strong>
+    <ul class="mt-2 list-disc list-inside space-y-1">
+        <?php foreach ($errors as $e): ?><li><?= e($e) ?></li><?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+
+<form method="POST" action="" class="space-y-6">
+    <?= csrf_field() ?>
+
+    <!-- Section: Lead Info -->
+    <div class="card">
+        <div class="card-header">
+            <h2>📋 Lead Information</h2>
+        </div>
+        <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+                <label class="form-label required-lbl">Lead Date</label>
+                <input type="date" name="lead_date" class="form-input"
+                       value="<?= e($data['lead_date'] ?? date('Y-m-d')) ?>" required>
+            </div>
+            <div>
+                <label class="form-label">Lead Status</label>
+                <select name="status" class="form-select">
+                    <?php foreach (['new','pending','approved','disbursed','rejected','on_hold'] as $s): ?>
+                    <option value="<?= $s ?>" <?= (($data['status'] ?? 'new') === $s) ? 'selected' : '' ?>>
+                        <?= ucfirst(str_replace('_',' ',$s)) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Status Date</label>
+                <input type="date" name="status_date" class="form-input"
+                       value="<?= e($data['status_date'] ?? '') ?>">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Customer Details -->
+    <div class="card">
+        <div class="card-header">
+            <h2>👤 Customer Details</h2>
+        </div>
+        <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="md:col-span-2">
+                <label class="form-label required-lbl">Customer Name</label>
+                <input type="text" name="customer_name" class="form-input"
+                       value="<?= e($data['customer_name'] ?? '') ?>" required
+                       placeholder="e.g. Harpal Singh S/o Matu Singh">
+            </div>
+            <div>
+                <label class="form-label required-lbl">Mobile</label>
+                <input type="tel" name="customer_mobile" class="form-input"
+                       value="<?= e($data['customer_mobile'] ?? '') ?>" required placeholder="10-digit mobile">
+            </div>
+            <div>
+                <label class="form-label">Alternate Mobile</label>
+                <input type="tel" name="customer_mobile2" class="form-input"
+                       value="<?= e($data['customer_mobile2'] ?? '') ?>">
+            </div>
+            <div class="md:col-span-2">
+                <label class="form-label">Address</label>
+                <input type="text" name="customer_address" class="form-input"
+                       value="<?= e($data['customer_address'] ?? '') ?>" placeholder="Village / City">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Vehicle & Loan -->
+    <div class="card">
+        <div class="card-header">
+            <h2>🚛 Vehicle & Loan Details</h2>
+        </div>
+        <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+                <label class="form-label">Vehicle (Make & Model)</label>
+                <input type="text" name="vehicle_make_model" class="form-input"
+                       value="<?= e($data['vehicle_make_model'] ?? '') ?>" placeholder="e.g. TATA 1512">
+            </div>
+            <div>
+                <label class="form-label">Year of Manufacture</label>
+                <input type="number" name="year_of_manufacture" class="form-input" min="1990" max="<?= date('Y') ?>"
+                       value="<?= e($data['year_of_manufacture'] ?? '') ?>" placeholder="e.g. 2022">
+            </div>
+            <div>
+                <label class="form-label">Registration Number</label>
+                <input type="text" name="registration_number" class="form-input"
+                       value="<?= e($data['registration_number'] ?? '') ?>" placeholder="e.g. HR55AL4871">
+            </div>
+            <div>
+                <label class="form-label">Loan Amount (₹)</label>
+                <input type="number" name="loan_amount" class="form-input" step="1000"
+                       value="<?= e($data['loan_amount'] ?? '') ?>" placeholder="e.g. 900000">
+            </div>
+            <div>
+                <label class="form-label">Referred By</label>
+                <input type="text" name="referred_by" class="form-input"
+                       value="<?= e($data['referred_by'] ?? '') ?>" placeholder="e.g. Seka N / Direct">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Notes -->
+    <div class="card">
+        <div class="card-header">
+            <h2>📝 Query / Notes</h2>
+        </div>
+        <div class="card-body">
+            <textarea name="query_notes" class="form-input h-24 resize-none"
+                      placeholder="Any queries, remarks, or special notes..."><?= e($data['query_notes'] ?? '') ?></textarea>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="flex items-center gap-3 justify-end">
+        <a href="/lead-follow-up/leads/index.php" class="btn btn-secondary">
+            Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+            Create Lead
+        </button>
+    </div>
+</form>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
