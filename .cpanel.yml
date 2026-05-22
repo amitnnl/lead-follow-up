@@ -3,4 +3,3 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/hotelsunplaza/dsa.nitscomputer.in/
     - /bin/cp -R * $DEPLOYPATH
-    - /bin/cp .htaccess $DEPLOYPATH || true
