@@ -50,6 +50,33 @@ function nav_active(string $dir, string $file = ''): string {
     <!-- Chart.js (single instance) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
+    <!-- HTMX & NProgress for SPA feel -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css" />
+    <style>
+        #nprogress .bar { background: #6366f1 !important; height: 3px !important; }
+        #nprogress .peg { box-shadow: 0 0 10px #6366f1, 0 0 5px #6366f1 !important; }
+        #nprogress .spinner-icon { border-top-color: #6366f1 !important; border-left-color: #6366f1 !important; }
+    </style>
+    <script>
+        document.addEventListener('htmx:beforeRequest', () => NProgress.start());
+        document.addEventListener('htmx:afterOnLoad', () => NProgress.done());
+        document.addEventListener('htmx:responseError', () => NProgress.done());
+        document.addEventListener('htmx:sendError', () => NProgress.done());
+        
+        // Clean up DataTables before swap
+        document.addEventListener('htmx:beforeSwap', function() {
+            if (window.jQuery && $.fn.dataTable) {
+                $('.dataTable').each(function() {
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        $(this).DataTable().destroy();
+                    }
+                });
+            }
+        });
+    </script>
+
     <!-- Dark mode: restore preference before render to prevent flash -->
     <script>
     (function(){
@@ -82,7 +109,7 @@ function nav_active(string $dir, string $file = ''): string {
     }
     </script>
 </head>
-<body class="min-h-screen flex text-gray-800 relative">
+<body class="min-h-screen flex text-gray-800 relative" hx-boost="true">
 
 <!-- Mobile Sidebar Overlay -->
 <div id="sidebarOverlay" class="sidebar-overlay hidden lg:hidden" onclick="toggleSidebar()"></div>
@@ -192,7 +219,7 @@ function nav_active(string $dir, string $file = ''): string {
                 <div class="text-white text-xs font-semibold truncate"><?= e($user['name'] ?? 'User') ?></div>
                 <div class="text-slate-400 text-[10px] capitalize font-medium"><?= e($user['role'] ?? '') ?></div>
             </div>
-            <a href="<?php echo BASE_URL; ?>/logout.php" class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-white/5" title="Logout">
+            <a href="<?php echo BASE_URL; ?>/logout.php" hx-boost="false" class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-white/5" title="Logout">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
