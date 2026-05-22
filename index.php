@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
 
 if (is_logged_in()) {
-    header('Location: /lead-follow-up/dashboard.php');
+    header('Location: ' . BASE_URL . '/dashboard.php');
     exit;
 }
 
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         if ($user && password_verify($password, $user['password'])) {
             login_user($user);
-            header('Location: /lead-follow-up/dashboard.php');
+            header('Location: ' . BASE_URL . '/dashboard.php');
             exit;
         } else {
             $error = 'Invalid email or password.';
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login — LeadFlow Pro</title>
     <meta name="description" content="Login to DSA Vehicle Finance Lead Management System.">
     <meta name="theme-color" content="#090d16">
-    <link href="/lead-follow-up/assets/css/tailwind.css?v=<?= filemtime(__DIR__ . '/assets/css/tailwind.css') ?>" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/tailwind.css?v=<?= filemtime(__DIR__ . '/assets/css/tailwind.css') ?>" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

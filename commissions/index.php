@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('success','Commission added.');
         }
     }
-    header('Location: /lead-follow-up/commissions/index.php'); exit;
+    header('Location: ' . BASE_URL . '/commissions/index.php'); exit;
 }
 
 // Summary stats
@@ -114,7 +114,7 @@ require_once __DIR__ . '/../includes/header.php';
                 ?>
                 <tr>
                     <td>
-                        <a href="/lead-follow-up/leads/view.php?id=<?= e($c['lead_id']) ?>" class="text-brand-600 dark:text-brand-400 hover:underline font-mono text-xs font-black">
+                        <a href="<?= BASE_URL ?>/leads/view.php?id=<?= e($c['lead_id']) ?>" class="text-brand-600 dark:text-brand-400 hover:underline font-mono text-xs font-black">
                             <?= e($c['lead_id']) ?>
                         </a>
                     </td>

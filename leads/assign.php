@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/auth.php';
 // Only Admin or Staff should assign leads
 if (!is_admin() && !is_staff()) {
     flash('error', 'You do not have permission to assign leads.');
-    header('Location: /lead-follow-up/leads/index.php');
+    header('Location: ' . BASE_URL . '/leads/index.php');
     exit;
 }
 
@@ -15,7 +15,7 @@ $lead = db_fetch_one($conn, "SELECT * FROM leads WHERE lead_id = ?", 's', [$lead
 
 if (!$lead) {
     flash('error', 'Lead not found.');
-    header('Location: /lead-follow-up/leads/index.php');
+    header('Location: ' . BASE_URL . '/leads/index.php');
     exit;
 }
 
@@ -48,22 +48,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($agent_id) {
         if (!$bank_name || !$acc_num || !$ifsc) {
             flash('error', 'Bank details (Name, Account No, IFSC) are required when assigning an Agent.');
-            header('Location: /lead-follow-up/leads/assign.php?id=' . urlencode($lead['lead_id']));
+            header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']));
             exit;
         }
         if ($rc_status === 'pending' || $insurance_status === 'pending' || $rto_status === 'pending') {
             flash('error', 'Document statuses (RC, Insurance, RTO) must be completed (not Pending) before assigning an Agent.');
-            header('Location: /lead-follow-up/leads/assign.php?id=' . urlencode($lead['lead_id']));
+            header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']));
             exit;
         }
         if ($rc_status === 'received' && empty($rc_number)) {
             flash('error', 'RC Number is required when RC Status is Received.');
-            header('Location: /lead-follow-up/leads/assign.php?id=' . urlencode($lead['lead_id']));
+            header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']));
             exit;
         }
         if ($insurance_status === 'received' && empty($insurance_number)) {
             flash('error', 'Insurance Number is required when Insurance Status is Received.');
-            header('Location: /lead-follow-up/leads/assign.php?id=' . urlencode($lead['lead_id']));
+            header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']));
             exit;
         }
     }
@@ -74,14 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         log_lead_action($conn, $lead['id'], 'Lead Assigned', 'Assignment updated by ' . current_user()['name'], current_user_id());
         flash('success', 'Lead assigned successfully!');
-        header('Location: /lead-follow-up/leads/view.php?id=' . urlencode($lead['lead_id']));
+        header('Location: ' . BASE_URL . '/leads/view.php?id=' . urlencode($lead['lead_id']));
         exit;
     } else {
         flash('error', 'Database error: ' . $conn->error);
     }
 }
 
-$headerActions = '<a href="/lead-follow-up/leads/view.php?id=' . e($lead['lead_id']) . '"
+$headerActions = '<a href="<?= BASE_URL ?>/leads/view.php?id=' . e($lead['lead_id']) . '"
     class="btn btn-secondary btn-sm shadow-sm">
     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Lead
 </a>';
@@ -238,7 +238,7 @@ require_once __DIR__ . '/../includes/header.php';
             </div>
 
             <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
-                <a href="/lead-follow-up/leads/view.php?id=<?= urlencode($lead['lead_id']) ?>" 
+                <a href="<?= BASE_URL ?>/leads/view.php?id=<?= urlencode($lead['lead_id']) ?>" 
                    class="btn btn-secondary py-2.5">Cancel</a>
                 <button type="submit" 
                         class="btn-primary py-2.5 shadow-md hover-glow">

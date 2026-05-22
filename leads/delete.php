@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/auth.php';
 
 if (!is_admin()) {
     flash('error', 'Only administrators can delete leads.');
-    header('Location: /lead-follow-up/leads/index.php');
+    header('Location: ' . BASE_URL . '/leads/index.php');
     exit;
 }
 
@@ -32,5 +32,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-header('Location: /lead-follow-up/leads/index.php');
+header('Location: ' . BASE_URL . '/leads/index.php');
 exit;

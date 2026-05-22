@@ -21,11 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('success','Financer added.');
         }
     }
-    header('Location: /lead-follow-up/financers/index.php'); exit;
+    header('Location: ' . BASE_URL . '/financers/index.php'); exit;
 }
 if (isset($_GET['toggle'])) {
     db_query($conn,"UPDATE financers SET is_active=1-is_active WHERE id=?",'i',[(int)$_GET['toggle']]);
-    header('Location: /lead-follow-up/financers/index.php'); exit;
+    header('Location: ' . BASE_URL . '/financers/index.php'); exit;
 }
 
 $financers = db_fetch_all($conn,"

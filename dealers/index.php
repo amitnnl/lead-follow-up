@@ -21,11 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('success','Dealer added.');
         }
     }
-    header('Location: /lead-follow-up/dealers/index.php'); exit;
+    header('Location: ' . BASE_URL . '/dealers/index.php'); exit;
 }
 if (isset($_GET['toggle'])) {
     db_query($conn,"UPDATE dealers SET is_active=1-is_active WHERE id=?",'i',[(int)$_GET['toggle']]);
-    header('Location: /lead-follow-up/dealers/index.php'); exit;
+    header('Location: ' . BASE_URL . '/dealers/index.php'); exit;
 }
 
 $dealers = db_fetch_all($conn,"

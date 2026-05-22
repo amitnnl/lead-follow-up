@@ -13,6 +13,11 @@ if ($conn->connect_error) {
 
 $conn->set_charset('utf8mb4');
 
+// Define dynamic BASE_URL so routing works both locally (/lead-follow-up) and live (/)
+$is_localhost = ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1');
+define('BASE_URL', $is_localhost ? '/lead-follow-up' : '');
+
+
 /**
  * Safe query helper — returns result or throws
  */

@@ -87,7 +87,7 @@ $leads = db_fetch_all($conn, "
     ORDER BY l.lead_date DESC
 ", $types, $params);
 
-$headerActions = '<a href="/lead-follow-up/leads/create.php"
+$headerActions = '<a href="<?= BASE_URL ?>/leads/create.php"
     class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl shadow-sm transition-colors">
     <span class="text-lg leading-none">+</span> New Lead
 </a>';
@@ -168,7 +168,7 @@ require_once __DIR__ . '/../includes/header.php';
                 Filter
             </button>
             <?php if ($filterStatus || $filterRc || $filterIns || $filterRto || $filterAgent || $filterFinancer || $filterExecutive): ?>
-                <a href="/lead-follow-up/leads/index.php" class="btn btn-secondary btn-sm">Clear</a>
+                <a href="<?= BASE_URL ?>/leads/index.php" class="btn btn-secondary btn-sm">Clear</a>
             <?php endif; ?>
         </div>
     </div>
@@ -202,7 +202,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <?php foreach ($leads as $lead): ?>
                 <tr>
                     <td class="px-4 py-3">
-                        <a href="/lead-follow-up/leads/view.php?id=<?= e($lead['lead_id']) ?>"
+                        <a href="<?= BASE_URL ?>/leads/view.php?id=<?= e($lead['lead_id']) ?>"
                            class="text-blue-600 hover:underline font-mono text-xs font-bold">
                             <?= e($lead['lead_id']) ?>
                         </a>
@@ -260,7 +260,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </td>
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-1.5">
-                            <a href="/lead-follow-up/leads/view.php?id=<?= e($lead['lead_id']) ?>"
+                            <a href="<?= BASE_URL ?>/leads/view.php?id=<?= e($lead['lead_id']) ?>"
                                class="p-1.5 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" title="View Detail">
                                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -268,7 +268,7 @@ require_once __DIR__ . '/../includes/header.php';
                                 </svg>
                             </a>
                             <?php if (is_admin() || is_staff()): ?>
-                            <a href="/lead-follow-up/leads/edit.php?id=<?= e($lead['lead_id']) ?>"
+                            <a href="<?= BASE_URL ?>/leads/edit.php?id=<?= e($lead['lead_id']) ?>"
                                class="p-1.5 text-slate-500 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" title="Edit Lead">
                                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -276,7 +276,7 @@ require_once __DIR__ . '/../includes/header.php';
                             </a>
                             <?php endif; ?>
                             <?php if (is_admin()): ?>
-                            <form action="/lead-follow-up/leads/delete.php" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to completely delete this lead? This cannot be undone.');">
+                            <form action="<?= BASE_URL ?>/leads/delete.php" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to completely delete this lead? This cannot be undone.');">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="id" value="<?= e($lead['lead_id']) ?>">
                                 <button type="submit" class="p-1.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg cursor-pointer" title="Delete Lead">

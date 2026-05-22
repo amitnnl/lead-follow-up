@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('success', 'Agent added.');
         }
     }
-    header('Location: /lead-follow-up/agents/index.php');
+    header('Location: ' . BASE_URL . '/agents/index.php');
     exit;
 }
 
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['toggle'])) {
     $aid = (int)$_GET['toggle'];
     db_query($conn, "UPDATE agents SET is_active = 1-is_active WHERE id=?", 'i', [$aid]);
-    header('Location: /lead-follow-up/agents/index.php');
+    header('Location: ' . BASE_URL . '/agents/index.php');
     exit;
 }
 

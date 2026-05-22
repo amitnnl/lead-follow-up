@@ -108,7 +108,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="lg:col-span-2 card overflow-hidden hover-lift animate-fade-up" style="animation-delay: 450ms">
         <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Recent Leads</h3>
-            <a href="/lead-follow-up/leads/index.php" class="text-xs text-blue-600 hover:text-blue-800 font-medium">View All →</a>
+            <a href="<?= BASE_URL ?>/leads/index.php" class="text-xs text-blue-600 hover:text-blue-800 font-medium">View All →</a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -125,7 +125,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?php foreach ($recentLeads as $lead): ?>
                     <tr class="hover:bg-blue-50/30 dark:hover:bg-gray-800/50 transition-colors">
                         <td class="px-5 py-3">
-                            <a href="/lead-follow-up/leads/view.php?id=<?= $lead['lead_id'] ?>"
+                            <a href="<?= BASE_URL ?>/leads/view.php?id=<?= $lead['lead_id'] ?>"
                                class="text-blue-600 hover:text-blue-800 font-mono text-xs font-semibold">
                                 <?= e($lead['lead_id']) ?>
                             </a>
@@ -149,7 +149,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="card hover-lift animate-fade-up" style="animation-delay: 500ms">
             <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">⚡ Follow-ups Due</h3>
-                <a href="/lead-follow-up/followups/index.php" class="text-xs text-blue-600 hover:text-blue-800">View All →</a>
+                <a href="<?= BASE_URL ?>/followups/index.php" class="text-xs text-blue-600 hover:text-blue-800">View All →</a>
             </div>
             <div class="divide-y divide-gray-50 dark:divide-gray-800">
                 <?php if ($dueFollowups): ?>
@@ -202,7 +202,7 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <!-- Quick Action FAB -->
-<a href="/lead-follow-up/leads/create.php"
+<a href="<?= BASE_URL ?>/leads/create.php"
    class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl transition-all hover:scale-110 z-50"
    title="Add New Lead">
     +

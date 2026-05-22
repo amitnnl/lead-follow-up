@@ -20,7 +20,7 @@ $lead = db_fetch_one($conn, "
 
 if (!$lead) {
     flash('error', 'Lead not found.');
-    header('Location: /lead-follow-up/leads/index.php');
+    header('Location: ' . BASE_URL . '/leads/index.php');
     exit;
 }
 
@@ -66,20 +66,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_followup'])) {
         }
         log_lead_action($conn, $lead['id'], 'Follow-up Added', $remarks, current_user_id());
         flash('success', 'Follow-up added successfully.');
-        header("Location: /lead-follow-up/leads/view.php?id=" . urlencode($lead['lead_id']));
+        header("Location: ' . BASE_URL . '/leads/view.php?id=" . urlencode($lead['lead_id']));
         exit;
     }
 }
 
 $headerActions = '
 <div class="flex items-center gap-2">
-    <a href="/lead-follow-up/leads/index.php"
+    <a href="<?= BASE_URL ?>/leads/index.php"
        class="btn btn-secondary btn-sm">
        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
        All Leads
     </a>'
 . (is_admin() || is_staff() ? '
-    <a href="/lead-follow-up/leads/edit.php?id=' . e($lead['lead_id']) . '"
+    <a href="<?= BASE_URL ?>/leads/edit.php?id=' . e($lead['lead_id']) . '"
        class="btn btn-primary btn-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
         Edit Lead
@@ -197,7 +197,7 @@ function stage_class($current, $target) {
                         Assignment
                     </h3>
                     <?php if (is_admin() || is_staff()): ?>
-                    <a href="/lead-follow-up/leads/assign.php?id=<?= urlencode($lead['lead_id']) ?>" class="btn btn-secondary btn-xs">Assign</a>
+                    <a href="<?= BASE_URL ?>/leads/assign.php?id=<?= urlencode($lead['lead_id']) ?>" class="btn btn-secondary btn-xs">Assign</a>
                     <?php endif; ?>
                 </div>
                 <dl class="space-y-3.5 text-sm">
@@ -408,7 +408,7 @@ function stage_class($current, $target) {
             <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-800/40 pb-3">Quick Actions</h3>
             <div class="space-y-2.5">
                 <?php if (is_admin() || is_staff()): ?>
-                <a href="/lead-follow-up/leads/assign.php?id=<?= e($lead['lead_id']) ?>"
+                <a href="<?= BASE_URL ?>/leads/assign.php?id=<?= e($lead['lead_id']) ?>"
                    class="flex items-center gap-3 w-full px-4 py-3 bg-brand-50 hover:bg-brand-100/80 text-brand-700 rounded-xl text-sm font-semibold transition-all duration-300 border border-brand-100/50 dark:bg-brand-950/20 dark:hover:bg-brand-950/40 dark:text-brand-300 dark:border-brand-900/30">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     Assign / Route Lead
@@ -425,13 +425,13 @@ function stage_class($current, $target) {
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                     Call Customer
                 </a>
-                <a href="/lead-follow-up/leads/edit.php?id=<?= e($lead['lead_id']) ?>"
+                <a href="<?= BASE_URL ?>/leads/edit.php?id=<?= e($lead['lead_id']) ?>"
                    class="flex items-center gap-3 w-full px-4 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition-all duration-300 border border-slate-200/50 dark:bg-slate-900/30 dark:hover:bg-slate-900/60 dark:text-slate-300 dark:border-slate-800/40">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                     Edit Lead Details
                 </a>
                 <?php if (is_admin()): ?>
-                <form action="/lead-follow-up/leads/delete.php" method="POST" class="w-full" onsubmit="return confirm('Are you sure you want to completely delete this lead? This cannot be undone.');">
+                <form action="<?= BASE_URL ?>/leads/delete.php" method="POST" class="w-full" onsubmit="return confirm('Are you sure you want to completely delete this lead? This cannot be undone.');">
                     <?= csrf_field() ?>
                     <input type="hidden" name="id" value="<?= e($lead['lead_id']) ?>">
                     <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-sm font-semibold transition-all duration-300 border border-rose-100/50 dark:bg-rose-950/20 dark:hover:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/30">

@@ -8,7 +8,7 @@ $leadIdParam = $_GET['id'] ?? '';
 $lead = db_fetch_one($conn, "SELECT * FROM leads WHERE lead_id=?", 's', [$leadIdParam]);
 if (!$lead) {
     flash('error', 'Lead not found.');
-    header('Location: /lead-follow-up/leads/index.php');
+    header('Location: ' . BASE_URL . '/leads/index.php');
     exit;
 }
 
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             log_lead_action($conn, $lead['id'], 'Updated', 'Lead details updated.', current_user_id());
             flash('success', 'Lead ' . $lead['lead_id'] . ' updated successfully!');
-            header('Location: /lead-follow-up/leads/view.php?id=' . $lead['lead_id']);
+            header('Location: ' . BASE_URL . '/leads/view.php?id=' . $lead['lead_id']);
             exit;
         } else {
             $errors[] = 'Database error: ' . $conn->error;
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$headerActions = '<a href="/lead-follow-up/leads/view.php?id=' . e($lead['lead_id']) . '" class="btn btn-secondary btn-sm">
+$headerActions = '<a href="<?= BASE_URL ?>/leads/view.php?id=' . e($lead['lead_id']) . '" class="btn btn-secondary btn-sm">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
     Back to Lead
 </a>';
@@ -322,7 +322,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="flex items-center gap-3 justify-end">
-        <a href="/lead-follow-up/leads/view.php?id=<?= e($lead['lead_id']) ?>" class="btn btn-secondary">
+        <a href="<?= BASE_URL ?>/leads/view.php?id=<?= e($lead['lead_id']) ?>" class="btn btn-secondary">
             Cancel
         </a>
         <button type="submit" class="btn btn-primary">
