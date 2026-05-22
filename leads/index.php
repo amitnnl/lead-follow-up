@@ -109,33 +109,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </select>
         </div>
-        <div>
-            <label class="form-label">RC Status</label>
-            <select name="rc_status" class="form-select">
-                <option value="">All</option>
-                <option value="pending" <?= $filterRc === 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="received" <?= $filterRc === 'received' ? 'selected' : '' ?>>Received</option>
-                <option value="not_applicable" <?= $filterRc === 'not_applicable' ? 'selected' : '' ?>>N/A</option>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">Insurance Status</label>
-            <select name="insurance_status" class="form-select">
-                <option value="">All</option>
-                <option value="pending" <?= $filterIns === 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="received" <?= $filterIns === 'received' ? 'selected' : '' ?>>Received</option>
-                <option value="not_applicable" <?= $filterIns === 'not_applicable' ? 'selected' : '' ?>>N/A</option>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">RTO Status</label>
-            <select name="rto_status" class="form-select">
-                <option value="">All</option>
-                <option value="pending" <?= $filterRto === 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="done" <?= $filterRto === 'done' ? 'selected' : '' ?>>Done</option>
-                <option value="not_applicable" <?= $filterRto === 'not_applicable' ? 'selected' : '' ?>>N/A</option>
-            </select>
-        </div>
+
         <div>
             <label class="form-label">Agent / DSA</label>
             <select name="agent_id" class="form-select">
@@ -167,7 +141,7 @@ require_once __DIR__ . '/../includes/header.php';
             <button type="submit" class="btn btn-primary btn-sm flex-1">
                 Filter
             </button>
-            <?php if ($filterStatus || $filterRc || $filterIns || $filterRto || $filterAgent || $filterFinancer || $filterExecutive): ?>
+            <?php if ($filterStatus || $filterAgent || $filterFinancer || $filterExecutive): ?>
                 <a href="<?php echo BASE_URL; ?>/leads/index.php" class="btn btn-secondary btn-sm">Clear</a>
             <?php endif; ?>
         </div>
