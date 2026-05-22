@@ -11,23 +11,32 @@ if (is_logged_in()) {
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email    = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $attempts = db_fetch_one($conn, "SELECT COUNT(*) as c FROM failed_logins WHERE ip_address = ? AND attempt_time > (NOW() - INTERVAL 15 MINUTE)", 's', [$ip])['c'] ?? 0;
 
-    if ($email && $password) {
-        $user = db_fetch_one($conn,
-            "SELECT * FROM users WHERE email = ? AND is_active = 1 LIMIT 1",
-            's', [$email]
-        );
-        if ($user && password_verify($password, $user['password'])) {
-            login_user($user);
-            header('Location: ' . BASE_URL . '/dashboard.php');
-            exit;
-        } else {
-            $error = 'Invalid email or password.';
-        }
+    if ($attempts >= 5) {
+        $error = 'Too many failed login attempts. Please try again in 15 minutes.';
     } else {
-        $error = 'Please fill in all fields.';
+        $email    = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        if ($email && $password) {
+            $user = db_fetch_one($conn,
+                "SELECT * FROM users WHERE email = ? AND is_active = 1 LIMIT 1",
+                's', [$email]
+            );
+            if ($user && password_verify($password, $user['password'])) {
+                db_query($conn, "DELETE FROM failed_logins WHERE ip_address = ?", 's', [$ip]);
+                login_user($user);
+                header('Location: ' . BASE_URL . '/dashboard.php');
+                exit;
+            } else {
+                db_query($conn, "INSERT INTO failed_logins (ip_address) VALUES (?)", 's', [$ip]);
+                $error = 'Invalid email or password.';
+            }
+        } else {
+            $error = 'Please fill in all fields.';
+        }
     }
 }
 ?>

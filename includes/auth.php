@@ -2,6 +2,14 @@
 // includes/auth.php — Session & Auth helpers
 
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 86400,
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'] ?? '',
+        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
     session_start();
 }
 
@@ -49,6 +57,7 @@ function require_role(string ...$roles): void {
 }
 
 function login_user(array $user): void {
+    session_regenerate_id(true);
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['role']    = $user['role'];
     $_SESSION['user']    = $user;
