@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:is(.dark, .dark *));
 /* ─── PREMIUM MODERN SYSTEM TOKENS ─── */
 @theme {
   --color-brand-50: #eef2ff;
