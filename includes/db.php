@@ -1,20 +1,37 @@
 <?php
 // includes/db.php — Database Connection
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'dsa_leads');
 
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+// Default Local Credentials
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'dsa_leads';
 
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Database connection failed: ' . $conn->connect_error]));
+// Override with local config if exists (for live server)
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
 }
 
-$conn->set_charset('utf8mb4');
+define('DB_HOST', $db_host);
+define('DB_USER', $db_user);
+define('DB_PASS', $db_pass);
+define('DB_NAME', $db_name);
+
+try {
+    // PHP 8.1+ throws exceptions on connection errors by default
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($conn->connect_error) {
+        throw new Exception($conn->connect_error);
+    }
+    $conn->set_charset('utf8mb4');
+} catch (Exception $e) {
+    http_response_code(503);
+    die("<h3>Database Connection Error</h3><p>Please check your database credentials in cPanel.</p><!-- " . $e->getMessage() . " -->");
+}
 
 // Define dynamic BASE_URL so routing works both locally (/lead-follow-up) and live (/)
-$is_localhost = ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1');
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$is_localhost = ($host === 'localhost' || $host === '127.0.0.1');
 define('BASE_URL', $is_localhost ? '/lead-follow-up' : '');
 
 
