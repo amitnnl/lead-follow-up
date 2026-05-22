@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$headerActions = '<a href="<?= BASE_URL ?>/leads/view.php?id=' . e($lead['lead_id']) . '"
+$headerActions = '<a href="' . BASE_URL . '/leads/view.php?id=' . e($lead['lead_id']) . '"
     class="btn btn-secondary btn-sm shadow-sm">
     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Lead
 </a>';
@@ -238,7 +238,7 @@ require_once __DIR__ . '/../includes/header.php';
             </div>
 
             <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
-                <a href="<?= BASE_URL ?>/leads/view.php?id=<?= urlencode($lead['lead_id']) ?>" 
+                <a href="<?php echo BASE_URL; ?>/leads/view.php?id=<?= urlencode($lead['lead_id']) ?>" 
                    class="btn btn-secondary py-2.5">Cancel</a>
                 <button type="submit" 
                         class="btn-primary py-2.5 shadow-md hover-glow">

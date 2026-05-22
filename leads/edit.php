@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$headerActions = '<a href="<?= BASE_URL ?>/leads/view.php?id=' . e($lead['lead_id']) . '" class="btn btn-secondary btn-sm">
+$headerActions = '<a href="' . BASE_URL . '/leads/view.php?id=' . e($lead['lead_id']) . '" class="btn btn-secondary btn-sm">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
     Back to Lead
 </a>';
@@ -322,7 +322,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="flex items-center gap-3 justify-end">
-        <a href="<?= BASE_URL ?>/leads/view.php?id=<?= e($lead['lead_id']) ?>" class="btn btn-secondary">
+        <a href="<?php echo BASE_URL; ?>/leads/view.php?id=<?= e($lead['lead_id']) ?>" class="btn btn-secondary">
             Cancel
         </a>
         <button type="submit" class="btn btn-primary">

@@ -114,7 +114,7 @@ require_once __DIR__ . '/../includes/header.php';
                 ?>
                 <tr>
                     <td>
-                        <a href="<?= BASE_URL ?>/leads/view.php?id=<?= e($c['lead_id']) ?>" class="text-brand-600 dark:text-brand-400 hover:underline font-mono text-xs font-black">
+                        <a href="<?php echo BASE_URL; ?>/leads/view.php?id=<?= e($c['lead_id']) ?>" class="text-brand-600 dark:text-brand-400 hover:underline font-mono text-xs font-black">
                             <?= e($c['lead_id']) ?>
                         </a>
                     </td>
