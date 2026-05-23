@@ -2,27 +2,27 @@
 @custom-variant dark (&:is(.dark, .dark *));
 /* ─── PREMIUM MODERN SYSTEM TOKENS ─── */
 @theme {
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-300: #a5b4fc;
-  --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
-  --color-brand-950: #1e1b4b;
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+  --color-brand-950: #022c22;
 
-  --color-sec-50: #f5f3ff;
-  --color-sec-500: #8b5cf6;
-  --color-sec-600: #7c3aed;
-  --color-sec-700: #6d28d9;
+  --color-sec-50: #f0fdf4;
+  --color-sec-500: #22c55e;
+  --color-sec-600: #16a34a;
+  --color-sec-700: #15803d;
 
   --color-surface: #f8fafc;
-  --color-surface-card: rgba(255, 255, 255, 0.75);
-  --color-surface-sidebar: rgba(15, 23, 42, 0.96);
-  --color-surface-topbar: rgba(255, 255, 255, 0.70);
+  --color-surface-card: rgba(255, 255, 255, 0.85);
+  --color-surface-sidebar: rgba(2, 44, 34, 0.98);
+  --color-surface-topbar: rgba(255, 255, 255, 0.80);
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
@@ -95,13 +95,20 @@
     @apply bg-white/70 backdrop-blur-xl border border-slate-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.02)];
   }
   .glass-sidebar {
-    @apply bg-slate-950/95 backdrop-blur-xl border-r border-slate-900/60;
+    @apply bg-emerald-950/96 backdrop-blur-xl border-r border-emerald-900/40;
   }
   .hover-lift {
     @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-500/5;
   }
   .hover-glow {
     @apply transition-all duration-300 ease-out hover:shadow-lg hover:shadow-brand-500/15;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
@@ -114,7 +121,7 @@
 
   /* Dark mode space base */
   .dark body, body.dark {
-    @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-100;
+    @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-950/20 via-slate-950 to-black text-slate-100;
   }
 
   /* Custom sleek scrollbar */

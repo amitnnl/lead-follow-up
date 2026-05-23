@@ -54,7 +54,7 @@ $agents = db_fetch_all($conn, "
     ORDER BY a.is_active DESC, total_leads DESC
 ");
 
-$headerActions = '<button onclick="openModal(\'addModal\')" class="btn btn-primary btn-sm">
+$headerActions = '<button onclick="openAddAgentModal()" class="btn btn-primary btn-sm">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
     Add Agent
 </button>';
@@ -188,10 +188,27 @@ function editAgent(agent) {
     document.getElementById('fIfsc').value   = agent.ifsc_code || '';
     openModal('addModal');
 }
+function openAddAgentModal() {
+    document.getElementById('modalTitle').textContent = 'Add Agent';
+    document.getElementById('editId').value  = '0';
+    document.getElementById('fName').value   = '';
+    document.getElementById('fMobile').value = '';
+    document.getElementById('fEmail').value  = '';
+    document.getElementById('fPan').value    = '';
+    document.getElementById('fBank').value   = '';
+    document.getElementById('fIfsc').value   = '';
+    openModal('addModal');
+}
 function closeAgentModal() {
     closeModal('addModal');
     document.getElementById('editId').value = '0';
     document.getElementById('modalTitle').textContent = 'Add Agent';
+    document.getElementById('fName').value   = '';
+    document.getElementById('fMobile').value = '';
+    document.getElementById('fEmail').value  = '';
+    document.getElementById('fPan').value    = '';
+    document.getElementById('fBank').value   = '';
+    document.getElementById('fIfsc').value   = '';
 }
 </script>
 

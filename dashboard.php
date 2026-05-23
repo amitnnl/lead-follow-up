@@ -14,21 +14,6 @@ $totalLoanAmt   = db_fetch_one($conn, "SELECT SUM(loan_amount) as s FROM leads W
 $totalPayout    = db_fetch_one($conn, "SELECT SUM(payout_amount) as s FROM leads WHERE payout_amount IS NOT NULL")['s'] ?? 0;
 $totalCommPaid  = db_fetch_one($conn, "SELECT SUM(paid_amount) as s FROM commissions")['s'] ?? 0;
 
-// Status breakdown for chart
-$statusRows = db_fetch_all($conn, "SELECT status, COUNT(*) as cnt FROM leads GROUP BY status");
-$statusLabels = array_column($statusRows, 'status');
-$statusCounts = array_column($statusRows, 'cnt');
-
-// Monthly leads for trend chart (last 6 months)
-$monthlyRows = db_fetch_all($conn, "
-    SELECT DATE_FORMAT(lead_date,'%b %Y') as month, COUNT(*) as cnt
-    FROM leads
-    WHERE lead_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(lead_date,'%Y-%m')
-    ORDER BY MIN(lead_date)
-");
-$monthLabels  = array_column($monthlyRows, 'month');
-$monthCounts  = array_column($monthlyRows, 'cnt');
 
 // Top executives
 $execRows = db_fetch_all($conn, "
@@ -88,19 +73,6 @@ require_once __DIR__ . '/includes/header.php';
     <?php endforeach; ?>
 </div>
 
-<!-- Charts Row -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
-    <!-- Monthly Trend -->
-    <div class="lg:col-span-2 card p-5 hover-lift animate-fade-up" style="animation-delay: 350ms">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Monthly Lead Trend</h3>
-        <canvas id="trendChart" height="100"></canvas>
-    </div>
-    <!-- Status Donut -->
-    <div class="card p-5 hover-lift animate-fade-up" style="animation-delay: 400ms">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Status Breakdown</h3>
-        <canvas id="statusChart" height="180"></canvas>
-    </div>
-</div>
 
 <!-- Bottom Row -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -208,98 +180,6 @@ require_once __DIR__ . '/includes/header.php';
     +
 </a>
 
-<!-- Chart.js already loaded in header.php -->
-<script>
-const isDark = document.documentElement.classList.contains('dark');
-const gridColor = isDark ? 'rgba(51, 65, 85, 0.4)' : '#f1f5f9';
-const textColor = isDark ? '#94a3b8' : '#64748b';
-const chartBorder = isDark ? '#0f172a' : '#ffffff';
 
-// Monthly Trend Chart
-new Chart(document.getElementById('trendChart'), {
-    type: 'bar',
-    data: {
-        labels: <?= json_encode($monthLabels ?: ['No Data']) ?>,
-        datasets: [{
-            label: 'Leads',
-            data: <?= json_encode($monthCounts ?: [0]) ?>,
-            backgroundColor: 'rgba(99, 102, 241, 0.15)',
-            borderColor: '#6366f1',
-            borderWidth: 2.5,
-            borderRadius: 8,
-            hoverBackgroundColor: 'rgba(124, 58, 237, 0.25)',
-            hoverBorderColor: '#7c3aed',
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { 
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                titleColor: isDark ? '#ffffff' : '#0f172a',
-                bodyColor: isDark ? '#cbd5e1' : '#475569',
-                borderColor: isDark ? '#334155' : '#e2e8f0',
-                borderWidth: 1,
-                padding: 12,
-                cornerRadius: 12,
-                displayColors: false
-            }
-        },
-        scales: {
-            y: { 
-                beginAtZero: true, 
-                grid: { color: gridColor },
-                ticks: { color: textColor, font: { family: 'Inter', size: 11 } }
-            },
-            x: { 
-                grid: { display: false },
-                ticks: { color: textColor, font: { family: 'Inter', size: 11 } }
-            }
-        }
-    }
-});
-
-// Status Donut Chart
-new Chart(document.getElementById('statusChart'), {
-    type: 'doughnut',
-    data: {
-        labels: <?= json_encode(array_map('ucfirst', $statusLabels ?: ['No Data'])) ?>,
-        datasets: [{
-            data: <?= json_encode($statusCounts ?: [1]) ?>,
-            backgroundColor: ['#6366f1','#f59e0b','#10b981','#8b5cf6','#ef4444','#64748b'],
-            borderWidth: 3,
-            borderColor: chartBorder,
-            hoverOffset: 4
-        }]
-    },
-    options: {
-        responsive: true,
-        cutout: '72%',
-        plugins: { 
-            legend: { 
-                position: 'bottom', 
-                labels: { 
-                    color: textColor,
-                    font: { family: 'Inter', size: 11, weight: '500' }, 
-                    padding: 12,
-                    boxWidth: 8,
-                    boxHeight: 8,
-                    usePointStyle: true
-                } 
-            },
-            tooltip: {
-                backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                titleColor: isDark ? '#ffffff' : '#0f172a',
-                bodyColor: isDark ? '#cbd5e1' : '#475569',
-                borderColor: isDark ? '#334155' : '#e2e8f0',
-                borderWidth: 1,
-                padding: 12,
-                cornerRadius: 12
-            }
-        }
-    }
-});
-</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

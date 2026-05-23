@@ -71,6 +71,40 @@ $allAgents     = db_fetch_all($conn, "SELECT id, name FROM agents WHERE is_activ
 $allFinancers  = db_fetch_all($conn, "SELECT id, name FROM financers WHERE is_active=1 ORDER BY name");
 $allExecutives = db_fetch_all($conn, "SELECT id, name FROM executives WHERE is_active=1 ORDER BY name");
 
+// Calculate dynamic status counts honoring role-based restrictions and active filter dropdowns
+$whereCounts = '1=1';
+$countsParams = [];
+$countsTypes = '';
+
+if (is_agent()) {
+    $agentRow = db_fetch_one($conn, "SELECT id FROM agents WHERE user_id = ?", 'i', [current_user_id()]);
+    if ($agentRow) {
+        $whereCounts  .= ' AND agent_id = ?';
+        $countsParams[] = $agentRow['id'];
+        $countsTypes   .= 'i';
+    }
+}
+
+if ($filterAgent) {
+    $whereCounts  .= ' AND agent_id = ?';
+    $countsParams[] = $filterAgent;
+    $countsTypes   .= 'i';
+}
+if ($filterFinancer) {
+    $whereCounts  .= ' AND financer_id = ?';
+    $countsParams[] = $filterFinancer;
+    $countsTypes   .= 'i';
+}
+if ($filterExecutive) {
+    $whereCounts  .= ' AND executive_id = ?';
+    $countsParams[] = $filterExecutive;
+    $countsTypes   .= 'i';
+}
+
+$statusCountsQuery = db_fetch_all($conn, "SELECT status, COUNT(*) as cnt FROM leads WHERE $whereCounts GROUP BY status", $countsTypes, $countsParams);
+$statusCounts = array_column($statusCountsQuery, 'cnt', 'status');
+$totalLeadsCount = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads WHERE $whereCounts", $countsTypes, $countsParams)['cnt'] ?? 0;
+
 $leads = db_fetch_all($conn, "
     SELECT l.id, l.lead_id, l.lead_date, l.customer_name, l.customer_mobile,
            l.vehicle_make_model, l.registration_number, l.loan_amount,
@@ -96,24 +130,51 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <!-- Filter Bar -->
-<form method="GET" class="card p-6 mb-6">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 items-end">
-        <div>
-            <label class="form-label">Lead Status</label>
-            <select name="status" class="form-select">
-                <option value="">All Statuses</option>
-                <?php
-                $statuses = ['new','pending','approved','disbursed','rejected','on_hold'];
-                foreach ($statuses as $s): ?>
-                    <option value="<?= $s ?>" <?= $filterStatus === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+<form method="GET" id="filterForm" class="card p-6 mb-6 animate-fade-in">
+    <!-- Status Tabs section -->
+    <div class="mb-4">
+        <label class="form-label mb-3">Filter by Lead Status</label>
+        
+        <input type="hidden" name="status" id="filterStatusVal" value="<?= e($filterStatus) ?>">
+        
+        <div class="flex overflow-x-auto gap-2.5 pb-2 -mb-2 scrollbar-none scroll-smooth">
+            <!-- All Statuses Tab -->
+            <?php $isAllActive = ($filterStatus === ''); ?>
+            <button type="button" onclick="selectStatus('')"
+                    class="group flex items-center shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer select-none <?= $isAllActive ? 'bg-gradient-to-r from-brand-600 to-sec-600 text-white shadow-lg shadow-brand-500/20 scale-[1.02]' : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-brand-300 dark:hover:border-brand-700 hover:text-brand-600 dark:hover:text-brand-400 hover:-translate-y-0.5 shadow-sm' ?>">
+                <span>All Statuses</span>
+                <span class="<?= $isAllActive ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-brand-50 dark:group-hover:bg-brand-950/40 group-hover:text-brand-600 dark:group-hover:text-brand-400' ?> ml-2 px-2 py-0.5 rounded-full text-xs font-bold transition-colors">
+                    <?= $totalLeadsCount ?>
+                </span>
+            </button>
 
+            <!-- Individual Statuses -->
+            <?php
+            $statuses = ['new', 'pending', 'approved', 'disbursed', 'rejected', 'on_hold'];
+            foreach ($statuses as $s): 
+                $isActive = ($filterStatus === $s);
+                $cnt = $statusCounts[$s] ?? 0;
+                $label = ucfirst(str_replace('_', ' ', $s));
+            ?>
+                <button type="button" onclick="selectStatus('<?= $s ?>')"
+                        class="group flex items-center shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer select-none <?= $isActive ? 'bg-gradient-to-r from-brand-600 to-sec-600 text-white shadow-lg shadow-brand-500/20 scale-[1.02]' : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-brand-300 dark:hover:border-brand-700 hover:text-brand-600 dark:hover:text-brand-400 hover:-translate-y-0.5 shadow-sm' ?>">
+                    <span><?= $label ?></span>
+                    <span class="<?= $isActive ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-brand-50 dark:group-hover:bg-brand-950/40 group-hover:text-brand-600 dark:group-hover:text-brand-400' ?> ml-2 px-2 py-0.5 rounded-full text-xs font-bold transition-colors">
+                        <?= $cnt ?>
+                    </span>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Dropdown Filters section -->
+    <div class="border-t border-slate-100 dark:border-slate-800/60 my-4"></div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 items-end">
         <div>
             <label class="form-label">Agent / DSA</label>
-            <select name="agent_id" class="form-select">
-                <option value="">All</option>
+            <select name="agent_id" onchange="this.form.submit()" class="form-select">
+                <option value="">All Agents / DSAs</option>
                 <?php foreach ($allAgents as $a): ?>
                     <option value="<?= $a['id'] ?>" <?= $filterAgent == $a['id'] ? 'selected' : '' ?>><?= e($a['name']) ?></option>
                 <?php endforeach; ?>
@@ -121,8 +182,8 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         <div>
             <label class="form-label">Financer</label>
-            <select name="financer_id" class="form-select">
-                <option value="">All</option>
+            <select name="financer_id" onchange="this.form.submit()" class="form-select">
+                <option value="">All Financers</option>
                 <?php foreach ($allFinancers as $f): ?>
                     <option value="<?= $f['id'] ?>" <?= $filterFinancer == $f['id'] ? 'selected' : '' ?>><?= e($f['name']) ?></option>
                 <?php endforeach; ?>
@@ -130,23 +191,34 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         <div>
             <label class="form-label">Executive</label>
-            <select name="executive_id" class="form-select">
-                <option value="">All</option>
+            <select name="executive_id" onchange="this.form.submit()" class="form-select">
+                <option value="">All Executives</option>
                 <?php foreach ($allExecutives as $ex): ?>
                     <option value="<?= $ex['id'] ?>" <?= $filterExecutive == $ex['id'] ? 'selected' : '' ?>><?= e($ex['name']) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
-        <div class="flex items-center gap-2">
-            <button type="submit" class="btn btn-primary btn-sm flex-1">
-                Filter
-            </button>
-            <?php if ($filterStatus || $filterAgent || $filterFinancer || $filterExecutive): ?>
-                <a href="<?php echo BASE_URL; ?>/leads/index.php" class="btn btn-secondary btn-sm">Clear</a>
-            <?php endif; ?>
-        </div>
     </div>
+
+    <?php if ($filterStatus || $filterAgent || $filterFinancer || $filterExecutive): ?>
+        <div class="flex justify-end mt-3">
+            <a href="<?= BASE_URL ?>/leads/index.php" 
+               class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-500 hover:text-rose-600 transition-colors cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Clear all active filters
+            </a>
+        </div>
+    <?php endif; ?>
 </form>
+
+<script>
+function selectStatus(status) {
+    document.getElementById('filterStatusVal').value = status;
+    document.getElementById('filterForm').submit();
+}
+</script>
 
 <!-- Leads Table -->
 <div class="card">
@@ -165,9 +237,6 @@ require_once __DIR__ . '/../includes/header.php';
                     <th>Financer</th>
                     <th>SFE</th>
                     <th>Status</th>
-                    <th>RC</th>
-                    <th>Ins.</th>
-                    <th>RTO</th>
                     <th>Payout</th>
                     <th>Actions</th>
                 </tr>
@@ -199,36 +268,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <td class="px-4 py-3 text-gray-500 text-xs"><?= e($lead['financer_name'] ?? '—') ?></td>
                     <td class="px-4 py-3 text-gray-500 text-xs"><?= e($lead['executive_name'] ?? '—') ?></td>
                     <td class="px-4 py-3"><?= status_badge($lead['status']) ?></td>
-                    <td class="px-4 py-3">
-                        <?php
-                        $rcClass = match($lead['rc_status']) {
-                            'received' => 'badge badge-green',
-                            'not_applicable' => 'badge badge-gray',
-                            default    => 'badge badge-yellow'
-                        };
-                        ?>
-                        <span class="<?= $rcClass ?>"><?= ucfirst(str_replace('_',' ',$lead['rc_status'])) ?></span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <?php
-                        $insClass = match($lead['insurance_status']) {
-                            'received' => 'badge badge-green',
-                            'not_applicable' => 'badge badge-gray',
-                            default    => 'badge badge-yellow'
-                        };
-                        ?>
-                        <span class="<?= $insClass ?>"><?= ucfirst(str_replace('_',' ',$lead['insurance_status'])) ?></span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <?php
-                        $rtoClass = match($lead['rto_status']) {
-                            'done' => 'badge badge-green',
-                            'not_applicable' => 'badge badge-gray',
-                            default => 'badge badge-yellow'
-                        };
-                        ?>
-                        <span class="<?= $rtoClass ?>"><?= ucfirst(str_replace('_',' ',$lead['rto_status'])) ?></span>
-                    </td>
+
                     <td class="px-4 py-3 text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
                         <?= $lead['payout_amount'] ? format_currency((float)$lead['payout_amount']) : '—' ?>
                     </td>
@@ -279,7 +319,7 @@ require_once __DIR__ . '/../includes/header.php';
 $(document).ready(function() {
     initTable('#leadsTable', {
         order: [[1, 'desc']],
-        columnDefs: [{ orderable: false, targets: 15 }],
+        columnDefs: [{ orderable: false, targets: 12 }],
         scrollX: true,
     });
 });
