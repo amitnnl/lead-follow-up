@@ -374,7 +374,6 @@ function nav_active(string $dir, string $file = ''): string {
             Settings
         </a>
     </nav>
-</aside>iv>
 </aside>
 
 
