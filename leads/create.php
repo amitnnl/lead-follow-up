@@ -121,25 +121,23 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>📋 Lead Information</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-                <label class="form-label required-lbl">Lead Date</label>
-                <input type="date" name="lead_date" class="form-input"
-                       value="<?= e($data['lead_date'] ?? date('Y-m-d')) ?>" required>
+            <div class="form-floating">
+                <input type="date" name="lead_date" id="lead_date" value="<?= e($data['lead_date'] ?? date('Y-m-d')) ?>" required placeholder=" ">
+                <label for="lead_date" class="required-lbl">Lead Date</label>
             </div>
-            <div>
-                <label class="form-label">Lead Status</label>
-                <select name="status" class="form-select">
+            <div class="form-floating">
+                <select name="status" id="status" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;" onchange="this.setAttribute('data-val', this.value);">
                     <?php foreach (['new','pending','approved','disbursed','rejected','on_hold'] as $s): ?>
                     <option value="<?= $s ?>" <?= (($data['status'] ?? 'new') === $s) ? 'selected' : '' ?>>
                         <?= ucfirst(str_replace('_',' ',$s)) ?>
                     </option>
                     <?php endforeach; ?>
                 </select>
+                <label for="status">Lead Status</label>
             </div>
-            <div>
-                <label class="form-label">Status Date</label>
-                <input type="date" name="status_date" class="form-input"
-                       value="<?= e($data['status_date'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="date" name="status_date" id="status_date" value="<?= e($data['status_date'] ?? '') ?>" placeholder=" ">
+                <label for="status_date">Status Date</label>
             </div>
         </div>
     </div>
@@ -150,26 +148,21 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>👤 Customer Details</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="md:col-span-2">
-                <label class="form-label required-lbl">Customer Name</label>
-                <input type="text" name="customer_name" class="form-input"
-                       value="<?= e($data['customer_name'] ?? '') ?>" required
-                       placeholder="e.g. Harpal Singh S/o Matu Singh">
+            <div class="md:col-span-2 form-floating">
+                <input type="text" name="customer_name" id="customer_name" value="<?= e($data['customer_name'] ?? '') ?>" required placeholder=" ">
+                <label for="customer_name" class="required-lbl">Customer Name (e.g. Harpal Singh S/o Matu Singh)</label>
             </div>
-            <div>
-                <label class="form-label required-lbl">Mobile</label>
-                <input type="tel" name="customer_mobile" class="form-input"
-                       value="<?= e($data['customer_mobile'] ?? '') ?>" required placeholder="10-digit mobile">
+            <div class="form-floating">
+                <input type="tel" name="customer_mobile" id="customer_mobile" value="<?= e($data['customer_mobile'] ?? '') ?>" required placeholder=" ">
+                <label for="customer_mobile" class="required-lbl">Mobile (10-digit)</label>
             </div>
-            <div>
-                <label class="form-label">Alternate Mobile</label>
-                <input type="tel" name="customer_mobile2" class="form-input"
-                       value="<?= e($data['customer_mobile2'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="tel" name="customer_mobile2" id="customer_mobile2" value="<?= e($data['customer_mobile2'] ?? '') ?>" placeholder=" ">
+                <label for="customer_mobile2">Alternate Mobile</label>
             </div>
-            <div class="md:col-span-2">
-                <label class="form-label">Address</label>
-                <input type="text" name="customer_address" class="form-input"
-                       value="<?= e($data['customer_address'] ?? '') ?>" placeholder="Village / City">
+            <div class="md:col-span-2 form-floating">
+                <input type="text" name="customer_address" id="customer_address" value="<?= e($data['customer_address'] ?? '') ?>" placeholder=" ">
+                <label for="customer_address">Address (Village / City)</label>
             </div>
         </div>
     </div>
@@ -180,30 +173,25 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>🚛 Vehicle & Loan Details</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-                <label class="form-label">Vehicle (Make & Model)</label>
-                <input type="text" name="vehicle_make_model" class="form-input"
-                       value="<?= e($data['vehicle_make_model'] ?? '') ?>" placeholder="e.g. TATA 1512">
+            <div class="form-floating">
+                <input type="text" name="vehicle_make_model" id="vehicle_make_model" value="<?= e($data['vehicle_make_model'] ?? '') ?>" placeholder=" ">
+                <label for="vehicle_make_model">Vehicle (Make & Model e.g. TATA 1512)</label>
             </div>
-            <div>
-                <label class="form-label">Year of Manufacture</label>
-                <input type="number" name="year_of_manufacture" class="form-input" min="1990" max="<?= date('Y') ?>"
-                       value="<?= e($data['year_of_manufacture'] ?? '') ?>" placeholder="e.g. 2022">
+            <div class="form-floating">
+                <input type="number" name="year_of_manufacture" id="year_of_manufacture" min="1990" max="<?= date('Y') ?>" value="<?= e($data['year_of_manufacture'] ?? '') ?>" placeholder=" ">
+                <label for="year_of_manufacture">Year of Manufacture</label>
             </div>
-            <div>
-                <label class="form-label">Registration Number</label>
-                <input type="text" name="registration_number" class="form-input"
-                       value="<?= e($data['registration_number'] ?? '') ?>" placeholder="e.g. HR55AL4871">
+            <div class="form-floating">
+                <input type="text" name="registration_number" id="registration_number" value="<?= e($data['registration_number'] ?? '') ?>" placeholder=" ">
+                <label for="registration_number">Registration Number</label>
             </div>
-            <div>
-                <label class="form-label">Loan Amount (₹)</label>
-                <input type="number" name="loan_amount" class="form-input" step="1000"
-                       value="<?= e($data['loan_amount'] ?? '') ?>" placeholder="e.g. 900000">
+            <div class="form-floating">
+                <input type="number" name="loan_amount" id="loan_amount" step="1000" value="<?= e($data['loan_amount'] ?? '') ?>" placeholder=" ">
+                <label for="loan_amount">Loan Amount (₹)</label>
             </div>
-            <div>
-                <label class="form-label">Referred By</label>
-                <input type="text" name="referred_by" class="form-input"
-                       value="<?= e($data['referred_by'] ?? '') ?>" placeholder="e.g. Seka N / Direct">
+            <div class="form-floating">
+                <input type="text" name="referred_by" id="referred_by" value="<?= e($data['referred_by'] ?? '') ?>" placeholder=" ">
+                <label for="referred_by">Referred By</label>
             </div>
         </div>
     </div>
@@ -213,9 +201,9 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="card-header">
             <h2>📝 Query / Notes</h2>
         </div>
-        <div class="card-body">
-            <textarea name="query_notes" class="form-input h-24 resize-none"
-                      placeholder="Any queries, remarks, or special notes..."><?= e($data['query_notes'] ?? '') ?></textarea>
+        <div class="card-body form-floating">
+            <textarea name="query_notes" id="query_notes" class="h-24 resize-none" placeholder=" "><?= e($data['query_notes'] ?? '') ?></textarea>
+            <label for="query_notes">Any queries, remarks, or special notes...</label>
         </div>
     </div>
 

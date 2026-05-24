@@ -121,21 +121,21 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>📋 Lead Information — <span class="font-mono text-brand-600 dark:text-brand-400"><?= e($lead['lead_id']) ?></span></h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-                <label class="form-label">Lead Date</label>
-                <input type="date" name="lead_date" class="form-input" value="<?= e($data['lead_date']) ?>">
+            <div class="form-floating">
+                <input type="date" name="lead_date" id="lead_date" value="<?= e($data['lead_date']) ?>" placeholder=" ">
+                <label for="lead_date">Lead Date</label>
             </div>
-            <div>
-                <label class="form-label">Status</label>
-                <select name="status" class="form-select">
+            <div class="form-floating">
+                <select name="status" id="status" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <?php foreach (['new','pending','approved','disbursed','rejected','on_hold'] as $s): ?>
                     <option value="<?= $s ?>" <?= ($data['status'] === $s) ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <label for="status">Status</label>
             </div>
-            <div>
-                <label class="form-label">Status Date</label>
-                <input type="date" name="status_date" class="form-input" value="<?= e($data['status_date'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="date" name="status_date" id="status_date" value="<?= e($data['status_date'] ?? '') ?>" placeholder=" ">
+                <label for="status_date">Status Date</label>
             </div>
         </div>
     </div>
@@ -145,21 +145,21 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>👤 Customer Details</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="md:col-span-2">
-                <label class="form-label required-lbl">Customer Name</label>
-                <input type="text" name="customer_name" class="form-input" value="<?= e($data['customer_name']) ?>" required>
+            <div class="md:col-span-2 form-floating">
+                <input type="text" name="customer_name" id="customer_name" value="<?= e($data['customer_name']) ?>" required placeholder=" ">
+                <label for="customer_name" class="required-lbl">Customer Name</label>
             </div>
-            <div>
-                <label class="form-label required-lbl">Mobile</label>
-                <input type="tel" name="customer_mobile" class="form-input" value="<?= e($data['customer_mobile']) ?>" required>
+            <div class="form-floating">
+                <input type="tel" name="customer_mobile" id="customer_mobile" value="<?= e($data['customer_mobile']) ?>" required placeholder=" ">
+                <label for="customer_mobile" class="required-lbl">Mobile</label>
             </div>
-            <div>
-                <label class="form-label">Alternate Mobile</label>
-                <input type="tel" name="customer_mobile2" class="form-input" value="<?= e($data['customer_mobile2'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="tel" name="customer_mobile2" id="customer_mobile2" value="<?= e($data['customer_mobile2'] ?? '') ?>" placeholder=" ">
+                <label for="customer_mobile2">Alternate Mobile</label>
             </div>
-            <div class="md:col-span-2">
-                <label class="form-label">Address</label>
-                <input type="text" name="customer_address" class="form-input" value="<?= e($data['customer_address'] ?? '') ?>">
+            <div class="md:col-span-2 form-floating">
+                <input type="text" name="customer_address" id="customer_address" value="<?= e($data['customer_address'] ?? '') ?>" placeholder=" ">
+                <label for="customer_address">Address</label>
             </div>
         </div>
     </div>
@@ -169,25 +169,25 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>🚛 Vehicle & Loan</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-                <label class="form-label">Vehicle</label>
-                <input type="text" name="vehicle_make_model" class="form-input" value="<?= e($data['vehicle_make_model'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="text" name="vehicle_make_model" id="vehicle_make_model" value="<?= e($data['vehicle_make_model'] ?? '') ?>" placeholder=" ">
+                <label for="vehicle_make_model">Vehicle</label>
             </div>
-            <div>
-                <label class="form-label">Year of Manufacture</label>
-                <input type="number" name="year_of_manufacture" class="form-input" value="<?= e($data['year_of_manufacture'] ?? '') ?>" min="1990" max="<?= date('Y') ?>">
+            <div class="form-floating">
+                <input type="number" name="year_of_manufacture" id="year_of_manufacture" value="<?= e($data['year_of_manufacture'] ?? '') ?>" min="1990" max="<?= date('Y') ?>" placeholder=" ">
+                <label for="year_of_manufacture">Year of Manufacture</label>
             </div>
-            <div>
-                <label class="form-label">Reg. Number</label>
-                <input type="text" name="registration_number" class="form-input" value="<?= e($data['registration_number'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="text" name="registration_number" id="registration_number" value="<?= e($data['registration_number'] ?? '') ?>" placeholder=" ">
+                <label for="registration_number">Reg. Number</label>
             </div>
-            <div>
-                <label class="form-label">Loan Amount (₹)</label>
-                <input type="number" name="loan_amount" class="form-input" value="<?= e($data['loan_amount'] ?? '') ?>" step="1000">
+            <div class="form-floating">
+                <input type="number" name="loan_amount" id="loan_amount" value="<?= e($data['loan_amount'] ?? '') ?>" step="1000" placeholder=" ">
+                <label for="loan_amount">Loan Amount (₹)</label>
             </div>
-            <div>
-                <label class="form-label">Referred By</label>
-                <input type="text" name="referred_by" class="form-input" value="<?= e($data['referred_by'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="text" name="referred_by" id="referred_by" value="<?= e($data['referred_by'] ?? '') ?>" placeholder=" ">
+                <label for="referred_by">Referred By</label>
             </div>
         </div>
     </div>
@@ -197,17 +197,17 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>🏦 Client Bank Details</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-                <label class="form-label">Bank Name</label>
-                <input type="text" name="customer_bank_name" class="form-input" value="<?= e($data['customer_bank_name'] ?? '') ?>" placeholder="e.g. HDFC Bank">
+            <div class="form-floating">
+                <input type="text" name="customer_bank_name" id="customer_bank_name" value="<?= e($data['customer_bank_name'] ?? '') ?>" placeholder=" ">
+                <label for="customer_bank_name">Bank Name (e.g. HDFC Bank)</label>
             </div>
-            <div>
-                <label class="form-label">Account Number</label>
-                <input type="text" name="customer_account_number" class="form-input" value="<?= e($data['customer_account_number'] ?? '') ?>" placeholder="e.g. 50100...">
+            <div class="form-floating">
+                <input type="text" name="customer_account_number" id="customer_account_number" value="<?= e($data['customer_account_number'] ?? '') ?>" placeholder=" ">
+                <label for="customer_account_number">Account Number</label>
             </div>
-            <div>
-                <label class="form-label">IFSC Code</label>
-                <input type="text" name="customer_ifsc_code" class="form-input" value="<?= e($data['customer_ifsc_code'] ?? '') ?>" placeholder="e.g. HDFC0001234">
+            <div class="form-floating">
+                <input type="text" name="customer_ifsc_code" id="customer_ifsc_code" value="<?= e($data['customer_ifsc_code'] ?? '') ?>" placeholder=" ">
+                <label for="customer_ifsc_code">IFSC Code</label>
             </div>
         </div>
     </div>
@@ -217,41 +217,41 @@ require_once __DIR__ . '/../includes/header.php';
             <h2>🔗 Assignment</h2>
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div>
-                <label class="form-label">Agent / DSA</label>
-                <select name="agent_id" class="form-select">
+            <div class="form-floating">
+                <select name="agent_id" id="agent_id" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <option value="">— Select —</option>
                     <?php foreach ($agents as $a): ?>
                     <option value="<?= $a['id'] ?>" <?= ($data['agent_id'] == $a['id']) ? 'selected' : '' ?>><?= e($a['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <label for="agent_id">Agent / DSA</label>
             </div>
-            <div>
-                <label class="form-label">Financer</label>
-                <select name="financer_id" class="form-select">
+            <div class="form-floating">
+                <select name="financer_id" id="financer_id" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <option value="">— Select —</option>
                     <?php foreach ($financers as $f): ?>
                     <option value="<?= $f['id'] ?>" <?= ($data['financer_id'] == $f['id']) ? 'selected' : '' ?>><?= e($f['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <label for="financer_id">Financer</label>
             </div>
-            <div>
-                <label class="form-label">Dealer</label>
-                <select name="dealer_id" class="form-select">
+            <div class="form-floating">
+                <select name="dealer_id" id="dealer_id" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <option value="">— Select —</option>
                     <?php foreach ($dealers as $d): ?>
                     <option value="<?= $d['id'] ?>" <?= ($data['dealer_id'] == $d['id']) ? 'selected' : '' ?>><?= e($d['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <label for="dealer_id">Dealer</label>
             </div>
-            <div>
-                <label class="form-label">SFE / Executive</label>
-                <select name="executive_id" class="form-select">
+            <div class="form-floating">
+                <select name="executive_id" id="executive_id" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <option value="">— Select —</option>
                     <?php foreach ($executives as $ex): ?>
                     <option value="<?= $ex['id'] ?>" <?= ($data['executive_id'] == $ex['id']) ? 'selected' : '' ?>><?= e($ex['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <label for="executive_id">SFE / Executive</label>
             </div>
         </div>
     </div>
@@ -262,52 +262,52 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         <div class="card-body grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <div class="flex gap-3">
-                <div class="flex-1">
-                    <label class="form-label">RC Status</label>
-                    <select name="rc_status" class="form-select">
+                <div class="flex-1 form-floating">
+                    <select name="rc_status" id="rc_status" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                         <option value="pending" <?= ($data['rc_status']=='pending') ? 'selected' : '' ?>>Pending</option>
                         <option value="received" <?= ($data['rc_status']=='received') ? 'selected' : '' ?>>Received</option>
                         <option value="not_applicable" <?= ($data['rc_status']=='not_applicable') ? 'selected' : '' ?>>N/A</option>
                     </select>
+                    <label for="rc_status">RC Status</label>
                 </div>
-                <div class="flex-1">
-                    <label class="form-label">RC Number</label>
-                    <input type="text" name="rc_number" class="form-input" value="<?= e($data['rc_number'] ?? '') ?>">
+                <div class="flex-1 form-floating">
+                    <input type="text" name="rc_number" id="rc_number" value="<?= e($data['rc_number'] ?? '') ?>" placeholder=" ">
+                    <label for="rc_number">RC Number</label>
                 </div>
             </div>
             <div class="flex gap-3">
-                <div class="flex-1">
-                    <label class="form-label">Insurance Status</label>
-                    <select name="insurance_status" class="form-select">
+                <div class="flex-1 form-floating">
+                    <select name="insurance_status" id="insurance_status" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                         <option value="pending" <?= ($data['insurance_status']=='pending') ? 'selected' : '' ?>>Pending</option>
                         <option value="received" <?= ($data['insurance_status']=='received') ? 'selected' : '' ?>>Received</option>
                         <option value="not_applicable" <?= ($data['insurance_status']=='not_applicable') ? 'selected' : '' ?>>N/A</option>
                     </select>
+                    <label for="insurance_status">Insurance Status</label>
                 </div>
-                <div class="flex-1">
-                    <label class="form-label">Insurance No.</label>
-                    <input type="text" name="insurance_number" class="form-input" value="<?= e($data['insurance_number'] ?? '') ?>">
+                <div class="flex-1 form-floating">
+                    <input type="text" name="insurance_number" id="insurance_number" value="<?= e($data['insurance_number'] ?? '') ?>" placeholder=" ">
+                    <label for="insurance_number">Insurance No.</label>
                 </div>
             </div>
-            <div>
-                <label class="form-label">RTO Status</label>
-                <select name="rto_status" class="form-select">
+            <div class="form-floating">
+                <select name="rto_status" id="rto_status" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <option value="pending" <?= ($data['rto_status']=='pending') ? 'selected' : '' ?>>Pending</option>
                     <option value="done" <?= ($data['rto_status']=='done') ? 'selected' : '' ?>>Done</option>
                     <option value="not_applicable" <?= ($data['rto_status']=='not_applicable') ? 'selected' : '' ?>>N/A</option>
                 </select>
+                <label for="rto_status">RTO Status</label>
             </div>
-            <div>
-                <label class="form-label">Payout Amount (₹)</label>
-                <input type="number" name="payout_amount" class="form-input" step="100" value="<?= e($data['payout_amount'] ?? '') ?>">
+            <div class="form-floating">
+                <input type="number" name="payout_amount" id="payout_amount" step="100" value="<?= e($data['payout_amount'] ?? '') ?>" placeholder=" ">
+                <label for="payout_amount">Payout Amount (₹)</label>
             </div>
-            <div>
-                <label class="form-label">Payout Status</label>
-                <select name="payout_status" class="form-select">
+            <div class="form-floating">
+                <select name="payout_status" id="payout_status" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
                     <option value="pending" <?= ($data['payout_status']=='pending') ? 'selected' : '' ?>>Pending</option>
                     <option value="partial" <?= ($data['payout_status']=='partial') ? 'selected' : '' ?>>Partial</option>
                     <option value="paid" <?= ($data['payout_status']=='paid') ? 'selected' : '' ?>>Paid</option>
                 </select>
+                <label for="payout_status">Payout Status</label>
             </div>
         </div>
     </div>
@@ -316,8 +316,9 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="card-header">
             <h2>📝 Query / Notes</h2>
         </div>
-        <div class="card-body">
-            <textarea name="query_notes" class="form-input resize-none" rows="3"><?= e($data['query_notes'] ?? '') ?></textarea>
+        <div class="card-body form-floating">
+            <textarea name="query_notes" id="query_notes" class="resize-none h-24" placeholder=" "><?= e($data['query_notes'] ?? '') ?></textarea>
+            <label for="query_notes">Query / Notes</label>
         </div>
     </div>
 

@@ -137,6 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                class="form-input"
                                placeholder="••••••••">
                     </div>
+                    
+                    <div class="flex items-center justify-between pt-1">
+                        <div class="flex items-center gap-2">
+                            <input id="remember" name="remember" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:bg-slate-900/60 dark:border-slate-700 cursor-pointer transition-colors">
+                            <label for="remember" class="text-xs font-medium text-slate-600 dark:text-slate-400 cursor-pointer">Remember me</label>
+                        </div>
+                        <a href="#" class="text-xs font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors">Forgot password?</a>
+                    </div>
                 </div>
 
                 <button type="submit" class="mt-6 w-full btn btn-primary">

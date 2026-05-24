@@ -24,6 +24,15 @@ $execRows = db_fetch_all($conn, "
     GROUP BY ex.id ORDER BY total DESC LIMIT 5
 ");
 
+// Top financers
+$financerRows = db_fetch_all($conn, "
+    SELECT f.name, COUNT(l.id) as total,
+           SUM(CASE WHEN l.status='disbursed' THEN 1 ELSE 0 END) as disbursed
+    FROM leads l
+    JOIN financers f ON l.financer_id = f.id
+    GROUP BY f.id ORDER BY total DESC LIMIT 5
+");
+
 // Recent leads
 $recentLeads = db_fetch_all($conn, "
     SELECT l.lead_id, l.customer_name, l.vehicle_make_model, l.loan_amount, l.status, l.lead_date,
@@ -163,7 +172,33 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="text-right">
                         <div class="w-20 bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
                             <div class="bg-blue-500 h-1.5 rounded-full"
-                                 style="width:<?= min(100, round($ex['disbursed']/$ex['total']*100)) ?>%"></div>
+                                 style="width:<?= $ex['total'] > 0 ? min(100, round($ex['disbursed']/$ex['total']*100)) : 0 ?>%"></div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Top Financers -->
+        <div class="card hover-lift animate-fade-up" style="animation-delay: 600ms">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">🏦 Top Financers</h3>
+            </div>
+            <div class="p-4 space-y-3">
+                <?php foreach ($financerRows as $i => $fn): ?>
+                <div class="flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                        <?= $i + 1 ?>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs font-semibold text-gray-800 dark:text-gray-200"><?= e($fn['name']) ?></div>
+                        <div class="text-xs text-gray-400"><?= $fn['total'] ?> leads · <?= $fn['disbursed'] ?> disbursed</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="w-20 bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                            <div class="bg-emerald-500 h-1.5 rounded-full"
+                                 style="width:<?= $fn['total'] > 0 ? min(100, round($fn['disbursed']/$fn['total']*100)) : 0 ?>%"></div>
                         </div>
                     </div>
                 </div>

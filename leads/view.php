@@ -325,37 +325,45 @@ function stage_class($current, $target) {
                 </h3>
             </div>
             <?php if ($followups): ?>
-            <div class="divide-y divide-slate-100 dark:divide-slate-800/40">
-                <?php foreach ($followups as $fu): ?>
-                <div class="px-6 py-5 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex-1">
-                            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium"><?= nl2br(e($fu['remarks'])) ?></p>
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-slate-400 dark:text-slate-500">
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    <?= date('d M Y', strtotime($fu['followup_date'])) ?>
-                                </span>
-                                <?php if ($fu['next_followup_date']): ?>
-                                <span class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
-                                    <svg class="w-3.5 h-3.5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-                                    Next: <strong class="font-semibold"><?= date('d M Y', strtotime($fu['next_followup_date'])) ?></strong>
-                                </span>
-                                <?php endif; ?>
-                                <?php if ($fu['done_by']): ?>
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                    by <?= e($fu['done_by']) ?>
-                                </span>
+            <div class="relative px-6 py-5">
+                <!-- Vertical Line -->
+                <div class="absolute left-[2.25rem] top-8 bottom-8 w-0.5 bg-slate-200 dark:bg-slate-800/60"></div>
+                <div class="space-y-6">
+                    <?php foreach ($followups as $fu): ?>
+                    <div class="relative pl-10 group">
+                        <!-- Timeline Dot -->
+                        <div class="absolute left-[-5px] top-1.5 w-3 h-3 rounded-full bg-brand-500 ring-4 ring-white dark:ring-slate-900 group-hover:scale-125 transition-transform duration-300 shadow-sm shadow-brand-500/50"></div>
+                        <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-100 dark:border-slate-800/40 shadow-sm group-hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1">
+                                    <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium"><?= nl2br(e($fu['remarks'])) ?></p>
+                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-slate-400 dark:text-slate-500">
+                                        <span class="flex items-center gap-1 font-semibold text-slate-500 dark:text-slate-400">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            <?= date('d M Y', strtotime($fu['followup_date'])) ?>
+                                        </span>
+                                        <?php if ($fu['next_followup_date']): ?>
+                                        <span class="flex items-center gap-1 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/30 px-2 py-0.5 rounded-md border border-brand-100 dark:border-brand-900/30">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                                            Next: <strong><?= date('d M Y', strtotime($fu['next_followup_date'])) ?></strong>
+                                        </span>
+                                        <?php endif; ?>
+                                        <?php if ($fu['done_by']): ?>
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                            by <?= e($fu['done_by']) ?>
+                                        </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <?php if ($fu['status_changed_to']): ?>
+                                <div class="flex-shrink-0"><?= status_badge($fu['status_changed_to']) ?></div>
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <?php if ($fu['status_changed_to']): ?>
-                        <span class="flex-shrink-0"><?= status_badge($fu['status_changed_to']) ?></span>
-                        <?php endif; ?>
                     </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
             </div>
             <?php else: ?>
             <div class="px-6 py-10 text-center text-slate-400 dark:text-slate-500 text-sm">

@@ -2,26 +2,26 @@
 @custom-variant dark (&:is(.dark, .dark *));
 /* ─── PREMIUM MODERN SYSTEM TOKENS ─── */
 @theme {
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-300: #6ee7b7;
-  --color-brand-400: #34d399;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-brand-800: #065f46;
-  --color-brand-900: #064e3b;
-  --color-brand-950: #022c22;
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
 
-  --color-sec-50: #f0fdf4;
-  --color-sec-500: #22c55e;
-  --color-sec-600: #16a34a;
-  --color-sec-700: #15803d;
+  --color-sec-50: #eef2ff;
+  --color-sec-500: #6366f1;
+  --color-sec-600: #4f46e5;
+  --color-sec-700: #4338ca;
 
   --color-surface: #f8fafc;
   --color-surface-card: rgba(255, 255, 255, 0.85);
-  --color-surface-sidebar: rgba(2, 44, 34, 0.98);
+  --color-surface-sidebar: rgba(23, 37, 84, 0.98);
   --color-surface-topbar: rgba(255, 255, 255, 0.80);
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -169,6 +169,43 @@
   .dark .form-select {
     @apply bg-slate-900/60 border-slate-800 text-slate-100
            focus:border-brand-400 focus:ring-brand-400/10;
+  }
+
+  .form-floating {
+    @apply relative;
+  }
+  .form-floating > input,
+  .form-floating > select,
+  .form-floating > textarea {
+    @apply block w-full px-4 pb-2.5 pt-6 text-sm text-slate-800 bg-white rounded-xl border border-slate-200 appearance-none focus:outline-none focus:ring-0 focus:border-brand-500 transition-all duration-300;
+  }
+  .form-floating > label {
+    @apply absolute text-sm text-slate-500 duration-300 transform top-3.5 z-10 origin-[0] start-4 cursor-text scale-75 -translate-y-3;
+  }
+  
+  .form-floating > input:placeholder-shown:not(:focus) + label,
+  .form-floating > textarea:placeholder-shown:not(:focus) + label {
+    @apply scale-100 translate-y-0 text-slate-500;
+  }
+  
+  .form-floating > input:focus + label,
+  .form-floating > select:focus + label,
+  .form-floating > textarea:focus + label {
+    @apply text-brand-600 scale-75 -translate-y-3;
+  }
+
+  .dark .form-floating > input,
+  .dark .form-floating > select,
+  .dark .form-floating > textarea {
+    @apply bg-slate-900/60 text-slate-100 border-slate-800 focus:border-brand-400;
+  }
+  .dark .form-floating > label {
+    @apply text-slate-400;
+  }
+  .dark .form-floating > input:focus + label,
+  .dark .form-floating > select:focus + label,
+  .dark .form-floating > textarea:focus + label {
+    @apply text-brand-400;
   }
 
   /* ── Interactive Premium Buttons ── */

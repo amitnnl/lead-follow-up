@@ -8,7 +8,12 @@ $currentDir  = basename(dirname($_SERVER['PHP_SELF']));
 
 function nav_active(string $dir, string $file = ''): string {
     global $currentDir, $currentFile;
-    if ($dir === $currentDir || ($dir === 'root' && $currentFile === $file)) {
+    if ($dir === $currentDir) {
+        if ($file !== '' && $file !== $currentFile) {
+            return 'sidebar-nav-inactive';
+        }
+        return 'sidebar-nav-active';
+    } elseif ($dir === 'root' && $currentFile === $file) {
         return 'sidebar-nav-active';
     }
     return 'sidebar-nav-inactive';
@@ -132,9 +137,7 @@ function nav_active(string $dir, string $file = ''): string {
                 <div class="text-brand-300/50 text-[9px] font-bold uppercase tracking-wider">DSA Finance Panel</div>
             </div>
         </div>
-    </div>
-
-    <!-- Navigation -->
+     <!-- Navigation -->
     <nav class="flex-1 px-3.5 py-5 space-y-1.5 sidebar-nav overflow-y-auto">
         <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-1 mb-2">Main</div>
 
@@ -146,12 +149,22 @@ function nav_active(string $dir, string $file = ''): string {
             Dashboard
         </a>
 
+        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Lead Management</div>
+
+        <a href="<?php echo BASE_URL; ?>/leads/create.php"
+           class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads', 'create.php') ?>">
+            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Lead
+        </a>
+
         <a href="<?php echo BASE_URL; ?>/leads/index.php"
-           class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads') ?>">
+           class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads', 'index.php') ?>">
             <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            Leads
+            Assigned Leads
         </a>
 
         <a href="<?php echo BASE_URL; ?>/followups/index.php"
@@ -162,7 +175,7 @@ function nav_active(string $dir, string $file = ''): string {
             Follow-ups
         </a>
 
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Management</div>
+        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Network</div>
 
         <a href="<?php echo BASE_URL; ?>/agents/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('agents') ?>">
@@ -195,37 +208,27 @@ function nav_active(string $dir, string $file = ''): string {
             <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Commissions
+            Payouts
         </a>
 
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Reports</div>
+        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">System</div>
 
         <a href="<?php echo BASE_URL; ?>/reports/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('reports') ?>">
             <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
-            MIS Reports
+            Reports
+        </a>
+        
+        <a href="#" class="flex items-center gap-3 py-2.5 rounded-xl text-sm sidebar-nav-inactive">
+            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Settings
         </a>
     </nav>
-
-    <!-- User Info -->
-    <div class="px-5 py-4 border-t border-slate-900/60 bg-slate-950/40">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-sec-500 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
-                <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="text-white text-xs font-semibold truncate"><?= e($user['name'] ?? 'User') ?></div>
-                <div class="text-slate-400 text-[10px] capitalize font-medium"><?= e($user['role'] ?? '') ?></div>
-            </div>
-            <a href="<?php echo BASE_URL; ?>/logout.php" hx-boost="false" class="text-slate-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-white/5" title="Logout">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-            </a>
-        </div>
-    </div>
+</aside>iv>
 </aside>
 
 
@@ -233,40 +236,63 @@ function nav_active(string $dir, string $file = ''): string {
 <div class="flex-1 flex flex-col min-h-screen overflow-hidden print:block print:min-h-0 print:overflow-visible lg:ml-0">
     <!-- Top bar -->
     <header class="glass-panel border-b-0 px-4 sm:px-6 py-3.5 flex items-center justify-between flex-shrink-0 z-10 sticky top-0 print:hidden">
-        <!-- Left: Hamburger + Title -->
-        <div class="flex items-center gap-3">
+        <!-- Left: Hamburger + Title + Search -->
+        <div class="flex items-center gap-4">
             <!-- Mobile Hamburger -->
             <button onclick="toggleSidebar()" class="lg:hidden p-2 -ml-2 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 transition-colors" aria-label="Toggle sidebar">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
-            <div>
+            <div class="hidden sm:block">
                 <h1 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white"><?= e($pageTitle ?? 'Dashboard') ?></h1>
                 <?php if (!empty($pageBreadcrumb)): ?>
                 <div class="text-[11px] text-gray-400 dark:text-gray-500"><?= $pageBreadcrumb ?></div>
                 <?php endif; ?>
             </div>
+            
+            <!-- Global Search -->
+            <div class="hidden lg:flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-xl px-3 py-2 ml-4">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" placeholder="Search leads, agents..." class="bg-transparent border-none outline-none text-sm ml-2 w-48 dark:text-white placeholder-slate-400">
+            </div>
         </div>
-        <!-- Right: Date + Dark Mode + Actions -->
+
+        <!-- Right: Actions + Profile -->
         <div class="flex items-center gap-2 sm:gap-3">
-            <span class="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline"><?= date('D, d M Y') ?></span>
+            <a href="<?= BASE_URL ?>/leads/create.php" class="hidden sm:inline-flex btn-primary py-1.5 px-3 text-xs rounded-lg gap-1.5 items-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add Lead
+            </a>
+
+            <!-- Notifications -->
+            <button class="p-2 rounded-xl text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-500 transition-colors relative">
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </button>
 
             <!-- Dark Mode Toggle -->
             <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-500 transition-colors" aria-label="Toggle dark mode" title="Toggle theme">
-                <!-- Sun icon (shown in dark mode) -->
+                <!-- Sun icon -->
                 <svg class="w-4.5 h-4.5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
-                <!-- Moon icon (shown in light mode) -->
+                <!-- Moon icon -->
                 <svg class="w-4.5 h-4.5 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                 </svg>
             </button>
 
-            <?php if (isset($headerActions)): ?>
-                <?= $headerActions ?>
-            <?php endif; ?>
+            <!-- User Profile -->
+            <div class="relative ml-2 flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-4">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-sec-500 flex items-center justify-center text-white font-extrabold text-xs shadow-md">
+                    <?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?>
+                </div>
+                <div class="hidden sm:block text-left">
+                    <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight"><?= e($user['name'] ?? 'User') ?></div>
+                    <div class="text-[10px] text-slate-400 font-medium capitalize"><?= e($user['role'] ?? '') ?></div>
+                </div>
+            </div>
+            <a href="<?php echo BASE_URL; ?>/logout.php" hx-boost="false" class="text-slate-400 hover:text-red-500 p-2" title="Logout">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </a>
         </div>
     </header>
 
