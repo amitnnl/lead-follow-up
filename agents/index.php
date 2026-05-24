@@ -6,9 +6,24 @@ require_role('admin', 'staff');
 $pageTitle      = 'Agents';
 $pageBreadcrumb = 'Agent Management';
 
-// Handle add/edit POST
+// Handle POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf()) die('Invalid CSRF');
+    
+    // Handle delete POST
+    if (isset($_POST['delete_id'])) {
+        if (!is_admin()) {
+            flash('error', 'Only administrators can delete agents.');
+        } else {
+            $deleteId = (int)$_POST['delete_id'];
+            db_query($conn, "DELETE FROM agents WHERE id = ?", 'i', [$deleteId]);
+            flash('success', 'Agent deleted.');
+        }
+        header('Location: ' . BASE_URL . '/agents/index.php');
+        exit;
+    }
+
+    // Handle add/edit POST
     $name = trim($_POST['name'] ?? '');
     $mobile = trim($_POST['mobile'] ?? '');
     $email  = trim($_POST['email'] ?? '');
@@ -121,6 +136,15 @@ require_once __DIR__ . '/../includes/header.php';
                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
                                <?php endif; ?>
                             </a>
+                            <?php if (is_admin()): ?>
+                            <form method="POST" action="" class="inline-block" onsubmit="return confirm('<?= $agent['total_leads'] > 0 ? 'WARNING: This agent has ' . $agent['total_leads'] . ' associated leads. Deleting this agent will set their leads to None. Are you sure you want to delete ' . e(addslashes($agent['name'])) . '?' : 'Are you sure you want to delete agent ' . e(addslashes($agent['name'])) . '?' ?>');">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="delete_id" value="<?= $agent['id'] ?>">
+                                <button type="submit" class="p-2 text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/80 rounded-xl transition-all duration-300 shadow-sm cursor-pointer" title="Delete">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </form>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>
