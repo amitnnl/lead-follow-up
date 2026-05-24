@@ -63,15 +63,161 @@ function nav_active(string $dir, string $file = ''): string {
         #nprogress .bar { background: #6366f1 !important; height: 3px !important; }
         #nprogress .peg { box-shadow: 0 0 10px #6366f1, 0 0 5px #6366f1 !important; }
         #nprogress .spinner-icon { border-top-color: #6366f1 !important; border-left-color: #6366f1 !important; }
+
+        /* Premium Glassmorphic Toast CSS */
+        #toast-container {
+            perspective: 1000px;
+        }
+        .toast-notification {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: 'Inter', sans-serif;
+        }
+        .toast-success {
+            background-color: rgba(6, 78, 59, 0.85); /* Emerald 900 translucent */
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #ecfdf5;
+        }
+        .toast-error {
+            background-color: rgba(159, 18, 57, 0.85); /* Rose 900 translucent */
+            border-color: rgba(244, 63, 94, 0.3);
+            color: #fff1f2;
+        }
+        .toast-warning {
+            background-color: rgba(120, 53, 4, 0.85); /* Amber 900 translucent */
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fffbeb;
+        }
+        .toast-info {
+            background-color: rgba(15, 23, 42, 0.9); /* Slate 900 translucent */
+            border-color: rgba(99, 102, 241, 0.3);
+            color: #e0e7ff;
+        }
+        .toast-animate-in {
+            animation: toast-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .toast-animate-out {
+            animation: toast-slide-out 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes toast-slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes toast-slide-out {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.95);
+            }
+        }
     </style>
     <script>
+        // Silence standard harmless browser extension unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+            const reason = event.reason;
+            if (reason && reason.message) {
+                const msg = reason.message;
+                if (msg.includes('Could not establish connection') || 
+                    msg.includes('message channel closed') || 
+                    msg.includes('Receiving end does not exist')) {
+                    event.preventDefault();
+                    // Log internally in dev if needed, otherwise ignore silently
+                    console.debug('Filtered extension warning:', msg);
+                }
+            }
+        });
+
+        // Global Dynamic Toast Notification System
+        function showToast(message, type = 'info') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full px-4 sm:px-0';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification toast-animate-in toast-' + type;
+
+            let iconSvg = '';
+            if (type === 'success') {
+                iconSvg = `<svg class="w-5 h-5 flex-shrink-0" style="color: #34d399;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            } else if (type === 'error') {
+                iconSvg = `<svg class="w-5 h-5 flex-shrink-0" style="color: #f87171;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            } else if (type === 'warning') {
+                iconSvg = `<svg class="w-5 h-5 flex-shrink-0" style="color: #fbbf24;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+            } else {
+                iconSvg = `<svg class="w-5 h-5 flex-shrink-0" style="color: #818cf8;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            }
+
+            toast.innerHTML = `
+                ${iconSvg}
+                <div class="flex-1 text-xs font-semibold leading-relaxed" style="margin-top: 1px;">${message}</div>
+                <button class="opacity-60 hover:opacity-100 transition-opacity duration-150 flex-shrink-0 focus:outline-none" style="background:none; border:none; padding:0; cursor:pointer;" onclick="closeToast(this.parentElement)">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto dismiss after 4.5 seconds
+            setTimeout(() => {
+                closeToast(toast);
+            }, 4500);
+        }
+
+        function closeToast(toastElement) {
+            if (!toastElement) return;
+            toastElement.classList.remove('toast-animate-in');
+            toastElement.classList.add('toast-animate-out');
+            setTimeout(() => {
+                toastElement.remove();
+            }, 300);
+        }
+
+        // HTMX Global Events and Error Boundary Handlers
         document.addEventListener('htmx:beforeRequest', () => NProgress.start());
         document.addEventListener('htmx:afterOnLoad', () => NProgress.done());
-        document.addEventListener('htmx:responseError', () => NProgress.done());
-        document.addEventListener('htmx:sendError', () => NProgress.done());
+
+        document.addEventListener('htmx:responseError', function(evt) {
+            NProgress.done();
+            const status = evt.detail.xhr.status;
+            const statusText = evt.detail.xhr.statusText || 'Server Error';
+            showToast(`Request failed: Server responded with status ${status} (${statusText})`, 'error');
+        });
+
+        document.addEventListener('htmx:sendError', function(evt) {
+            NProgress.done();
+            showToast("Connection issue detected. Please check your network connection.", "warning");
+        });
         
-        // Clean up DataTables before swap
-        document.addEventListener('htmx:beforeSwap', function() {
+        // Clean up DataTables before swap & safeguard swap targets from net::ERR_NETWORK_CHANGED drops
+        document.addEventListener('htmx:beforeSwap', function(evt) {
+            // If connection is aborted or network changes, the status is 0. 
+            // Setting shouldSwap to false gracefully stops HTMX's swap engine, avoiding DOM insertBefore TypeErrors.
+            if (evt.detail.xhr && evt.detail.xhr.status === 0) {
+                evt.detail.shouldSwap = false;
+                return;
+            }
+
             if (window.jQuery && $.fn.dataTable) {
                 $('.dataTable').each(function() {
                     if ($.fn.DataTable.isDataTable(this)) {
