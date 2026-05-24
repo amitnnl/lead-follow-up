@@ -404,9 +404,13 @@ function nav_active(string $dir, string $file = ''): string {
 
         <!-- Right: Actions + Profile -->
         <div class="flex items-center gap-2 sm:gap-3">
-            <a href="<?= BASE_URL ?>/leads/create.php" class="hidden sm:inline-flex btn-primary py-1.5 px-3 text-xs rounded-lg gap-1.5 items-center">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add Lead
-            </a>
+            <?php if (!empty($headerActions)): ?>
+                <?= $headerActions ?>
+            <?php else: ?>
+                <a href="<?= BASE_URL ?>/leads/create.php" class="hidden sm:inline-flex btn-primary py-1.5 px-3 text-xs rounded-lg gap-1.5 items-center">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add Lead
+                </a>
+            <?php endif; ?>
 
             <!-- Notifications -->
             <button class="p-2 rounded-xl text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-500 transition-colors relative">
