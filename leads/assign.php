@@ -30,6 +30,49 @@ $executives = db_fetch_all($conn, "SELECT id, name FROM executives WHERE is_acti
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf()) { die('Invalid CSRF token'); }
 
+    // Handle Quick Add requests on-the-fly
+    if (isset($_POST['quick_add'])) {
+        $type = $_POST['quick_add'];
+        if ($type === 'agent') {
+            $name   = trim($_POST['name'] ?? '');
+            $mobile = trim($_POST['mobile'] ?? '');
+            $email  = trim($_POST['email'] ?? '');
+            $pan    = trim($_POST['pan_number'] ?? '');
+            if ($name && $mobile) {
+                db_query($conn, "INSERT INTO agents (name, mobile, email, pan_number) VALUES (?, ?, ?, ?)", 'ssss', [$name, $mobile, $email, $pan]);
+                $newId = $conn->insert_id;
+                flash('success', 'Quick Added Agent: ' . $name);
+                header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']) . '&select_agent=' . $newId);
+                exit;
+            }
+        } elseif ($type === 'financer') {
+            $name    = trim($_POST['name'] ?? '');
+            $contact = trim($_POST['contact_person'] ?? '');
+            $mobile  = trim($_POST['mobile'] ?? '');
+            if ($name) {
+                db_query($conn, "INSERT INTO financers (name, contact_person, mobile) VALUES (?, ?, ?)", 'sss', [$name, $contact, $mobile]);
+                $newId = $conn->insert_id;
+                flash('success', 'Quick Added Financer: ' . $name);
+                header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']) . '&select_financer=' . $newId);
+                exit;
+            }
+        } elseif ($type === 'dealer') {
+            $name    = trim($_POST['name'] ?? '');
+            $contact = trim($_POST['contact_person'] ?? '');
+            $mobile  = trim($_POST['mobile'] ?? '');
+            if ($name) {
+                db_query($conn, "INSERT INTO dealers (name, contact_person, mobile) VALUES (?, ?, ?)", 'sss', [$name, $contact, $mobile]);
+                $newId = $conn->insert_id;
+                flash('success', 'Quick Added Dealer: ' . $name);
+                header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']) . '&select_dealer=' . $newId);
+                exit;
+            }
+        }
+        flash('error', 'Required fields are missing for quick addition.');
+        header('Location: ' . BASE_URL . '/leads/assign.php?id=' . urlencode($lead['lead_id']));
+        exit;
+    }
+
     $agent_id     = (int)($_POST['agent_id'] ?? 0) ?: null;
     $financer_id  = (int)($_POST['financer_id'] ?? 0) ?: null;
     $dealer_id    = (int)($_POST['dealer_id'] ?? 0) ?: null;
@@ -81,11 +124,16 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Agent -->
                 <div>
-                    <label class="form-label" id="lbl_agent_id">Agent / DSA</label>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="form-label mb-0" id="lbl_agent_id">Agent / DSA</label>
+                        <button type="button" onclick="openModal('quickAddAgentModal')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition-colors cursor-pointer focus:outline-none">
+                            + Quick Add
+                        </button>
+                    </div>
                     <select name="agent_id" class="form-select">
                         <option value="">— Unassigned —</option>
                         <?php foreach ($agents as $a): ?>
-                        <option value="<?= $a['id'] ?>" <?= ($lead['agent_id'] == $a['id']) ? 'selected' : '' ?>>
+                        <option value="<?= $a['id'] ?>" <?= ((isset($_GET['select_agent']) && $_GET['select_agent'] == $a['id']) || (!isset($_GET['select_agent']) && $lead['agent_id'] == $a['id'])) ? 'selected' : '' ?>>
                             <?= e($a['name']) ?>
                         </option>
                         <?php endforeach; ?>
@@ -94,11 +142,16 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- Financer -->
                 <div>
-                    <label class="form-label" id="lbl_financer_id">Financer / Bank</label>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="form-label mb-0" id="lbl_financer_id">Financer / Bank</label>
+                        <button type="button" onclick="openModal('quickAddFinancerModal')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition-colors cursor-pointer focus:outline-none">
+                            + Quick Add
+                        </button>
+                    </div>
                     <select name="financer_id" class="form-select">
                         <option value="">— Unassigned —</option>
                         <?php foreach ($financers as $f): ?>
-                        <option value="<?= $f['id'] ?>" <?= ($lead['financer_id'] == $f['id']) ? 'selected' : '' ?>>
+                        <option value="<?= $f['id'] ?>" <?= ((isset($_GET['select_financer']) && $_GET['select_financer'] == $f['id']) || (!isset($_GET['select_financer']) && $lead['financer_id'] == $f['id'])) ? 'selected' : '' ?>>
                             <?= e($f['name']) ?>
                         </option>
                         <?php endforeach; ?>
@@ -107,11 +160,16 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- Dealer -->
                 <div>
-                    <label class="form-label" id="lbl_dealer_id">Dealer</label>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="form-label mb-0" id="lbl_dealer_id">Dealer</label>
+                        <button type="button" onclick="openModal('quickAddDealerModal')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition-colors cursor-pointer focus:outline-none">
+                            + Quick Add
+                        </button>
+                    </div>
                     <select name="dealer_id" class="form-select">
                         <option value="">— Unassigned —</option>
                         <?php foreach ($dealers as $d): ?>
-                        <option value="<?= $d['id'] ?>" <?= ($lead['dealer_id'] == $d['id']) ? 'selected' : '' ?>>
+                        <option value="<?= $d['id'] ?>" <?= ((isset($_GET['select_dealer']) && $_GET['select_dealer'] == $d['id']) || (!isset($_GET['select_dealer']) && $lead['dealer_id'] == $d['id'])) ? 'selected' : '' ?>>
                             <?= e($d['name']) ?>
                         </option>
                         <?php endforeach; ?>
@@ -149,5 +207,99 @@ require_once __DIR__ . '/../includes/header.php';
 
 
 
+
+<!-- Quick Add Agent Modal -->
+<div id="quickAddAgentModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal('quickAddAgentModal')">
+    <div class="modal-panel max-w-md w-full">
+        <div class="modal-header">
+            <h3 class="font-bold text-slate-700 dark:text-white uppercase tracking-wider text-xs">Quick Add Agent</h3>
+            <button onclick="closeModal('quickAddAgentModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-gray-300 text-2xl cursor-pointer">×</button>
+        </div>
+        <form method="POST" action="" class="modal-body space-y-4">
+            <?= csrf_field() ?>
+            <input type="hidden" name="quick_add" value="agent">
+            <div>
+                <label class="form-label required-lbl">Full Name</label>
+                <input type="text" name="name" class="form-input" required placeholder="Agent Name">
+            </div>
+            <div>
+                <label class="form-label required-lbl">Mobile</label>
+                <input type="tel" name="mobile" class="form-input" required placeholder="10-digit mobile">
+            </div>
+            <div>
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" placeholder="agent@email.com">
+            </div>
+            <div>
+                <label class="form-label">PAN Number</label>
+                <input type="text" name="pan_number" class="form-input" placeholder="ABCDE1234F">
+            </div>
+            <div class="modal-footer pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeModal('quickAddAgentModal')" class="btn btn-secondary text-xs">Cancel</button>
+                <button type="submit" class="btn btn-primary text-xs">Add Agent</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Quick Add Financer Modal -->
+<div id="quickAddFinancerModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal('quickAddFinancerModal')">
+    <div class="modal-panel max-w-md w-full">
+        <div class="modal-header">
+            <h3 class="font-bold text-slate-700 dark:text-white uppercase tracking-wider text-xs">Quick Add Financer</h3>
+            <button onclick="closeModal('quickAddFinancerModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-gray-300 text-2xl cursor-pointer">×</button>
+        </div>
+        <form method="POST" action="" class="modal-body space-y-4">
+            <?= csrf_field() ?>
+            <input type="hidden" name="quick_add" value="financer">
+            <div>
+                <label class="form-label required-lbl">Financer Name</label>
+                <input type="text" name="name" class="form-input" required placeholder="Financer business name">
+            </div>
+            <div>
+                <label class="form-label">Contact Person</label>
+                <input type="text" name="contact_person" class="form-input" placeholder="e.g. Bank Manager">
+            </div>
+            <div>
+                <label class="form-label">Mobile</label>
+                <input type="tel" name="mobile" class="form-input" placeholder="Contact number">
+            </div>
+            <div class="modal-footer pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeModal('quickAddFinancerModal')" class="btn btn-secondary text-xs">Cancel</button>
+                <button type="submit" class="btn btn-primary text-xs">Add Financer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Quick Add Dealer Modal -->
+<div id="quickAddDealerModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal('quickAddDealerModal')">
+    <div class="modal-panel max-w-md w-full">
+        <div class="modal-header">
+            <h3 class="font-bold text-slate-700 dark:text-white uppercase tracking-wider text-xs">Quick Add Dealer</h3>
+            <button onclick="closeModal('quickAddDealerModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-gray-300 text-2xl cursor-pointer">×</button>
+        </div>
+        <form method="POST" action="" class="modal-body space-y-4">
+            <?= csrf_field() ?>
+            <input type="hidden" name="quick_add" value="dealer">
+            <div>
+                <label class="form-label required-lbl">Dealer Name</label>
+                <input type="text" name="name" class="form-input" required placeholder="Dealer business name">
+            </div>
+            <div>
+                <label class="form-label">Contact Person</label>
+                <input type="text" name="contact_person" class="form-input" placeholder="e.g. Sales Executive">
+            </div>
+            <div>
+                <label class="form-label">Mobile</label>
+                <input type="tel" name="mobile" class="form-input" placeholder="Contact number">
+            </div>
+            <div class="modal-footer pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeModal('quickAddDealerModal')" class="btn btn-secondary text-xs">Cancel</button>
+                <button type="submit" class="btn btn-primary text-xs">Add Dealer</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
