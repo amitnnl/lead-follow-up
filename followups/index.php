@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/auth.php';
 $pageTitle      = 'Follow-ups';
 $pageBreadcrumb = 'All Follow-ups';
 
-$filter = $_GET['filter'] ?? 'today';
+$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 
 $where = '1=1';
 $params = [];

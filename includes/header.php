@@ -164,7 +164,7 @@ function nav_active(string $dir, string $file = ''): string {
             <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            Assigned Leads
+            Assigneds
         </a>
 
         <a href="<?php echo BASE_URL; ?>/followups/index.php"

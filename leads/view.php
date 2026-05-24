@@ -51,22 +51,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_followup'])) {
     $remarks  = trim($_POST['remarks'] ?? '');
     $nextDate = $_POST['next_followup_date'] ?? null;
     $newStatus = $_POST['new_status'] ?? $lead['status'];
+    
     if ($remarks) {
         db_query($conn, "
             INSERT INTO lead_followups (lead_id, followup_date, next_followup_date, remarks, status_changed_to, created_by)
             VALUES (?,CURDATE(),?,?,?,?)
         ", 'isssi', [$lead['id'], $nextDate ?: null, $remarks, $newStatus, current_user_id()]);
 
-        // Update lead status if changed
+        // Capture bank and document fields if provided
+        $updateSql = "UPDATE leads SET status=?, status_date=CURDATE()";
+        $updateParams = [$newStatus];
+        $updateTypes = 's';
+        
+        if (is_admin() && $newStatus === 'disbursed') {
+            $bank_name = trim($_POST['customer_bank_name'] ?? '');
+            $acc_num   = trim($_POST['customer_account_number'] ?? '');
+            $ifsc      = trim($_POST['customer_ifsc_code'] ?? '');
+            $rc_status = $_POST['rc_status'] ?? $lead['rc_status'];
+            $rc_number = trim($_POST['rc_number'] ?? '');
+            $insurance_status = $_POST['insurance_status'] ?? $lead['insurance_status'];
+            $insurance_number = trim($_POST['insurance_number'] ?? '');
+            $rto_status = $_POST['rto_status'] ?? $lead['rto_status'];
+            
+            // Validate them
+            if (!$bank_name || !$acc_num || !$ifsc) {
+                flash('error', 'Bank details are required when disbursing.');
+                header("Location: " . BASE_URL . "/leads/view.php?id=" . urlencode($lead['lead_id']));
+                exit;
+            }
+            if ($rc_status === 'pending' || $insurance_status === 'pending' || $rto_status === 'pending') {
+                flash('error', 'Document statuses must be completed (not Pending) when disbursing.');
+                header("Location: " . BASE_URL . "/leads/view.php?id=" . urlencode($lead['lead_id']));
+                exit;
+            }
+
+            $updateSql .= ", customer_bank_name=?, customer_account_number=?, customer_ifsc_code=?, rc_status=?, rc_number=?, insurance_status=?, insurance_number=?, rto_status=?";
+            $updateParams = array_merge($updateParams, [$bank_name, $acc_num, $ifsc, $rc_status, $rc_number, $insurance_status, $insurance_number, $rto_status]);
+            $updateTypes .= 'ssssssss';
+        }
+        
+        $updateSql .= " WHERE id=?";
+        $updateParams[] = $lead['id'];
+        $updateTypes .= 'i';
+        
+        db_query($conn, $updateSql, $updateTypes, $updateParams);
+
         if ($newStatus !== $lead['status']) {
-            db_query($conn, "UPDATE leads SET status=?, status_date=CURDATE() WHERE id=?",
-                'si', [$newStatus, $lead['id']]);
             log_lead_action($conn, $lead['id'], 'Status Changed', "From {$lead['status']} to {$newStatus}", current_user_id());
             $lead['status'] = $newStatus;
         }
         log_lead_action($conn, $lead['id'], 'Follow-up Added', $remarks, current_user_id());
         flash('success', 'Follow-up added successfully.');
-        header("Location: ' . BASE_URL . '/leads/view.php?id=" . urlencode($lead['lead_id']));
+        header("Location: " . BASE_URL . "/leads/view.php?id=" . urlencode($lead['lead_id']));
         exit;
     }
 }
@@ -204,7 +240,7 @@ function stage_class($current, $target) {
                     <?php
                     $aFields = [
                         'Agent / DSA'   => $lead['agent_name'],
-                        'Financer'      => $lead['financier_name'],
+                        'Financer'      => $lead['financer_name'],
                         'Dealer'        => $lead['dealer_name'],
                         'SFE/Executive' => $lead['executive_name'],
                     ];
@@ -382,7 +418,7 @@ function stage_class($current, $target) {
                 <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 Add Follow-up
             </h3>
-            <form method="POST" action="" class="space-y-4">
+            <form method="POST" action="" class="space-y-4" id="followUpForm">
                 <?= csrf_field() ?>
                 <input type="hidden" name="add_followup" value="1">
                 <div>
@@ -397,7 +433,7 @@ function stage_class($current, $target) {
                 </div>
                 <div>
                     <label class="form-label">Update Status</label>
-                    <select name="new_status" class="form-select">
+                    <select name="new_status" id="new_status_select" class="form-select">
                         <?php foreach (['new','pending','approved','disbursed','rejected','on_hold'] as $s): ?>
                         <option value="<?= $s ?>" <?= ($lead['status'] === $s) ? 'selected' : '' ?>>
                             <?= ucfirst(str_replace('_',' ',$s)) ?>
@@ -405,7 +441,110 @@ function stage_class($current, $target) {
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <button type="submit" class="w-full btn btn-primary">
+
+                <?php if (is_admin()): ?>
+                <div id="disbursed_fields" style="display: none;" class="mt-4 border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
+                    <p class="text-xs text-rose-500 font-semibold">* Required for Disbursed status.</p>
+                    
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-2">📄 Document Status</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-2">
+                            <label class="form-label text-xs">RC Status</label>
+                            <select name="rc_status" id="fu_rc_status" class="form-select text-sm py-1.5">
+                                <option value="pending" <?= ($lead['rc_status']=='pending') ? 'selected' : '' ?>>Pending</option>
+                                <option value="received" <?= ($lead['rc_status']=='received') ? 'selected' : '' ?>>Received</option>
+                                <option value="not_applicable" <?= ($lead['rc_status']=='not_applicable') ? 'selected' : '' ?>>N/A</option>
+                            </select>
+                            <input type="text" name="rc_number" id="fu_rc_number" class="form-input text-sm py-1.5 mt-1" value="<?= e($lead['rc_number'] ?? '') ?>" placeholder="RC Number">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="form-label text-xs">Insurance Status</label>
+                            <select name="insurance_status" id="fu_insurance_status" class="form-select text-sm py-1.5">
+                                <option value="pending" <?= ($lead['insurance_status']=='pending') ? 'selected' : '' ?>>Pending</option>
+                                <option value="received" <?= ($lead['insurance_status']=='received') ? 'selected' : '' ?>>Received</option>
+                                <option value="not_applicable" <?= ($lead['insurance_status']=='not_applicable') ? 'selected' : '' ?>>N/A</option>
+                            </select>
+                            <input type="text" name="insurance_number" id="fu_insurance_number" class="form-input text-sm py-1.5 mt-1" value="<?= e($lead['insurance_number'] ?? '') ?>" placeholder="Insurance No.">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="form-label text-xs">RTO Status</label>
+                            <select name="rto_status" id="fu_rto_status" class="form-select text-sm py-1.5">
+                                <option value="pending" <?= ($lead['rto_status']=='pending') ? 'selected' : '' ?>>Pending</option>
+                                <option value="done" <?= ($lead['rto_status']=='done') ? 'selected' : '' ?>>Done</option>
+                                <option value="not_applicable" <?= ($lead['rto_status']=='not_applicable') ? 'selected' : '' ?>>N/A</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-2 mt-4">🏦 Client Bank Details</h4>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <input type="text" name="customer_bank_name" id="fu_bank_name" class="form-input text-sm py-1.5" value="<?= e($lead['customer_bank_name'] ?? '') ?>" placeholder="Bank Name">
+                        </div>
+                        <div>
+                            <input type="text" name="customer_account_number" id="fu_acc_num" class="form-input text-sm py-1.5" value="<?= e($lead['customer_account_number'] ?? '') ?>" placeholder="Account Number">
+                        </div>
+                        <div>
+                            <input type="text" name="customer_ifsc_code" id="fu_ifsc" class="form-input text-sm py-1.5" value="<?= e($lead['customer_ifsc_code'] ?? '') ?>" placeholder="IFSC Code">
+                        </div>
+                    </div>
+                </div>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const statusSelect = document.getElementById('new_status_select');
+                    const disbursedFields = document.getElementById('disbursed_fields');
+                    const bankInputs = ['fu_bank_name', 'fu_acc_num', 'fu_ifsc'];
+                    const rcSelect = document.getElementById('fu_rc_status');
+                    const rcNum = document.getElementById('fu_rc_number');
+                    const insSelect = document.getElementById('fu_insurance_status');
+                    const insNum = document.getElementById('fu_insurance_number');
+
+                    function toggleDisbursedFields() {
+                        const isDisbursed = statusSelect.value === 'disbursed';
+                        if (disbursedFields) {
+                            disbursedFields.style.display = isDisbursed ? 'block' : 'none';
+                        }
+                        
+                        bankInputs.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.required = isDisbursed;
+                        });
+                        
+                        if (isDisbursed) {
+                            rcNum.required = (rcSelect.value === 'received');
+                            insNum.required = (insSelect.value === 'received');
+                        } else {
+                            if (rcNum) rcNum.required = false;
+                            if (insNum) insNum.required = false;
+                        }
+                    }
+
+                    if (statusSelect) {
+                        statusSelect.addEventListener('change', toggleDisbursedFields);
+                        toggleDisbursedFields(); // init
+                    }
+                    if (rcSelect) rcSelect.addEventListener('change', toggleDisbursedFields);
+                    if (insSelect) insSelect.addEventListener('change', toggleDisbursedFields);
+                    
+                    const form = document.getElementById('followUpForm');
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            if (statusSelect.value === 'disbursed') {
+                                const rc = document.getElementById('fu_rc_status').value;
+                                const ins = document.getElementById('fu_insurance_status').value;
+                                const rto = document.getElementById('fu_rto_status').value;
+                                if (rc === 'pending' || ins === 'pending' || rto === 'pending') {
+                                    e.preventDefault();
+                                    alert('Document statuses cannot be "Pending" when marking as disbursed.');
+                                }
+                            }
+                        });
+                    }
+                });
+                </script>
+                <?php endif; ?>
+
+                <button type="submit" class="w-full btn btn-primary mt-4">
                     Save Follow-up
                 </button>
             </form>
@@ -439,7 +578,7 @@ function stage_class($current, $target) {
                     Edit Lead Details
                 </a>
                 <?php if (is_admin()): ?>
-                <form action="<?php echo BASE_URL; ?>/leads/delete.php" method="POST" class="w-full" onsubmit="return confirm('Are you sure you want to completely delete this lead? This cannot be undone.');">
+                <form action="<?php echo BASE_URL; ?>/leads/delete.php" method="POST" class="w-full" hx-confirm="Are you sure you want to completely delete this lead? This cannot be undone.">
                     <?= csrf_field() ?>
                     <input type="hidden" name="id" value="<?= e($lead['lead_id']) ?>">
                     <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-sm font-semibold transition-all duration-300 border border-rose-100/50 dark:bg-rose-950/20 dark:hover:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/30">

@@ -20,7 +20,7 @@ if (is_agent()) {
 }
 
 // Status filter
-$filterStatus = $_GET['status'] ?? '';
+$filterStatus = isset($_GET['status']) ? $_GET['status'] : 'approved';
 $filterRc     = $_GET['rc_status'] ?? '';
 $filterIns    = $_GET['insurance_status'] ?? '';
 $filterRto    = $_GET['rto_status'] ?? '';
@@ -202,7 +202,7 @@ require_once __DIR__ . '/../includes/header.php';
 
     <?php if ($filterStatus || $filterAgent || $filterFinancer || $filterExecutive): ?>
         <div class="flex justify-end mt-3">
-            <a href="<?= BASE_URL ?>/leads/index.php" 
+            <a href="<?= BASE_URL ?>/leads/index.php?status=" 
                class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-500 hover:text-rose-600 transition-colors cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -290,7 +290,7 @@ function selectStatus(status) {
                             </a>
                             <?php endif; ?>
                             <?php if (is_admin()): ?>
-                            <form action="<?php echo BASE_URL; ?>/leads/delete.php" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to completely delete this lead? This cannot be undone.');">
+                            <form action="<?php echo BASE_URL; ?>/leads/delete.php" method="POST" class="inline" hx-confirm="Are you sure you want to completely delete this lead? This cannot be undone.">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="id" value="<?= e($lead['lead_id']) ?>">
                                 <button type="submit" class="p-1.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg cursor-pointer" title="Delete Lead">
