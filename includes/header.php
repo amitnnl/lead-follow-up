@@ -127,6 +127,46 @@ function nav_active(string $dir, string $file = ''): string {
                 transform: translateY(-15px) scale(0.95);
             }
         }
+
+        /* Collapsible Sidebar Styles for Widescreen Desktop */
+        @media (min-width: 1024px) {
+            /* Sidebar transitions */
+            #sidebar {
+                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            .sidebar-collapsed #sidebar {
+                width: 76px !important;
+            }
+            /* Hide logo brand text and subheadings */
+            .sidebar-collapsed #sidebar .sidebar-text,
+            .sidebar-collapsed #sidebar .sidebar-subheading {
+                display: none !important;
+            }
+            /* Center elements when collapsed */
+            .sidebar-collapsed #sidebar .sidebar-nav a {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 44px;
+                height: 44px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            /* Hide inline menu text inside the links */
+            .sidebar-collapsed #sidebar .sidebar-nav a span {
+                display: none !important;
+            }
+            /* Adjust margins and layout elements */
+            .sidebar-collapsed #sidebar .px-6 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                justify-content: center !important;
+            }
+            .sidebar-collapsed #sidebar .flex.items-center.gap-3 {
+                justify-content: center !important;
+                gap: 0 !important;
+            }
+        }
     </style>
     <script>
         // Silence standard harmless browser extension unhandled promise rejections
@@ -228,12 +268,17 @@ function nav_active(string $dir, string $file = ''): string {
         });
     </script>
 
-    <!-- Dark mode: restore preference before render to prevent flash -->
+    <!-- Restore visual preferences before render to prevent layout flashing -->
     <script>
     (function(){
+        // Restore dark mode
         const t = localStorage.getItem('theme');
         if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
+        }
+        // Restore collapsible sidebar state
+        if (localStorage.getItem('sidebar-collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-collapsed');
         }
     })();
     </script>
@@ -273,105 +318,106 @@ function nav_active(string $dir, string $file = ''): string {
     <!-- Logo -->
     <div class="px-6 py-5.5 border-b border-slate-900/60 bg-slate-950/20">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-sec-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-sec-500 flex items-center justify-center shadow-lg shadow-brand-500/20 flex-shrink-0">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
             </div>
-            <div>
+            <div class="sidebar-text">
                 <div class="text-white font-extrabold text-sm leading-tight tracking-tight">LeadFlow Pro</div>
                 <div class="text-brand-300/50 text-[9px] font-bold uppercase tracking-wider">DSA Finance Panel</div>
             </div>
         </div>
+    </div>
      <!-- Navigation -->
     <nav class="flex-1 px-3.5 py-5 space-y-1.5 sidebar-nav overflow-y-auto">
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-1 mb-2">Main</div>
+        <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-1 mb-2">Main</div>
 
         <a href="<?php echo BASE_URL; ?>/dashboard.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('root','dashboard.php') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
             </svg>
-            Dashboard
+            <span>Dashboard</span>
         </a>
 
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Lead Management</div>
+        <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Lead Management</div>
 
         <a href="<?php echo BASE_URL; ?>/leads/create.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads', 'create.php') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            Add Lead
+            <span>Add Lead</span>
         </a>
 
         <a href="<?php echo BASE_URL; ?>/leads/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads', 'index.php') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            Assigneds
+            <span>Assigneds</span>
         </a>
 
         <a href="<?php echo BASE_URL; ?>/followups/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('followups') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
-            Follow-ups
+            <span>Follow-ups</span>
         </a>
 
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Network</div>
+        <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Network</div>
 
         <a href="<?php echo BASE_URL; ?>/agents/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('agents') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            Agents
+            <span>Agents</span>
         </a>
 
         <a href="<?php echo BASE_URL; ?>/dealers/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('dealers') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
-            Dealers
+            <span>Dealers</span>
         </a>
 
         <a href="<?php echo BASE_URL; ?>/financers/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('financers') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
             </svg>
-            Financers
+            <span>Financers</span>
         </a>
 
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Finance</div>
+        <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Finance</div>
 
         <a href="<?php echo BASE_URL; ?>/commissions/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('commissions') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Payouts
+            <span>Payouts</span>
         </a>
 
-        <div class="text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">System</div>
+        <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">System</div>
 
         <a href="<?php echo BASE_URL; ?>/reports/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('reports') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
-            Reports
+            <span>Reports</span>
         </a>
         
         <a href="<?php echo BASE_URL; ?>/settings.php" class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('settings') ?>">
-            <svg class="w-[18px] h-[18px] opacity-80" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            Settings
+            <span>Settings</span>
         </a>
     </nav>
 </aside>
@@ -383,8 +429,8 @@ function nav_active(string $dir, string $file = ''): string {
     <header class="glass-panel border-b-0 px-4 sm:px-6 py-3.5 flex items-center justify-between flex-shrink-0 z-10 sticky top-0 print:hidden">
         <!-- Left: Hamburger + Title + Search -->
         <div class="flex items-center gap-4">
-            <!-- Mobile Hamburger -->
-            <button onclick="toggleSidebar()" class="lg:hidden p-2 -ml-2 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 transition-colors" aria-label="Toggle sidebar">
+            <!-- Toggle Hamburger (Mobile overlay + Desktop collapse) -->
+            <button onclick="toggleSidebar()" class="p-2 -ml-2 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 transition-colors cursor-pointer" aria-label="Toggle sidebar">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <div class="hidden sm:block">

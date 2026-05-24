@@ -5,30 +5,36 @@
 </div>
 
 <script>
-// ─── Sidebar Toggle (Mobile) ───
+// ─── Sidebar Toggle (Mobile Overlay & Widescreen Collapse) ───
 function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const isOpen = !sidebar.classList.contains('-translate-x-full');
-
-    if (isOpen) {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
+    if (window.innerWidth >= 1024) {
+        const root = document.documentElement;
+        const isCollapsed = root.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
     } else {
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const isOpen = !sidebar.classList.contains('-translate-x-full');
+
+        if (isOpen) {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        } else {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
     }
 }
 
-// Close sidebar on window resize to desktop
+// Close sidebar overlay on window resize to desktop and restore regular layout
 window.addEventListener('resize', () => {
     if (window.innerWidth >= 1024) {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.add('hidden');
+        if (sidebar) sidebar.classList.remove('-translate-x-full');
+        if (overlay) overlay.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
 });
