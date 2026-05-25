@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'year_of_manufacture' => trim($_POST['year_of_manufacture'] ?? ''),
         'registration_number' => trim($_POST['registration_number'] ?? ''),
         'loan_amount'         => trim($_POST['loan_amount'] ?? ''),
+        'loan_type'           => $_POST['loan_type'] ?? 'new_loan',
         'referred_by'         => trim($_POST['referred_by'] ?? ''),
         'agent_id'            => null,
         'financer_id'         => null,
@@ -48,15 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO leads
             (lead_id, lead_date, customer_name, customer_mobile, customer_mobile2,
              customer_address, vehicle_make_model, year_of_manufacture, registration_number,
-             loan_amount, referred_by, agent_id, financer_id, dealer_id, executive_id,
+             loan_amount, loan_type, referred_by, agent_id, financer_id, dealer_id, executive_id,
              status, status_date, query_notes, rc_status, insurance_status, rto_status,
              payout_amount, payout_status, created_by)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         ");
         $payout_amt = $data['payout_amount'] !== '' ? (float)$data['payout_amount'] : null;
         $curr_user_id = current_user_id();
 
-        $stmt->bind_param('sssssssisssiiiiisssssdsi',
+        $stmt->bind_param('sssssssissssiiiiisssssdsi',
             $leadId,
             $data['lead_date'],
             $data['customer_name'],
@@ -67,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['year_of_manufacture'],
             $data['registration_number'],
             $data['loan_amount'],
+            $data['loan_type'],
             $data['referred_by'],
             $data['agent_id'],
             $data['financer_id'],
@@ -188,6 +190,13 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="form-floating">
                 <input type="number" name="loan_amount" id="loan_amount" step="1000" value="<?= e($data['loan_amount'] ?? '') ?>" placeholder=" ">
                 <label for="loan_amount">Loan Amount (₹)</label>
+            </div>
+            <div class="form-floating">
+                <select name="loan_type" id="loan_type" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
+                    <option value="new_loan" <?= (($data['loan_type'] ?? 'new_loan') === 'new_loan') ? 'selected' : '' ?>>New Loan</option>
+                    <option value="refinance" <?= (($data['loan_type'] ?? '') === 'refinance') ? 'selected' : '' ?>>Refinance</option>
+                </select>
+                <label for="loan_type">Loan Type</label>
             </div>
             <div class="form-floating">
                 <input type="text" name="referred_by" id="referred_by" value="<?= e($data['referred_by'] ?? '') ?>" placeholder=" ">

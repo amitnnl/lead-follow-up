@@ -343,6 +343,7 @@ function nav_active(string $dir, string $file = ''): string {
 
         <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Lead Management</div>
 
+        <?php if (!is_executive()): ?>
         <a href="<?php echo BASE_URL; ?>/leads/create.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads', 'create.php') ?>">
             <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -350,6 +351,7 @@ function nav_active(string $dir, string $file = ''): string {
             </svg>
             <span>Add Lead</span>
         </a>
+        <?php endif; ?>
 
         <a href="<?php echo BASE_URL; ?>/leads/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('leads', 'index.php') ?>">
@@ -367,6 +369,7 @@ function nav_active(string $dir, string $file = ''): string {
             <span>Follow-ups</span>
         </a>
 
+        <?php if (!is_executive()): ?>
         <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Network</div>
 
         <a href="<?php echo BASE_URL; ?>/agents/index.php"
@@ -392,7 +395,9 @@ function nav_active(string $dir, string $file = ''): string {
             </svg>
             <span>Financers</span>
         </a>
+        <?php endif; ?>
 
+        <?php if (!is_executive()): ?>
         <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">Finance</div>
 
         <a href="<?php echo BASE_URL; ?>/commissions/index.php"
@@ -402,9 +407,11 @@ function nav_active(string $dir, string $file = ''): string {
             </svg>
             <span>Payouts</span>
         </a>
+        <?php endif; ?>
 
         <div class="sidebar-subheading text-slate-500 dark:text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 mt-6 mb-2">System</div>
 
+        <?php if (!is_executive()): ?>
         <a href="<?php echo BASE_URL; ?>/reports/index.php"
            class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('reports') ?>">
             <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -412,6 +419,7 @@ function nav_active(string $dir, string $file = ''): string {
             </svg>
             <span>Reports</span>
         </a>
+        <?php endif; ?>
         
         <a href="<?php echo BASE_URL; ?>/settings.php" class="flex items-center gap-3 py-2.5 rounded-xl text-sm <?= nav_active('settings') ?>">
             <svg class="w-[18px] h-[18px] opacity-80 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -452,9 +460,11 @@ function nav_active(string $dir, string $file = ''): string {
             <?php if (!empty($headerActions)): ?>
                 <?= $headerActions ?>
             <?php else: ?>
+                <?php if (!is_executive()): ?>
                 <a href="<?= BASE_URL ?>/leads/create.php" class="hidden sm:inline-flex btn-primary py-1.5 px-3 text-xs rounded-lg gap-1.5 items-center">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add Lead
                 </a>
+                <?php endif; ?>
             <?php endif; ?>
 
             <!-- Notifications -->

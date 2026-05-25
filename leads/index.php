@@ -18,6 +18,15 @@ if (is_agent()) {
         $types   .= 'i';
     }
 }
+if (is_executive()) {
+    $execRow = db_fetch_one($conn,
+        "SELECT id FROM executives WHERE user_id = ?", 'i', [current_user_id()]);
+    if ($execRow) {
+        $where  .= ' AND l.executive_id = ?';
+        $params[] = $execRow['id'];
+        $types   .= 'i';
+    }
+}
 
 // Status filter
 $filterStatus = isset($_GET['status']) ? $_GET['status'] : 'approved';
@@ -25,9 +34,16 @@ $filterRc     = $_GET['rc_status'] ?? '';
 $filterIns    = $_GET['insurance_status'] ?? '';
 $filterRto    = $_GET['rto_status'] ?? '';
 
+$filterLoanType = $_GET['loan_type'] ?? '';
+
 if ($filterStatus) {
     $where   .= ' AND l.status = ?';
     $params[] = $filterStatus;
+    $types   .= 's';
+}
+if ($filterLoanType) {
+    $where   .= ' AND l.loan_type = ?';
+    $params[] = $filterLoanType;
     $types   .= 's';
 }
 if ($filterRc) {
@@ -85,6 +101,15 @@ if (is_agent()) {
     }
 }
 
+if (is_executive()) {
+    $execRow = db_fetch_one($conn, "SELECT id FROM executives WHERE user_id = ?", 'i', [current_user_id()]);
+    if ($execRow) {
+        $whereCounts  .= ' AND executive_id = ?';
+        $countsParams[] = $execRow['id'];
+        $countsTypes   .= 'i';
+    }
+}
+
 if ($filterAgent) {
     $whereCounts  .= ' AND agent_id = ?';
     $countsParams[] = $filterAgent;
@@ -100,6 +125,11 @@ if ($filterExecutive) {
     $countsParams[] = $filterExecutive;
     $countsTypes   .= 'i';
 }
+if ($filterLoanType) {
+    $whereCounts  .= ' AND loan_type = ?';
+    $countsParams[] = $filterLoanType;
+    $countsTypes   .= 's';
+}
 
 $statusCountsQuery = db_fetch_all($conn, "SELECT status, COUNT(*) as cnt FROM leads WHERE $whereCounts GROUP BY status", $countsTypes, $countsParams);
 $statusCounts = array_column($statusCountsQuery, 'cnt', 'status');
@@ -107,7 +137,7 @@ $totalLeadsCount = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads WHERE 
 
 $leads = db_fetch_all($conn, "
     SELECT l.id, l.lead_id, l.lead_date, l.customer_name, l.customer_mobile,
-           l.vehicle_make_model, l.registration_number, l.loan_amount,
+           l.vehicle_make_model, l.registration_number, l.loan_amount, l.loan_type,
            l.status, l.payout_amount, l.payout_status,
            l.rc_status, l.insurance_status, l.rto_status,
            a.name as agent_name, f.name as financer_name,
@@ -168,49 +198,66 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <!-- Dropdown Filters section -->
-    <div class="border-t border-slate-100 dark:border-slate-800/60 my-4"></div>
+    <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 animate-fade-in">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                </svg>
+                Filters
+            </span>
+            <?php if ($filterStatus || $filterAgent || $filterFinancer || $filterExecutive || $filterLoanType): ?>
+                <a href="<?= BASE_URL ?>/leads/index.php?status=" 
+                   class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-500 hover:text-rose-600 transition-colors cursor-pointer px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 rounded-xl shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Clear Filters
+                </a>
+            <?php endif; ?>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <label class="form-label text-xs mb-1 text-slate-500 dark:text-slate-400">Agent / DSA</label>
+                <select name="agent_id" onchange="this.form.submit()" class="form-select text-sm py-2 bg-slate-50/80 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700 cursor-pointer rounded-xl font-medium text-slate-700 dark:text-slate-300 transition-colors shadow-sm">
+                    <option value="">👤 All Agents / DSAs</option>
+                    <?php foreach ($allAgents as $a): ?>
+                        <option value="<?= $a['id'] ?>" <?= $filterAgent == $a['id'] ? 'selected' : '' ?>><?= e($a['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div>
+                <label class="form-label text-xs mb-1 text-slate-500 dark:text-slate-400">Financer</label>
+                <select name="financer_id" onchange="this.form.submit()" class="form-select text-sm py-2 bg-slate-50/80 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700 cursor-pointer rounded-xl font-medium text-slate-700 dark:text-slate-300 transition-colors shadow-sm">
+                    <option value="">🏦 All Financers</option>
+                    <?php foreach ($allFinancers as $f): ?>
+                        <option value="<?= $f['id'] ?>" <?= $filterFinancer == $f['id'] ? 'selected' : '' ?>><?= e($f['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div>
+                <label class="form-label text-xs mb-1 text-slate-500 dark:text-slate-400">Executive</label>
+                <select name="executive_id" onchange="this.form.submit()" class="form-select text-sm py-2 bg-slate-50/80 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700 cursor-pointer rounded-xl font-medium text-slate-700 dark:text-slate-300 transition-colors shadow-sm">
+                    <option value="">👔 All Executives</option>
+                    <?php foreach ($allExecutives as $ex): ?>
+                        <option value="<?= $ex['id'] ?>" <?= $filterExecutive == $ex['id'] ? 'selected' : '' ?>><?= e($ex['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 items-end">
-        <div>
-            <label class="form-label">Agent / DSA</label>
-            <select name="agent_id" onchange="this.form.submit()" class="form-select">
-                <option value="">All Agents / DSAs</option>
-                <?php foreach ($allAgents as $a): ?>
-                    <option value="<?= $a['id'] ?>" <?= $filterAgent == $a['id'] ? 'selected' : '' ?>><?= e($a['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">Financer</label>
-            <select name="financer_id" onchange="this.form.submit()" class="form-select">
-                <option value="">All Financers</option>
-                <?php foreach ($allFinancers as $f): ?>
-                    <option value="<?= $f['id'] ?>" <?= $filterFinancer == $f['id'] ? 'selected' : '' ?>><?= e($f['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div>
-            <label class="form-label">Executive</label>
-            <select name="executive_id" onchange="this.form.submit()" class="form-select">
-                <option value="">All Executives</option>
-                <?php foreach ($allExecutives as $ex): ?>
-                    <option value="<?= $ex['id'] ?>" <?= $filterExecutive == $ex['id'] ? 'selected' : '' ?>><?= e($ex['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
+            <div>
+                <label class="form-label text-xs mb-1 text-slate-500 dark:text-slate-400">Loan Type</label>
+                <select name="loan_type" onchange="this.form.submit()" class="form-select text-sm py-2 bg-slate-50/80 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-700 cursor-pointer rounded-xl font-medium text-slate-700 dark:text-slate-300 transition-colors shadow-sm">
+                    <option value="">💰 All Loan Types</option>
+                    <option value="new_loan" <?= $filterLoanType === 'new_loan' ? 'selected' : '' ?>>New Loan</option>
+                    <option value="refinance" <?= $filterLoanType === 'refinance' ? 'selected' : '' ?>>Refinance</option>
+                </select>
+            </div>
         </div>
     </div>
-
-    <?php if ($filterStatus || $filterAgent || $filterFinancer || $filterExecutive): ?>
-        <div class="flex justify-end mt-3">
-            <a href="<?= BASE_URL ?>/leads/index.php?status=" 
-               class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-500 hover:text-rose-600 transition-colors cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                Clear all active filters
-            </a>
-        </div>
-    <?php endif; ?>
 </form>
 
 <script>
@@ -232,6 +279,7 @@ function selectStatus(status) {
                     <th>Mobile</th>
                     <th>Vehicle</th>
                     <th>Reg. No.</th>
+                    <th>Type</th>
                     <th>Loan Amt</th>
                     <th>Agent/Ref</th>
                     <th>Financer</th>
@@ -261,6 +309,7 @@ function selectStatus(status) {
                     </td>
                     <td class="px-4 py-3 text-gray-600 text-xs"><?= e($lead['vehicle_make_model'] ?? '—') ?></td>
                     <td class="px-4 py-3 text-gray-500 text-xs font-mono"><?= e($lead['registration_number'] ?? '—') ?></td>
+                    <td class="px-4 py-3 text-xs whitespace-nowrap"><?= loan_type_badge($lead['loan_type']) ?></td>
                     <td class="px-4 py-3 text-gray-700 text-xs font-medium whitespace-nowrap">
                         <?= $lead['loan_amount'] ? format_currency((float)$lead['loan_amount']) : '—' ?>
                     </td>
@@ -300,7 +349,7 @@ function selectStatus(status) {
                                 </button>
                             </form>
                             <?php endif; ?>
-                            <a href="https://wa.me/91<?= preg_replace('/\D/','',$lead['customer_mobile']) ?>" target="_blank"
+                            <a href="<?= whatsapp_url($lead['customer_mobile'], $lead['customer_name'], $lead['lead_id'], $lead['status']) ?>" target="_blank"
                                class="p-1.5 text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" title="WhatsApp Contact">
                                 <svg class="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.019-5.117-2.875-6.976C16.605 1.905 14.128.883 11.5.882c-5.443 0-9.87 4.422-9.873 9.869 0 1.704.469 3.372 1.358 4.845L1.92 19.34l3.963-1.04c1.46.797 3.09 1.214 4.764 1.214zM16.92 14.17c-.29-.145-1.716-.848-1.982-.945-.266-.096-.46-.145-.654.145-.193.29-.75.945-.918 1.139-.168.193-.337.218-.627.073-.29-.145-1.223-.45-2.33-1.439-.86-.767-1.44-1.716-1.609-2.006-.168-.29-.018-.446.127-.59.13-.13.29-.337.435-.507.145-.17.193-.29.29-.483.097-.193.048-.36-.024-.507-.072-.145-.654-1.576-.895-2.158-.236-.569-.475-.49-.654-.5l-.56-.007c-.193 0-.507.072-.772.361-.266.29-1.014.991-1.014 2.415 0 1.425 1.038 2.802 1.183 2.995.145.193 2.042 3.12 4.947 4.378.692.299 1.233.479 1.654.613.696.22 1.33.193 1.83.118.558-.084 1.717-.701 1.959-1.378.24-.677.24-1.257.17-1.377-.073-.12-.266-.193-.556-.339z"/>
@@ -319,7 +368,7 @@ function selectStatus(status) {
 $(document).ready(function() {
     initTable('#leadsTable', {
         order: [[1, 'desc']],
-        columnDefs: [{ orderable: false, targets: 12 }],
+        columnDefs: [{ orderable: false, targets: 13 }],
         scrollX: true,
     });
 });

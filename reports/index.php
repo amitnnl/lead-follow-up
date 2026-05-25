@@ -2,12 +2,42 @@
 // reports/index.php — MIS Reports & Analytics
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_role('admin', 'staff');
 $pageTitle      = 'MIS Reports';
 $pageBreadcrumb = 'Reports & Analytics';
 
-// Date range filter
+// Date range & deep filters
 $fromDate = $_GET['from'] ?? date('Y-m-01'); // First of current month
 $toDate   = $_GET['to']   ?? date('Y-m-d');
+$agentFilter = (int)($_GET['agent_id'] ?? 0);
+$execFilter  = (int)($_GET['executive_id'] ?? 0);
+$finFilter   = (int)($_GET['financer_id'] ?? 0);
+
+// Build dynamic WHERE clauses for the leads table joins
+$leadConditions = "l.lead_date BETWEEN ? AND ?";
+$params = [$fromDate, $toDate];
+$types = "ss";
+
+if ($agentFilter) {
+    $leadConditions .= " AND l.agent_id = ?";
+    $params[] = $agentFilter;
+    $types .= "i";
+}
+if ($execFilter) {
+    $leadConditions .= " AND l.executive_id = ?";
+    $params[] = $execFilter;
+    $types .= "i";
+}
+if ($finFilter) {
+    $leadConditions .= " AND l.financer_id = ?";
+    $params[] = $finFilter;
+    $types .= "i";
+}
+
+// Fetch lists for filter dropdowns
+$agentsList    = db_fetch_all($conn, "SELECT id, name FROM agents WHERE is_active=1 ORDER BY name");
+$executivesList = db_fetch_all($conn, "SELECT id, name FROM executives WHERE is_active=1 ORDER BY name");
+$financersList  = db_fetch_all($conn, "SELECT id, name FROM financers WHERE is_active=1 ORDER BY name");
 
 // Agent Performance Report
 $agentPerf = db_fetch_all($conn, "
@@ -21,10 +51,10 @@ $agentPerf = db_fetch_all($conn, "
            SUM(l.loan_amount) as total_loan_value,
            SUM(l.payout_amount) as total_payout
     FROM agents a
-    LEFT JOIN leads l ON l.agent_id=a.id AND l.lead_date BETWEEN ? AND ?
+    LEFT JOIN leads l ON l.agent_id=a.id AND $leadConditions
     GROUP BY a.id
     ORDER BY disbursed_leads DESC
-", 'ss', [$fromDate, $toDate]);
+", $types, $params);
 
 // Executive Performance
 $execPerf = db_fetch_all($conn, "
@@ -34,9 +64,10 @@ $execPerf = db_fetch_all($conn, "
            SUM(CASE WHEN l.status='rejected' THEN 1 ELSE 0 END) as rejected,
            SUM(l.loan_amount) as loan_value
     FROM executives ex
-    LEFT JOIN leads l ON l.executive_id=ex.id AND l.lead_date BETWEEN ? AND ?
-    GROUP BY ex.id ORDER BY disbursed DESC
-", 'ss', [$fromDate, $toDate]);
+    LEFT JOIN leads l ON l.executive_id=ex.id AND $leadConditions
+    GROUP BY ex.id 
+    ORDER BY disbursed DESC
+", $types, $params);
 
 // Financer Summary
 $financerSummary = db_fetch_all($conn, "
@@ -45,41 +76,89 @@ $financerSummary = db_fetch_all($conn, "
            SUM(CASE WHEN l.status='disbursed' THEN 1 ELSE 0 END) as disbursed,
            SUM(l.loan_amount) as loan_value
     FROM financers f
-    LEFT JOIN leads l ON l.financer_id=f.id AND l.lead_date BETWEEN ? AND ?
-    GROUP BY f.id ORDER BY loan_value DESC
-", 'ss', [$fromDate, $toDate]);
+    LEFT JOIN leads l ON l.financer_id=f.id AND $leadConditions
+    GROUP BY f.id 
+    ORDER BY loan_value DESC
+", $types, $params);
 
 // Daily MIS — last 30 days
 $dailyMIS = db_fetch_all($conn, "
-    SELECT lead_date,
+    SELECT l.lead_date,
            COUNT(*) as total,
-           SUM(CASE WHEN status='approved' OR status='disbursed' THEN 1 ELSE 0 END) as approved,
-           SUM(loan_amount) as loan_value
-    FROM leads
-    WHERE lead_date BETWEEN ? AND ?
-    GROUP BY lead_date ORDER BY lead_date DESC
-", 'ss', [$fromDate, $toDate]);
+           SUM(CASE WHEN l.status='approved' OR l.status='disbursed' THEN 1 ELSE 0 END) as approved,
+           SUM(l.loan_amount) as loan_value
+    FROM leads l
+    WHERE $leadConditions
+    GROUP BY l.lead_date 
+    ORDER BY l.lead_date DESC
+", $types, $params);
 
+$activeTab = $_GET['tab'] ?? 'agent';
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- Date Filter -->
-<form method="GET" class="card p-5 mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 items-end animate-fade-up">
+<!-- Date & Deep Filters Form -->
+<form method="GET" class="card p-5 mb-6 animate-fade-up">
     <input type="hidden" name="tab" value="<?= e($activeTab) ?>">
-    <div>
-        <label class="form-label">From Date</label>
-        <input type="date" name="from" class="form-input w-full" value="<?= e($fromDate) ?>">
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end">
+        <div>
+            <label class="form-label text-xs font-bold uppercase text-slate-400">From Date</label>
+            <input type="date" name="from" class="form-input w-full py-2 text-sm" value="<?= e($fromDate) ?>">
+        </div>
+        <div>
+            <label class="form-label text-xs font-bold uppercase text-slate-400">To Date</label>
+            <input type="date" name="to" class="form-input w-full py-2 text-sm" value="<?= e($toDate) ?>">
+        </div>
+        <div>
+            <label class="form-label text-xs font-bold uppercase text-slate-400">Agent / DSA</label>
+            <select name="agent_id" class="form-select w-full py-2 text-sm">
+                <option value="">— All Agents —</option>
+                <?php foreach ($agentsList as $a): ?>
+                <option value="<?= $a['id'] ?>" <?= $agentFilter === (int)$a['id'] ? 'selected' : '' ?>><?= e($a['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label class="form-label text-xs font-bold uppercase text-slate-400">SFE / Executive</label>
+            <select name="executive_id" class="form-select w-full py-2 text-sm">
+                <option value="">— All SFEs —</option>
+                <?php foreach ($executivesList as $ex): ?>
+                <option value="<?= $ex['id'] ?>" <?= $execFilter === (int)$ex['id'] ? 'selected' : '' ?>><?= e($ex['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label class="form-label text-xs font-bold uppercase text-slate-400">Financer / Bank</label>
+            <select name="financer_id" class="form-select w-full py-2 text-sm">
+                <option value="">— All Banks —</option>
+                <?php foreach ($financersList as $f): ?>
+                <option value="<?= $f['id'] ?>" <?= $finFilter === (int)$f['id'] ? 'selected' : '' ?>><?= e($f['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
     </div>
-    <div>
-        <label class="form-label">To Date</label>
-        <input type="date" name="to" class="form-input w-full" value="<?= e($toDate) ?>">
-    </div>
-    <div class="md:col-span-2 flex flex-wrap gap-2.5">
-        <button type="submit" class="btn-primary btn-sm px-5 py-2.5 shadow-md hover-glow">Apply Filter</button>
-        <a href="?from=<?= date('Y-m-01') ?>&to=<?= date('Y-m-d') ?>&tab=<?= e($activeTab) ?>"
-           class="btn btn-secondary btn-sm px-4 py-2.5 shadow-sm">This Month</a>
-        <a href="?from=<?= date('Y-01-01') ?>&to=<?= date('Y-m-d') ?>&tab=<?= e($activeTab) ?>"
-           class="btn btn-secondary btn-sm px-4 py-2.5 shadow-sm">This Year</a>
+    
+    <div class="mt-4 flex flex-wrap justify-between items-center gap-4 border-t border-slate-100 dark:border-slate-800/40 pt-4">
+        <div class="flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-primary btn-sm flex items-center gap-1 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                Apply Analytics Filters
+            </button>
+            <?php if ($agentFilter || $execFilter || $finFilter): ?>
+            <a href="?from=<?= $fromDate ?>&to=<?= $toDate ?>&tab=<?= e($activeTab) ?>"
+               class="btn btn-secondary btn-sm flex items-center gap-1">
+                ✕ Clear Advanced Filters
+            </a>
+            <?php endif; ?>
+        </div>
+        
+        <div class="flex flex-wrap gap-2">
+            <a href="?from=<?= date('Y-m-01') ?>&to=<?= date('Y-m-d') ?>&agent_id=<?= $agentFilter ?>&executive_id=<?= $execFilter ?>&financer_id=<?= $finFilter ?>&tab=<?= e($activeTab) ?>"
+               class="btn btn-secondary btn-sm animate-pulse-once">This Month</a>
+            <a href="?from=<?= date('Y-01-01') ?>&to=<?= date('Y-m-d') ?>&agent_id=<?= $agentFilter ?>&executive_id=<?= $execFilter ?>&financer_id=<?= $finFilter ?>&tab=<?= e($activeTab) ?>"
+               class="btn btn-secondary btn-sm">This Year</a>
+        </div>
     </div>
 </form>
 
@@ -92,13 +171,12 @@ require_once __DIR__ . '/../includes/header.php';
         'financer'=> '🏦 Financer Summary',
         'daily'   => '📅 Daily MIS'
     ];
-    $activeTab = $_GET['tab'] ?? 'agent';
     foreach ($tabs as $key => $label):
         $active = ($activeTab === $key) 
             ? 'bg-white dark:bg-slate-800 shadow-md text-brand-600 dark:text-brand-400 font-bold border border-slate-200/30 dark:border-slate-700/30' 
             : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 font-semibold hover:bg-white/40 dark:hover:bg-slate-800/30';
     ?>
-    <a href="?from=<?= $fromDate ?>&to=<?= $toDate ?>&tab=<?= $key ?>"
+    <a href="?from=<?= $fromDate ?>&to=<?= $toDate ?>&agent_id=<?= $agentFilter ?>&executive_id=<?= $execFilter ?>&financer_id=<?= $finFilter ?>&tab=<?= $key ?>"
        class="px-4.5 py-2.5 rounded-xl text-sm transition-all duration-300 <?= $active ?>">
         <?= $label ?>
     </a>

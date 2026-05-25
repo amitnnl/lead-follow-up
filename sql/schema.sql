@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` VARCHAR(150) NOT NULL,
   `email` VARCHAR(150) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
-  `role` ENUM('admin','agent','staff') NOT NULL DEFAULT 'staff',
+  `role` ENUM('admin','agent','staff','executive') NOT NULL DEFAULT 'staff',
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `leads` (
   `year_of_manufacture` YEAR NULL,
   `registration_number` VARCHAR(30) NULL,
   `loan_amount` DECIMAL(12,2) NULL,
+  `loan_type` ENUM('new_loan','refinance') NOT NULL DEFAULT 'new_loan',
   -- Bank Details (Client)
   `customer_bank_name` VARCHAR(150) NULL,
   `customer_account_number` VARCHAR(30) NULL,
@@ -155,6 +156,18 @@ CREATE TABLE IF NOT EXISTS `commissions` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`agent_id`) REFERENCES `agents`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Lead Documents
+CREATE TABLE IF NOT EXISTS `lead_documents` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `lead_id` INT UNSIGNED NOT NULL,
+  `document_type` ENUM('aadhaar','pan','bank_statement','rc','insurance','vehicle_image','other') NOT NULL,
+  `file_path` VARCHAR(255) NOT NULL,
+  `verification_status` ENUM('pending','verified','rejected') DEFAULT 'pending',
+  `verification_notes` TEXT,
+  `uploaded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ============================================================

@@ -48,6 +48,10 @@ function is_staff(): bool {
     return current_role() === 'staff';
 }
 
+function is_executive(): bool {
+    return current_role() === 'executive';
+}
+
 function require_role(string ...$roles): void {
     require_login();
     if (!in_array(current_role(), $roles)) {
@@ -124,4 +128,26 @@ function status_badge(string $status): string {
 
 function format_currency(float $amount): string {
     return '₹' . number_format($amount, 0, '.', ',');
+}
+
+function loan_type_badge(string $type): string {
+    if ($type === 'refinance') {
+        return '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-purple-50 text-purple-700 border border-purple-100/80 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-900/30">Refinance</span>';
+    }
+    return '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-indigo-50 text-indigo-700 border border-indigo-100/80 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-900/30">New Loan</span>';
+}
+
+function whatsapp_url(string $mobile, string $name, string $leadId, string $status): string {
+    $cleanMobile = preg_replace('/\D/', '', $mobile);
+    // Standardize to 91 prefix for Indian phone numbers if it's 10 digits
+    if (strlen($cleanMobile) === 10) {
+        $cleanMobile = '91' . $cleanMobile;
+    } elseif (strlen($cleanMobile) === 11 && str_starts_with($cleanMobile, '0')) {
+        $cleanMobile = '91' . substr($cleanMobile, 1);
+    }
+    
+    $statusText = ucfirst(str_replace('_', ' ', $status));
+    $msg = "Hello {$name}, this is regarding your vehicle loan application (ID: {$leadId}). The current status of your application is: {$statusText}. Please feel free to reach out if you have any questions. Thanks! - LeadFlow Pro";
+    
+    return "https://wa.me/{$cleanMobile}?text=" . urlencode($msg);
 }

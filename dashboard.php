@@ -4,15 +4,35 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
 $pageTitle = 'Dashboard';
 
-// KPI Queries
-$totalLeads     = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads")['cnt'] ?? 0;
-$approved       = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads WHERE status='approved'")['cnt'] ?? 0;
-$disbursed      = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads WHERE status='disbursed'")['cnt'] ?? 0;
-$pending        = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads WHERE status='pending'")['cnt'] ?? 0;
-$rejected       = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads WHERE status='rejected'")['cnt'] ?? 0;
-$totalLoanAmt   = db_fetch_one($conn, "SELECT SUM(loan_amount) as s FROM leads WHERE status IN('approved','disbursed')")['s'] ?? 0;
-$totalPayout    = db_fetch_one($conn, "SELECT SUM(payout_amount) as s FROM leads WHERE payout_amount IS NOT NULL")['s'] ?? 0;
-$totalCommPaid  = db_fetch_one($conn, "SELECT SUM(paid_amount) as s FROM commissions")['s'] ?? 0;
+// Setup Executive Scope
+$isExecutive = is_executive();
+$execId = null;
+$whereScope = "1=1";
+$paramsScope = [];
+$typesScope = '';
+
+if ($isExecutive) {
+    $execRow = db_fetch_one($conn, "SELECT id FROM executives WHERE user_id = ?", 'i', [current_user_id()]);
+    $execId = $execRow['id'] ?? 0;
+    $whereScope = "l.executive_id = ?";
+    $paramsScope = [$execId];
+    $typesScope = 'i';
+}
+
+// KPI Queries (Note: using leads table alias 'l' for safety with our whereScope)
+$totalLeads     = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads l WHERE $whereScope", $typesScope, $paramsScope)['cnt'] ?? 0;
+$approved       = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads l WHERE l.status='approved' AND $whereScope", $typesScope, $paramsScope)['cnt'] ?? 0;
+$disbursed      = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads l WHERE l.status='disbursed' AND $whereScope", $typesScope, $paramsScope)['cnt'] ?? 0;
+$pending        = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads l WHERE l.status='pending' AND $whereScope", $typesScope, $paramsScope)['cnt'] ?? 0;
+$rejected       = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM leads l WHERE l.status='rejected' AND $whereScope", $typesScope, $paramsScope)['cnt'] ?? 0;
+$totalLoanAmt   = db_fetch_one($conn, "SELECT SUM(l.loan_amount) as s FROM leads l WHERE l.status IN('approved','disbursed') AND $whereScope", $typesScope, $paramsScope)['s'] ?? 0;
+$totalPayout    = db_fetch_one($conn, "SELECT SUM(l.payout_amount) as s FROM leads l WHERE l.payout_amount IS NOT NULL AND $whereScope", $typesScope, $paramsScope)['s'] ?? 0;
+
+if ($isExecutive) {
+    $totalCommPaid  = db_fetch_one($conn, "SELECT SUM(c.paid_amount) as s FROM commissions c JOIN leads l ON c.lead_id = l.id WHERE l.executive_id = ?", 'i', [$execId])['s'] ?? 0;
+} else {
+    $totalCommPaid  = db_fetch_one($conn, "SELECT SUM(paid_amount) as s FROM commissions")['s'] ?? 0;
+}
 
 
 // Top executives
@@ -35,23 +55,25 @@ $financerRows = db_fetch_all($conn, "
 
 // Recent leads
 $recentLeads = db_fetch_all($conn, "
-    SELECT l.lead_id, l.customer_name, l.vehicle_make_model, l.loan_amount, l.status, l.lead_date,
+    SELECT l.lead_id, l.customer_name, l.customer_mobile, l.vehicle_make_model, l.loan_amount, l.status, l.lead_date,
            ex.name as executive_name, f.name as financer_name
     FROM leads l
     LEFT JOIN executives ex ON l.executive_id = ex.id
     LEFT JOIN financers f ON l.financer_id = f.id
+    WHERE $whereScope
     ORDER BY l.created_at DESC LIMIT 8
-");
+", $typesScope, $paramsScope);
 
 // Follow-ups due today or overdue
 $dueFollowups = db_fetch_all($conn, "
-    SELECT lf.next_followup_date, lf.remarks, l.lead_id, l.customer_name, l.customer_mobile
+    SELECT lf.next_followup_date, lf.remarks, l.lead_id, l.customer_name, l.customer_mobile, l.status
     FROM lead_followups lf
     JOIN leads l ON lf.lead_id = l.id
     WHERE lf.next_followup_date <= CURDATE()
       AND l.status NOT IN ('disbursed','rejected')
+      AND $whereScope
     ORDER BY lf.next_followup_date ASC LIMIT 5
-");
+", $typesScope, $paramsScope);
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -111,7 +133,19 @@ require_once __DIR__ . '/includes/header.php';
                                 <?= e($lead['lead_id']) ?>
                             </a>
                         </td>
-                        <td class="px-5 py-3 text-gray-800 dark:text-gray-200 font-medium"><?= e($lead['customer_name']) ?></td>
+                        <td class="px-5 py-3">
+                            <div class="font-medium text-gray-800 dark:text-gray-200 text-xs sm:text-sm"><?= e($lead['customer_name']) ?></div>
+                            <div class="flex items-center gap-1.5 mt-0.5 text-slate-400 text-[10px] flex-wrap">
+                                <a href="tel:<?= e($lead['customer_mobile']) ?>" class="hover:text-blue-600 font-mono font-medium">
+                                    <?= e($lead['customer_mobile']) ?>
+                                </a>
+                                <span>·</span>
+                                <a href="<?= whatsapp_url($lead['customer_mobile'], $lead['customer_name'], $lead['lead_id'], $lead['status']) ?>" target="_blank"
+                                   class="text-emerald-500 hover:text-emerald-600 font-semibold" title="WhatsApp Contact">
+                                    WhatsApp
+                                </a>
+                            </div>
+                        </td>
                         <td class="px-5 py-3 text-gray-500 dark:text-gray-400 text-xs"><?= e($lead['vehicle_make_model'] ?? '—') ?></td>
                         <td class="px-5 py-3 text-gray-700 dark:text-gray-300 font-medium text-xs">
                             <?= $lead['loan_amount'] ? format_currency((float)$lead['loan_amount']) : '—' ?>
@@ -142,9 +176,21 @@ require_once __DIR__ . '/includes/header.php';
                                 <div class="text-xs text-gray-400 font-mono"><?= e($fu['lead_id']) ?></div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-[160px]"><?= e($fu['remarks']) ?></div>
                             </div>
-                            <span class="text-xs text-red-500 font-semibold flex-shrink-0 mt-0.5">
-                                <?= $fu['next_followup_date'] ?>
-                            </span>
+                            <div class="text-right flex flex-col items-end gap-1.5 flex-shrink-0">
+                                <span class="text-xs text-red-500 font-semibold flex-shrink-0 mt-0.5">
+                                    <?= $fu['next_followup_date'] ?>
+                                </span>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <a href="<?= whatsapp_url($fu['customer_mobile'], $fu['customer_name'], $fu['lead_id'], $fu['status']) ?>" target="_blank"
+                                       class="p-1 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded transition-colors" title="WhatsApp">
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.458L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.115-2.903-6.99C16.26 1.876 13.784.843 11.15.842 5.712.842 1.29 5.26 1.285 10.7c-.002 1.716.446 3.393 1.3 4.89l-.995 3.636 3.73-.978c1.477.806 3.011 1.233 4.73 1.233z"/></svg>
+                                    </a>
+                                    <a href="tel:<?= e($fu['customer_mobile']) ?>"
+                                       class="p-1 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded transition-colors" title="Call">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <?php endforeach; ?>

@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'year_of_manufacture' => trim($_POST['year_of_manufacture'] ?? ''),
         'registration_number' => trim($_POST['registration_number'] ?? ''),
         'loan_amount'         => trim($_POST['loan_amount'] ?? ''),
+        'loan_type'           => $_POST['loan_type'] ?? 'new_loan',
         'referred_by'         => trim($_POST['referred_by'] ?? ''),
         'customer_bank_name'  => trim($_POST['customer_bank_name'] ?? ''),
         'customer_account_number' => trim($_POST['customer_account_number'] ?? ''),
@@ -64,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             UPDATE leads SET
                 lead_date=?, customer_name=?, customer_mobile=?, customer_mobile2=?,
                 customer_address=?, vehicle_make_model=?, year_of_manufacture=?,
-                registration_number=?, loan_amount=?, referred_by=?,
+                registration_number=?, loan_amount=?, loan_type=?, referred_by=?,
                 customer_bank_name=?, customer_account_number=?, customer_ifsc_code=?,
                 agent_id=?, financer_id=?, dealer_id=?, executive_id=?,
                 status=?, status_date=?, query_notes=?,
@@ -74,10 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $loanAmt = $data['loan_amount'] !== '' ? (float)$data['loan_amount'] : null;
         $payAmt  = $data['payout_amount'] !== '' ? (float)$data['payout_amount'] : null;
-        $stmt->bind_param('ssssssisdssssiiiisssssssdsi',
+        $stmt->bind_param('ssssssisdsssssiiiisssssssdsi',
             $data['lead_date'], $data['customer_name'], $data['customer_mobile'],
             $data['customer_mobile2'], $data['customer_address'], $data['vehicle_make_model'],
             $data['year_of_manufacture'], $data['registration_number'], $loanAmt,
+            $data['loan_type'],
             $data['referred_by'], $data['customer_bank_name'], $data['customer_account_number'], $data['customer_ifsc_code'],
             $data['agent_id'], $data['financer_id'],
             $data['dealer_id'], $data['executive_id'],
@@ -184,6 +186,13 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="form-floating">
                 <input type="number" name="loan_amount" id="loan_amount" value="<?= e($data['loan_amount'] ?? '') ?>" step="1000" placeholder=" ">
                 <label for="loan_amount">Loan Amount (₹)</label>
+            </div>
+            <div class="form-floating">
+                <select name="loan_type" id="loan_type" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">
+                    <option value="new_loan" <?= (($data['loan_type'] ?? 'new_loan') === 'new_loan') ? 'selected' : '' ?>>New Loan</option>
+                    <option value="refinance" <?= (($data['loan_type'] ?? '') === 'refinance') ? 'selected' : '' ?>>Refinance</option>
+                </select>
+                <label for="loan_type">Loan Type</label>
             </div>
             <div class="form-floating">
                 <input type="text" name="referred_by" id="referred_by" value="<?= e($data['referred_by'] ?? '') ?>" placeholder=" ">
