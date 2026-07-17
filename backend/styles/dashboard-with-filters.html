@@ -1,0 +1,557 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LEADFLOW PRO — PREMIUM DASHBOARD WITH INTEGRATED FILTER BAR
+     Complete Dashboard Layout with All Components
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — LeadFlow Pro</title>
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="design-system.css">
+  <link rel="stylesheet" href="filters.css">
+  <style>
+    body {
+      background: #f9fafb;
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    @media (min-width: 1024px) {
+      .dashboard-container {
+        padding: 3rem;
+      }
+    }
+
+    .hero-text {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-subtext {
+      font-size: 1rem;
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+
+    .filter-section {
+      margin-bottom: 2rem;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #d1d5db;
+    }
+
+    .kpi-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-change {
+      font-size: 0.875rem;
+      color: #10b981;
+      font-weight: 500;
+    }
+
+    .kpi-change.negative {
+      color: #ef4444;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      background: #f3f4f6;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 2rem;
+    }
+
+    .chart-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 1rem;
+    }
+
+    .chart-placeholder {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 2px dashed #d1fae5;
+      border-radius: 0.5rem;
+      padding: 3rem;
+      text-align: center;
+      color: #047857;
+      font-size: 0.875rem;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 0.875rem;
+      color: #111827;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-blue {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-amber {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+      animation: fade-in 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header style="background: white; border-bottom: 1px solid #e5e7eb; padding: 1rem 0; position: sticky; top: 0; z-index: 100;">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 3rem;">
+      <div>
+        <h1 style="font-size: 1.25rem; font-weight: 700; color: #111827;">📈 LeadFlow Pro</h1>
+      </div>
+      <nav style="display: flex; gap: 2rem;">
+        <a href="#" style="color: #6b7280; text-decoration: none; font-weight: 500;">Dashboard</a>
+        <a href="#" style="color: #6b7280; text-decoration: none; font-weight: 500;">Leads</a>
+        <a href="#" style="color: #6b7280; text-decoration: none; font-weight: 500;">Reports</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <button style="padding: 0.5rem 1rem; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">🔔</button>
+      <button style="padding: 0.5rem 1rem; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">👤 User</button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="dashboard-container" style="max-width: 1400px; margin: 0 auto;">
+
+  <!-- PAGE TITLE -->
+  <div>
+    <h2 class="hero-text">Dashboard</h2>
+    <p class="hero-subtext">Welcome back! Here's your lead summary for today.</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-section animate-in">
+    <div class="filter-bar">
+      
+      <!-- CHANNEL FILTER -->
+      <div class="filter-item">
+        <div class="filter-icon">🔗</div>
+        <div style="position: relative;">
+          <button class="filter-button" onclick="toggleDropdown(event, 'channel')">
+            <span class="filter-label">Channel</span>
+            <span class="filter-value">All Channels</span>
+            <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </button>
+          <div id="channel-dropdown" class="filter-dropdown" style="display: none;">
+            <div class="filter-dropdown-item active">All Channels</div>
+            <div class="filter-dropdown-item">Freehold</div>
+            <div class="filter-dropdown-item">Partner</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-divider" style="width: 1px; height: 24px; background: #e5e7eb;"></div>
+
+      <!-- DEALER FILTER -->
+      <div class="filter-item">
+        <div class="filter-icon">🏪</div>
+        <div style="position: relative;">
+          <button class="filter-button" onclick="toggleDropdown(event, 'dealer')">
+            <span class="filter-label">Dealer</span>
+            <span class="filter-value">All Dealers</span>
+            <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </button>
+          <div id="dealer-dropdown" class="filter-dropdown" style="display: none;">
+            <div class="filter-dropdown-item active">All Dealers</div>
+            <div class="filter-dropdown-item">ABC Motors</div>
+            <div class="filter-dropdown-item">XYZ Auto</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-divider" style="width: 1px; height: 24px; background: #e5e7eb;"></div>
+
+      <!-- FINANCER FILTER -->
+      <div class="filter-item">
+        <div class="filter-icon">🏦</div>
+        <div style="position: relative;">
+          <button class="filter-button" onclick="toggleDropdown(event, 'financer')">
+            <span class="filter-label">Financer</span>
+            <span class="filter-value">All Financers</span>
+            <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </button>
+          <div id="financer-dropdown" class="filter-dropdown" style="display: none;">
+            <div class="filter-dropdown-item active">All Financers</div>
+            <div class="filter-dropdown-item">HDFC Bank</div>
+            <div class="filter-dropdown-item">ICICI Bank</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-divider" style="width: 1px; height: 24px; background: #e5e7eb;"></div>
+
+      <!-- EXECUTIVE FILTER -->
+      <div class="filter-item">
+        <div class="filter-icon">👔</div>
+        <div style="position: relative;">
+          <button class="filter-button" onclick="toggleDropdown(event, 'executive')">
+            <span class="filter-label">Executive</span>
+            <span class="filter-value">All Executives</span>
+            <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </button>
+          <div id="executive-dropdown" class="filter-dropdown" style="display: none;">
+            <div class="filter-dropdown-item active">All Executives</div>
+            <div class="filter-dropdown-item">Rajesh Kumar</div>
+            <div class="filter-dropdown-item">Priya Sharma</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-divider" style="width: 1px; height: 24px; background: #e5e7eb;"></div>
+
+      <!-- LOAN TYPE FILTER -->
+      <div class="filter-item">
+        <div class="filter-icon">💰</div>
+        <div style="position: relative;">
+          <button class="filter-button" onclick="toggleDropdown(event, 'loantype')">
+            <span class="filter-label">Loan Type</span>
+            <span class="filter-value">All Loan Types</span>
+            <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </button>
+          <div id="loantype-dropdown" class="filter-dropdown" style="display: none;">
+            <div class="filter-dropdown-item active">All Loan Types</div>
+            <div class="filter-dropdown-item">New</div>
+            <div class="filter-dropdown-item">Used</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid animate-in">
+    
+    <!-- Total Leads Card -->
+    <div class="kpi-card">
+      <div class="kpi-label">📊 Total Leads</div>
+      <div class="kpi-value">1,247</div>
+      <div class="kpi-change">↑ 12% from last week</div>
+      <div class="stats-grid" style="margin-top: 1rem;">
+        <div class="stat-item">
+          <div class="stat-value">847</div>
+          <div class="stat-label">New</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">400</div>
+          <div class="stat-label">Existing</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Leads Card -->
+    <div class="kpi-card">
+      <div class="kpi-label">✅ Approved</div>
+      <div class="kpi-value">342</div>
+      <div class="kpi-change">↑ 8% approval rate</div>
+      <div class="stats-grid" style="margin-top: 1rem;">
+        <div class="stat-item">
+          <div class="stat-value">$8.5M</div>
+          <div class="stat-label">Amount</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">27.4%</div>
+          <div class="stat-label">Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Follow-ups Card -->
+    <div class="kpi-card">
+      <div class="kpi-label">⏳ Pending Follow-ups</div>
+      <div class="kpi-value">156</div>
+      <div class="kpi-change negative">↓ 5% overdue</div>
+      <div class="stats-grid" style="margin-top: 1rem;">
+        <div class="stat-item">
+          <div class="stat-value">89</div>
+          <div class="stat-label">Today</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">67</div>
+          <div class="stat-label">This Week</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disbursed Card -->
+    <div class="kpi-card">
+      <div class="kpi-label">💰 Disbursed</div>
+      <div class="kpi-value">$12.3M</div>
+      <div class="kpi-change">↑ 18% vs last month</div>
+      <div class="stats-grid" style="margin-top: 1rem;">
+        <div class="stat-item">
+          <div class="stat-value">123</div>
+          <div class="stat-label">Loans</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">$100K</div>
+          <div class="stat-label">Avg</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHARTS SECTION -->
+  <div class="animate-in">
+    <div class="chart-container">
+      <div class="chart-title">Status Distribution</div>
+      <div class="chart-placeholder">
+        📊 Chart Placeholder — Replace with your charting library (Chart.js, Recharts, etc.)
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT LEADS TABLE -->
+  <div class="animate-in">
+    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #111827;">Recent Leads</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Lead ID</th>
+            <th>Customer</th>
+            <th>Vehicle</th>
+            <th>Amount</th>
+            <th>Channel</th>
+            <th>Status</th>
+            <th>Assigned</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">#LL-001247</code></td>
+            <td>
+              <div style="font-weight: 500;">Rajesh Gupta</div>
+              <div style="font-size: 0.75rem; color: #9ca3af;">rajesh@example.com</div>
+            </td>
+            <td>Toyota Fortuner 2024</td>
+            <td><strong>₹45,00,000</strong></td>
+            <td>Freehold</td>
+            <td><span class="badge badge-green">✓ Approved</span></td>
+            <td>Rajesh Kumar</td>
+            <td><a href="#" style="color: #10b981; text-decoration: none; font-weight: 500;">→ View</a></td>
+          </tr>
+          <tr>
+            <td><code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">#LL-001246</code></td>
+            <td>
+              <div style="font-weight: 500;">Priya Sharma</div>
+              <div style="font-size: 0.75rem; color: #9ca3af;">priya@example.com</div>
+            </td>
+            <td>Hyundai Creta 2023</td>
+            <td><strong>₹28,50,000</strong></td>
+            <td>Partner</td>
+            <td><span class="badge badge-amber">⌛ Pending</span></td>
+            <td>Priya Sharma</td>
+            <td><a href="#" style="color: #10b981; text-decoration: none; font-weight: 500;">→ View</a></td>
+          </tr>
+          <tr>
+            <td><code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">#LL-001245</code></td>
+            <td>
+              <div style="font-weight: 500;">Vikram Singh</div>
+              <div style="font-size: 0.75rem; color: #9ca3af;">vikram@example.com</div>
+            </td>
+            <td>Mahindra XUV700</td>
+            <td><strong>₹52,00,000</strong></td>
+            <td>Freehold</td>
+            <td><span class="badge badge-blue">📝 New</span></td>
+            <td>Vikram Singh</td>
+            <td><a href="#" style="color: #10b981; text-decoration: none; font-weight: 500;">→ View</a></td>
+          </tr>
+          <tr>
+            <td><code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">#LL-001244</code></td>
+            <td>
+              <div style="font-weight: 500;">Anjali Verma</div>
+              <div style="font-size: 0.75rem; color: #9ca3af;">anjali@example.com</div>
+            </td>
+            <td>Maruti Swift 2022</td>
+            <td><strong>₹12,50,000</strong></td>
+            <td>Partner</td>
+            <td><span class="badge badge-green">✓ Disbursed</span></td>
+            <td>Rajesh Kumar</td>
+            <td><a href="#" style="color: #10b981; text-decoration: none; font-weight: 500;">→ View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer style="background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 2rem; margin-top: 3rem; text-align: center; color: #6b7280; font-size: 0.875rem;">
+  © 2024 LeadFlow Pro. All rights reserved. | <a href="#" style="color: #10b981; text-decoration: none;">Privacy Policy</a> | <a href="#" style="color: #10b981; text-decoration: none;">Terms of Service</a>
+</footer>
+
+<script>
+  function toggleDropdown(event, id) {
+    event.preventDefault();
+    const dropdown = document.getElementById(id + '-dropdown');
+    const button = event.currentTarget;
+
+    document.querySelectorAll('[id$="-dropdown"]').forEach(el => {
+      if (el !== dropdown) el.style.display = 'none';
+    });
+
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.filter-item')) {
+      document.querySelectorAll('[id$="-dropdown"]').forEach(el => {
+        el.style.display = 'none';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

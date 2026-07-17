@@ -1,0 +1,399 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LEADFLOW PRO — PREMIUM FILTER BAR TEMPLATE
+     Single-Row Filters with Icons & Dropdowns
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filter Bar — LeadFlow Pro</title>
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="design-system.css">
+  <link rel="stylesheet" href="filters.css">
+  <style>
+    body {
+      background: #f9fafb;
+      padding: 2rem;
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    .demo-section {
+      margin-bottom: 3rem;
+    }
+
+    .demo-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 1rem;
+    }
+
+    .demo-description {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      overflow-x: auto;
+    }
+
+    /* Simple dropdown functionality demo */
+    .filter-dropdown {
+      display: none;
+    }
+
+    .filter-dropdown.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="max-w-6xl mx-auto">
+
+  <!-- HEADER -->
+  <div class="mb-8">
+    <h1 style="font-size: 2rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem;">
+      Filter Bar Component
+    </h1>
+    <p style="font-size: 1rem; color: #6b7280;">
+      Premium single-row filter component with icons and dropdowns
+    </p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       DEMO 1: STANDARD FILTER BAR
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="demo-section">
+    <h2 class="demo-title">Standard Filter Bar (Full Row)</h2>
+    <p class="demo-description">Single-row layout with all filters visible at once. Scrollable on mobile.</p>
+
+    <div class="demo-container">
+      <div class="filter-bar">
+
+        <!-- CHANNEL FILTER -->
+        <div class="filter-item">
+          <div class="filter-icon">🔗</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'channel')">
+              <span class="filter-label">Channel</span>
+              <span class="filter-value">All Channels</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="channel-dropdown" class="filter-dropdown">
+              <div class="filter-dropdown-item active" onclick="selectFilter(event, 'channel', 'All Channels')">
+                All Channels
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'channel', 'Freehold')">
+                Freehold
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'channel', 'Partner')">
+                Partner
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- DEALER FILTER -->
+        <div class="filter-item">
+          <div class="filter-icon">🏪</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'dealer')">
+              <span class="filter-label">Dealer</span>
+              <span class="filter-value">All Dealers</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="dealer-dropdown" class="filter-dropdown">
+              <div class="filter-dropdown-item active" onclick="selectFilter(event, 'dealer', 'All Dealers')">
+                All Dealers
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'dealer', 'ABC Motors')">
+                ABC Motors
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'dealer', 'XYZ Auto')">
+                XYZ Auto
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'dealer', 'Prime Vehicles')">
+                Prime Vehicles
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- FINANCER FILTER -->
+        <div class="filter-item">
+          <div class="filter-icon">🏦</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'financer')">
+              <span class="filter-label">Financer</span>
+              <span class="filter-value">All Financers</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="financer-dropdown" class="filter-dropdown">
+              <div class="filter-dropdown-item active" onclick="selectFilter(event, 'financer', 'All Financers')">
+                All Financers
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'financer', 'HDFC Bank')">
+                HDFC Bank
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'financer', 'ICICI Bank')">
+                ICICI Bank
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'financer', 'Bajaj Finance')">
+                Bajaj Finance
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- EXECUTIVE FILTER -->
+        <div class="filter-item">
+          <div class="filter-icon">👔</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'executive')">
+              <span class="filter-label">Executive</span>
+              <span class="filter-value">All Executives</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="executive-dropdown" class="filter-dropdown">
+              <div class="filter-dropdown-item active" onclick="selectFilter(event, 'executive', 'All Executives')">
+                All Executives
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'executive', 'Rajesh Kumar')">
+                Rajesh Kumar
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'executive', 'Priya Sharma')">
+                Priya Sharma
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'executive', 'Vikram Singh')">
+                Vikram Singh
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- LOAN TYPE FILTER -->
+        <div class="filter-item">
+          <div class="filter-icon">💰</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'loantype')">
+              <span class="filter-label">Loan Type</span>
+              <span class="filter-value">All Loan Types</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="loantype-dropdown" class="filter-dropdown">
+              <div class="filter-dropdown-item active" onclick="selectFilter(event, 'loantype', 'All Loan Types')">
+                All Loan Types
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'loantype', 'New')">
+                New
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'loantype', 'Used')">
+                Used
+              </div>
+              <div class="filter-dropdown-item" onclick="selectFilter(event, 'loantype', 'Commercial')">
+                Commercial
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       DEMO 2: COMPACT FILTER BAR
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="demo-section">
+    <h2 class="demo-title">Compact Filter Bar (Smaller Spaces)</h2>
+    <p class="demo-description">Ideal for dashboards with limited space. Shows only icons and values.</p>
+
+    <div class="demo-container">
+      <div class="filter-bar-compact">
+
+        <div class="filter-item">
+          <div class="filter-icon">🔗</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'channel2')">
+              <span class="filter-value">All Channels</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="channel2-dropdown" class="filter-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-item">
+          <div class="filter-icon">🏪</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'dealer2')">
+              <span class="filter-value">All Dealers</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="dealer2-dropdown" class="filter-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-item">
+          <div class="filter-icon">🏦</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'financer2')">
+              <span class="filter-value">All Financers</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="financer2-dropdown" class="filter-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-item">
+          <div class="filter-icon">👔</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'executive2')">
+              <span class="filter-value">All Executives</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="executive2-dropdown" class="filter-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-item">
+          <div class="filter-icon">💰</div>
+          <div class="relative">
+            <button class="filter-button" onclick="toggleDropdown(event, 'loantype2')">
+              <span class="filter-value">All Loan Types</span>
+              <svg class="filter-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+            <div id="loantype2-dropdown" class="filter-dropdown"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       CODE EXAMPLES
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="demo-section">
+    <h2 class="demo-title">HTML Code</h2>
+    <p class="demo-description">Copy this code to use the filter bar in your pages.</p>
+
+    <div class="demo-container" style="background: #1f2937; color: #e5e7eb; font-family: 'Fira Code', monospace; font-size: 0.875rem; padding: 1.5rem; overflow-x: auto; border-color: #374151;">
+
+<pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word;"><span style="color: #60a5fa;">&lt;div class="filter-bar"&gt;</span>
+
+  <span style="color: #60a5fa;">&lt;!-- CHANNEL FILTER --&gt;</span>
+  <span style="color: #60a5fa;">&lt;div class="filter-item"&gt;</span>
+    <span style="color: #60a5fa;">&lt;div class="filter-icon"&gt;</span>🔗<span style="color: #60a5fa;">&lt;/div&gt;</span>
+    <span style="color: #60a5fa;">&lt;button class="filter-button"&gt;</span>
+      <span style="color: #60a5fa;">&lt;span class="filter-label"&gt;</span>Channel<span style="color: #60a5fa;">&lt;/span&gt;</span>
+      <span style="color: #60a5fa;">&lt;span class="filter-value"&gt;</span>All Channels<span style="color: #60a5fa;">&lt;/span&gt;</span>
+      <span style="color: #60a5fa;">&lt;svg class="filter-arrow"&gt;</span>...<span style="color: #60a5fa;">&lt;/svg&gt;</span>
+    <span style="color: #60a5fa;">&lt;/button&gt;</span>
+  <span style="color: #60a5fa;">&lt;/div&gt;</span>
+
+  <span style="color: #60a5fa;">&lt;!-- Repeat for other filters --&gt;</span>
+
+<span style="color: #60a5fa;">&lt;/div&gt;</span></pre>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function toggleDropdown(event, id) {
+    event.preventDefault();
+    const dropdown = document.getElementById(id + '-dropdown');
+    const button = event.currentTarget;
+
+    // Close all other dropdowns
+    document.querySelectorAll('.filter-dropdown.show').forEach(el => {
+      if (el !== dropdown) {
+        el.classList.remove('show');
+        el.parentElement.parentElement.querySelector('.filter-button').classList.remove('active');
+      }
+    });
+
+    // Toggle current dropdown
+    dropdown.classList.toggle('show');
+    button.classList.toggle('active');
+  }
+
+  function selectFilter(event, id, value) {
+    event.preventDefault();
+    const button = event.currentTarget.parentElement.parentElement.querySelector('.filter-button');
+    const valueSpan = button.querySelector('.filter-value');
+
+    valueSpan.textContent = value;
+
+    // Update active state
+    const items = event.currentTarget.parentElement.querySelectorAll('.filter-dropdown-item');
+    items.forEach(item => {
+      item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+
+    // Close dropdown
+    event.currentTarget.parentElement.classList.remove('show');
+    button.classList.remove('active');
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.filter-item')) {
+      document.querySelectorAll('.filter-dropdown.show').forEach(el => {
+        el.classList.remove('show');
+      });
+      document.querySelectorAll('.filter-button.active').forEach(btn => {
+        btn.classList.remove('active');
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

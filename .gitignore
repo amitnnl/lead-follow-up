@@ -1,0 +1,40 @@
+# Dependencies and Archives
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+*.zip
+*.tar.gz
+# frontend/dist/  <-- Commented out so cPanel can pull the built React files
+
+# Backend uploads (keep the directory and .htaccess, but ignore files)
+backend/uploads/*
+!backend/uploads/.htaccess
+!backend/uploads/documents/
+!backend/uploads/leads/
+
+# Ignore actual uploaded files within the subdirectories
+backend/uploads/documents/*
+backend/uploads/leads/*
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+backend/.env
+.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+.agent/
+.claude/
+frontend/.agent/
+frontend/.claude/
+frontend/ralph/
+scratch/
+
+# Local config overrides
+backend/includes/config.local.php

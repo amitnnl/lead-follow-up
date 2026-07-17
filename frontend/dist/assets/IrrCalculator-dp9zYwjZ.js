@@ -1,0 +1,1 @@
+import{f as e}from"./vendor-CTTlxoKb.js";import{t}from"./IrrCalculatorComponent-Dmc3VPIu.js";var n=e();function r(){return(0,n.jsx)(`div`,{className:`space-y-6 animate-fade-in pb-12`,children:(0,n.jsx)(t,{})})}export{r as default};

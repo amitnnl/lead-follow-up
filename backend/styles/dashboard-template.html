@@ -1,0 +1,391 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LEADFLOW PRO 2026 — PREMIUM DASHBOARD TEMPLATE
+     Enterprise Fintech UI with Component Showcase
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeadFlow Pro — Executive Dashboard</title>
+  <link rel="stylesheet" href="assets/css/tailwind.css">
+  <link rel="stylesheet" href="styles/design-system.css">
+  <style>
+    /* Smooth scrolling and transitions */
+    * {
+      scroll-behavior: smooth;
+    }
+
+    /* Custom animations */
+    @keyframes count-up {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-kpi {
+      animation: count-up 0.6s ease-out;
+    }
+
+    .card-kpi:nth-child(1) { animation-delay: 0.1s; }
+    .card-kpi:nth-child(2) { animation-delay: 0.2s; }
+    .card-kpi:nth-child(3) { animation-delay: 0.3s; }
+    .card-kpi:nth-child(4) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-700">
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     TOP NAVIGATION
+     ════════════════════════════════════════════════════════════════════════ -->
+<nav class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+  <div class="flex items-center justify-between px-6 py-4">
+    <!-- Logo & Brand -->
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+        <span class="text-white font-bold text-lg">LF</span>
+      </div>
+      <div>
+        <h1 class="text-base font-bold text-slate-900">LeadFlow Pro</h1>
+        <p class="text-xs text-slate-500">2026</p>
+      </div>
+    </div>
+
+    <!-- Center: Search -->
+    <div class="flex-1 max-w-lg mx-8">
+      <input
+        type="text"
+        placeholder="Search leads, agents, financers..."
+        class="w-full px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700
+               placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10"
+      />
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="flex items-center gap-4">
+      <!-- Notifications -->
+      <button class="relative p-2 hover:bg-slate-100 rounded-lg transition-colors">
+        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+        </svg>
+        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+      </button>
+
+      <!-- User Menu -->
+      <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+        <div class="text-right hidden sm:block">
+          <p class="text-sm font-medium text-slate-900">John Admin</p>
+          <p class="text-xs text-slate-500">Administrator</p>
+        </div>
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
+          <span class="text-white text-sm font-semibold">JA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ════════════════════════════════════════════════════════════════════════ -->
+<main class="p-6">
+
+  <!-- PAGE HEADER -->
+  <div class="mb-8">
+    <h1 class="heading-page mb-2">Executive Dashboard</h1>
+    <p class="text-muted">Real-time overview of your finance operations</p>
+  </div>
+
+  <!-- FILTERS & ACTIONS -->
+  <div class="flex items-center justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+      <select class="select text-sm">
+        <option>This Month</option>
+        <option>Last Month</option>
+        <option>Last Quarter</option>
+        <option>Year to Date</option>
+      </select>
+      <button class="btn-secondary btn-sm">Apply Filter</button>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost btn-sm">📊 Export</button>
+      <button class="btn-ghost btn-sm">⚙️ Settings</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       KPI CARDS SECTION
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="kpi-grid mb-8">
+
+    <!-- KPI 1: Total Leads -->
+    <div class="card-kpi">
+      <div class="card-kpi-header">
+        <p class="card-kpi-title">Total Leads</p>
+        <div class="card-kpi-icon bg-blue-50 text-blue-600">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v2h8v-2zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-2a4 4 0 00-8 0v2a2 2 0 002 2h4a2 2 0 002-2z"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="card-kpi-value">2,847</p>
+      <p class="card-kpi-change positive">↑ 12.5% from last month</p>
+    </div>
+
+    <!-- KPI 2: Approved Leads -->
+    <div class="card-kpi">
+      <div class="card-kpi-header">
+        <p class="card-kpi-title">Approved Leads</p>
+        <div class="card-kpi-icon bg-purple-50 text-purple-600">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="card-kpi-value">1,241</p>
+      <p class="card-kpi-change positive">↑ 8.2% from last month</p>
+    </div>
+
+    <!-- KPI 3: Disbursed Amount -->
+    <div class="card-kpi">
+      <div class="card-kpi-header">
+        <p class="card-kpi-title">Disbursed Amount</p>
+        <div class="card-kpi-icon bg-green-50 text-green-600">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M8.16 5.314l4.897-4.897a1 1 0 111.415 1.415L9.575 6.728A1 1 0 108.16 5.314zM2 10a8 8 0 1016 0 8 8 0 01-16 0zm9-3a1 1 0 11-2 0 1 1 0 012 0zM6.3 6.3a1 1 0 10-1.414 1.414l.707.707a1 1 0 101.414-1.414l-.707-.707zm7.414 7.414a1 1 0 101.414-1.414l-.707-.707a1 1 0 10-1.414 1.414l.707.707zM13 11a1 1 0 110-2 1 1 0 010 2z"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="card-kpi-value">₹456.8 Cr</p>
+      <p class="card-kpi-change positive">↑ 15.3% from last month</p>
+    </div>
+
+    <!-- KPI 4: Pending Follow-ups -->
+    <div class="card-kpi">
+      <div class="card-kpi-header">
+        <p class="card-kpi-title">Pending Follow-ups</p>
+        <div class="card-kpi-icon bg-amber-50 text-amber-600">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"></path>
+          </svg>
+        </div>
+      </div>
+      <p class="card-kpi-value">342</p>
+      <p class="card-kpi-change negative">↓ 3.1% from last month</p>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       STATUS BREAKDOWN
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+    <!-- Status Distribution -->
+    <div class="card p-6">
+      <h3 class="heading-card mb-6">Lead Status Distribution</h3>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="badge-new">●</span>
+            <span class="text-sm text-slate-700">New</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="progress-bar w-40">
+              <div class="progress-fill" style="width: 35%"></div>
+            </div>
+            <span class="text-sm font-semibold text-slate-900 w-12 text-right">997</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="badge-pending">●</span>
+            <span class="text-sm text-slate-700">Pending</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="progress-bar w-40">
+              <div class="progress-fill bg-amber-500" style="width: 28%"></div>
+            </div>
+            <span class="text-sm font-semibold text-slate-900 w-12 text-right">797</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="badge-approved">●</span>
+            <span class="text-sm text-slate-700">Approved</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="progress-bar w-40">
+              <div class="progress-fill bg-purple-500" style="width: 22%"></div>
+            </div>
+            <span class="text-sm font-semibold text-slate-900 w-12 text-right">626</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="badge-disbursed">●</span>
+            <span class="text-sm text-slate-700">Disbursed</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="progress-bar w-40">
+              <div class="progress-fill bg-green-500" style="width: 15%"></div>
+            </div>
+            <span class="text-sm font-semibold text-slate-900 w-12 text-right">427</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conversion Metrics -->
+    <div class="card p-6">
+      <h3 class="heading-card mb-6">Conversion Metrics</h3>
+      <div class="space-y-6">
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-sm text-slate-600">Approval Rate</span>
+            <span class="text-sm font-semibold text-slate-900">43.6%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 43.6%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-sm text-slate-600">Disbursal Rate</span>
+            <span class="text-sm font-semibold text-slate-900">21.2%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 21.2%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-sm text-slate-600">Rejection Rate</span>
+            <span class="text-sm font-semibold text-slate-900">12.1%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill bg-red-500" style="width: 12.1%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       RECENT LEADS
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+      <h3 class="heading-card">Recent Leads</h3>
+      <a href="#" class="text-sm text-brand-600 hover:text-brand-700 font-medium">View All →</a>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Lead ID</th>
+            <th>Customer</th>
+            <th>Vehicle</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Agent</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="table-row-action hover:bg-slate-50">
+            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">#LD001234</code></td>
+            <td>
+              <div>
+                <p class="font-medium text-slate-900">Rajesh Kumar</p>
+                <p class="text-xs text-slate-500">+91 98765 43210</p>
+              </div>
+            </td>
+            <td>
+              <p class="font-medium text-slate-900">Mahindra XUV700</p>
+              <p class="text-xs text-slate-500">₹19,00,000</p>
+            </td>
+            <td><strong>₹15,00,000</strong></td>
+            <td><span class="badge-approved">Approved</span></td>
+            <td>
+              <p class="text-sm text-slate-700">Priya Sharma</p>
+            </td>
+            <td>
+              <button class="btn-ghost btn-sm">View</button>
+            </td>
+          </tr>
+
+          <tr class="table-row-action hover:bg-slate-50">
+            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">#LD001233</code></td>
+            <td>
+              <div>
+                <p class="font-medium text-slate-900">Ameya Desai</p>
+                <p class="text-xs text-slate-500">+91 87654 32109</p>
+              </div>
+            </td>
+            <td>
+              <p class="font-medium text-slate-900">Toyota Fortuner</p>
+              <p class="text-xs text-slate-500">₹32,50,000</p>
+            </td>
+            <td><strong>₹25,00,000</strong></td>
+            <td><span class="badge-pending">Pending</span></td>
+            <td>
+              <p class="text-sm text-slate-700">Vikram Singh</p>
+            </td>
+            <td>
+              <button class="btn-ghost btn-sm">View</button>
+            </td>
+          </tr>
+
+          <tr class="table-row-action hover:bg-slate-50">
+            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">#LD001232</code></td>
+            <td>
+              <div>
+                <p class="font-medium text-slate-900">Sneha Patel</p>
+                <p class="text-xs text-slate-500">+91 76543 21098</p>
+              </div>
+            </td>
+            <td>
+              <p class="font-medium text-slate-900">Hyundai Creta</p>
+              <p class="text-xs text-slate-500">₹14,00,000</p>
+            </td>
+            <td><strong>₹11,00,000</strong></td>
+            <td><span class="badge-disbursed">Disbursed</span></td>
+            <td>
+              <p class="text-sm text-slate-700">Arjun Nair</p>
+            </td>
+            <td>
+              <button class="btn-ghost btn-sm">View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════════════════════════════════ -->
+<footer class="mt-16 border-t border-slate-200 bg-slate-50 py-8">
+  <div class="max-w-7xl mx-auto px-6 text-center text-sm text-slate-600">
+    <p>&copy; 2026 LeadFlow Pro. All rights reserved. | <a href="#" class="text-brand-600 hover:underline">Privacy</a> | <a href="#" class="text-brand-600 hover:underline">Terms</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,549 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEADFLOW PRO 2026 — PREMIUM COMPONENT LIBRARY
+   Enterprise Fintech UI Components & Patterns
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ════════════════════════════════════════════════════════════════════════
+     BUTTONS — Premium, Interactive, Trustworthy
+     ════════════════════════════════════════════════════════════════════════ */
+
+  /* Base Button */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium
+           text-sm transition-all duration-200 select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  /* Primary Button */
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800
+           focus:ring-brand-500 shadow-sm hover:shadow-md;
+  }
+  .dark .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-600 active:bg-brand-700;
+  }
+
+  /* Secondary Button */
+  .btn-secondary {
+    @apply btn bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:bg-neutral-300
+           focus:ring-neutral-300 border border-neutral-200;
+  }
+  .dark .btn-secondary {
+    @apply bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:bg-neutral-600 border-neutral-700;
+  }
+
+  /* Ghost Button */
+  .btn-ghost {
+    @apply btn text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200 focus:ring-neutral-300;
+  }
+  .dark .btn-ghost {
+    @apply text-neutral-300 hover:bg-neutral-800 active:bg-neutral-700 focus:ring-neutral-700;
+  }
+
+  /* Danger Button */
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus:ring-red-500;
+  }
+
+  /* Success Button */
+  .btn-success {
+    @apply btn bg-green-600 text-white hover:bg-green-700 active:bg-green-800 focus:ring-green-500;
+  }
+
+  /* Small Button */
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  /* Large Button */
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+
+  /* Full Width */
+  .btn-block {
+    @apply w-full;
+  }
+
+  /* Icon Only */
+  .btn-icon {
+    @apply inline-flex items-center justify-center w-10 h-10 p-0 rounded-lg;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     CARDS — Modern, Layered, Professional
+     ════════════════════════════════════════════════════════════════════════ */
+
+  /* Standard Card */
+  .card {
+    @apply bg-white rounded-lg border border-neutral-200 shadow-sm
+           transition-all duration-200 overflow-hidden;
+  }
+  .dark .card {
+    @apply bg-neutral-900 border-neutral-800;
+  }
+
+  /* Elevated Card (Premium Hover Effect) */
+  .card-elevated {
+    @apply card hover:shadow-lg hover:-translate-y-0.5 cursor-pointer;
+  }
+
+  /* Flat Card */
+  .card-flat {
+    @apply bg-neutral-50 rounded-lg border border-neutral-200 p-4;
+  }
+  .dark .card-flat {
+    @apply bg-neutral-900/50 border-neutral-800;
+  }
+
+  /* KPI Card (Dashboard) */
+  .card-kpi {
+    @apply card p-6 space-y-3;
+  }
+  .card-kpi-header {
+    @apply flex items-center justify-between;
+  }
+  .card-kpi-title {
+    @apply text-sm font-medium text-neutral-600 dark:text-neutral-400;
+  }
+  .card-kpi-icon {
+    @apply w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600;
+  }
+  .card-kpi-value {
+    @apply text-3xl font-bold text-neutral-900 dark:text-white;
+  }
+  .card-kpi-change {
+    @apply text-sm font-medium;
+  }
+  .card-kpi-change.positive {
+    @apply text-green-600 dark:text-green-400;
+  }
+  .card-kpi-change.negative {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  /* Status Card */
+  .card-status {
+    @apply card p-4 flex items-center gap-4 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50;
+  }
+  .card-status-badge {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-lg;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     BADGES & PILLS — Status Indicators
+     ════════════════════════════════════════════════════════════════════════ */
+
+  /* Badge Base */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  /* Status: New (Blue) */
+  .badge-new {
+    @apply badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300;
+  }
+
+  /* Status: Pending (Amber) */
+  .badge-pending {
+    @apply badge bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300;
+  }
+
+  /* Status: Approved (Purple) */
+  .badge-approved {
+    @apply badge bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300;
+  }
+
+  /* Status: Disbursed (Green) */
+  .badge-disbursed {
+    @apply badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300;
+  }
+
+  /* Status: Rejected (Red) */
+  .badge-rejected {
+    @apply badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300;
+  }
+
+  /* Status: On Hold (Slate) */
+  .badge-on-hold {
+    @apply badge bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300;
+  }
+
+  /* Outline Badge */
+  .badge-outline {
+    @apply badge border border-current;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     TYPOGRAPHY — Enterprise Data-Focused
+     ════════════════════════════════════════════════════════════════════════ */
+
+  /* Headings */
+  .heading-page {
+    @apply text-3xl font-bold text-neutral-900 dark:text-white tracking-tight;
+  }
+  .heading-section {
+    @apply text-2xl font-bold text-neutral-900 dark:text-white;
+  }
+  .heading-subsection {
+    @apply text-lg font-semibold text-neutral-900 dark:text-white;
+  }
+  .heading-card {
+    @apply text-base font-semibold text-neutral-800 dark:text-neutral-100;
+  }
+
+  /* Text Styles */
+  .text-muted {
+    @apply text-neutral-600 dark:text-neutral-400;
+  }
+  .text-label {
+    @apply text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wide;
+  }
+  .text-hint {
+    @apply text-xs text-neutral-500 dark:text-neutral-500;
+  }
+  .text-caption {
+    @apply text-xs font-medium text-neutral-600 dark:text-neutral-400;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     MODALS & OVERLAYS
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/40 backdrop-blur-sm z-40 animate-fade-in;
+  }
+
+  .modal {
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-neutral-900
+           rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto z-50 animate-modal-in;
+  }
+
+  .modal-header {
+    @apply flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-800;
+  }
+
+  .modal-title {
+    @apply heading-section;
+  }
+
+  .modal-content {
+    @apply p-6 space-y-6;
+  }
+
+  .modal-footer {
+    @apply flex items-center justify-end gap-3 p-6 border-t border-neutral-200 dark:border-neutral-800;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     TABLES — Data-Dense & Interactive
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .table-container {
+    @apply overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-800;
+  }
+
+  .table {
+    @apply w-full text-sm border-collapse;
+  }
+
+  .table thead {
+    @apply bg-neutral-50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800;
+  }
+
+  .table th {
+    @apply px-6 py-3 text-left font-semibold text-neutral-700 dark:text-neutral-300 uppercase text-xs tracking-wide;
+  }
+
+  .table tbody tr {
+    @apply border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50/50 dark:hover:bg-neutral-800/30 transition-colors;
+  }
+
+  .table td {
+    @apply px-6 py-4 text-neutral-700 dark:text-neutral-300;
+  }
+
+  .table-row-action {
+    @apply cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700/50;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     FORMS — Clean & Accessible
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .form-group {
+    @apply space-y-2;
+  }
+
+  .form-row {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  .form-row-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold text-neutral-700 dark:text-neutral-300;
+  }
+
+  .form-label-required::after {
+    content: ' *';
+    @apply text-red-500;
+  }
+
+  .form-hint {
+    @apply text-xs text-neutral-500 dark:text-neutral-400 mt-1;
+  }
+
+  .form-error {
+    @apply text-xs text-red-600 dark:text-red-400 mt-1;
+  }
+
+  /* Enhanced Input */
+  .input {
+    @apply w-full px-3 py-2.5 border border-neutral-300 rounded-lg bg-white text-neutral-900
+           placeholder-neutral-400 text-sm transition-all duration-200
+           focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10;
+  }
+
+  .dark .input {
+    @apply border-neutral-700 bg-neutral-800 text-neutral-100 placeholder-neutral-500
+           focus:border-brand-400 focus:ring-brand-400/10;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500/10;
+  }
+
+  .input-success {
+    @apply border-green-500 focus:border-green-500 focus:ring-green-500/10;
+  }
+
+  /* Select */
+  .select {
+    @apply w-full px-3 py-2.5 border border-neutral-300 rounded-lg bg-white text-neutral-900
+           text-sm appearance-none cursor-pointer transition-all duration-200
+           focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10
+           bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')]
+           bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-9;
+  }
+
+  .dark .select {
+    @apply border-neutral-700 bg-neutral-800 text-neutral-100
+           focus:border-brand-400 focus:ring-brand-400/10;
+  }
+
+  /* Textarea */
+  .textarea {
+    @apply w-full px-3 py-2.5 border border-neutral-300 rounded-lg bg-white text-neutral-900
+           placeholder-neutral-400 text-sm font-mono transition-all duration-200
+           focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 resize-none;
+  }
+
+  .dark .textarea {
+    @apply border-neutral-700 bg-neutral-800 text-neutral-100 placeholder-neutral-500
+           focus:border-brand-400 focus:ring-brand-400/10;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     ALERTS & NOTIFICATIONS
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .alert {
+    @apply p-4 rounded-lg border flex items-start gap-3;
+  }
+
+  .alert-icon {
+    @apply flex-shrink-0 w-5 h-5 mt-0.5;
+  }
+
+  .alert-content {
+    @apply flex-1;
+  }
+
+  .alert-title {
+    @apply font-semibold text-sm;
+  }
+
+  .alert-message {
+    @apply text-sm mt-1;
+  }
+
+  /* Success Alert */
+  .alert-success {
+    @apply alert bg-green-50 border-green-200 text-green-900 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200;
+  }
+
+  /* Error Alert */
+  .alert-error {
+    @apply alert bg-red-50 border-red-200 text-red-900 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200;
+  }
+
+  /* Warning Alert */
+  .alert-warning {
+    @apply alert bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-200;
+  }
+
+  /* Info Alert */
+  .alert-info {
+    @apply alert bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     PROGRESS & LOADING
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .progress-bar {
+    @apply w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-brand-600 dark:bg-brand-500 transition-all duration-500;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    @apply inline-block w-4 h-4 border-2 border-transparent border-t-brand-600
+           rounded-full animate-spin;
+  }
+
+  .spinner-lg {
+    @apply w-8 h-8;
+  }
+
+  /* Loading Skeleton */
+  .skeleton {
+    @apply bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     LAYOUT UTILITIES
+     ════════════════════════════════════════════════════════════════════════ */
+
+  /* Container */
+  .container-fluid {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+
+  /* Grid */
+  .grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+
+  /* Sidebar Layout */
+  .layout-sidebar {
+    @apply flex min-h-screen;
+  }
+
+  .sidebar {
+    @apply w-64 bg-neutral-900 text-white flex-shrink-0;
+  }
+
+  .sidebar-collapsed {
+    @apply w-20;
+  }
+
+  .main-content {
+    @apply flex-1 flex flex-col overflow-hidden;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     DASHBOARD GRID
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .kpi-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+
+  .chart-container {
+    @apply card p-6;
+  }
+
+  .chart-title {
+    @apply heading-card mb-4;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     MICRO INTERACTIONS
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .hover-shadow {
+    @apply transition-shadow duration-200 hover:shadow-lg;
+  }
+
+  .active-scale {
+    @apply active:scale-95;
+  }
+
+  /* Smooth Color Transition */
+  .color-transition {
+    @apply transition-colors duration-200;
+  }
+
+  /* Smooth Opacity Transition */
+  .opacity-transition {
+    @apply transition-opacity duration-200;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     RESPONSIVE UTILITIES
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .hidden-mobile {
+    @apply hidden md:block;
+  }
+
+  .visible-mobile {
+    @apply md:hidden;
+  }
+
+  .mobile-full {
+    @apply md:w-auto w-full;
+  }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     ACCESSIBILITY
+     ════════════════════════════════════════════════════════════════════════ */
+
+  .focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+  }
+
+  .sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden clip-[rect(0,0,0,0)] whitespace-nowrap border-0;
+  }
+
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ENHANCED KEYFRAMES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.97) translateY(6px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+}

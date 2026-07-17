@@ -1,0 +1,7 @@
+---
+deployment:
+  tasks:
+    - /bin/mkdir -p $HOME/hotelsunplaza/dsa.nitscomputer.in/
+    - /bin/cp -R backend $DEPLOYPATH/
+    - /bin/cp -R frontend/dist/* $DEPLOYPATH/
+    - /bin/cp frontend/dist/.htaccess $DEPLOYPATH/

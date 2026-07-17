@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # 1. Route /api requests to your PHP backend
+  RewriteRule ^api/(.*)$ backend/api/index.php [QSA,L]
+  
+  # 2. Route /uploads requests to your backend uploads folder
+  RewriteRule ^uploads/(.*)$ backend/uploads/$1 [L]
+
+  # 3. Route all other requests to React (index.html) so React Router works
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.html [QSA,L]
+</IfModule>
