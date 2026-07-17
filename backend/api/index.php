@@ -164,6 +164,11 @@ if (empty($input) && !empty($_POST)) {
     $input = $_POST;
 }
 
+// Unlock session for read-only (GET) requests to allow high-concurrency parallel loading on live servers
+if ($method === 'GET') {
+    session_write_close();
+}
+
 // ----------------------------------------------------
 // ROUTER
 // ----------------------------------------------------
