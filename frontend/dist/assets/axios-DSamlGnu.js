@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-QTnfLwEv.js";import{m as t}from"./vendor-CTTlxoKb.js";var n=e({default:()=>r}),r=t.create({baseURL:`/backend/api`,withCredentials:!0,headers:{"Content-Type":`application/json`,Accept:`application/json`}});r.interceptors.response.use(e=>e,e=>(e.response&&e.response.status,Promise.reject(e)));export{n,r as t};
