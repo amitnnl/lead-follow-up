@@ -250,6 +250,21 @@
     background-color: #1a2336 !important;
   }
 
+  /* ── Global Button Micro-interactions ── */
+  button {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  }
+
+  button:active {
+    transform: scale(0.97);
+  }
+
+  /* Prevent scaling for specific utility items if needed */
+  .no-scale:active {
+    transform: none !important;
+  }
+
+
   th:first-child {
     border-top-left-radius: 8px;
   }

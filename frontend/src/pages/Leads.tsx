@@ -4,8 +4,8 @@ import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 import {
   Search, MessageCircle, Plus, X, Download, UserPlus,
-  Car, Phone, ChevronDown,
-  CircleDot, Filter, TrendingUp, Building2, UserCheck,
+  Phone, ChevronDown,
+  CircleDot, Filter, TrendingUp,
   Clock, CheckCircle2, PauseCircle,
   XCircle, Sparkles, Loader2
 } from 'lucide-react';
@@ -81,86 +81,60 @@ function LeadTableRow({
         />
       </td>
 
-      {/* Customer Info (Icon Block) */}
+      <td className="px-4 py-4 whitespace-nowrap">
+        <button onClick={() => onOpenPreview(lead.id)} className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
+          {lead.lead_id}
+        </button>
+      </td>
+
+      <td className="px-4 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-medium">
+        {lead.lead_date}
+      </td>
+
       <td className="px-4 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0">
-            <UserCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-          </div>
-          <div className="min-w-0">
-            <button onClick={() => onOpenPreview(lead.id)} className="font-semibold text-slate-800 dark:text-white text-sm truncate max-w-[200px] hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer">
-              {lead.customer_name}
-            </button>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5 font-mono">
-              <span className="text-indigo-600 dark:text-indigo-400 font-bold">{lead.lead_id}</span>
-              <span>•</span>
-              <span>{lead.customer_mobile}</span>
-            </div>
-          </div>
-          {/* Quick Actions for WhatsApp/Call */}
-          <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <a href={getWhatsAppLink(lead.customer_mobile, lead.customer_name)} target="_blank" rel="noreferrer"
-              className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 transition-colors" title="Instant WhatsApp">
-              <MessageCircle className="w-3.5 h-3.5" />
-            </a>
-            <a href={`tel:${lead.customer_mobile}`}
-              className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:blue-400 hover:bg-blue-100 transition-colors" title="Direct Phone Call">
-              <Phone className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        </div>
-      </td>
-
-      {/* Vehicle Specification */}
-      <td className="px-3.5 py-3">
-        <div className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 font-bold">
-          <Car className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
-          <span className="truncate max-w-[150px]" title={lead.vehicle_make_model}>{lead.vehicle_make_model || '—'}</span>
-        </div>
-        <div className="flex items-center gap-1.5 mt-1">
-          {lead.registration_number && (
-            <span className="font-mono text-[10px] text-slate-400 dark:text-slate-500 uppercase">
-              {lead.registration_number} ·
-            </span>
-          )}
-          {lead.vehicle_condition && (
-            <span className={clsx('text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide',
-              lead.vehicle_condition === 'new' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300')}>
-              {lead.vehicle_condition === 'new' ? '✨ New' : '🚗 Used'}
-            </span>
-          )}
-        </div>
-      </td>
-
-      {/* Loan Amount */}
-      <td className="px-4 py-4 text-right whitespace-nowrap">
-        <span className="font-mono text-sm font-black text-emerald-600 dark:text-emerald-400 tabular-nums block">
-          ₹{(lead.loan_amount || 0).toLocaleString('en-IN')}
+        <span className="font-bold text-slate-800 dark:text-white text-xs truncate max-w-[150px] block" title={lead.customer_name}>
+          {lead.customer_name}
         </span>
-        {lead.loan_type && (
-          <span className="text-[10px] text-slate-400 uppercase font-semibold block mt-0.5">
-            {lead.loan_type.replace('_', ' ')}
-          </span>
-        )}
       </td>
 
-      {/* Assigned Financer / Bank */}
-      <td className="px-4 py-4">
+      <td className="px-4 py-4 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]" title={lead.customer_address}>
+        {lead.customer_address || '—'}
+      </td>
+
+      <td className="px-4 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
         <div className="flex items-center gap-1.5">
-          <Building2 className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
-          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">{lead.financer_name || '—'}</span>
+          <span>{lead.customer_mobile}</span>
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <a href={getWhatsAppLink(lead.customer_mobile, lead.customer_name)} target="_blank" rel="noreferrer" className="text-emerald-600 hover:text-emerald-500"><MessageCircle className="w-3.5 h-3.5" /></a>
+            <a href={`tel:${lead.customer_mobile}`} className="text-blue-600 hover:text-blue-500"><Phone className="w-3.5 h-3.5" /></a>
+          </div>
         </div>
       </td>
 
-      {/* Executive SFE */}
-      <td className="px-4 py-4">
-        <div className="flex items-center gap-1.5">
-          <UserCheck className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
-          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">{lead.executive_name || '—'}</span>
-        </div>
+      <td className="px-4 py-4 text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]" title={lead.vehicle_make_model}>
+        {lead.vehicle_make_model || '—'}
       </td>
 
-      {/* Dealer / Agent */}
+      <td className="px-4 py-4 text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+        {lead.registration_number || '—'}
+      </td>
+
+      <td className="px-4 py-4 font-mono text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums text-right">
+        ₹{(lead.loan_amount || 0).toLocaleString('en-IN')}
+      </td>
+
+      <td className="px-4 py-4 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+        {lead.financer_name || '—'}
+      </td>
+
+      <td className="px-4 py-4 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+        {lead.executive_name || '—'}
+      </td>
+
+      <td className="px-4 py-4 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+        {lead.loan_type ? (lead.loan_type === 'new_loan' ? 'New Loan' : (lead.loan_type === 'used_loan' ? 'Used Loan' : lead.loan_type)) : '—'}
+      </td>
+
       <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold">
         {lead.agent_name ? (
           <div>
@@ -168,34 +142,30 @@ function LeadTableRow({
               {lead.agent_name}
             </span>
             {(!lead.agent_kyc_verified || !lead.agent_bank_verified) && (
-              <span className="text-[9px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded border border-amber-200 mt-1 inline-flex" title="Missing KYC/Bank Details">
-                Missing KYC
-              </span>
+              <span className="text-[9px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded border border-amber-200 mt-0.5 inline-flex" title="Missing KYC/Bank Details">Missing KYC</span>
             )}
           </div>
         ) : (
-          <span className="text-slate-500">Direct</span>
+          <span className="text-slate-500">{lead.dealer_name ? lead.dealer_name : 'Direct'}</span>
         )}
       </td>
 
-      {/* Status Pill */}
       <td className="px-4 py-4">
         <span className={clsx(
-          "inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded border uppercase tracking-wide",
-          STATUS_CONFIG[lead.status]?.bg, STATUS_CONFIG[lead.status]?.text, STATUS_CONFIG[lead.status]?.border
+          "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide",
+          STATUS_CONFIG[lead.status]?.bg, STATUS_CONFIG[lead.status]?.text
         )}>
           <span className={clsx('w-1.5 h-1.5 rounded-full', STATUS_CONFIG[lead.status]?.dot || 'bg-slate-400')} />
           {STATUS_CONFIG[lead.status]?.label || lead.status}
         </span>
       </td>
 
-      {/* Actions (Always Visible & Professional) */}
       <td className="px-4 py-4 text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1.5">
           {isAdminOrManager && (
             <button onClick={() => onAssign(lead)}
-              className="p-1.5 rounded-lg text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Full Assignment Dialog">
-              <UserPlus className="w-4 h-4" />
+              className="p-1 rounded text-slate-500 hover:text-primary-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Full Assignment Dialog">
+              <UserPlus className="w-3.5 h-3.5" />
             </button>
           )}
           <button
@@ -703,11 +673,10 @@ export default function Leads() {
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto relative scrollbar-thin">
+          <div className="overflow-x-auto relative custom-scrollbar">
             <table className="w-full text-xs text-left border-collapse table-fixed min-w-[1150px]">
               <thead>
                 <tr className="bg-slate-50 dark:bg-[#192736] border-b border-slate-200 dark:border-slate-800">
-                  {/* Checkbox Header */}
                   <th className="sticky left-0 bg-slate-50 dark:bg-[#192736] z-20 px-2 py-3 border-r border-slate-200/80 dark:border-slate-800 text-center w-12">
                     <input
                       type="checkbox"
@@ -716,51 +685,20 @@ export default function Leads() {
                       className="rounded border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500/20 w-4 h-4 cursor-pointer"
                     />
                   </th>
-
-                  {/* Lead ID Header */}
-                  <th className="sticky left-12 bg-slate-50 dark:bg-[#192736] z-20 px-3 py-3 border-r border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">
-                    Lead ID & Date
-                  </th>
-
-                  {/* Customer Header */}
-                  <th className="sticky left-[160px] bg-slate-50 dark:bg-[#192736] z-20 px-3.5 py-3 border-r-2 border-slate-200 dark:border-slate-700/80 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.06)] dark:shadow-[4px_0_8px_-4px_rgba(0,0,0,0.3)] text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-52">
-                    Customer Contact
-                  </th>
-
-                  {/* Vehicle Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-44">
-                    Vehicle Specification
-                  </th>
-
-                  {/* Loan Amt Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-32">
-                    Loan Request
-                  </th>
-
-                  {/* Financer Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">
-                    Financer / Bank
-                  </th>
-
-                  {/* Executive Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">
-                    Assigned SFE
-                  </th>
-
-                  {/* Dealer/DSA Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">
-                    Dealer's
-                  </th>
-
-                  {/* Status Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">
-                    Status Pill
-                  </th>
-
-                  {/* Actions Header */}
-                  <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-36">
-                    Actions
-                  </th>
+                  <th className="sticky left-12 bg-slate-50 dark:bg-[#192736] z-20 px-3 py-3 border-r border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead ID</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Date</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">Customer Name</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">Address</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Mobile</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">Make & Model</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Reg No</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-28">Loan Amount</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Financer</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Executive</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead Type</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Dealer's</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Status</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-24">Actions</th>
                 </tr>
               </thead>
               <tbody>

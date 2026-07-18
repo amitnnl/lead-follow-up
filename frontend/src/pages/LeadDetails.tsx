@@ -1487,7 +1487,7 @@ export default function LeadDetails() {
         {/* ══════════════════════════════════════════════════════════
             RIGHT RAIL
         ══════════════════════════════════════════════════════════ */}
-        <div className="no-print space-y-4">
+        <div className="no-print space-y-4 lg:sticky lg:top-6">
 
           {/* Quick Stats */}
           <div className="card p-5 space-y-3">

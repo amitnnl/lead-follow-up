@@ -385,6 +385,39 @@ switch ($path) {
             ORDER BY lf.next_followup_date ASC LIMIT 5
         ", $typesScope, $paramsScope);
 
+        // Chart Data Generation
+        $monthlyDisbursements = db_fetch_all($conn, "
+            SELECT DATE_FORMAT(l.created_at, '%b') as month, SUM(l.loan_amount) as amount, COUNT(l.id) as count 
+            FROM leads l
+            WHERE l.status = 'disbursed' AND $whereScope
+            GROUP BY DATE_FORMAT(l.created_at, '%b'), YEAR(l.created_at), MONTH(l.created_at)
+            ORDER BY YEAR(l.created_at) ASC, MONTH(l.created_at) ASC LIMIT 6
+        ", $typesScope, $paramsScope);
+
+        $statusBreakdownRaw = db_fetch_all($conn, "
+            SELECT l.status, COUNT(l.id) as count 
+            FROM leads l
+            WHERE $whereScope
+            GROUP BY l.status
+        ", $typesScope, $paramsScope);
+        
+        $colorMap = ['new'=>'#3b82f6', 'pending'=>'#f59e0b', 'approved'=>'#10b981', 'disbursed'=>'#14b8a6', 'rejected'=>'#f43f5e', 'on_hold'=>'#a855f7'];
+        $statusBreakdown = array_map(function($row) use ($colorMap) {
+            return [
+                'status' => $row['status'],
+                'count' => (int)$row['count'],
+                'color' => $colorMap[$row['status']] ?? '#94a3b8'
+            ];
+        }, $statusBreakdownRaw);
+
+        $pipelineByFinancer = db_fetch_all($conn, "
+            SELECT f.name as financer, COUNT(l.id) as leads, SUM(IF(l.status='disbursed', 1, 0)) as disbursed 
+            FROM leads l JOIN financers f ON l.financer_id = f.id
+            WHERE $whereScope
+            GROUP BY f.id
+            ORDER BY leads DESC LIMIT 5
+        ", $typesScope, $paramsScope);
+
         json_response([
             'kpis' => [
                 'total' => $totalLeads,
@@ -406,7 +439,12 @@ switch ($path) {
                 'multiplier' => floatval($tierMultiplier)
             ],
             'recentLeads' => $recentLeads,
-            'dueFollowups' => $dueFollowups
+            'dueFollowups' => $dueFollowups,
+            'chartData' => [
+                'monthlyDisbursements' => $monthlyDisbursements,
+                'statusBreakdown' => $statusBreakdown,
+                'pipelineByFinancer' => $pipelineByFinancer
+            ]
         ]);
         break;
 
