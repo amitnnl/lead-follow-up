@@ -5,26 +5,25 @@ import { useSettingsStore } from './store/settingsStore';
 import MainLayout from './components/layout/MainLayout';
 import { useThemeStore } from './store/themeStore';
 
-// Dynamic Code Splitting via React.lazy for instant initial bundle loading
-const Login = React.lazy(() => import('./pages/Login'));
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const LandingPage = React.lazy(() => import('./pages/LandingPage'));
-const Leads = React.lazy(() => import('./pages/Leads'));
-const LeadDetails = React.lazy(() => import('./pages/LeadDetails'));
-const Commissions = React.lazy(() => import('./pages/Commissions'));
-const Reports = React.lazy(() => import('./pages/Reports'));
-const Settings = React.lazy(() => import('./pages/Settings'));
-const Financers = React.lazy(() => import('./pages/Financers'));
-const Executives = React.lazy(() => import('./pages/Executives'));
-const Dealers = React.lazy(() => import('./pages/Dealers'));
-const ChannelExecutives = React.lazy(() => import('./pages/ChannelExecutives'));
-const Users = React.lazy(() => import('./pages/Users'));
-const SystemAudit = React.lazy(() => import('./pages/SystemAudit'));
-const Banking = React.lazy(() => import('./pages/Banking'));
-const Ledger = React.lazy(() => import('./pages/Ledger'));
-const Followups = React.lazy(() => import('./pages/Followups'));
-const IrrCalculator = React.lazy(() => import('./pages/IrrCalculator'));
-
+// Static imports for instant navigation (removes lazy load slowness)
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import LandingPage from './pages/LandingPage';
+import Leads from './pages/Leads';
+import LeadDetails from './pages/LeadDetails';
+import Commissions from './pages/Commissions';
+import Reports from './pages/Reports';
+import Settings from './pages/Settings';
+import Financers from './pages/Financers';
+import Executives from './pages/Executives';
+import Dealers from './pages/Dealers';
+import ChannelExecutives from './pages/ChannelExecutives';
+import Users from './pages/Users';
+import SystemAudit from './pages/SystemAudit';
+import Banking from './pages/Banking';
+import Ledger from './pages/Ledger';
+import Followups from './pages/Followups';
+import IrrCalculator from './pages/IrrCalculator';
 const RouteLoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
     <div className="relative flex items-center justify-center">
@@ -62,7 +61,6 @@ function App() {
   }, [checkAuth, fetchSettings]);
 
   return (
-    <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
@@ -108,7 +106,6 @@ function App() {
         
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-    </Suspense>
   );
 }
 

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import {
   AlertCircle, ArrowRight, Eye, EyeOff, Lock, Mail, CheckCircle2,
-  ShieldCheck, Zap, FileCheck, Sparkles, Car, RefreshCw, Award, Sun, Moon
+  ShieldCheck, Sparkles, Car, RefreshCw, Award, Sun, Moon
 } from 'lucide-react';
 import { useSettingsStore } from '../store/settingsStore';
 import { useThemeStore } from '../store/themeStore';
@@ -62,20 +62,6 @@ function DealPreviewCard({ title, model, amount, status, badgeColor, delay }: {
   );
 }
 
-/* ─── Feature Pill (Institutional Light/Dark Mode) ─────────────────────────────── */
-function FeaturePill({ icon: Icon, text, desc }: { icon: React.ElementType; text: string; desc: string }) {
-  return (
-    <div className="flex items-start gap-3 bg-white/80 dark:bg-[#111622]/80 hover:bg-white dark:hover:bg-[#162230] border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl p-3.5 shadow-sm transition-all duration-200">
-      <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-100 dark:border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5 text-indigo-600 dark:text-indigo-400">
-        <Icon className="w-4.5 h-4.5" />
-      </div>
-      <div>
-        <h5 className="text-xs font-bold text-slate-900 dark:text-white">{text}</h5>
-        <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{desc}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function Login() {
   const { login } = useAuthStore();
@@ -221,19 +207,7 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Grid of Key Features */}
-          <div className="grid grid-cols-2 gap-3 pt-3">
-            <FeaturePill
-              icon={FileCheck}
-              text="Sanction PDF Generator"
-              desc="Generate instant branded sanction letters with terms & QR codes."
-            />
-            <FeaturePill
-              icon={Zap}
-              text="Instant IRR & EMI Engine"
-              desc="Calculate exact monthly installments and net yield on the fly."
-            />
-          </div>
+
         </div>
 
         {/* Footer */}
