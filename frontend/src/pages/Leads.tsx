@@ -624,7 +624,7 @@ export default function Leads() {
                 </div>
                 {isAdminOrManager && (
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dealer / DSA</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dealer's</label>
                     <select value={filterAgent} onChange={(e) => setFilterAgent(e.target.value)}
                       className="w-full text-sm bg-slate-50 dark:bg-[#111622] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-xl py-2 px-3 focus:border-indigo-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 outline-none transition-colors">
                       <option value="" className="bg-white dark:bg-[#111622]">All Dealers</option>
@@ -742,7 +742,7 @@ export default function Leads() {
 
                   {/* Dealer/DSA Header */}
                   <th className="px-3.5 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">
-                    Dealer / DSA
+                    Dealer's
                   </th>
 
                   {/* Status Header */}

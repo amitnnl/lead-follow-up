@@ -81,7 +81,7 @@ function DealerModal({
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <User className="w-5 h-5 text-indigo-500" />
-            {editingDealer ? 'Edit Dealer (DSA)' : 'Add Dealer (DSA)'}
+            {editingDealer ? 'Edit Dealer' : 'Add Dealer'}
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
             <X className="w-5 h-5" />
@@ -90,7 +90,7 @@ function DealerModal({
         <form onSubmit={onSubmit} className="p-6 space-y-5">
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Dealer (DSA) Name *</label>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Dealer Name *</label>
               <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white" placeholder="e.g. Maruti Motors / Rajesh" />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -115,7 +115,7 @@ function DealerModal({
           <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
             <button type="button" onClick={onClose} className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer">Cancel</button>
             <button type="submit" className="px-5 py-2.5 text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl shadow-sm transition-colors cursor-pointer">
-              {editingDealer ? 'Save Changes' : 'Add Dealer (DSA)'}
+              {editingDealer ? 'Save Changes' : 'Add Dealer'}
             </button>
           </div>
         </form>
@@ -223,9 +223,9 @@ export default function Dealers() {
             <div className="w-8 h-8 rounded-xl bg-indigo-500/15 flex items-center justify-center">
               <User className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             </div>
-            Dealers (DSA)
+            Dealer's
           </h1>
-          <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Manage individual vehicle dealers (DSA) and sourcing partners.</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Manage individual vehicle dealers and sourcing partners.</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export default function Dealers() {
             onClick={() => handleOpenModal()}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-sm shadow-indigo-500/25 cursor-pointer hover:shadow-md hover:shadow-indigo-500/30"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> Add Dealer (DSA)
+            <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> Add Dealer
           </button>
         </div>
       </div>
@@ -254,7 +254,7 @@ export default function Dealers() {
       <div className="grid grid-cols-3 gap-3 animate-fade-in" style={{ animationDelay: '50ms' }}>
         <div className="bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-4 text-center">
           <div className="text-2xl font-black text-slate-800 dark:text-white">{stats.total}</div>
-          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Dealers</div>
+          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Dealer's</div>
         </div>
         <div className="bg-emerald-50/50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl p-4 text-center">
           <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{stats.active}</div>

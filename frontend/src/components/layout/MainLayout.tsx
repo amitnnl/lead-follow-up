@@ -184,7 +184,7 @@ export default function MainLayout() {
       items: [
         { to: '/financers', icon: Landmark, label: 'Financers' },
         { to: '/executives', icon: UserCircle, label: 'Executives' },
-        { to: '/dealers', icon: User, label: 'Dealers / DSA' },
+        { to: '/dealers', icon: User, label: 'Dealer\'s' },
         { to: '/channel-executives', icon: UsersRound, label: 'Channels' }
       ]
     }] : []),
@@ -226,7 +226,7 @@ export default function MainLayout() {
     if (path.startsWith('/leads/')) return { group: 'Leads', title: 'Lead Dossier & Details' };
     if (path === '/financers') return { group: 'Network', title: 'Financers & Bank Roster' };
     if (path === '/executives') return { group: 'Network', title: 'Field Executives' };
-    if (path === '/dealers') return { group: 'Network', title: 'Dealers & DSA Agents' };
+    if (path === '/dealers') return { group: 'Network', title: 'Dealer\'s' };
     if (path === '/channel-executives') return { group: 'Network', title: 'Channel Partners' };
     if (path === '/banking') return { group: 'Finance', title: 'Banking & Cash Flow' };
     if (path === '/ledger') return { group: 'Finance', title: 'Master General Ledger' };

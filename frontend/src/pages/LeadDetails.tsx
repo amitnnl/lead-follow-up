@@ -5,7 +5,7 @@ import {
   ArrowLeft, PhoneCall, MessageCircle, FileText,
   Clock, CheckCircle, XCircle, Building,
   Edit, Trash2, Printer, RefreshCw, ShieldAlert,
-  User, ChevronRight, AlertTriangle, TrendingUp, Calendar, Banknote,
+  User, ChevronRight, AlertTriangle, TrendingUp, Download, Calendar, Banknote,
   Shield, Info, CircleDot, BadgeCheck, List, Calculator, Users, Plus, X
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -370,6 +370,24 @@ export default function LeadDetails() {
     } catch (err) { console.error('Failed to log interaction', err); }
   };
 
+  const handleDownloadDocs = async () => {
+    try {
+      const response = await api.get(`/leads/download_docs?id=${lead.id}`, {
+        responseType: 'blob', // Important for handling binary file download
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${lead.lead_id}_documents.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Failed to download documents. Make sure documents exist for this lead.');
+    }
+  };
+
   // Stepper config
   const STAGES = ['new', 'pending', 'approved', 'disbursed'] as const;
   const STAGE_META: Record<string, { label: string; sub: string; icon: React.ElementType }> = {
@@ -680,6 +698,14 @@ export default function LeadDetails() {
                   <Edit className="w-3.5 h-3.5" /> Edit
                 </button>
               )}
+              {isAdminOrManager && (
+                <button
+                  onClick={handleDownloadDocs}
+                  className="inline-flex items-center gap-2 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" /> Download Docs
+                </button>
+              )}
               <button
                 onClick={() => window.print()}
                 className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-700 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-sm"
@@ -956,7 +982,7 @@ export default function LeadDetails() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'Dealer / DSA', value: lead.agent_name || lead.dealer_name || 'Direct / None', color: 'slate' as const },
+                    { label: 'Dealer\'s', value: lead.agent_name || lead.dealer_name || 'Direct / None', color: 'slate' as const },
                     ...(lead.channel_executive_name ? [{ label: 'Channel Agent', value: lead.channel_executive_name, color: 'indigo' as const }] : []),
                     { label: 'Financer / Bank', value: lead.financer_name || 'Unassigned', color: 'amber' as const },
                     { label: 'Bank Executive', value: lead.executive_name || 'Unassigned', color: 'emerald' as const },

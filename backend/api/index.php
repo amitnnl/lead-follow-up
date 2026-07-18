@@ -1010,6 +1010,62 @@ switch ($path) {
         break;
 
     // ----------------------------------------------------
+    // DOWNLOAD DOCUMENTS
+    // ----------------------------------------------------
+    case 'leads/download_docs':
+        api_require_login();
+        if (!is_admin() && !is_manager()) {
+            http_response_code(403);
+            die("Unauthorized");
+        }
+        
+        $lead_id = (int)($_GET['id'] ?? 0);
+        if (!$lead_id) {
+            http_response_code(400);
+            die("Invalid lead ID");
+        }
+        
+        $docs = db_fetch_all($conn, "SELECT document_type, file_path FROM lead_documents WHERE lead_id = ? AND IFNULL(verification_notes, '') != 'Archived / Removed by user'", 'i', [$lead_id]);
+        if (empty($docs)) {
+            http_response_code(404);
+            die("No documents found for this lead");
+        }
+        
+        $zip = new ZipArchive();
+        $zipFilename = tempnam(sys_get_temp_dir(), 'lead_docs_') . '.zip';
+        
+        if ($zip->open($zipFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            http_response_code(500);
+            die("Cannot create zip file");
+        }
+        
+        $added = 0;
+        foreach ($docs as $doc) {
+            $path = __DIR__ . '/../' . $doc['file_path'];
+            if (file_exists($path)) {
+                $ext = pathinfo($path, PATHINFO_EXTENSION);
+                $zip->addFile($path, $doc['document_type'] . '.' . $ext);
+                $added++;
+            }
+        }
+        $zip->close();
+        
+        if ($added === 0) {
+            http_response_code(404);
+            die("No files physically exist on the server.");
+        }
+        
+        $lead = db_fetch_one($conn, "SELECT lead_id FROM leads WHERE id = ?", 'i', [$lead_id]);
+        $leadStr = $lead ? $lead['lead_id'] : 'Lead';
+        
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="' . $leadStr . '_Documents.zip"');
+        header('Content-Length: ' . filesize($zipFilename));
+        readfile($zipFilename);
+        unlink($zipFilename);
+        exit;
+
+    // ----------------------------------------------------
     // FOLLOW-UPS ENDPOINTS
     // ----------------------------------------------------
     case 'followups':
@@ -1153,7 +1209,7 @@ switch ($path) {
                 }
 
                 // Update lead status to disbursed
-                db_query($conn, "UPDATE leads SET status = 'disbursed', status_date = CURDATE(), final_loan_amount = ?, tenure_months = ?, roi = ? WHERE id = ?", 'sdidi', [$final_loan_amount, $tenure_months, $roi, $lead_id]);
+                db_query($conn, "UPDATE leads SET status = 'disbursed', status_date = CURDATE(), final_loan_amount = ?, tenure_months = ?, roi = ? WHERE id = ?", 'didi', [$final_loan_amount, $tenure_months, $roi, $lead_id]);
 
                 // Create Commissions row if status is 'disbursed'
                 $commRow = db_fetch_one($conn, "SELECT id FROM commissions WHERE lead_id = ?", 'i', [$lead_id]);
