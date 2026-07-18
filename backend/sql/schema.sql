@@ -114,6 +114,9 @@ CREATE TABLE IF NOT EXISTS `leads` (
   `year_of_manufacture` YEAR NULL,
   `registration_number` VARCHAR(30) NULL,
   `loan_amount` DECIMAL(12,2) NULL,
+  `final_loan_amount` DECIMAL(15,2) NULL,
+  `tenure_months` INT NULL,
+  `roi` DECIMAL(5,2) NULL,
   `loan_type` ENUM('new_loan','refinance') NOT NULL DEFAULT 'new_loan',
   -- Bank Details (Client)
   `customer_bank_name` VARCHAR(150) NULL,

@@ -954,6 +954,14 @@ switch ($path) {
 
         // Validation for Disbursement
         if ($status === 'disbursed') {
+            $final_loan_amount = (float)($input['final_loan_amount'] ?? 0);
+            $tenure_months = (int)($input['tenure_months'] ?? 0);
+            $roi = (float)($input['roi'] ?? 0);
+
+            if ($final_loan_amount <= 0 || $tenure_months <= 0 || $roi <= 0) {
+                json_error("Final loan amount, tenure (months), and ROI are mandatory for disbursal.");
+            }
+
             $gate = can_disburse_lead($conn, $lead);
             if ($gate !== true) {
                 json_error($gate);
@@ -963,6 +971,8 @@ switch ($path) {
         // Update lead status
         if ($status === 'rejected') {
             db_query($conn, "UPDATE leads SET status = 'rejected', status_date = CURDATE(), executive_id = NULL, financer_id = NULL, channel_id = NULL, channel_executive_id = NULL WHERE id = ?", 'i', [$id]);
+        } else if ($status === 'disbursed') {
+            db_query($conn, "UPDATE leads SET status = ?, status_date = CURDATE(), final_loan_amount = ?, tenure_months = ?, roi = ? WHERE id = ?", 'sdidi', [$status, $final_loan_amount, $tenure_months, $roi, $id]);
         } else {
             db_query($conn, "UPDATE leads SET status = ?, status_date = CURDATE() WHERE id = ?", 'si', [$status, $id]);
         }
@@ -980,7 +990,7 @@ switch ($path) {
             if (!$commRow) {
                 // Compute commission (1% of loan amount by default, or based on system setting)
                 $percent = (float)get_setting('default_commission_rate', '1.0');
-                $commission_amount = round(($lead['loan_amount'] * $percent) / 100, 2);
+                $commission_amount = round(($final_loan_amount * $percent) / 100, 2);
                 
                 db_query($conn, "
                     INSERT INTO commissions (lead_id, agent_id, commission_amount, paid_amount, payout_90_status, payout_10_status)
@@ -1112,6 +1122,14 @@ switch ($path) {
                 $gate = can_disburse_lead($conn, $lead, $newly_uploaded);
                 if ($gate !== true) json_error($gate);
 
+                $final_loan_amount = (float)($input['final_loan_amount'] ?? $_POST['final_loan_amount'] ?? 0);
+                $tenure_months = (int)($input['tenure_months'] ?? $_POST['tenure_months'] ?? 0);
+                $roi = (float)($input['roi'] ?? $_POST['roi'] ?? 0);
+
+                if ($final_loan_amount <= 0 || $tenure_months <= 0 || $roi <= 0) {
+                    json_error("Final loan amount, tenure (months), and ROI are mandatory for disbursal.");
+                }
+
                 if (is_admin() || is_manager()) {
                     db_query($conn, "UPDATE lead_documents SET verification_status = 'verified' WHERE lead_id = ? AND verification_status = 'pending' AND IFNULL(verification_notes, '') != 'Archived / Removed by user'", 'i', [$lead_id]);
                 }
@@ -1135,13 +1153,13 @@ switch ($path) {
                 }
 
                 // Update lead status to disbursed
-                db_query($conn, "UPDATE leads SET status = 'disbursed', status_date = CURDATE() WHERE id = ?", 'i', [$lead_id]);
+                db_query($conn, "UPDATE leads SET status = 'disbursed', status_date = CURDATE(), final_loan_amount = ?, tenure_months = ?, roi = ? WHERE id = ?", 'sdidi', [$final_loan_amount, $tenure_months, $roi, $lead_id]);
 
                 // Create Commissions row if status is 'disbursed'
                 $commRow = db_fetch_one($conn, "SELECT id FROM commissions WHERE lead_id = ?", 'i', [$lead_id]);
                 if (!$commRow) {
                     $percent = (float)get_setting('default_commission_rate', '1.0');
-                    $commission_amount = round(($lead['loan_amount'] * $percent) / 100, 2);
+                    $commission_amount = round(($final_loan_amount * $percent) / 100, 2);
                     if (!empty($lead['agent_id'])) {
                         db_query($conn, "
                             INSERT INTO commissions (lead_id, agent_id, commission_amount, paid_amount, payout_90_status, payout_10_status)

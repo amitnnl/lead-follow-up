@@ -6,7 +6,7 @@ import {
   Clock, CheckCircle, XCircle, Building,
   Edit, Trash2, Printer, RefreshCw, ShieldAlert,
   User, ChevronRight, AlertTriangle, TrendingUp, Calendar, Banknote,
-  Shield, Info, CircleDot, BadgeCheck, List, Calculator, Users
+  Shield, Info, CircleDot, BadgeCheck, List, Calculator, Users, Plus, X
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
@@ -113,6 +113,47 @@ export default function LeadDetails() {
   const [assignError, setAssignError] = useState('');
   const [assignSuccess, setAssignSuccess] = useState(false);
 
+  const [quickAddType, setQuickAddType] = useState<'financer' | 'executive' | null>(null);
+  const [quickAddName, setQuickAddName] = useState('');
+  const [quickAddMobile, setQuickAddMobile] = useState('');
+  const [quickAddLoading, setQuickAddLoading] = useState(false);
+
+  const handleQuickAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickAddName) return;
+    setQuickAddLoading(true);
+    try {
+      if (quickAddType === 'financer') {
+        const res = await api.post('/setup/financers', { name: quickAddName, is_active: 1 });
+        const newId = res.data?.id;
+        const listRes = await api.get('/setup/financers');
+        setFinancers(listRes.data.financers || []);
+        if (newId) {
+          setAssignForm(prev => ({ ...prev, financer_id: newId.toString(), executive_id: '' }));
+        }
+      } else if (quickAddType === 'executive') {
+        const payload: any = { name: quickAddName, mobile: quickAddMobile, is_active: 1 };
+        if (assignForm.financer_id) {
+          payload.financer_id = assignForm.financer_id;
+        }
+        const res = await api.post('/setup/executives', payload);
+        const newId = res.data?.id;
+        const listRes = await api.get('/setup/executives');
+        setExecutives(listRes.data.executives || []);
+        if (newId) {
+          setAssignForm(prev => ({ ...prev, executive_id: newId.toString() }));
+        }
+      }
+      setQuickAddType(null);
+      setQuickAddName('');
+      setQuickAddMobile('');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to quick add');
+    } finally {
+      setQuickAddLoading(false);
+    }
+  };
+
   const activeTab = searchParams.get('tab') || 'overview';
 
   // Followup form state
@@ -137,6 +178,10 @@ export default function LeadDetails() {
   const handleDisburseDocChange = (type: string, file: File | null) => {
     setDisburseDocs(prev => ({ ...prev, [type]: file }));
   };
+
+  const [disburseFinalAmount, setDisburseFinalAmount] = useState('');
+  const [disburseTenure, setDisburseTenure] = useState('');
+  const [disburseRoi, setDisburseRoi] = useState('');
 
   const handleUploadDocumentPragmatic = async (category: string, docType: string, file: File, expiryDate?: string) => {
     if (!data?.lead?.id) return;
@@ -255,6 +300,9 @@ export default function LeadDetails() {
         formData.append('insurance_company', insuranceDetails.insurance_company || data?.lead.insurance_company || '');
         formData.append('policy_number', insuranceDetails.policy_number || data?.lead.policy_number || '');
         formData.append('insurance_expiry_date', insuranceDetails.insurance_expiry_date || data?.lead.insurance_expiry_date || '');
+        formData.append('final_loan_amount', disburseFinalAmount);
+        formData.append('tenure_months', disburseTenure);
+        formData.append('roi', disburseRoi);
         await api.post('/followups/add', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         navigate('/leads?status=disbursed');
         return;
@@ -264,6 +312,9 @@ export default function LeadDetails() {
       setRemarks('');
       setNextDate('');
       setDisburseDocs({ aadhaar: null, pan: null, bank_statement: null, other: null, rc: null, insurance: null });
+      setDisburseFinalAmount('');
+      setDisburseTenure('');
+      setDisburseRoi('');
       fetchLeadDetails();
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to add follow-up');
@@ -663,6 +714,16 @@ export default function LeadDetails() {
               </div>
             )}
           </div>
+
+          {/* Row 3: Final Disbursed Amt */}
+          {lead.status === 'disbursed' && lead.final_loan_amount && (
+            <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-4 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 rounded-xl">
+              <InfoRow label="Final Disbursed Amt" value={<span className="text-emerald-700 dark:text-emerald-400 font-bold">₹{parseFloat(lead.final_loan_amount).toLocaleString()}</span>} />
+              <InfoRow label="Tenure (Months)" value={lead.tenure_months} mono />
+              <InfoRow label="ROI (%)" value={`${lead.roi}%`} mono />
+              {lead.payout_amount && <InfoRow label="Agent Payout" value={<span className="text-indigo-600 dark:text-indigo-400 font-bold">₹{parseFloat(lead.payout_amount).toLocaleString()}</span>} />}
+            </div>
+          )}
         </div>
       </div>
 
@@ -1026,9 +1087,14 @@ export default function LeadDetails() {
 
                   {/* 2. Target Financer / Bank */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                      Target Financer
-                    </label>
+                    <div className="flex justify-between items-center">
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                        Financer
+                      </label>
+                      <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-0.5 cursor-pointer">
+                        <Plus className="w-3 h-3" /> Quick Add
+                      </button>
+                    </div>
                     <select
                       value={assignForm.financer_id}
                       onChange={(e) => setAssignForm({ ...assignForm, financer_id: e.target.value, executive_id: '' })}
@@ -1041,9 +1107,14 @@ export default function LeadDetails() {
 
                   {/* 3. Assign to Executive */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
-                      Bank Executive
-                    </label>
+                    <div className="flex justify-between items-center">
+                      <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                        Bank Executive
+                      </label>
+                      <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-0.5 cursor-pointer">
+                        <Plus className="w-3 h-3" /> Quick Add
+                      </button>
+                    </div>
                     <select
                       value={assignForm.executive_id}
                       onChange={(e) => setAssignForm({ ...assignForm, executive_id: e.target.value })}
@@ -1133,6 +1204,27 @@ export default function LeadDetails() {
                     {/* Disbursal extras */}
                     {newStatus === 'disbursed' && (
                       <div className="p-4 bg-amber-50 dark:bg-amber-500/5 rounded-xl border border-amber-200 dark:border-amber-500/20 space-y-4">
+                        <div className="space-y-3 pb-4 border-b border-amber-200/50">
+                          <div className="flex items-center gap-2">
+                            <Banknote className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                            <h4 className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">Final Loan Details (Required)</h4>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Final Loan Amount *</label>
+                              <input required type="number" min="1" value={disburseFinalAmount} onChange={e => setDisburseFinalAmount(e.target.value)} className="w-full text-xs font-mono" placeholder="₹ Amount" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tenure (Months) *</label>
+                              <input required type="number" min="1" value={disburseTenure} onChange={e => setDisburseTenure(e.target.value)} className="w-full text-xs font-mono" placeholder="e.g. 60" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">ROI (%) *</label>
+                              <input required type="number" step="0.01" min="0.1" value={disburseRoi} onChange={e => setDisburseRoi(e.target.value)} className="w-full text-xs font-mono" placeholder="e.g. 8.5" />
+                            </div>
+                          </div>
+                        </div>
+
                         {lead.vehicle_condition === 'new' ? (
                           <div className="space-y-3">
                             <div className="flex items-center gap-2">
@@ -1555,6 +1647,40 @@ export default function LeadDetails() {
         leadId={data?.lead?.id} initialData={data?.lead}
         onSuccess={() => { setIsAssignmentModalOpen(false); fetchLeadDetails(); }}
       />
+      
+      {quickAddType && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[70] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <Plus className="w-4 h-4 text-indigo-600" />
+                Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
+              </h3>
+              <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
+              <div>
+                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
+                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 dark:text-white transition-all" />
+              </div>
+              {quickAddType === 'executive' && (
+                <div>
+                  <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
+                  <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+                </div>
+              )}
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
+                <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-indigo-500/20">
+                  {quickAddLoading ? 'Saving...' : 'Save & Select'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

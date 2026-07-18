@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Users, Calendar, Building2, UserCircle2, AlertCircle } from 'lucide-react';
+import { X, Users, Calendar, Building2, UserCircle2, AlertCircle, Plus } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 
@@ -28,6 +28,47 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
     channel_id: '',
     channel_executive_id: ''
   });
+
+  const [quickAddType, setQuickAddType] = useState<'financer' | 'executive' | null>(null);
+  const [quickAddName, setQuickAddName] = useState('');
+  const [quickAddMobile, setQuickAddMobile] = useState('');
+  const [quickAddLoading, setQuickAddLoading] = useState(false);
+
+  const handleQuickAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickAddName) return;
+    setQuickAddLoading(true);
+    try {
+      if (quickAddType === 'financer') {
+        const res = await api.post('/setup/financers', { name: quickAddName, is_active: 1 });
+        const newId = res.data?.id;
+        const listRes = await api.get('/setup/financers');
+        setFinancers(listRes.data.financers || []);
+        if (newId) {
+          setFormData(prev => ({ ...prev, financer_id: newId.toString(), executive_id: '' }));
+        }
+      } else if (quickAddType === 'executive') {
+        const payload: any = { name: quickAddName, mobile: quickAddMobile, is_active: 1 };
+        if (formData.financer_id) {
+          payload.financer_id = formData.financer_id;
+        }
+        const res = await api.post('/setup/executives', payload);
+        const newId = res.data?.id;
+        const listRes = await api.get('/setup/executives');
+        setExecutives(listRes.data.executives || []);
+        if (newId) {
+          setFormData(prev => ({ ...prev, executive_id: newId.toString() }));
+        }
+      }
+      setQuickAddType(null);
+      setQuickAddName('');
+      setQuickAddMobile('');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to quick add');
+    } finally {
+      setQuickAddLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -141,12 +182,17 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                   />
                 </div>
 
-                {/* 2. Target Financer / Bank */}
+                {/* 2. Financer / Bank */}
                 <div>
-                  <label className={labelClass}>
-                    <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                    Target Financer
-                  </label>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                      Financer
+                    </label>
+                    <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
+                      <Plus className="w-3 h-3" /> Quick Add
+                    </button>
+                  </div>
                   <select
                     value={formData.financer_id}
                     onChange={handleFinancerChange}
@@ -159,10 +205,15 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
 
                 {/* 3. Assign to Executive (SFE) */}
                 <div>
-                  <label className="block text-xs font-semibold text-primary-600 dark:text-primary-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
-                    <UserCircle2 className="w-3.5 h-3.5 text-primary-500" />
-                    Bank Executive
-                  </label>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="block text-xs font-semibold text-primary-600 dark:text-primary-400 flex items-center gap-1.5 uppercase tracking-wider">
+                      <UserCircle2 className="w-3.5 h-3.5 text-primary-500" />
+                      Bank Executive
+                    </label>
+                    <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
+                      <Plus className="w-3 h-3" /> Quick Add
+                    </button>
+                  </div>
                   <select
                     value={formData.executive_id}
                     onChange={(e) => setFormData({...formData, executive_id: e.target.value})}
@@ -193,6 +244,40 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
         </form>
 
       </div>
+
+      {quickAddType && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[60] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <Plus className="w-4 h-4 text-primary-600" />
+                Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
+              </h3>
+              <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
+              <div>
+                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
+                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all" />
+              </div>
+              {quickAddType === 'executive' && (
+                <div>
+                  <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
+                  <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+                </div>
+              )}
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
+                <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-primary-500/20">
+                  {quickAddLoading ? 'Saving...' : 'Save & Select'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
