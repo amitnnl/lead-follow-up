@@ -18,6 +18,7 @@ interface Lead {
   id: number;
   lead_id: string;
   customer_name: string;
+  customer_address?: string;
   customer_mobile: string;
   vehicle_make_model: string;
   registration_number: string;
@@ -375,15 +376,18 @@ export default function Leads() {
   const handleBulkExport = () => {
     if (!selectedLeadIds.length) return;
     const filteredLeads = leads.filter(l => selectedLeadIds.includes(l.id));
-    const headers = ["Lead ID", "Date", "Customer Name", "Mobile", "Vehicle", "Reg No", "Loan Amount", "Executive", "Dealer/Agent", "Status"];
+    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Dealer/Agent", "Status"];
     const rows = filteredLeads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
+      `"${(l.customer_address || '').replace(/"/g, '""')}"`,
       l.customer_mobile || '',
       `"${(l.vehicle_make_model || '').replace(/"/g, '""')}"`,
       l.registration_number || '', l.loan_amount || 0,
+      `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
-      `"${(l.agent_name || 'Direct').replace(/"/g, '""')}"`,
+      l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
+      `"${(l.agent_name || l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -457,15 +461,18 @@ export default function Leads() {
 
   const exportToCSV = () => {
     if (!leads.length) return;
-    const headers = ["Lead ID", "Date", "Customer Name", "Mobile", "Vehicle", "Reg No", "Loan Amount", "Executive", "Dealer/Agent", "Status"];
+    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Dealer/Agent", "Status"];
     const rows = leads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
+      `"${(l.customer_address || '').replace(/"/g, '""')}"`,
       l.customer_mobile || '',
       `"${(l.vehicle_make_model || '').replace(/"/g, '""')}"`,
       l.registration_number || '', l.loan_amount || 0,
+      `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
-      `"${(l.agent_name || 'Direct').replace(/"/g, '""')}"`,
+      l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
+      `"${(l.agent_name || l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
