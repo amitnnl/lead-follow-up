@@ -6,13 +6,12 @@ import {
   Clock, CheckCircle, XCircle, Building,
   Edit, Trash2, Printer, RefreshCw, ShieldAlert,
   User, ChevronRight, AlertTriangle, TrendingUp, Download, Calendar, Banknote,
-  Shield, Info, CircleDot, BadgeCheck, List, Calculator, Users, Plus, X
+  Shield, Info, CircleDot, BadgeCheck, List, Users, Plus, X
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
 import NewLeadModal from '../components/NewLeadModal';
 import AssignmentModal from '../components/AssignmentModal';
-import IrrCalculatorComponent from '../components/IrrCalculatorComponent';
 import PragmaticLeadDocuments from '../components/documents/PragmaticLeadDocuments';
 import clsx from 'clsx';
 
@@ -413,7 +412,7 @@ export default function LeadDetails() {
     ...(lead?.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') ? [{ id: 'assignment', icon: Users, label: 'Assign Lead' }] : []),
     { id: 'documents',  icon: FileText,     label: 'Documents' },
     { id: 'followups',  icon: MessageCircle, label: 'Follow-ups', badge: isOverdue ? '!' : null },
-    { id: 'calculator', icon: Calculator,   label: 'IRR Calc' },
+
     { id: 'logs',       icon: Clock,        label: 'Audit Logs' },
   ].filter(t => !(t.id === 'documents' && user?.role === 'staff'));
 
@@ -1436,21 +1435,6 @@ export default function LeadDetails() {
               )}
             </div>
           )}
-
-          {/* ─────────────── CALCULATOR TAB ─────────────── */}
-          {activeTab === 'calculator' && (
-            <div className="card p-5 animate-fade-in">
-              <IrrCalculatorComponent
-                initialLoanAmount={Number(lead.loan_amount) || 500000}
-                initialCustomerName={lead.customer_name}
-                initialVehicle={lead.vehicle_make_model}
-                leadId={lead.id}
-                onSaveToLeadNotes={(text) => { setRemarks(text); handleTabChange('followups'); }}
-                isReadOnly={lead.status === 'disbursed'}
-              />
-            </div>
-          )}
-
           {/* ─────────────── AUDIT LOGS TAB ─────────────── */}
           {activeTab === 'logs' && (
             <div className="card p-5 animate-fade-in">

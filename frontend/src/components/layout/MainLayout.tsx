@@ -33,6 +33,7 @@ import { useThemeStore } from '../../store/themeStore';
 import api from '../../lib/axios';
 import { useSettingsStore } from '../../store/settingsStore';
 import NewLeadModal from '../NewLeadModal';
+import IrrCalculatorComponent from '../IrrCalculatorComponent';
 
 export default function MainLayout() {
   const { user, logout } = useAuthStore();
@@ -47,6 +48,7 @@ export default function MainLayout() {
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
+  const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
 
   const handleToggleSidebar = () => {
@@ -167,8 +169,7 @@ export default function MainLayout() {
     {
       heading: 'Overview',
       items: [
-        { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/calculator', icon: Calculator, label: 'IRR Calculator' }
+        { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' }
       ]
     },
     {
@@ -217,7 +218,7 @@ export default function MainLayout() {
     const path = location.pathname;
     const status = new URLSearchParams(location.search).get('status');
     if (path === '/dashboard') return { group: 'Overview', title: 'Dashboard' };
-    if (path === '/calculator') return { group: 'Overview', title: 'IRR Calculator' };
+
     if (path === '/leads') {
       if (status === 'approved') return { group: 'Leads', title: 'Approved Leads' };
       if (status === 'disbursed') return { group: 'Leads', title: 'Disbursed Leads' };
@@ -471,6 +472,15 @@ export default function MainLayout() {
               <span className="hidden sm:inline">New Lead</span>
             </button>
 
+            <button
+              onClick={() => setIsCalculatorModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+              title="Open IRR Calculator"
+            >
+              <Calculator className="w-4 h-4" />
+              <span className="hidden sm:inline">Calc</span>
+            </button>
+
             <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
             {/* Notifications Popover Trigger */}
@@ -594,16 +604,35 @@ export default function MainLayout() {
         <main className="flex-1 overflow-y-auto overflow-x-hidden relative rounded-[2rem] glass-panel p-4 md:p-6 custom-scrollbar shadow-xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-slate-900/50">
           <Outlet />
         </main>
-      </div>
+        
+        {isNewLeadModalOpen && (
+          <NewLeadModal
+            isOpen={isNewLeadModalOpen}
+            onClose={() => setIsNewLeadModalOpen(false)}
+            onSuccess={(newId) => {
+              setIsNewLeadModalOpen(false);
+              navigate(`/leads/${newId}`);
+            }}
+          />
+        )}
 
-      <NewLeadModal
-        isOpen={isNewLeadModalOpen}
-        onClose={() => setIsNewLeadModalOpen(false)}
-        onSuccess={(newId) => {
-          setIsNewLeadModalOpen(false);
-          navigate(`/leads/${newId}`);
-        }}
-      />
+        {/* Floating IRR Calculator Modal */}
+        {isCalculatorModalOpen && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800 animate-scale-in">
+              <button 
+                onClick={() => setIsCalculatorModalOpen(false)}
+                className="absolute right-4 top-4 z-10 p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 rounded-xl transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="p-2 sm:p-6">
+                <IrrCalculatorComponent />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
