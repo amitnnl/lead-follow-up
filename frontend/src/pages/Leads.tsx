@@ -136,10 +136,10 @@ function LeadTableRow({
       </td>
 
       <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold">
-        {lead.channel_executive_name ? (
+        {lead.channel_name || lead.channel_executive_name ? (
           <div>
-            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.channel_executive_name}>
-              {lead.channel_executive_name}
+            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.channel_name || lead.channel_executive_name}>
+              {lead.channel_name || lead.channel_executive_name}
             </span>
           </div>
         ) : (
@@ -444,7 +444,7 @@ export default function Leads() {
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
-      `"${(l.channel_executive_name || '').replace(/"/g, '""')}"`,
+      `"${(l.channel_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
       `"${(l.agent_name || 'Direct').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
