@@ -136,22 +136,19 @@ function LeadTableRow({
       </td>
 
       <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold">
-        {lead.agent_name || lead.channel_executive_name ? (
+        {lead.channel_executive_name ? (
           <div>
-            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.agent_name || lead.channel_executive_name || ''}>
-              {lead.agent_name || lead.channel_executive_name}
+            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.channel_executive_name}>
+              {lead.channel_executive_name}
             </span>
-            {lead.agent_name && (!lead.agent_kyc_verified || !lead.agent_bank_verified) && (
-              <span className="text-[9px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded border border-amber-200 mt-0.5 inline-flex" title="Missing KYC/Bank Details">Missing KYC</span>
-            )}
           </div>
         ) : (
           <span className="text-slate-400">—</span>
         )}
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.dealer_name || 'Direct'}>
-        {lead.dealer_name || 'Direct'}
+      <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.agent_name || 'Direct / None'}>
+        {lead.agent_name || 'Direct / None'}
       </td>
 
       <td className="px-4 py-4">
@@ -447,8 +444,8 @@ export default function Leads() {
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
-      `"${(l.agent_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
-      `"${(l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
+      `"${(l.channel_executive_name || '').replace(/"/g, '""')}"`,
+      `"${(l.agent_name || 'Direct').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");

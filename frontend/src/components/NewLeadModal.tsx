@@ -268,8 +268,8 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                   <input type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" name="customer_mobile2" value={formData.customer_mobile2} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Optional" />
                 </div>
                 <div className="md:col-span-2 relative">
-                  <label className={labelClass}>Address</label>
-                  <textarea name="customer_address" value={formData.customer_address} onChange={handleChange} className="w-full p-2.5 pl-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none h-16 text-slate-800 dark:text-white text-sm" placeholder="Full residential address"></textarea>
+                  <label className={labelClass}>Address *</label>
+                  <textarea required name="customer_address" value={formData.customer_address} onChange={handleChange} className="w-full p-2.5 pl-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none h-16 text-slate-800 dark:text-white text-sm" placeholder="Full residential address"></textarea>
                   <MapPin className="w-4 h-4 text-slate-400 absolute left-2.5 top-[35px]" />
                 </div>
               </div>
@@ -283,8 +283,8 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className={labelClass}>Make & Model</label>
-                  <input type="text" name="vehicle_make_model" list="vehicle-suggestions" value={formData.vehicle_make_model} onChange={handleChange} className={inputClass} placeholder="e.g. Tata LPT 1512" />
+                  <label className={labelClass}>Make & Model *</label>
+                  <input required type="text" name="vehicle_make_model" list="vehicle-suggestions" value={formData.vehicle_make_model} onChange={handleChange} className={inputClass} placeholder="e.g. Tata LPT 1512" />
                   <datalist id="vehicle-suggestions">
                     <option value="Tata Ace Gold" />
                     <option value="Mahindra Bolero Pickup" />
@@ -308,23 +308,23 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                       <input required type="text" name="registration_number" value={formData.registration_number} onChange={handleChange} className={inputClass} placeholder="e.g. MH 04 AB 1234" />
                     </div>
                     <div>
-                      <label className={labelClass}>Year of Manufacture</label>
-                      <input type="number" min="1990" max="2030" name="year_of_manufacture" value={formData.year_of_manufacture} onChange={handleChange} className={inputClass} placeholder="YYYY" />
+                      <label className={labelClass}>Year of Manufacture *</label>
+                      <input required type="number" min="1990" max="2030" name="year_of_manufacture" value={formData.year_of_manufacture} onChange={handleChange} className={inputClass} placeholder="YYYY" />
                     </div>
                     <div className="sm:col-span-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                       <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Old Vehicle Insurance Details</span>
                     </div>
                     <div>
-                      <label className={labelClass}>Insurance Company Name</label>
-                      <input type="text" name="insurance_company" value={formData.insurance_company} onChange={handleChange} className={inputClass} placeholder="e.g. ICICI Lombard" />
+                      <label className={labelClass}>Insurance Company Name *</label>
+                      <input required type="text" name="insurance_company" value={formData.insurance_company} onChange={handleChange} className={inputClass} placeholder="e.g. ICICI Lombard" />
                     </div>
                     <div>
-                      <label className={labelClass}>Policy Number</label>
-                      <input type="text" name="policy_number" value={formData.policy_number} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Policy No." />
+                      <label className={labelClass}>Policy Number *</label>
+                      <input required type="text" name="policy_number" value={formData.policy_number} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Policy No." />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className={labelClass}>Insurance Expiry Date</label>
-                      <input type="date" name="insurance_expiry_date" value={formData.insurance_expiry_date} onChange={handleChange} className={inputClass} />
+                      <label className={labelClass}>Insurance Expiry Date *</label>
+                      <input required type="date" name="insurance_expiry_date" value={formData.insurance_expiry_date} onChange={handleChange} className={inputClass} />
                     </div>
                   </>
                 )}
@@ -339,10 +339,10 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className={labelClass}>Requested Loan Amount</label>
+                  <label className={labelClass}>Requested Loan Amount *</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₹</span>
-                    <input type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} className={`${inputClass} pl-7`} placeholder="0.00" />
+                    <input required type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} className={`${inputClass} pl-7`} placeholder="0.00" />
                   </div>
                 </div>
                  <div>
@@ -366,12 +366,12 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 {formData.vehicle_condition !== 'old' && !isSelfScopedAgent && (
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dealer</label>
+                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dealer *</label>
                       <button type="button" onClick={() => { setQuickAddType('dealer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
                         <Plus className="w-3 h-3" /> Quick Add
                       </button>
                     </div>
-                    <select name="agent_id" value={formData.agent_id} onChange={handleChange} className={`${inputClass} text-xs`}>
+                    <select required name="agent_id" value={formData.agent_id} onChange={handleChange} className={`${inputClass} text-xs`}>
                       <option value="">— Direct / None —</option>
                       {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
                     </select>
@@ -380,12 +380,12 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 {!isSelfScopedAgent && (
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Channels</label>
+                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Channels *</label>
                       <button type="button" onClick={() => { setQuickAddType('channel_agent'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
                         <Plus className="w-3 h-3" /> Quick Add
                       </button>
                     </div>
-                    <select name="channel_executive_id" value={formData.channel_executive_id} onChange={handleChange} className={`${inputClass} text-xs`}>
+                    <select required name="channel_executive_id" value={formData.channel_executive_id} onChange={handleChange} className={`${inputClass} text-xs`}>
                       <option value="">— Select Agent —</option>
                       {channelExecutives.map(ce => <option key={ce.id} value={ce.id}>{ce.name}</option>)}
                     </select>

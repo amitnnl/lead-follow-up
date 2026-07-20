@@ -48,6 +48,7 @@ export default function PragmaticLeadDocuments({
   const [file, setFile] = useState<File | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [previewDoc, setPreviewDoc] = useState<{ url: string; title: string } | null>(null);
+  const [dragActive, setDragActive] = useState<string | null>(null);
 
   // Auto-infer category from docType so user doesn't have to think about it
   const getCategoryFromType = (type: string) => {
@@ -162,9 +163,23 @@ export default function PragmaticLeadDocuments({
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {missingDocs.map(item => (
-                  <div key={item.type} className="p-3 bg-amber-50/50 dark:bg-amber-500/5 border border-amber-200/60 dark:border-amber-500/20 rounded-xl flex items-center justify-between gap-2 shadow-sm transition-all hover:shadow-md hover:border-amber-300 dark:hover:border-amber-500/40 group">
+                  <div 
+                    key={item.type} 
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(item.type); }}
+                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(null); }}
+                    onDrop={(e) => {
+                      e.preventDefault(); e.stopPropagation(); setDragActive(null);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        onUpload(item.cat, item.type, e.dataTransfer.files[0]);
+                      }
+                    }}
+                    className={`p-3 bg-amber-50/50 dark:bg-amber-500/5 border ${dragActive === item.type ? 'border-amber-500 bg-amber-100/50 dark:bg-amber-500/20 shadow-md scale-[1.02]' : 'border-amber-200/60 dark:border-amber-500/20 hover:shadow-md hover:border-amber-300 dark:hover:border-amber-500/40'} rounded-xl flex items-center justify-between gap-2 shadow-sm transition-all group relative`}
+                  >
+                    {dragActive === item.type && (
+                      <div className="absolute inset-0 border-2 border-dashed border-amber-500 rounded-xl pointer-events-none" />
+                    )}
                     <span className="text-xs font-bold text-amber-900 dark:text-amber-300 truncate pr-2">{item.label}</span>
-                    <label className="text-[10px] font-bold bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700/50 px-2.5 py-1.5 rounded-lg text-amber-700 dark:text-amber-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 cursor-pointer transition-colors shadow-sm flex items-center gap-1 shrink-0">
+                    <label className="text-[10px] font-bold bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700/50 px-2.5 py-1.5 rounded-lg text-amber-700 dark:text-amber-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 cursor-pointer transition-colors shadow-sm flex items-center gap-1 shrink-0 z-10">
                       {uploadingDoc ? '...' : <><UploadCloud className="w-3.5 h-3.5" /> Upload</>}
                       <input 
                         type="file" 
