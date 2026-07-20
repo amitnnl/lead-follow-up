@@ -497,7 +497,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                 <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400">{formatCurrency(lead.loan_amount)}</span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Vehicle Condition</span>
+                <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Lead Type</span>
                 <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize flex items-center gap-1">
                   <span className={`w-1.5 h-1.5 rounded-full ${lead.vehicle_condition === 'new' ? 'bg-violet-500' : 'bg-amber-500'}`} />
                   {lead.vehicle_condition || 'New'}

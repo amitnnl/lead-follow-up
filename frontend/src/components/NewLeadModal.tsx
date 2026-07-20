@@ -230,7 +230,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
             
             {/* Smart Vehicle Condition Dropdown */}
             <div className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800/80 mb-6">
-              <label className={labelClass}>Vehicle Condition *</label>
+              <label className={labelClass}>Lead Type *</label>
               <select 
                 required 
                 name="vehicle_condition" 
@@ -380,7 +380,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 {!isSelfScopedAgent && (
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Channel Agent</label>
+                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Channels</label>
                       <button type="button" onClick={() => { setQuickAddType('channel_agent'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
                         <Plus className="w-3 h-3" /> Quick Add
                       </button>
@@ -425,7 +425,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                 <Plus className="w-4 h-4 text-primary-600" />
-                Quick Add {quickAddType === 'dealer' ? 'Dealer' : 'Channel Agent'}
+                Quick Add {quickAddType === 'dealer' ? 'Dealer' : 'Channels'}
               </h3>
               <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
                 <X className="w-4 h-4" />

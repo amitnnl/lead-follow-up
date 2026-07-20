@@ -20,7 +20,7 @@ const ROLE_CONFIG: Record<string, { label: string; icon: any; color: string; bgC
   staff: { label: 'Staff', icon: UsersIcon, color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-50 dark:bg-slate-800' },
   executive: { label: 'Field Exec', icon: UserCheck, color: 'text-amber-700 dark:text-amber-400', bgColor: 'bg-amber-50 dark:bg-amber-950/40' },
   agent: { label: 'DSA Agent', icon: UsersIcon, color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-50 dark:bg-slate-800' },
-  channel_agent: { label: 'Channel Agent', icon: UsersIcon, color: 'text-indigo-700 dark:text-indigo-400', bgColor: 'bg-indigo-50 dark:bg-indigo-950/40' },
+  channel_agent: { label: 'Channels', icon: UsersIcon, color: 'text-indigo-700 dark:text-indigo-400', bgColor: 'bg-indigo-50 dark:bg-indigo-950/40' },
   rto_desk: { label: 'RTO Desk', icon: UserCog, color: 'text-rose-700 dark:text-rose-400', bgColor: 'bg-rose-50 dark:bg-rose-950/40' },
   insurance_desk: { label: 'Insurance Desk', icon: UserCog, color: 'text-emerald-700 dark:text-emerald-400', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40' },
 };
@@ -123,7 +123,7 @@ function UserModal({
               <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-rose-500 text-sm text-slate-800 dark:text-white">
                 <option value="manager">Manager</option>
                 <option value="staff">Staff</option>
-                <option value="channel_agent">Channel Agent</option>
+                <option value="channel_agent">Channels</option>
                 <option value="agent">DSA Agent</option>
                 <option value="executive">Field Executive</option>
                 <option value="admin">Admin</option>
@@ -152,7 +152,7 @@ function UserModal({
           {formData.role === 'channel_agent' && (
             <div className="flex items-start gap-2 mt-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 p-3 rounded-lg border border-indigo-200 dark:border-indigo-900/30 text-xs">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <p>When creating a Channel Agent user account, remember to link this login account under <strong>Setup → Channel Agents</strong> so their self-created leads are tracked properly.</p>
+              <p>When creating a Channels user account, remember to link this login account under <strong>Setup → Channels</strong> so their self-created leads are tracked properly.</p>
             </div>
           )}
 
@@ -358,7 +358,7 @@ export default function Users() {
                   <option value="staff">Staff</option>
                   <option value="executive">Executive</option>
                   <option value="agent">DSA Agent</option>
-                  <option value="channel_agent">Channel Agent</option>
+                  <option value="channel_agent">Channels</option>
                   <option value="rto_desk">RTO Desk</option>
                   <option value="insurance_desk">Insurance Desk</option>
                 </select>

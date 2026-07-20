@@ -51,7 +51,7 @@ function AgentModal({
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <UsersRound className="w-5 h-5 text-primary-500" />
-            {editingExec ? 'Edit Channel Agent Profile' : 'Add Channel Agent'}
+            {editingExec ? 'Edit Channels Profile' : 'Add Channels'}
           </h2>
           <button onClick={onClose} type="button" className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
             <X className="w-5 h-5" />
@@ -203,7 +203,7 @@ function AgentModal({
           <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2 shrink-0">
             <button type="button" onClick={onClose} className="px-4 py-2.5 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200 dark:border-slate-700">Cancel</button>
             <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-primary-600 text-white hover:bg-primary-700 rounded-lg shadow-sm transition-colors cursor-pointer">
-              {editingExec ? 'Save Profile' : 'Add Channel Agent'}
+              {editingExec ? 'Save Profile' : 'Add Channels'}
             </button>
           </div>
         </form>
@@ -231,7 +231,7 @@ function AgentRow({
         <div className="font-semibold text-slate-800 dark:text-white flex items-center gap-2">
           {ex.name}
         </div>
-        <div className="text-[11px] text-slate-400 mt-0.5">Authorized Channel Agent</div>
+        <div className="text-[11px] text-slate-400 mt-0.5">Authorized Channels</div>
       </td>
       <td className="px-4 py-3.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
         <div className="font-semibold text-slate-800 dark:text-slate-200">{ex.mobile}</div>
@@ -294,7 +294,7 @@ export default function ChannelExecutives() {
       const res = await api.get('/setup/channel_executives');
       setExecutives(res.data.channel_executives || []);
     } catch (error) {
-      console.error('Failed to fetch channel agents', error);
+      console.error('Failed to fetch channels', error);
     } finally {
       setLoading(false);
     }
@@ -343,17 +343,17 @@ export default function ChannelExecutives() {
       setIsModalOpen(false);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to save channel agent');
+      alert(err.response?.data?.error || 'Failed to save channels');
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this channel agent?')) return;
+    if (!window.confirm('Are you sure you want to delete these channels?')) return;
     try {
       await api.delete(`/setup/channel_executives?id=${id}`);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete channel agent');
+      alert(err.response?.data?.error || 'Failed to delete channels');
     }
   };
 
@@ -465,7 +465,7 @@ export default function ChannelExecutives() {
                 />
               ))}
               {!loading && filteredExecutives.length === 0 && (
-                <tr><td colSpan={6} className="py-8 text-center text-slate-400 text-sm">No channel agents found. Add one above.</td></tr>
+                <tr><td colSpan={6} className="py-8 text-center text-slate-400 text-sm">No channels found. Add one above.</td></tr>
               )}
             </tbody>
           </table>

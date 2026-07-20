@@ -145,7 +145,7 @@ function AgentModal({
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <UsersRound className="w-5 h-5 text-indigo-500" />
-            {editingExec ? 'Edit Channel Agent Profile' : 'Add Channel Agent Profile'}
+            {editingExec ? 'Edit Channels Profile' : 'Add Channels Profile'}
           </h2>
           <button onClick={onClose} type="button" className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
             <X className="w-5 h-5" />
@@ -248,7 +248,7 @@ function AgentModal({
           <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2 shrink-0">
             <button type="button" onClick={onClose} className="px-4 py-2.5 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200 dark:border-slate-700">Cancel</button>
             <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg shadow-sm transition-colors cursor-pointer">
-              {editingExec ? 'Save Agent Profile' : 'Add Channel Agent'}
+              {editingExec ? 'Save Agent Profile' : 'Add Channels'}
             </button>
           </div>
         </form>
@@ -392,17 +392,17 @@ export default function Channels() {
       setIsAgentModalOpen(false);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to save channel agent');
+      alert(err.response?.data?.error || 'Failed to save channels');
     }
   };
 
   const handleAgentDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this channel agent?')) return;
+    if (!window.confirm('Are you sure you want to delete these channels?')) return;
     try {
       await api.delete(`/setup/channel_executives?id=${id}`);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete channel agent');
+      alert(err.response?.data?.error || 'Failed to delete channels');
     }
   };
 
@@ -439,7 +439,7 @@ export default function Channels() {
             </button>
           ) : (
             <button onClick={() => handleOpenAgentModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer">
-              <Plus className="w-4 h-4" /> Add Channel Agent
+              <Plus className="w-4 h-4" /> Add Channels
             </button>
           )}
         </div>
@@ -609,7 +609,7 @@ export default function Channels() {
                   </tr>
                 ))}
                 {!loading && filteredExecutives.length === 0 && (
-                  <tr><td colSpan={7} className="py-8 text-center text-slate-400 text-sm">No channel agents found. Click Add Channel Agent above.</td></tr>
+                  <tr><td colSpan={7} className="py-8 text-center text-slate-400 text-sm">No channels found. Click Add Channels above.</td></tr>
                 )}
               </tbody>
             </table>

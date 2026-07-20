@@ -982,7 +982,7 @@ export default function LeadDetails() {
                 <div className="space-y-3">
                   {[
                     { label: 'Dealer\'s', value: lead.agent_name || lead.dealer_name || 'Direct / None', color: 'slate' as const },
-                    ...(lead.channel_executive_name ? [{ label: 'Channel Agent', value: lead.channel_executive_name, color: 'indigo' as const }] : []),
+                    ...(lead.channel_executive_name ? [{ label: 'Channels', value: lead.channel_executive_name, color: 'indigo' as const }] : []),
                     { label: 'Financer / Bank', value: lead.financer_name || 'Unassigned', color: 'amber' as const },
                     { label: 'Bank Executive', value: lead.executive_name || 'Unassigned', color: 'emerald' as const },
                   ].map((row) => (
