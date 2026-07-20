@@ -141,6 +141,50 @@ export default function PragmaticLeadDocuments({
           </div>
         )}
 
+        {/* Missing Documents Quick Upload Checklist */}
+        {(() => {
+          const requiredDocs = [
+            { type: 'aadhaar', label: 'Aadhaar Card', cat: 'kyc' },
+            { type: 'pan', label: 'PAN Card', cat: 'kyc' },
+            { type: 'bank_statement', label: 'Bank Statement', cat: 'kyc' },
+            { type: 'photo', label: 'Applicant Photo', cat: 'kyc' },
+            { type: 'rc', label: 'RC Certificate', cat: 'vehicle' },
+            { type: 'insurance', label: 'Insurance Policy', cat: 'vehicle' }
+          ];
+          const missingDocs = requiredDocs.filter(item => !documents.some(d => d.document_type === item.type && d.verification_notes !== 'Archived / Removed by user'));
+          
+          if (missingDocs.length === 0) return null;
+
+          return (
+            <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5" /> Missing Documents Checklist
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {missingDocs.map(item => (
+                  <div key={item.type} className="p-3 bg-amber-50/50 dark:bg-amber-500/5 border border-amber-200/60 dark:border-amber-500/20 rounded-xl flex items-center justify-between gap-2 shadow-sm transition-all hover:shadow-md hover:border-amber-300 dark:hover:border-amber-500/40 group">
+                    <span className="text-xs font-bold text-amber-900 dark:text-amber-300 truncate pr-2">{item.label}</span>
+                    <label className="text-[10px] font-bold bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700/50 px-2.5 py-1.5 rounded-lg text-amber-700 dark:text-amber-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 cursor-pointer transition-colors shadow-sm flex items-center gap-1 shrink-0">
+                      {uploadingDoc ? '...' : <><UploadCloud className="w-3.5 h-3.5" /> Upload</>}
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => {
+                          if (e.target.files?.[0]) {
+                            onUpload(item.cat, item.type, e.target.files[0]);
+                          }
+                        }}
+                        disabled={uploadingDoc}
+                      />
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Easiest Inline Upload Form */}
         {showUploadForm && (
           <form onSubmit={handleUploadSubmit} className="mt-5 p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-primary-200 dark:border-primary-800/60 animate-in fade-in slide-in-from-top-2 space-y-4">

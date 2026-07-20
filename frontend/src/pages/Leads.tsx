@@ -136,18 +136,22 @@ function LeadTableRow({
       </td>
 
       <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold">
-        {lead.agent_name ? (
+        {lead.agent_name || lead.channel_executive_name ? (
           <div>
-            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.agent_name}>
-              {lead.agent_name}
+            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.agent_name || lead.channel_executive_name || ''}>
+              {lead.agent_name || lead.channel_executive_name}
             </span>
-            {(!lead.agent_kyc_verified || !lead.agent_bank_verified) && (
+            {lead.agent_name && (!lead.agent_kyc_verified || !lead.agent_bank_verified) && (
               <span className="text-[9px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded border border-amber-200 mt-0.5 inline-flex" title="Missing KYC/Bank Details">Missing KYC</span>
             )}
           </div>
         ) : (
-          <span className="text-slate-500">{lead.dealer_name ? lead.dealer_name : 'Direct'}</span>
+          <span className="text-slate-400">—</span>
         )}
+      </td>
+
+      <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.dealer_name || 'Direct'}>
+        {lead.dealer_name || 'Direct'}
       </td>
 
       <td className="px-4 py-4">
@@ -346,7 +350,7 @@ export default function Leads() {
   const handleBulkExport = () => {
     if (!selectedLeadIds.length) return;
     const filteredLeads = leads.filter(l => selectedLeadIds.includes(l.id));
-    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Dealer/Agent", "Status"];
+    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel Name", "Dealer", "Status"];
     const rows = filteredLeads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
@@ -357,7 +361,8 @@ export default function Leads() {
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
-      `"${(l.agent_name || l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
+      `"${(l.agent_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
+      `"${(l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -431,7 +436,7 @@ export default function Leads() {
 
   const exportToCSV = () => {
     if (!leads.length) return;
-    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Dealer/Agent", "Status"];
+    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel Name", "Dealer", "Status"];
     const rows = leads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
@@ -442,7 +447,8 @@ export default function Leads() {
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
-      `"${(l.agent_name || l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
+      `"${(l.agent_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
+      `"${(l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -696,7 +702,8 @@ export default function Leads() {
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Financer</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Executive</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead Type</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Dealer's</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Channel Name</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Dealer</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Status</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-24">Actions</th>
                 </tr>

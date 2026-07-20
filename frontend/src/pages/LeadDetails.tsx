@@ -1005,58 +1005,90 @@ export default function LeadDetails() {
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {[
-                    { type: 'aadhaar', label: 'Aadhaar Card' },
-                    { type: 'pan', label: 'PAN Card' },
-                    { type: 'bank_statement', label: 'Bank Statement' },
-                  ].map((item) => {
-                    const doc = documents?.find((d: any) => d.document_type === item.type && d.verification_notes !== 'Archived / Removed by user');
-                    const status: string = doc ? doc.verification_status : 'missing';
-                    const kycClass = status === 'verified' ? 'kyc-verified' : status === 'rejected' ? 'kyc-rejected' : status === 'pending' ? 'kyc-pending' : 'kyc-missing';
-                    return (
-                      <div key={item.type} className={clsx('rounded-xl border p-4 flex flex-col gap-3', kycClass)}>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold">{item.label}</span>
-                          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded flex items-center gap-1" style={{ background: 'rgba(0,0,0,0.1)' }}>
-                            {status === 'verified' && <CheckCircle className="w-2.5 h-2.5" />}
-                            {status === 'rejected' && <XCircle className="w-2.5 h-2.5" />}
-                            {status === 'missing' ? 'Not Uploaded' : status}
-                          </span>
+                  {(() => {
+                    const gateItems = [
+                      { type: 'aadhaar', label: 'Aadhaar Card', cat: 'KYC' },
+                      { type: 'pan', label: 'PAN Card', cat: 'KYC' },
+                      { type: 'bank_statement', label: 'Bank Statement', cat: 'Financial' },
+                    ].map(item => {
+                      const doc = documents?.find((d: any) => d.document_type === item.type && d.verification_notes !== 'Archived / Removed by user');
+                      return { ...item, doc, status: doc ? doc.verification_status : 'missing' };
+                    });
+
+                    // Hide fully verified docs to keep the upload list clean
+                    const visibleItems = gateItems.filter(item => item.status !== 'verified');
+
+                    if (visibleItems.length === 0) {
+                      return (
+                        <div className="col-span-1 sm:col-span-3 p-5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-xl flex items-center justify-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold shadow-sm">
+                          <CheckCircle className="w-5 h-5" /> All KYC Documents Uploaded & Verified!
                         </div>
-                        <p className="text-[11px] opacity-70">
-                          {doc ? `Uploaded ${doc.uploaded_at?.split(' ')[0] || 'recently'}` : 'Required for disbursal'}
-                        </p>
-                        <div className="flex items-center justify-between pt-2 border-t border-current/10 text-[11px]">
-                          {doc ? (
-                            <>
-                              <a href={getDocUrl(doc.file_path)} target="_blank" rel="noreferrer" className="font-semibold hover:underline">Preview</a>
-                              <div className="flex items-center gap-1">
-                                {canVerifyDocs && status === 'pending' && (
-                                  <>
-                                    <button onClick={() => handleVerifyDoc(doc.id, 'verified')} className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✓</button>
-                                    <button onClick={() => handleVerifyDoc(doc.id, 'rejected')} className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✗</button>
-                                  </>
-                                )}
-                                {isAdminOrManager && (
-                                  <button onClick={() => handleDeleteDoc(doc.id)} className="p-1 hover:opacity-70 rounded cursor-pointer" title="Archive">
-                                    <Trash2 className="w-3 h-3" />
-                                  </button>
-                                )}
-                              </div>
-                            </>
-                          ) : (
-                            user?.role !== 'staff' ? (
-                              <button onClick={() => handleTabChange('documents')} className="font-semibold hover:underline cursor-pointer flex items-center gap-1">
-                                <FileText className="w-3 h-3" /> Upload in Vault →
-                              </button>
+                      );
+                    }
+
+                    return visibleItems.map((item) => {
+                      const { doc, status } = item;
+                      const kycClass = status === 'rejected' ? 'kyc-rejected' : status === 'pending' ? 'kyc-pending' : 'kyc-missing';
+                      return (
+                        <div key={item.type} className={clsx('rounded-xl border p-4 flex flex-col gap-3', kycClass)}>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold">{item.label}</span>
+                            <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded flex items-center gap-1" style={{ background: 'rgba(0,0,0,0.1)' }}>
+                              {status === 'rejected' && <XCircle className="w-2.5 h-2.5" />}
+                              {status === 'missing' ? 'Not Uploaded' : status}
+                            </span>
+                          </div>
+                          <p className="text-[11px] opacity-70">
+                            {doc ? `Uploaded ${doc.uploaded_at?.split(' ')[0] || 'recently'}` : 'Required for disbursal'}
+                          </p>
+                          <div className="flex items-center justify-between pt-2 border-t border-current/10 text-[11px]">
+                            {doc ? (
+                              <>
+                                <a href={getDocUrl(doc.file_path)} target="_blank" rel="noreferrer" className="font-semibold hover:underline">Preview</a>
+                                <div className="flex items-center gap-1">
+                                  {canVerifyDocs && status === 'pending' && (
+                                    <>
+                                      <button onClick={() => handleVerifyDoc(doc.id, 'verified')} className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✓</button>
+                                      <button onClick={() => handleVerifyDoc(doc.id, 'rejected')} className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✗</button>
+                                    </>
+                                  )}
+                                  {isAdminOrManager && (
+                                    <button onClick={() => handleDeleteDoc(doc.id)} className="p-1 hover:opacity-70 rounded cursor-pointer" title="Archive">
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                              </>
                             ) : (
-                              <span className="opacity-60 italic">No file available</span>
-                            )
-                          )}
+                              user?.role !== 'staff' ? (
+                                <label className="font-semibold hover:underline cursor-pointer flex items-center gap-1 text-indigo-600 dark:text-indigo-400">
+                                  {uploadingDoc ? (
+                                    <span className="opacity-70 animate-pulse">Uploading...</span>
+                                  ) : (
+                                    <>
+                                      <FileText className="w-3 h-3" /> Quick Upload
+                                      <input 
+                                        type="file" 
+                                        className="hidden" 
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        onChange={(e) => {
+                                          if (e.target.files?.[0]) {
+                                            handleUploadDocumentPragmatic(item.cat, item.type, e.target.files[0]);
+                                          }
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                </label>
+                              ) : (
+                                <span className="opacity-60 italic">No file available</span>
+                              )
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    });
+                  })()}
                 </div>
               </div>
             </div>
