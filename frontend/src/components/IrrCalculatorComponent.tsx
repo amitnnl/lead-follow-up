@@ -33,8 +33,8 @@ export default function IrrCalculatorComponent({
   isCompact = false,
   isReadOnly = false
 }: IrrCalculatorProps) {
-  // Modes: 'reducing' | 'flat' | 'custom_emi'
-  const [calcMode, setCalcMode] = useState<'reducing' | 'flat' | 'custom_emi'>('reducing');
+  // Modes: 'reducing'
+  const calcMode = 'reducing';
 
   // Basic Inputs
   const [vehiclePrice, setVehiclePrice] = useState<number>(Math.round(initialLoanAmount * 1.25) || 650000);
@@ -44,8 +44,8 @@ export default function IrrCalculatorComponent({
 
   // Mode inputs
   const [reducingRate, setReducingRate] = useState<number>(10.50); // % p.a.
-  const [flatRate, setFlatRate] = useState<number>(5.75); // % p.a.
-  const [customEmi, setCustomEmi] = useState<number>(16500); // ₹
+  const flatRate = 5.75; // % p.a.
+  const customEmi = 16500; // ₹
 
   // Upfront Deductions / Fees
   const [showAdvanced, setShowAdvanced] = useState<boolean>(true);
@@ -354,47 +354,7 @@ Generated via Vehicle Finance Lead Portal`;
         <div className="no-print lg:col-span-5 space-y-6">
           <fieldset disabled={isReadOnly} className="card p-6 border-slate-200/80 dark:border-slate-800 shadow-lg space-y-5 disabled:opacity-85">
             
-            {/* Mode Selection Tabs */}
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                Calculation Mode
-              </label>
-              <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => setCalcMode('reducing')}
-                  className={`py-2 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    calcMode === 'reducing'
-                      ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  Reducing (IRR)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCalcMode('flat')}
-                  className={`py-2 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    calcMode === 'flat'
-                      ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  Flat Rate
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCalcMode('custom_emi')}
-                  className={`py-2 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    calcMode === 'custom_emi'
-                      ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  Target EMI
-                </button>
-              </div>
-            </div>
+            {/* Mode Selection Tabs (Removed) */}
 
             {/* Vehicle Price & Down Payment */}
             <div className="grid grid-cols-2 gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
@@ -485,67 +445,24 @@ Generated via Vehicle Finance Lead Portal`;
             </div>
 
             {/* Dynamic Rate Input based on Mode */}
-            {calcMode === 'reducing' && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
-                  <span>Nominal Reducing Rate (IRR % p.a.)</span>
-                  <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{reducingRate}%</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="1"
-                    max="50"
-                    value={reducingRate}
-                    onChange={(e) => setReducingRate(Number(e.target.value))}
-                    className="input font-semibold text-base"
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400 font-bold">%</div>
-                </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
+                <span>Nominal Reducing Rate (IRR % p.a.)</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{reducingRate}%</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.1"
+                  min="1"
+                  max="50"
+                  value={reducingRate}
+                  onChange={(e) => setReducingRate(Number(e.target.value))}
+                  className="input font-semibold text-base"
+                />
+                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400 font-bold">%</div>
               </div>
-            )}
-
-            {calcMode === 'flat' && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
-                  <span>Flat Interest Rate (% p.a.)</span>
-                  <span className="font-mono text-blue-600 dark:text-blue-400 font-bold">{flatRate}%</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="1"
-                    max="35"
-                    value={flatRate}
-                    onChange={(e) => setFlatRate(Number(e.target.value))}
-                    className="input font-semibold text-base"
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400 font-bold">%</div>
-                </div>
-              </div>
-            )}
-
-            {calcMode === 'custom_emi' && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
-                  <span>Proposed Monthly EMI (₹)</span>
-                  <span className="font-mono text-purple-600 dark:text-purple-400 font-bold">₹{customEmi.toLocaleString()}</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
-                  <input
-                    type="number"
-                    step="100"
-                    min="100"
-                    value={customEmi}
-                    onChange={(e) => setCustomEmi(Number(e.target.value))}
-                    className="input pl-8 font-semibold text-base"
-                  />
-                </div>
-              </div>
-            )}
+            </div>
 
             {/* Upfront Fees & Subvention Section (Collapsible) */}
             <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
@@ -654,26 +571,7 @@ Generated via Vehicle Finance Lead Portal`;
             </div>
           </div>
 
-          {/* Payout Estimator Widget */}
-          <div className="card p-5 border border-slate-200 dark:border-slate-800 shadow-sm bg-gradient-to-br from-indigo-50/40 to-slate-50/20 dark:from-indigo-950/10 dark:to-slate-900/10">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4 text-indigo-500" /> Payout & Commission split (DSA)
-            </h4>
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="bg-white dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                <span className="text-[10px] text-slate-400 font-bold uppercase">Estimated Comm. (1.5%)</span>
-                <p className="text-sm font-bold text-slate-800 dark:text-white mt-1">₹{Math.round(loanAmount * 0.015).toLocaleString()}</p>
-              </div>
-              <div className="bg-indigo-500/5 dark:bg-indigo-500/10 p-2.5 rounded-xl border border-indigo-100 dark:border-indigo-900/40">
-                <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase">Agent Payout (90%)</span>
-                <p className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 mt-1">₹{Math.round(loanAmount * 0.015 * 0.90).toLocaleString()}</p>
-              </div>
-              <div className="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Org Share (10%)</span>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-300 mt-1">₹{Math.round(loanAmount * 0.015 * 0.10).toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
+          {/* Payout Estimator Widget (Removed) */}
 
           {/* Breakdown KPI Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
@@ -698,44 +596,7 @@ Generated via Vehicle Finance Lead Portal`;
             </div>
           </div>
 
-          {/* Visual Progress Bar Breakdown */}
-          <div className="card p-5 space-y-3">
-            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Cash Flow & Payment Structure Breakdown
-            </h3>
-            
-            {(() => {
-              const totalAmount = calculations.principal + calculations.totalInterest;
-              const principalPcnt = totalAmount > 0 ? (calculations.principal / totalAmount) * 100 : 100;
-              const interestPcnt = totalAmount > 0 ? (calculations.totalInterest / totalAmount) * 100 : 0;
-              return (
-                <div>
-                  <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex shadow-inner">
-                    <div 
-                      style={{ width: `${principalPcnt}%` }} 
-                      className="bg-primary-600 transition-all duration-500" 
-                      title={`Principal: ${principalPcnt.toFixed(1)}%`}
-                    />
-                    <div 
-                      style={{ width: `${interestPcnt}%` }} 
-                      className="bg-amber-500 transition-all duration-500" 
-                      title={`Interest: ${interestPcnt.toFixed(1)}%`}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center text-xs mt-2 font-medium">
-                    <div className="flex items-center gap-1.5 text-primary-700 dark:text-primary-400">
-                      <span className="w-3 h-3 rounded-full bg-primary-600 inline-block" />
-                      <span>Principal: ₹{calculations.principal.toLocaleString()} ({principalPcnt.toFixed(1)}%)</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
-                      <span className="w-3 h-3 rounded-full bg-amber-500 inline-block" />
-                      <span>Interest: ₹{calculations.totalInterest.toLocaleString()} ({interestPcnt.toFixed(1)}%)</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
+          {/* Visual Progress Bar Breakdown (Removed) */}
 
           {/* Actions Bar */}
           <div className="no-print flex flex-wrap gap-2.5 items-center justify-between card p-4 bg-slate-50/80 dark:bg-slate-800/80">
