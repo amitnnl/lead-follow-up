@@ -341,6 +341,7 @@ Generated via Vehicle Finance Lead Portal`;
           </div>
         </div>
 
+
         {/* Amortization Schedule Table */}
         <div className="mb-4">
           <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1 mb-2">III. AMORTIZATION SCHEDULE</h3>

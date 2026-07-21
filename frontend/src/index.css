@@ -587,12 +587,18 @@
 /* ── Print Utilities for Multi-page Documents ── */
 @media print {
   /* Remove height and overflow constraints to allow multi-page flow */
-  html, body, #root, main, .h-screen, .h-full, .overflow-hidden, .overflow-y-auto, .max-h-[500px], .fixed, .absolute {
+  html, body, #root, main, .h-screen, .h-full, .overflow-hidden, .overflow-y-auto, .max-h-\[500px\], .max-h-\[90vh\], .fixed, .absolute, [role="dialog"], [data-radix-portal], .pointer-events-none {
     height: auto !important;
     max-height: none !important;
     min-height: auto !important;
     overflow: visible !important;
     position: static !important;
+    transform: none !important;
+  }
+
+  /* Hide background overlays when printing modals */
+  [data-state="open"] > .fixed.inset-0.bg-black\/80 {
+    display: none !important;
   }
 
   /* Ensure tables break cleanly across pages */

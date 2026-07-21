@@ -381,7 +381,7 @@ export default function MainLayout() {
 
       <aside 
         className={clsx(
-          "glass-panel flex flex-col select-none shrink-0 transition-all duration-300 ease-in-out z-50 overflow-x-hidden rounded-[2rem]",
+          "glass-panel flex flex-col select-none shrink-0 transition-all duration-300 ease-in-out z-50 overflow-x-hidden rounded-[2rem] print:hidden",
           // Desktop behavior (>= 768px)
           "md:sticky md:top-4 md:h-[calc(100vh-2rem)]",
           isSidebarOpen ? "md:w-[280px]" : "md:w-20",
@@ -401,10 +401,10 @@ export default function MainLayout() {
       </aside>
 
       {/* ── Main App Content Column ── */}
-      <div className="flex-1 flex flex-col min-w-0 h-[calc(100vh-2rem)] md:h-[calc(100vh-2rem)] relative">
+      <div className="flex-1 flex flex-col min-w-0 h-[calc(100vh-2rem)] md:h-[calc(100vh-2rem)] relative print:h-auto print:block">
         
         {/* ── Frosted Glass Top Context Bar ── */}
-        <header className="glass-header h-16 flex items-center justify-between px-4 lg:px-6 shrink-0 z-30 select-none rounded-[2rem] mb-4">
+        <header className="glass-header h-16 flex items-center justify-between px-4 lg:px-6 shrink-0 z-30 select-none rounded-[2rem] mb-4 print:hidden">
           
           <div className="flex items-center gap-3 min-w-0">
             {/* Sidebar toggle button */}
@@ -601,7 +601,11 @@ export default function MainLayout() {
         </header>
 
         {/* ── Main Scrollable Outlet ── */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden relative rounded-[2rem] glass-panel p-4 md:p-6 custom-scrollbar shadow-xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-slate-900/50">
+        <main className={clsx(
+          "flex-1 overflow-y-auto overflow-x-hidden relative rounded-[2rem] glass-panel p-4 md:p-6 custom-scrollbar shadow-xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-slate-900/50",
+          "print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none print:overflow-visible",
+          isCalculatorModalOpen && "print:hidden"
+        )}>
           <Outlet />
         </main>
         
@@ -618,15 +622,15 @@ export default function MainLayout() {
 
         {/* Floating IRR Calculator Modal */}
         {isCalculatorModalOpen && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800 animate-scale-in">
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in print:absolute print:inset-0 print:bg-transparent print:p-0 print:block">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800 animate-scale-in print:shadow-none print:border-none print:max-w-none print:max-h-none print:h-auto print:overflow-visible print:rounded-none print:bg-transparent">
               <button 
                 onClick={() => setIsCalculatorModalOpen(false)}
-                className="absolute right-4 top-4 z-10 p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 rounded-xl transition-all cursor-pointer"
+                className="absolute right-4 top-4 z-10 p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 rounded-xl transition-all cursor-pointer print:hidden"
               >
                 <X className="w-5 h-5" />
               </button>
-              <div className="p-2 sm:p-6">
+              <div className="p-2 sm:p-6 print:p-0">
                 <IrrCalculatorComponent />
               </div>
             </div>
