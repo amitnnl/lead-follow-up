@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Calculator, Download, Printer, Copy, Check, ShieldCheck, 
-  TrendingUp, FilePlus, ChevronDown, User, Car
+import {
+  Calculator, Download, Printer, Copy, Check,
+  TrendingUp, FilePlus, User, Car
 } from 'lucide-react';
 import api from '../lib/axios';
 
@@ -47,12 +47,7 @@ export default function IrrCalculatorComponent({
   const flatRate = 5.75; // % p.a.
   const customEmi = 16500; // ₹
 
-  // Upfront Deductions / Fees
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(true);
-  const [processingFeeType, setProcessingFeeType] = useState<'percent' | 'fixed'>('percent');
-  const [processingFeeValue, setProcessingFeeValue] = useState<number>(1.0); // 1% or ₹5000
-  const [docCharges, setDocCharges] = useState<number>(1500);
-  const [advanceEmis, setAdvanceEmis] = useState<number>(0); // 0, 1, or 2
+  // Upfront Deductions / Fees removed
 
   // Leads Dropdown state (for importing)
   const [leadsList, setLeadsList] = useState<any[]>([]);
@@ -110,37 +105,12 @@ export default function IrrCalculatorComponent({
     return (low + high) / 2;
   };
 
-  // Helper: Solve Net Monthly IRR given net disbursement C0 and subsequent remaining EMIs
-  const solveNetMonthlyIrr = (c0: number, emiVal: number, remainingMonths: number): number => {
-    if (c0 <= 0 || emiVal <= 0 || remainingMonths <= 0) return 0;
-    if (emiVal * remainingMonths <= c0) return 0;
 
-    let low = 0.0;
-    let high = 1.0;
-    for (let iter = 0; iter < 50; iter++) {
-      const mid = (low + high) / 2;
-      // NPV = C0 - EMI * (1 - (1+mid)^(-remainingMonths)) / mid
-      let pvEmis = 0;
-      if (mid === 0) {
-        pvEmis = emiVal * remainingMonths;
-      } else {
-        pvEmis = emiVal * ((1 - Math.pow(1 + mid, -remainingMonths)) / mid);
-      }
-      if (pvEmis < c0) {
-        // Discount rate mid is too high -> lowers PV of future EMIs below C0
-        high = mid;
-      } else {
-        low = mid;
-      }
-    }
-    return (low + high) / 2;
-  };
 
   // Main calculations memoized
   const calculations = useMemo(() => {
     const p = Math.max(0, Number(loanAmount) || 0);
     const n = Math.max(1, Number(tenureMonths) || 12);
-    const k = Math.min(n - 1, Math.max(0, Number(advanceEmis) || 0));
 
     let emiResult = 0;
     let monthlyReducingRate = 0;
@@ -164,20 +134,9 @@ export default function IrrCalculatorComponent({
       monthlyReducingRate = solveMonthlyRateFromEmi(p, emiResult, n);
     }
 
-    // Upfront fees
-    const pfVal = processingFeeType === 'percent' 
-      ? p * ((Number(processingFeeValue) || 0) / 100)
-      : (Number(processingFeeValue) || 0);
-    const docVal = Number(docCharges) || 0;
-    const advanceEmiTotal = emiResult * k;
-
-    // Net Disbursement to customer/dealer
-    const netDisbursed = Math.max(0, p - pfVal - docVal - advanceEmiTotal);
-    const remainingInstallments = n - k;
-
-    // Net Monthly IRR & Annualized Net IRR (XIRR)
-    const netMonthlyRate = solveNetMonthlyIrr(netDisbursed, emiResult, remainingInstallments);
-    const netAnnualIrr = netMonthlyRate * 12 * 100;
+    // Upfront fees & Net IRR calculations removed as per request
+    const netDisbursed = 0;
+    const netAnnualIrr = 0;
 
     // Standard Nominal Annual Reducing Rate
     const nominalAnnualIrr = monthlyReducingRate * 12 * 100;
@@ -223,16 +182,16 @@ export default function IrrCalculatorComponent({
       nominalAnnualIrr: Number(nominalAnnualIrr.toFixed(2)),
       netAnnualIrr: Number(netAnnualIrr.toFixed(2)),
       flatRateEquivalent: Number(flatRateEquivalent.toFixed(2)),
-      processingFeeAmount: Math.round(pfVal),
-      docChargesAmount: Math.round(docVal),
-      advanceEmiCount: k,
-      advanceEmiAmount: Math.round(advanceEmiTotal),
+      processingFeeAmount: 0,
+      docChargesAmount: 0,
+      advanceEmiCount: 0,
+      advanceEmiAmount: 0,
       netDisbursed: Math.round(netDisbursed),
       totalPayable: Math.round(totalPayable),
       totalInterest: Math.round(totalInterest),
       schedule
     };
-  }, [loanAmount, tenureMonths, calcMode, reducingRate, flatRate, customEmi, processingFeeType, processingFeeValue, docCharges, advanceEmis]);
+  }, [loanAmount, tenureMonths, calcMode, reducingRate, flatRate, customEmi]);
 
   // Quotation text formatter
   const generateQuotationText = (): string => {
@@ -249,15 +208,6 @@ export default function IrrCalculatorComponent({
 • *Monthly EMI:* ₹${calculations.emi.toLocaleString()}
 • *Nominal Reducing Rate:* ${calculations.nominalAnnualIrr}% p.a.
 • *Equivalent Flat Rate:* ${calculations.flatRateEquivalent}% p.a.
-• *Total Interest Payable:* ₹${calculations.totalInterest.toLocaleString()}
-• *Total Amount Payable:* ₹${calculations.totalPayable.toLocaleString()}
-
-*Upfront Deductions & Net Cash Flow:*
-• *Processing Fee:* ₹${calculations.processingFeeAmount.toLocaleString()}
-• *Documentation / File Charges:* ₹${calculations.docChargesAmount.toLocaleString()}
-• *Advance EMIs Collected:* ${calculations.advanceEmiCount} (₹${calculations.advanceEmiAmount.toLocaleString()})
-• *Net Disbursement Amount:* ₹${calculations.netDisbursed.toLocaleString()}
-• *Effective Net Annual IRR:* ${calculations.netAnnualIrr}% p.a.
 ----------------------------------------
 Generated via Vehicle Finance Lead Portal`;
   };
@@ -348,298 +298,192 @@ Generated via Vehicle Finance Lead Portal`;
       )}
 
       {/* Main Grid: Inputs vs Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Left Column: Calculation Controls (5 Cols) */}
-        <div className="no-print lg:col-span-5 space-y-6">
-          <fieldset disabled={isReadOnly} className="card p-6 border-slate-200/80 dark:border-slate-800 shadow-lg space-y-5 disabled:opacity-85">
+        {/* Left Column: Calculation Controls */}
+        <div className="no-print lg:col-span-2">
+          <fieldset disabled={isReadOnly} className="card p-6 border-slate-200/80 dark:border-slate-800 shadow-sm disabled:opacity-85 h-full flex flex-col justify-between">
             
-            {/* Mode Selection Tabs (Removed) */}
-
-            {/* Vehicle Price & Down Payment */}
-            <div className="grid grid-cols-2 gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1 flex items-center gap-1">
-                  <Car className="w-3.5 h-3.5 text-blue-500" /> Vehicle Price (₹)
-                </label>
-                <input
-                  type="number"
-                  step="5000"
-                  value={vehiclePrice}
-                  onChange={(e) => {
-                    const vp = Number(e.target.value);
-                    setVehiclePrice(vp);
-                    if (vp > downPayment) setLoanAmount(Math.max(0, vp - downPayment));
-                  }}
-                  className="input text-xs py-1.5 font-semibold"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-                  Down Payment (₹)
-                </label>
-                <input
-                  type="number"
-                  step="5000"
-                  value={downPayment}
-                  onChange={(e) => {
-                    const dp = Number(e.target.value);
-                    setDownPayment(dp);
-                    if (vehiclePrice > dp) setLoanAmount(Math.max(0, vehiclePrice - dp));
-                  }}
-                  className="input text-xs py-1.5 font-semibold"
-                />
-              </div>
-            </div>
-
-            {/* Loan Principal Amount */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
-                <span>Principal Loan Amount (₹)</span>
-                <span className="font-mono text-primary-600 dark:text-primary-400 font-bold">₹{loanAmount.toLocaleString()}</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
-                <input
-                  type="number"
-                  step="1000"
-                  min="10000"
-                  value={loanAmount}
-                  onChange={(e) => setLoanAmount(Math.max(0, Number(e.target.value)))}
-                  className="input pl-8 font-semibold text-base"
-                />
-              </div>
-              <input
-                type="range"
-                min="50000"
-                max="5000000"
-                step="25000"
-                value={loanAmount}
-                onChange={(e) => setLoanAmount(Number(e.target.value))}
-                className="w-full mt-2 accent-primary-600 cursor-pointer"
-              />
-            </div>
-
-            {/* Tenure (Months) */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
-                <span>Loan Tenure (Months)</span>
-                <span className="font-mono text-primary-600 dark:text-primary-400 font-bold">{tenureMonths} Months ({((tenureMonths)/12).toFixed(1)} Yrs)</span>
-              </label>
-              <div className="grid grid-cols-4 gap-1.5 mb-2">
-                {[12, 24, 36, 48, 60, 72, 84].map(t => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setTenureMonths(t)}
-                    className={`py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
-                      tenureMonths === t
-                        ? 'bg-primary-50 dark:bg-primary-500/10 border-primary-500 text-primary-700 dark:text-primary-400'
-                        : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
-                    }`}
-                  >
-                    {t}M
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Dynamic Rate Input based on Mode */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 flex justify-between">
-                <span>Nominal Reducing Rate (IRR % p.a.)</span>
-                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{reducingRate}%</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  step="0.1"
-                  min="1"
-                  max="50"
-                  value={reducingRate}
-                  onChange={(e) => setReducingRate(Number(e.target.value))}
-                  className="input font-semibold text-base"
-                />
-                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400 font-bold">%</div>
-              </div>
-            </div>
-
-            {/* Upfront Fees & Subvention Section (Collapsible) */}
-            <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
-              <button
-                type="button"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className="w-full flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-wider cursor-pointer"
-              >
-                <span>Upfront Deductions & Net Cash Flow</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
-              </button>
-
-              {showAdvanced && (
-                <div className="mt-3.5 space-y-3.5 bg-slate-50/70 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
-                  {/* Processing Fee */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">Processing Fee Type</label>
-                      <select
-                        value={processingFeeType}
-                        onChange={(e: any) => setProcessingFeeType(e.target.value)}
-                        className="input text-xs py-1.5"
-                      >
-                        <option value="percent">Percentage (%)</option>
-                        <option value="fixed">Fixed Amount (₹)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-                        Fee Value ({processingFeeType === 'percent' ? '%' : '₹'})
-                      </label>
-                      <input
-                        type="number"
-                        step={processingFeeType === 'percent' ? '0.25' : '500'}
-                        value={processingFeeValue}
-                        onChange={(e) => setProcessingFeeValue(Number(e.target.value))}
-                        className="input text-xs py-1.5 font-semibold"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Doc Charges & Advance EMIs */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">Doc / Stamp Charges (₹)</label>
-                      <input
-                        type="number"
-                        step="250"
-                        value={docCharges}
-                        onChange={(e) => setDocCharges(Number(e.target.value))}
-                        className="input text-xs py-1.5 font-semibold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">Advance EMIs Upfront</label>
-                      <select
-                        value={advanceEmis}
-                        onChange={(e) => setAdvanceEmis(Number(e.target.value))}
-                        className="input text-xs py-1.5 font-semibold"
-                      >
-                        <option value="0">0 (Standard Arrears)</option>
-                        <option value="1">1 Advance EMI</option>
-                        <option value="2">2 Advance EMIs</option>
-                      </select>
-                    </div>
+            <div className="space-y-8">
+              {/* Vehicle Price & Down Payment */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <Car className="w-4 h-4 text-blue-500" /> Vehicle Price
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
+                    <input
+                      type="number"
+                      step="5000"
+                      value={vehiclePrice}
+                      onChange={(e) => {
+                        const vp = Number(e.target.value);
+                        setVehiclePrice(vp);
+                        if (vp > downPayment) setLoanAmount(Math.max(0, vp - downPayment));
+                      }}
+                      className="input pl-8 font-semibold text-base py-2.5"
+                    />
                   </div>
                 </div>
-              )}
-            </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    Down Payment
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
+                    <input
+                      type="number"
+                      step="5000"
+                      value={downPayment}
+                      onChange={(e) => {
+                        const dp = Number(e.target.value);
+                        setDownPayment(dp);
+                        if (vehiclePrice > dp) setLoanAmount(Math.max(0, vehiclePrice - dp));
+                      }}
+                      className="input pl-8 font-semibold text-base py-2.5"
+                    />
+                  </div>
+                </div>
+              </div>
 
+              {/* Loan Principal Amount */}
+              <div>
+                <label className="flex justify-between items-end mb-2">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Principal Loan Amount</span>
+                  <span className="text-xl font-extrabold text-primary-600 dark:text-primary-400">₹{loanAmount.toLocaleString()}</span>
+                </label>
+                <input
+                  type="range"
+                  min="50000"
+                  max="5000000"
+                  step="25000"
+                  value={loanAmount}
+                  onChange={(e) => setLoanAmount(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600 dark:bg-slate-700"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-medium mt-1.5 px-1">
+                  <span>₹50K</span>
+                  <span>₹25L</span>
+                  <span>₹50L</span>
+                </div>
+              </div>
+
+              {/* Tenure & Interest Rate */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Tenure */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                    Loan Tenure (Months)
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[12, 24, 36, 48, 60, 72, 84].map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setTenureMonths(t)}
+                        className={`py-2 rounded-xl text-sm font-bold border-2 transition-all cursor-pointer ${
+                          tenureMonths === t
+                            ? 'bg-primary-50 dark:bg-primary-500/10 border-primary-500 text-primary-700 dark:text-primary-400 shadow-sm'
+                            : 'border-slate-100 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Rate */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                    Nominal Reducing Rate
+                  </label>
+                  <div className="relative max-w-[200px]">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="1"
+                      max="50"
+                      value={reducingRate}
+                      onChange={(e) => setReducingRate(Number(e.target.value))}
+                      className="input font-extrabold text-2xl py-3 pr-8 text-slate-800 dark:text-white"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400 font-bold text-lg">%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </fieldset>
         </div>
 
-        {/* Right Column: Key Financial KPI Cards & Summary (7 Cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          
-          {/* Top Highlight Card: Monthly EMI & Effective IRR */}
-          <div className="card p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Calculated Monthly EMI</p>
-                <div className="text-3xl md:text-4xl font-extrabold mt-1 tracking-tight text-slate-900 dark:text-white">
-                  ₹{calculations.emi.toLocaleString()} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">/ mo</span>
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Over {calculations.tenure} equal monthly installments
-                </p>
+        {/* Right Column: Output Card */}
+        <div className="lg:col-span-1 space-y-4">
+          <div className="card bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-950 text-white p-8 border-0 shadow-xl relative overflow-hidden h-full flex flex-col justify-center min-h-[300px]">
+            {/* Background decoration */}
+            <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div className="relative z-10">
+              <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Monthly EMI</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-5xl font-black tracking-tighter">₹{calculations.emi.toLocaleString()}</span>
+                <span className="text-lg font-medium text-slate-400">/mo</span>
               </div>
-
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700/60 space-y-2.5">
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-2">
-                  <span className="text-xs text-slate-600 dark:text-slate-300">Nominal Reducing Rate (IRR):</span>
-                  <span className="font-bold text-base text-slate-900 dark:text-white">{calculations.nominalAnnualIrr}% p.a.</span>
+              
+              <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400 font-medium">Nominal IRR</span>
+                  <span className="text-lg font-bold">{calculations.nominalAnnualIrr}% p.a.</span>
                 </div>
-                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-2">
-                  <span className="text-xs text-slate-600 dark:text-slate-300">Equivalent Flat Rate:</span>
-                  <span className="font-bold text-base text-amber-600 dark:text-amber-400">{calculations.flatRateEquivalent}% p.a.</span>
-                </div>
-                <div className="flex justify-between items-center pt-0.5">
-                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
-                    Net Effective IRR (XIRR):
-                  </span>
-                  <span className="font-extrabold text-lg text-emerald-600 dark:text-emerald-400">{calculations.netAnnualIrr}% p.a.</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400 font-medium">Flat Rate Equiv.</span>
+                  <span className="text-lg font-bold text-amber-400">{calculations.flatRateEquivalent}% p.a.</span>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Payout Estimator Widget (Removed) */}
-
-          {/* Breakdown KPI Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-            <div className="card p-4 bg-slate-50/50 dark:bg-slate-800/50">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Net Disbursed Cash Flow</p>
-              <p className="text-lg font-bold text-slate-800 dark:text-white mt-1">₹{calculations.netDisbursed.toLocaleString()}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">After fee & advance EMI deductions</p>
-            </div>
-
-            <div className="card p-4 bg-slate-50/50 dark:bg-slate-800/50">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Interest Payable</p>
-              <p className="text-lg font-bold text-amber-600 dark:text-amber-400 mt-1">₹{calculations.totalInterest.toLocaleString()}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">
-                {((calculations.totalInterest / calculations.totalPayable)*100 || 0).toFixed(1)}% of total payout
-              </p>
-            </div>
-
-            <div className="card p-4 bg-slate-50/50 dark:bg-slate-800/50 col-span-2 sm:col-span-1">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Amount Payable</p>
-              <p className="text-lg font-bold text-primary-600 dark:text-primary-400 mt-1">₹{calculations.totalPayable.toLocaleString()}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Principal + Interest</p>
-            </div>
-          </div>
-
-          {/* Visual Progress Bar Breakdown (Removed) */}
-
-          {/* Actions Bar */}
-          <div className="no-print flex flex-wrap gap-2.5 items-center justify-between card p-4 bg-slate-50/80 dark:bg-slate-800/80">
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={handleCopyQuote}
-                className="btn btn-secondary text-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                {copied ? 'Copied Summary!' : 'Copy Quotation Summary'}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleDownloadCsv}
-                className="btn btn-secondary text-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                <Download className="w-4 h-4" /> Export CSV Schedule
-              </button>
-
-              <button
-                type="button"
-                onClick={handlePrint}
-                className="btn btn-secondary text-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                <Printer className="w-4 h-4" /> Print Quotation
-              </button>
-            </div>
-
-            {(leadId || onSaveToLeadNotes) && !isReadOnly && (
-              <button
-                type="button"
-                onClick={handleSaveNote}
-                className="btn btn-primary text-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                {savedToNote ? <Check className="w-4 h-4" /> : <FilePlus className="w-4 h-4" />}
-                {savedToNote ? 'Saved to Lead Notes!' : 'Save Quote to Lead Notes'}
-              </button>
-            )}
-          </div>
-
         </div>
+      </div>
+
+      {/* Actions Bar */}
+      <div className="no-print flex flex-wrap gap-3 items-center justify-between card p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <button
+            type="button"
+            onClick={handleCopyQuote}
+            className="flex-1 md:flex-none btn bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-sm py-2 px-4 flex items-center justify-center gap-2 transition-colors cursor-pointer rounded-xl font-semibold"
+          >
+            {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+            {copied ? 'Copied!' : 'Copy Summary'}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownloadCsv}
+            className="flex-1 md:flex-none btn bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-sm py-2 px-4 flex items-center justify-center gap-2 transition-colors cursor-pointer rounded-xl font-semibold"
+          >
+            <Download className="w-4 h-4" /> Export CSV
+          </button>
+
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="flex-1 md:flex-none btn bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-sm py-2 px-4 flex items-center justify-center gap-2 transition-colors cursor-pointer rounded-xl font-semibold"
+          >
+            <Printer className="w-4 h-4" /> Print
+          </button>
+        </div>
+
+        {(leadId || onSaveToLeadNotes) && !isReadOnly && (
+          <button
+            type="button"
+            onClick={handleSaveNote}
+            className="w-full md:w-auto btn bg-primary-600 hover:bg-primary-700 text-white text-sm py-2 px-6 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer rounded-xl font-bold"
+          >
+            {savedToNote ? <Check className="w-4 h-4" /> : <FilePlus className="w-4 h-4" />}
+            {savedToNote ? 'Saved!' : 'Save to Lead Notes'}
+          </button>
+        )}
       </div>
 
       {/* Monthly Amortization Schedule Table */}

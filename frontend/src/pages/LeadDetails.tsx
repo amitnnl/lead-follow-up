@@ -222,8 +222,8 @@ export default function LeadDetails() {
 
   const canVerifyDocs = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
 
-  const fetchLeadDetails = async () => {
-    setLoading(true);
+  const fetchLeadDetails = async (isInitialLoad = false) => {
+    if (isInitialLoad) setLoading(true);
     try {
       const response = await api.get(`/leads/detail?id=${id}`);
       setData(response.data);
@@ -232,11 +232,11 @@ export default function LeadDetails() {
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to fetch lead details');
     } finally {
-      setLoading(false);
+      if (isInitialLoad) setLoading(false);
     }
   };
 
-  useEffect(() => { fetchLeadDetails(); }, [id]);
+  useEffect(() => { fetchLeadDetails(true); }, [id]);
 
   useEffect(() => {
     if (user?.role === 'admin' || user?.role === 'staff') {
@@ -274,6 +274,7 @@ export default function LeadDetails() {
       });
       setAssignSuccess(true);
       fetchLeadDetails();
+      handleTabChange('overview');
     } catch (err: any) {
       setAssignError(err.response?.data?.error || 'Failed to update assignment');
     } finally {
@@ -981,10 +982,10 @@ export default function LeadDetails() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'Dealer\'s', value: lead.agent_name || lead.dealer_name || 'Direct / None', color: 'slate' as const },
-                    ...((lead.channel_name || lead.channel_executive_name) ? [{ label: 'Channels', value: lead.channel_name || lead.channel_executive_name, color: 'indigo' as const }] : []),
-                    { label: 'Financer / Bank', value: lead.financer_name || 'Unassigned', color: 'amber' as const },
-                    { label: 'Bank Executive', value: lead.executive_name || 'Unassigned', color: 'emerald' as const },
+                    { label: 'Channel', value: lead.channel_name || lead.channel_executive_name || 'Unassigned', color: 'indigo' as const },
+                    { label: 'Dealer', value: lead.dealer_name || lead.agent_name || 'Direct / None', color: 'slate' as const },
+                    { label: 'Financer', value: lead.financer_name || 'Unassigned', color: 'amber' as const },
+                    { label: 'Executive', value: lead.executive_name || 'Unassigned', color: 'emerald' as const },
                   ].map((row) => (
                     <div key={row.label} className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-800/50 last:border-0">
                       <span className="text-xs font-medium text-slate-400 dark:text-slate-500">{row.label}</span>

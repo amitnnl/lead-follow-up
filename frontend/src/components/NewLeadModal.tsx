@@ -115,7 +115,6 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
     const updates: any = { [e.target.name]: val };
     if (e.target.name === 'vehicle_condition') {
       if (val === 'old') {
-        updates.agent_id = '';
         updates.loan_type = formData.loan_type === 'new_loan' ? 'refinance' : formData.loan_type;
       } else if (val === 'new') {
         updates.loan_type = 'new_loan';
@@ -363,7 +362,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                   <label className={labelClass}>Lead Date *</label>
                   <input required type="date" name="lead_date" value={formData.lead_date} onChange={handleChange} className={inputClass} />
                 </div>
-                {formData.vehicle_condition !== 'old' && !isSelfScopedAgent && (
+                {!isSelfScopedAgent && (
                   <div>
                     <div className="flex justify-between items-center mb-1">
                       <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dealer *</label>

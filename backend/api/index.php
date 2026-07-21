@@ -676,8 +676,6 @@ switch ($path) {
 
                 $financer_id = !empty($input['financer_id']) ? (int)$input['financer_id'] : null;
                 $executive_id = !empty($input['executive_id']) ? (int)$input['executive_id'] : null;
-                $channel_id = !empty($input['channel_id']) ? (int)$input['channel_id'] : null;
-                $channel_executive_id = !empty($input['channel_executive_id']) ? (int)$input['channel_executive_id'] : null;
                 $assigned_date = !empty($input['assigned_date']) ? trim($input['assigned_date']) : null;
 
                 // Get current lead state
@@ -690,17 +688,17 @@ switch ($path) {
                 $statusSql = "";
                 
                 // Automatically set status to 'initiated' when assigning for the first time OR re-assigning a rejected lead
-                if (($executive_id || $financer_id || $channel_id) && (empty($lead['executive_id']) || in_array($lead['status'], ['new', 'pending', 'rejected']))) {
+                if (($executive_id || $financer_id) && (empty($lead['executive_id']) || in_array($lead['status'], ['new', 'pending', 'rejected']))) {
                     $newStatus = 'initiated';
                     $statusSql = ", status = 'initiated', status_date = CURDATE()";
                 }
 
                 db_query($conn, "
                     UPDATE leads SET
-                        financer_id = ?, executive_id = ?, channel_id = ?, channel_executive_id = ?, assigned_date = ? $statusSql
+                        financer_id = ?, executive_id = ?, assigned_date = ? $statusSql
                     WHERE id = ?
-                ", 'iiiisi', [
-                    $financer_id, $executive_id, $channel_id, $channel_executive_id, $assigned_date, $id
+                ", 'iisi', [
+                    $financer_id, $executive_id, $assigned_date, $id
                 ]);
 
                 log_lead_action($conn, $id, 'Lead Assigned', 'Assignment updated by ' . current_user()['name'], current_user_id());

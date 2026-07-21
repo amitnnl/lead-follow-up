@@ -33,6 +33,7 @@ interface Lead {
   executive_name: string | null;
   dealer_name: string | null;
   channel_executive_name?: string | null;
+  channel_name?: string | null;
   financer_id?: number | null;
   executive_id?: number | null;
   agent_id?: number | null;
@@ -135,20 +136,16 @@ function LeadTableRow({
         {lead.loan_type ? (lead.loan_type === 'new_loan' ? 'New Loan' : (lead.loan_type === 'used_loan' ? 'Used Loan' : lead.loan_type)) : '—'}
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold">
+      <td className="px-4 py-4 whitespace-nowrap text-xs">
         {lead.channel_name || lead.channel_executive_name ? (
-          <div>
-            <span className="truncate max-w-[130px] block text-slate-700 dark:text-slate-200" title={lead.channel_name || lead.channel_executive_name}>
-              {lead.channel_name || lead.channel_executive_name}
-            </span>
-          </div>
-        ) : (
-          <span className="text-slate-400">—</span>
-        )}
+          <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.channel_name || lead.channel_executive_name || undefined}>{lead.channel_name || lead.channel_executive_name}</div>
+        ) : <span className="text-slate-400">—</span>}
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.agent_name || 'Direct / None'}>
-        {lead.agent_name || 'Direct / None'}
+      <td className="px-4 py-4 whitespace-nowrap text-xs">
+        {lead.dealer_name || lead.agent_name ? (
+          <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.dealer_name || lead.agent_name || undefined}>{lead.dealer_name || lead.agent_name}</div>
+        ) : <span className="text-slate-400">—</span>}
       </td>
 
       <td className="px-4 py-4">
@@ -347,7 +344,7 @@ export default function Leads() {
   const handleBulkExport = () => {
     if (!selectedLeadIds.length) return;
     const filteredLeads = leads.filter(l => selectedLeadIds.includes(l.id));
-    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel Name", "Dealer", "Status"];
+    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel", "Dealer", "Status"];
     const rows = filteredLeads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
@@ -358,8 +355,8 @@ export default function Leads() {
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
-      `"${(l.agent_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
-      `"${(l.dealer_name || 'Direct').replace(/"/g, '""')}"`,
+      `"${(l.channel_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
+      `"${(l.dealer_name || l.agent_name || 'Direct / None').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -433,7 +430,7 @@ export default function Leads() {
 
   const exportToCSV = () => {
     if (!leads.length) return;
-    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel Name", "Dealer", "Status"];
+    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel", "Dealer", "Status"];
     const rows = leads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
@@ -445,7 +442,7 @@ export default function Leads() {
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
       `"${(l.channel_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
-      `"${(l.agent_name || 'Direct').replace(/"/g, '""')}"`,
+      `"${(l.dealer_name || l.agent_name || 'Direct / None').replace(/"/g, '""')}"`,
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -699,7 +696,7 @@ export default function Leads() {
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Financer</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Executive</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead Type</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Channel Name</th>
+                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Channel</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Dealer</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Status</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-24">Actions</th>

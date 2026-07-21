@@ -99,7 +99,7 @@ const formatCompact = (n: number) => {
 };
 
 function SparklineChart({ data, color = '#4f46e5', height = 40 }: { data: number[]; color?: string; height?: number }) {
-  if (!data?.length) return <div className="w-full h-[40px]" />;
+  if (!data?.length || data.length <= 1) return <div className="w-full h-[40px]" />;
   const max = Math.max(...data);
   const min = Math.min(...data);
   const points = data.map((v, i) => ({
