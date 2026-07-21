@@ -583,3 +583,21 @@
     background-color: rgba(71, 85, 105, 0.5);
   }
 }
+
+/* ── Print Utilities for Multi-page Documents ── */
+@media print {
+  /* Remove height and overflow constraints to allow multi-page flow */
+  html, body, #root, main, .h-screen, .h-full, .overflow-hidden, .overflow-y-auto, .max-h-[500px], .fixed, .absolute {
+    height: auto !important;
+    max-height: none !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  /* Ensure tables break cleanly across pages */
+  table { page-break-inside: auto; }
+  tr    { page-break-inside: avoid; page-break-after: auto; }
+  thead { display: table-header-group; }
+  tfoot { display: table-footer-group; }
+}
