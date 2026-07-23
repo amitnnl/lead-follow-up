@@ -26,10 +26,12 @@ import {
   ChevronDown,
   Plus,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Palette,
+  Check
 } from 'lucide-react';
 import clsx from 'clsx';
-import { useThemeStore } from '../../store/themeStore';
+import { useThemeStore, type AccentTheme } from '../../store/themeStore';
 import api from '../../lib/axios';
 import { useSettingsStore } from '../../store/settingsStore';
 import NewLeadModal from '../NewLeadModal';
@@ -39,7 +41,9 @@ export default function MainLayout() {
   const { user, logout } = useAuthStore();
   const { settings } = useSettingsStore();
   const logoLetters = settings.app_name ? settings.app_name.substring(0, 2).toUpperCase() : 'LF';
-  const { isDark, toggleTheme } = useThemeStore();
+  const { isDark, toggleTheme, accent, setAccent, density, setDensity } = useThemeStore();
+  const [showThemePicker, setShowThemePicker] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
@@ -482,6 +486,117 @@ export default function MainLayout() {
             </button>
 
             <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
+
+            {/* Theme & Palette Customizer Trigger */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  const nextState = !showThemePicker;
+                  setShowThemePicker(nextState);
+                  if (nextState) {
+                    setShowNotifications(false);
+                    setShowProfileMenu(false);
+                  }
+                }}
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                title="Theme & Style Customizer"
+              >
+                <Palette className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
+              </button>
+
+              {showThemePicker && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowThemePicker(false)} />
+                  <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-4 text-slate-700 dark:text-slate-200 animate-fade-in space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                        <Palette className="w-3.5 h-3.5 text-primary-500" /> Theme & Presets
+                      </span>
+                      <button onClick={() => setShowThemePicker(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Mode switcher */}
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Display Mode</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => toggleTheme()}
+                          className={clsx(
+                            "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all border cursor-pointer",
+                            !isDark ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                          )}
+                        >
+                          <Sun className="w-3.5 h-3.5 text-amber-500" /> Light
+                        </button>
+                        <button
+                          onClick={() => toggleTheme()}
+                          className={clsx(
+                            "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all border cursor-pointer",
+                            isDark ? "bg-primary-500/10 border-primary-500 text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                          )}
+                        >
+                          <Moon className="w-3.5 h-3.5 text-indigo-400" /> Dark
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Primary Accent Color Presets */}
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Accent Color Preset</label>
+                      <div className="grid grid-cols-5 gap-2">
+                        {[
+                          { id: 'indigo', name: 'Sapphire', color: 'bg-indigo-600' },
+                          { id: 'emerald', name: 'Emerald', color: 'bg-emerald-500' },
+                          { id: 'violet', name: 'Violet', color: 'bg-violet-600' },
+                          { id: 'cyan', name: 'Cyan', color: 'bg-cyan-500' },
+                          { id: 'amber', name: 'Amber', color: 'bg-amber-500' },
+                        ].map((p) => (
+                          <button
+                            key={p.id}
+                            onClick={() => setAccent(p.id as AccentTheme)}
+                            title={p.name}
+                            className={clsx(
+                              "h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border relative",
+                              p.color,
+                              accent === p.id ? "ring-2 ring-offset-2 ring-primary-500 scale-105 border-white" : "border-transparent opacity-80 hover:opacity-100"
+                            )}
+                          >
+                            {accent === p.id && <Check className="w-4 h-4 text-white drop-shadow" />}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Layout Density */}
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Table & Grid Density</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => setDensity('comfortable')}
+                          className={clsx(
+                            "py-1.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center",
+                            density === 'comfortable' ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                          )}
+                        >
+                          Comfortable
+                        </button>
+                        <button
+                          onClick={() => setDensity('compact')}
+                          className={clsx(
+                            "py-1.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center",
+                            density === 'compact' ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                          )}
+                        >
+                          Compact
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Notifications Popover Trigger */}
             <div className="relative">

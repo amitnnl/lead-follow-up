@@ -146,9 +146,13 @@ function KPICard({
   sparklineData?: number[];
 }) {
   const content = (
-    <div className="glass-panel border-l-4 p-4.5 rounded-2xl hover-lift flex flex-col justify-between h-[134px] relative overflow-hidden group"
-      style={{ borderLeftColor: color }}>
-      <div className="relative flex items-start justify-between gap-1">
+    <div className="card border p-4.5 rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-[134px] relative overflow-hidden group animate-in zoom-in-95 duration-500"
+      style={{ 
+        borderColor: `${color}40`, 
+        boxShadow: `0 8px 24px -10px ${color}50`,
+        background: `linear-gradient(145deg, rgba(255,255,255,1) 0%, ${color}08 100%)`
+      }}>
+      <div className="relative flex items-start justify-between gap-1 z-10">
         <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate pr-2">
           {label}
         </span>
@@ -156,8 +160,8 @@ function KPICard({
           <Icon className="w-4 h-4 shrink-0" style={{ color }} />
         </div>
       </div>
-      <div className="relative flex flex-col justify-between flex-1 mt-1">
-        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
+      <div className="relative flex flex-col justify-between flex-1 mt-1 z-10">
+        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums animate-fade-in">
           {value}
         </div>
         {sparklineData && (

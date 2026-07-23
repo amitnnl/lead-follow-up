@@ -639,6 +639,8 @@ switch ($path) {
             $query_notes = trim($input['query_notes'] ?? '');
             $created_by = current_user_id();
 
+            $financer_lead_number = trim($input['financer_lead_number'] ?? '');
+
             if (is_channel_agent()) {
                 $cheRow = db_fetch_one($conn, "SELECT id, channel_id FROM channel_executives WHERE user_id = ?", 'i', [$created_by]);
                 if ($cheRow) {
@@ -656,12 +658,12 @@ switch ($path) {
                 INSERT INTO leads (
                     lead_id, lead_date, customer_name, customer_mobile, customer_mobile2, customer_address,
                     vehicle_condition, vehicle_make_model, year_of_manufacture, registration_number, insurance_company, policy_number, insurance_expiry_date, loan_amount, loan_type,
-                    referred_by, agent_id, channel_id, channel_executive_id, query_notes, status, created_by
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)
-            ", 'ssssssssissssdssiiisi', [
+                    referred_by, agent_id, channel_id, channel_executive_id, financer_lead_number, query_notes, status, created_by
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)
+            ", 'ssssssssissssdssiiissi', [
                 $lead_id, $lead_date, $customer_name, $customer_mobile, $customer_mobile2, $customer_address,
                 $vehicle_condition, $vehicle_make_model, $year_of_manufacture, $registration_number, $insurance_company, $policy_number, $insurance_expiry_date, $loan_amount, $loan_type,
-                $referred_by, $agent_id, $channel_id, $channel_executive_id, $query_notes, $created_by
+                $referred_by, $agent_id, $channel_id, $channel_executive_id, $financer_lead_number, $query_notes, $created_by
             ]);
 
             $newId = $conn->insert_id;
@@ -763,6 +765,8 @@ switch ($path) {
             $channel_executive_id = !empty($input['channel_executive_id']) ? (int)$input['channel_executive_id'] : null;
             $query_notes = trim($input['query_notes'] ?? '');
 
+            $financer_lead_number = trim($input['financer_lead_number'] ?? '');
+
             if (is_channel_agent()) {
                 $cheRow = db_fetch_one($conn, "SELECT id, channel_id FROM channel_executives WHERE user_id = ?", 'i', [current_user_id()]);
                 if ($cheRow) {
@@ -780,12 +784,12 @@ switch ($path) {
                 UPDATE leads SET
                     lead_date = ?, customer_name = ?, customer_mobile = ?, customer_mobile2 = ?, customer_address = ?,
                     vehicle_condition = ?, vehicle_make_model = ?, year_of_manufacture = ?, registration_number = ?, insurance_company = ?, policy_number = ?, insurance_expiry_date = ?, loan_amount = ?, loan_type = ?,
-                    referred_by = ?, agent_id = ?, channel_id = ?, channel_executive_id = ?, query_notes = ?
+                    referred_by = ?, agent_id = ?, channel_id = ?, channel_executive_id = ?, financer_lead_number = ?, query_notes = ?
                 WHERE id = ?
-            ", 'sssssssissssdssiiisi', [
+            ", 'sssssssissssdssiiissi', [
                 $lead_date, $customer_name, $customer_mobile, $customer_mobile2, $customer_address,
                 $vehicle_condition, $vehicle_make_model, $year_of_manufacture, $registration_number, $insurance_company, $policy_number, $insurance_expiry_date, $loan_amount, $loan_type,
-                $referred_by, $agent_id, $channel_id, $channel_executive_id, $query_notes, $id
+                $referred_by, $agent_id, $channel_id, $channel_executive_id, $financer_lead_number, $query_notes, $id
             ]);
 
             log_lead_action($conn, $id, 'Lead Updated', 'Core lead details updated.', current_user_id());
@@ -1718,7 +1722,6 @@ switch ($path) {
     // ----------------------------------------------------
     case 'documents/upload':
         api_require_login();
-        if (current_role() === 'staff') json_error("Access denied: Staff members cannot access or upload documents.", 403);
         if ($method !== 'POST') json_error("Method not allowed", 405);
 
         $lead_id = (int)($_POST['lead_id'] ?? 0);
@@ -1980,23 +1983,34 @@ switch ($path) {
     case 'setup/financers':
         if ($method === 'GET') {
             api_require_login();
-            $financers = db_fetch_all($conn, "SELECT * FROM financers ORDER BY name ASC");
+            $financers = db_fetch_all($conn, "
+                SELECT f.*, 
+                       (SELECT COUNT(*) FROM agents WHERE financer_id = f.id) as agents_count,
+                       COUNT(l.id) as leads_count,
+                       SUM(l.loan_amount) as total_loan,
+                       SUM(CASE WHEN l.status='disbursed' THEN 1 ELSE 0 END) as disbursed
+                FROM financers f 
+                LEFT JOIN leads l ON l.financer_id=f.id
+                GROUP BY f.id 
+                ORDER BY f.is_active DESC, f.name
+            ");
             json_response(['financers' => $financers]);
         }
         api_require_role('admin', 'manager', 'staff');
         if ($method === 'POST') {
             $name = trim($input['name'] ?? '');
-            $contact_person = trim($input['contact_person'] ?? '');
+            $dsa_code = trim($input['dsa_code'] ?? '');
             $mobile = trim($input['mobile'] ?? '');
+            $email = trim($input['email'] ?? '');
             $notes = trim($input['notes'] ?? '');
             $is_active = (int)($input['is_active'] ?? 1);
 
             if (empty($name)) json_error("Name is required.");
 
             db_query($conn, "
-                INSERT INTO financers (name, contact_person, mobile, notes, is_active)
-                VALUES (?, ?, ?, ?, ?)
-            ", 'ssssi', [$name, $contact_person, $mobile, $notes, $is_active]);
+                INSERT INTO financers (name, dsa_code, mobile, email, notes, is_active)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ", 'sssssi', [$name, $dsa_code, $mobile, $email, $notes, $is_active]);
 
             sync_all_user_role_entities($conn);
             json_response(['message' => 'Financer created successfully', 'id' => $conn->insert_id]);
@@ -2004,17 +2018,18 @@ switch ($path) {
             if (!is_admin() && !is_manager()) json_error("Only Admins and Managers can edit or delete master network records.", 403);
             $id = (int)($input['id'] ?? 0);
             $name = trim($input['name'] ?? '');
-            $contact_person = trim($input['contact_person'] ?? '');
+            $dsa_code = trim($input['dsa_code'] ?? '');
             $mobile = trim($input['mobile'] ?? '');
+            $email = trim($input['email'] ?? '');
             $notes = trim($input['notes'] ?? '');
             $is_active = (int)($input['is_active'] ?? 1);
 
             if (empty($name) || !$id) json_error("ID and Name are required.");
 
             db_query($conn, "
-                UPDATE financers SET name = ?, contact_person = ?, mobile = ?, notes = ?, is_active = ?
+                UPDATE financers SET name = ?, dsa_code = ?, mobile = ?, email = ?, notes = ?, is_active = ?
                 WHERE id = ?
-            ", 'ssssii', [$name, $contact_person, $mobile, $notes, $is_active, $id]);
+            ", 'ssssssi', [$name, $dsa_code, $mobile, $email, $notes, $is_active, $id]);
 
             sync_all_user_role_entities($conn);
             json_response(['message' => 'Financer updated successfully']);

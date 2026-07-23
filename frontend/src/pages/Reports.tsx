@@ -163,6 +163,7 @@ export default function Reports() {
   const [records, setRecords] = useState<ReportRecord[]>([]);
   const [summary, setSummary] = useState<ReportSummary | null>(null);
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
 
@@ -212,6 +213,7 @@ export default function Reports() {
 
   const handleExportCSV = () => {
     if (records.length === 0) return;
+    setExporting(true);
     let headers: string[] = [];
     let rows: any[][] = [];
 
@@ -262,6 +264,9 @@ export default function Reports() {
     link.setAttribute("href", encodeURI(csvContent));
     link.setAttribute("download", `MIS_Report_${reportType}_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    
+    // Simulate short delay for polish
+    setTimeout(() => setExporting(false), 800);
   };
 
   const reportTypes = [
@@ -321,8 +326,17 @@ export default function Reports() {
         </div>
         <div className="flex items-center gap-2">
           {isAdminOrManager && hasGenerated && records.length > 0 && (
-            <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-500/25 transition-all cursor-pointer">
-              <Download className="w-3.5 h-3.5" /> Export CSV ({records.length})
+            <button 
+              onClick={handleExportCSV} 
+              disabled={exporting}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-500/25 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+            >
+              {exporting ? (
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5" />
+              )}
+              {exporting ? 'Exporting...' : `Export CSV (${records.length})`}
             </button>
           )}
           <button 
@@ -343,11 +357,12 @@ export default function Reports() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
         
         {/* ── Filters Sidebar ── */}
-        <div className="col-span-1">
-          <form onSubmit={handleGenerate} className={clsx('card p-5 space-y-4', !showFilters && 'hidden lg:block')}>
-            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-3">
-              <SlidersHorizontal className="w-3.5 h-3.5" /> Report Settings
-            </h3>
+        <div className="col-span-1 relative z-10">
+          <div className="lg:sticky lg:top-6 space-y-4">
+            <form onSubmit={handleGenerate} className={clsx('card p-5 space-y-4 shadow-xl shadow-slate-200/40 dark:shadow-black/20 border-slate-200/60 dark:border-slate-800', !showFilters && 'hidden lg:block')}>
+              <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <SlidersHorizontal className="w-3.5 h-3.5" /> Report Settings
+              </h3>
             
             <div className="space-y-4">
               {/* Report Type - Card Selector */}
@@ -427,6 +442,7 @@ export default function Reports() {
               Show Filters <Filter className="w-4 h-4 inline-block ml-1" />
             </button>
           )}
+          </div>
         </div>
 
         {/* ── Output Grid ── */}

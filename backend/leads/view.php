@@ -12,7 +12,7 @@ $leadIdParam = $_GET['id'] ?? '';
 $lead = db_fetch_one($conn, "
     SELECT l.*,
            a.name as agent_name, a.mobile as agent_mobile,
-           f.name as financer_name,
+           f.name as financer_name, f.dsa_code as financer_dsa_code,
            d.name as dealer_name,
            ex.name as executive_name, ex.mobile as executive_mobile
     FROM leads l
@@ -609,6 +609,8 @@ function stage_class($current, $target) {
                     if (!empty($lead['dealer_name'])) $aFields['Source: Dealer'] = $lead['dealer_name'];
                     if (!empty($lead['agent_name'])) $aFields['Source: Channel'] = $lead['agent_name'];
                     $aFields['Financer'] = $lead['financer_name'];
+                    if (!empty($lead['financer_dsa_code'])) $aFields['DSA Code'] = $lead['financer_dsa_code'];
+                    if (!empty($lead['financer_lead_number'])) $aFields['Financer Lead No.'] = $lead['financer_lead_number'];
                     $aFields['SFE/Executive'] = $lead['executive_name'];
                     foreach ($aFields as $label => $val): ?>
                     <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800/40 pb-2 last:border-b-0 last:pb-0">

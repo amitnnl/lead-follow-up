@@ -28,6 +28,7 @@ interface EasyLeadDocumentsProps {
   isAdminOrManager: boolean;
   uploadingDoc: boolean;
   getDocUrl: (path: string) => string;
+  canViewDocs?: boolean;
 }
 
 export default function PragmaticLeadDocuments({
@@ -39,7 +40,8 @@ export default function PragmaticLeadDocuments({
   canVerifyDocs,
   isAdminOrManager,
   uploadingDoc,
-  getDocUrl
+  getDocUrl,
+  canViewDocs = true
 }: EasyLeadDocumentsProps) {
   const isDisbursed = lead?.status === 'disbursed';
   // Simple state for single upload area
@@ -113,32 +115,48 @@ export default function PragmaticLeadDocuments({
   return (
     <div className="space-y-6">
       
-      {/* 1. SIMPLE TOP UPLOAD BAR & REQUIRED DOCS STATUS */}
-      <div className="card p-5 border border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-[#111827]">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h3 className="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary-500" /> Lead Documents Vault
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Easily upload, preview, and verify all files for this customer.
-            </p>
+      {/* 1. UNIFIED DRAG-AND-DROP VAULT TOP BAR */}
+      <div 
+        className={`card p-6 border-2 border-dashed ${dragActive === 'global' ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-900/10' : 'border-slate-200 dark:border-slate-800'} shadow-sm bg-white dark:bg-[#111827] transition-all relative overflow-hidden group`}
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive('global'); }}
+        onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(null); }}
+        onDrop={(e) => {
+          e.preventDefault(); e.stopPropagation(); setDragActive(null);
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            setFile(e.dataTransfer.files[0]);
+            setShowUploadForm(true);
+          }
+        }}
+      >
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+          <div className="flex items-center gap-4 text-center sm:text-left">
+            <div className="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center shrink-0">
+              <UploadCloud className="w-7 h-7 text-primary-500" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
+                Upload to Document Vault
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
+                Drag and drop any document here, or click to browse. We support PDF, JPG, and PNG files up to 10MB.
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={() => setShowUploadForm(!showUploadForm)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-sm transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-md shadow-primary-500/20 transition-all cursor-pointer whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
-            {showUploadForm ? 'Close Upload Form' : 'Upload New Document'}
+            {showUploadForm ? 'Close Form' : 'Browse Files'}
           </button>
         </div>
 
         {isDisbursed && (
-          <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-450 rounded-xl text-[11px] font-semibold flex items-center gap-2 animate-fade-in">
-            <ShieldCheck className="w-4 h-4 text-emerald-650 dark:text-emerald-400 shrink-0" />
-            Note: This lead is disbursed. You can still upload additional documents (like RC or Insurance) as required.
+          <div className="mt-5 p-3.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-450 rounded-xl text-xs font-bold flex items-center gap-2 animate-fade-in relative z-10">
+            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            Note: This lead is disbursed. You can still upload additional post-disbursal documents.
           </div>
         )}
 
@@ -148,51 +166,29 @@ export default function PragmaticLeadDocuments({
             { type: 'aadhaar', label: 'Aadhaar Card', cat: 'kyc' },
             { type: 'pan', label: 'PAN Card', cat: 'kyc' },
             { type: 'bank_statement', label: 'Bank Statement', cat: 'kyc' },
-            { type: 'photo', label: 'Applicant Photo', cat: 'kyc' },
-            { type: 'rc', label: 'RC Certificate', cat: 'vehicle' },
-            { type: 'insurance', label: 'Insurance Policy', cat: 'vehicle' }
+            { type: 'rc', label: 'RC Certificate', cat: 'vehicle' }
           ];
           const missingDocs = requiredDocs.filter(item => !documents.some(d => d.document_type === item.type && d.verification_notes !== 'Archived / Removed by user'));
           
           if (missingDocs.length === 0) return null;
 
           return (
-            <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
+            <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800 relative z-10">
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5" /> Missing Documents Checklist
+                <AlertCircle className="w-3.5 h-3.5" /> Missing Mandatory Documents
               </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="flex flex-wrap gap-3">
                 {missingDocs.map(item => (
                   <div 
                     key={item.type} 
-                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(item.type); }}
-                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(null); }}
-                    onDrop={(e) => {
-                      e.preventDefault(); e.stopPropagation(); setDragActive(null);
-                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                        onUpload(item.cat, item.type, e.dataTransfer.files[0]);
-                      }
+                    onClick={() => {
+                      setDocType(item.type);
+                      setShowUploadForm(true);
                     }}
-                    className={`p-3 bg-amber-50/50 dark:bg-amber-500/5 border ${dragActive === item.type ? 'border-amber-500 bg-amber-100/50 dark:bg-amber-500/20 shadow-md scale-[1.02]' : 'border-amber-200/60 dark:border-amber-500/20 hover:shadow-md hover:border-amber-300 dark:hover:border-amber-500/40'} rounded-xl flex items-center justify-between gap-2 shadow-sm transition-all group relative`}
+                    className="px-3 py-2 bg-amber-50/50 hover:bg-amber-100 dark:bg-amber-500/5 dark:hover:bg-amber-500/10 border border-amber-200/60 dark:border-amber-500/20 rounded-xl flex items-center gap-2 cursor-pointer transition-all hover:scale-[1.02] hover:shadow-sm group"
                   >
-                    {dragActive === item.type && (
-                      <div className="absolute inset-0 border-2 border-dashed border-amber-500 rounded-xl pointer-events-none" />
-                    )}
-                    <span className="text-xs font-bold text-amber-900 dark:text-amber-300 truncate pr-2">{item.label}</span>
-                    <label className="text-[10px] font-bold bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700/50 px-2.5 py-1.5 rounded-lg text-amber-700 dark:text-amber-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 cursor-pointer transition-colors shadow-sm flex items-center gap-1 shrink-0 z-10">
-                      {uploadingDoc ? '...' : <><UploadCloud className="w-3.5 h-3.5" /> Upload</>}
-                      <input 
-                        type="file" 
-                        className="hidden" 
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={(e) => {
-                          if (e.target.files?.[0]) {
-                            onUpload(item.cat, item.type, e.target.files[0]);
-                          }
-                        }}
-                        disabled={uploadingDoc}
-                      />
-                    </label>
+                    <UploadCloud className="w-4 h-4 text-amber-500 group-hover:text-amber-600 transition-colors" />
+                    <span className="text-xs font-bold text-amber-900 dark:text-amber-300">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -302,7 +298,7 @@ export default function PragmaticLeadDocuments({
       </div>
 
       {/* 2. SIMPLE CATEGORY FILTER TABS */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 p-1">
         {[
           { id: 'all', label: 'All Documents', count: activeDocs.length },
           { id: 'kyc', label: '👤 KYC', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'kyc').length },
@@ -314,15 +310,15 @@ export default function PragmaticLeadDocuments({
             key={tab.id}
             type="button"
             onClick={() => setActiveFilter(tab.id)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-sm ${
               activeFilter === tab.id
-                ? 'bg-primary-600 text-white shadow-sm'
+                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 ring-2 ring-slate-900/20 dark:ring-white/20'
                 : 'bg-white dark:bg-[#111827] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900'
             }`}
           >
             {tab.label}
-            <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-              activeFilter === tab.id ? 'bg-primary-700 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+            <span className={`px-2 py-0.5 rounded-md text-[10px] font-black ${
+              activeFilter === tab.id ? 'bg-white/20 dark:bg-slate-900/20 text-current' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
             }`}>
               {tab.count}
             </span>
@@ -379,15 +375,17 @@ export default function PragmaticLeadDocuments({
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewDoc({ url: getDocUrl(doc.file_path), title: getDocTitle(doc.document_type) })}
-                    className="p-2 text-xs font-bold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/50 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
-                    title="Preview Document"
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span className="hidden sm:inline">Preview</span>
-                  </button>
+                  {canViewDocs && (
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDoc({ url: getDocUrl(doc.file_path), title: getDocTitle(doc.document_type) })}
+                      className="p-2 text-xs font-bold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/50 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                      title="Preview Document"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span className="hidden sm:inline">Preview</span>
+                    </button>
+                  )}
 
                   {canVerifyDocs && doc.verification_status === 'pending' && (
                     <>

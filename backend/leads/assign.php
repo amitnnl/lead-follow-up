@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $financer_id  = (int)($_POST['financer_id'] ?? 0) ?: null;
+    $financer_lead_number = trim($_POST['financer_lead_number'] ?? '') ?: null;
     $executive_id = (int)($_POST['executive_id'] ?? 0) ?: null;
     $assigned_date = $_POST['assigned_date'] ?: null;
     
@@ -116,8 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $statusSql = $statusChanged ? ", status_date=CURDATE()" : "";
-    $stmt = $conn->prepare("UPDATE leads SET financer_id=?, executive_id=?, assigned_date=?, status=? {$statusSql} WHERE id=?");
-    $stmt->bind_param('iissi', $financer_id, $executive_id, $assigned_date, $newStatus, $lead['id']);
+    $stmt = $conn->prepare("UPDATE leads SET financer_id=?, financer_lead_number=?, executive_id=?, assigned_date=?, status=? {$statusSql} WHERE id=?");
+    $stmt->bind_param('isissi', $financer_id, $financer_lead_number, $executive_id, $assigned_date, $newStatus, $lead['id']);
     
     if ($stmt->execute()) {
         log_lead_action($conn, $lead['id'], 'Lead Assigned', 'Assignment updated by ' . current_user()['name'], current_user_id());
@@ -173,7 +174,7 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="space-y-8">
                 
                 <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         
                         <!-- 1. Assigned Date -->
                         <div>
@@ -199,10 +200,16 @@ require_once __DIR__ . '/../includes/header.php';
                             </select>
                         </div>
                         
-                        <!-- 3. SFE -->
+                        <!-- 3. Financer Lead Number -->
+                        <div>
+                            <label class="form-label mb-2" id="lbl_financer_lead_number">3. Financer Lead/App No.</label>
+                            <input type="text" name="financer_lead_number" class="form-input bg-slate-50 dark:bg-slate-950" placeholder="e.g. APP-00123" value="<?= e($lead['financer_lead_number'] ?? '') ?>">
+                        </div>
+
+                        <!-- 4. SFE -->
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <label class="form-label mb-0 text-brand-800 dark:text-brand-200" id="lbl_executive_id">3. Assign to Executive (SFE)</label>
+                                <label class="form-label mb-0 text-brand-800 dark:text-brand-200" id="lbl_executive_id">4. Assign to Executive (SFE)</label>
                                 <button type="button" onclick="openModal('quickAddExecutiveModal')" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-800 transition-colors cursor-pointer focus:outline-none">
                                     + Quick Add
                                 </button>

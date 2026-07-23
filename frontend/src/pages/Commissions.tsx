@@ -389,11 +389,33 @@ export default function Commissions() {
                         <span className="text-rose-500 font-bold">-<FormatCurrency value={Number(c.tds_amount)} color="rose" /></span>
                         <span className="text-[9px] text-slate-400 ml-1">({c.tds_rate}% TDS)</span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs">
-                        <div className="font-bold text-emerald-600 dark:text-emerald-400">
-                          <FormatCurrency value={Number(c.net_payable)} color="emerald" />
+                      <td className="px-4 py-3 text-xs w-64">
+                        <div className="flex flex-col gap-1.5 w-full">
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="text-emerald-600 dark:text-emerald-400 text-sm">
+                              <FormatCurrency value={Number(c.net_payable)} color="emerald" />
+                            </span>
+                            <span className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">Net Total</span>
+                          </div>
+                          
+                          {/* 90/10 Visual Split Bar */}
+                          <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
+                            <div className="h-full bg-emerald-500 hover:brightness-110 transition-all cursor-help" style={{ width: '90%' }} title="90% Upfront Eligible" />
+                            <div className="h-full bg-amber-400 hover:brightness-110 transition-all cursor-help" style={{ width: '10%' }} title="10% Retention (Held)" />
+                          </div>
+                          
+                          <div className="flex items-center justify-between text-[9px] font-semibold mt-0.5">
+                            <span className="text-emerald-700 dark:text-emerald-500">Upfront: <FormatCurrency value={Number(c.net_payable) * 0.9} color="emerald" /></span>
+                            <span className="text-amber-600 dark:text-amber-500">Held: <FormatCurrency value={Number(c.net_payable) * 0.1} color="amber" /></span>
+                          </div>
+                          
+                          <div className="text-[9px] font-semibold text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 mt-1 flex justify-between">
+                            <span>Paid So Far: <FormatCurrency value={Number(c.paid_amount)} color="slate" /></span>
+                            <span className={Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? 'text-emerald-500' : 'text-slate-400'}>
+                              {Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? '✓ 90% Released' : 'Pending 90%'}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-[9px] text-slate-400 mt-0.5">Paid: <FormatCurrency value={Number(c.paid_amount)} color="slate" /></div>
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge status={c.approval_status || 'approved'} />

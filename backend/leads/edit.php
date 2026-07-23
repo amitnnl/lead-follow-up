@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'customer_ifsc_code'  => trim($_POST['customer_ifsc_code'] ?? ''),
         'agent_id'            => get_or_create_agent_by_name($conn, $_POST['channel_name'] ?? ''),
         'financer_id'         => (int)($_POST['financer_id'] ?? 0) ?: null,
+        'financer_lead_number'=> trim($_POST['financer_lead_number'] ?? ''),
         'dealer_id'           => (int)($_POST['dealer_id'] ?? 0) ?: null,
         'executive_id'        => (int)($_POST['executive_id'] ?? 0) ?: null,
         'status'              => $_POST['status'] ?? $lead['status'],
@@ -91,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 customer_address=?, vehicle_make_model=?, vehicle_condition=?, year_of_manufacture=?,
                 registration_number=?, insurance_company=?, policy_number=?, insurance_expiry_date=?, loan_amount=?, loan_type=?,
                 customer_bank_name=?, customer_account_number=?, customer_ifsc_code=?,
-                agent_id=?, financer_id=?, dealer_id=?, executive_id=?,
+                agent_id=?, financer_id=?, financer_lead_number=?, dealer_id=?, executive_id=?,
                 status=?, query_notes=?,
                 rc_status=?, rc_number=?, insurance_status=?, insurance_number=?, rto_status=?,
                 payout_amount=?, payout_status=?
@@ -101,13 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $year = $data['year_of_manufacture'] !== '' ? (int)$data['year_of_manufacture'] : null;
         $loanAmt = $data['loan_amount'] !== '' ? (float)$data['loan_amount'] : null;
         $payAmt  = $data['payout_amount'] !== '' ? (float)$data['payout_amount'] : null;
-        $stmt->bind_param('sssssssissssdsiiiisssssssdsi',
+        $stmt->bind_param('sssssssissssdsiiisisiisssssssdsi',
             $data['lead_date'], $data['customer_name'], $data['customer_mobile'],
             $data['customer_mobile2'], $data['customer_address'], $data['vehicle_make_model'], $data['vehicle_condition'],
             $year, $data['registration_number'], $data['insurance_company'], $data['policy_number'], $data['insurance_expiry_date'], $loanAmt,
             $data['loan_type'],
             $data['customer_bank_name'], $data['customer_account_number'], $data['customer_ifsc_code'],
-            $data['agent_id'], $data['financer_id'],
+            $data['agent_id'], $data['financer_id'], $data['financer_lead_number'],
             $data['dealer_id'], $data['executive_id'],
             $data['status'], $data['query_notes'],
             $data['rc_status'], $data['rc_number'], $data['insurance_status'], $data['insurance_number'], $data['rto_status'],
@@ -273,6 +274,10 @@ require_once __DIR__ . '/../includes/header.php';
                     <?php endforeach; ?>
                 </select>
                 <label for="financer_id">Financer</label>
+            </div>
+            <div class="form-floating">
+                <input type="text" name="financer_lead_number" id="financer_lead_number" value="<?= e($data['financer_lead_number'] ?? '') ?>" placeholder=" ">
+                <label for="financer_lead_number">Financer Lead/App No.</label>
             </div>
             <div class="form-floating">
                 <select name="dealer_id" id="dealer_id" class="form-select border-none px-0" style="padding-top:1.5rem; padding-bottom:0.625rem; padding-left:1rem; background-color:transparent; width:100%;">

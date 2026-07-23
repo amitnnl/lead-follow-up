@@ -410,12 +410,12 @@ export default function LeadDetails() {
   // Tabs
   const tabs = [
     { id: 'overview',   icon: List,         label: 'Overview' },
-    ...(lead?.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') ? [{ id: 'assignment', icon: Users, label: 'Assign Lead' }] : []),
     { id: 'documents',  icon: FileText,     label: 'Documents' },
+    ...(lead?.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') ? [{ id: 'assignment', icon: Users, label: 'Assign Lead' }] : []),
     { id: 'followups',  icon: MessageCircle, label: 'Follow-ups', badge: isOverdue ? '!' : null },
 
     { id: 'logs',       icon: Clock,        label: 'Audit Logs' },
-  ].filter(t => !(t.id === 'documents' && user?.role === 'staff'));
+  ];
 
   // Follow-up status dot color
   const followupDotColor: Record<string, string> = {
@@ -1105,29 +1105,31 @@ export default function LeadDetails() {
                 </div>
               </div>
 
-              {assignError && (
-                <div className="p-3.5 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-450 rounded-xl text-xs font-semibold">
-                  {assignError}
-                </div>
-              )}
+              {/* The assignment block is now always available, bypassing the mandatory document check as requested. */}
+              <>
+                  {assignError && (
+                    <div className="p-3.5 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-450 rounded-xl text-xs font-semibold">
+                      {assignError}
+                    </div>
+                  )}
 
-              {assignSuccess && (
-                <div className="p-3.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-450 rounded-xl text-xs font-semibold">
-                  Assignment updated successfully!
-                </div>
-              )}
+                  {assignSuccess && (
+                    <div className="p-3.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-450 rounded-xl text-xs font-semibold">
+                      Assignment updated successfully!
+                    </div>
+                  )}
 
-              {lead.status === 'rejected' && (
-                <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-250 dark:border-amber-900/40 rounded-xl flex items-start gap-3 text-amber-800 dark:text-amber-300 text-xs font-semibold">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="font-bold block text-sm mb-0.5">Reactivating Rejected Lead</strong>
-                    Re-assigning this lead to a Financer or Executive will automatically move it out of Rejection and display it in the active assigned list.
-                  </div>
-                </div>
-              )}
+                  {lead.status === 'rejected' && (
+                    <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-250 dark:border-amber-900/40 rounded-xl flex items-start gap-3 text-amber-800 dark:text-amber-300 text-xs font-semibold">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="font-bold block text-sm mb-0.5">Reactivating Rejected Lead</strong>
+                        Re-assigning this lead to a Financer or Executive will automatically move it out of Rejection and display it in the active assigned list.
+                      </div>
+                    </div>
+                  )}
 
-              <form onSubmit={handleAssignSubmit} className="space-y-6">
+                  <form onSubmit={handleAssignSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* 1. Assigned Date */}
                   <div className="space-y-1.5">
@@ -1203,6 +1205,7 @@ export default function LeadDetails() {
                   </button>
                 </div>
               </form>
+              </>
             </div>
           )}
 
@@ -1449,23 +1452,14 @@ export default function LeadDetails() {
           {/* ─────────────── DOCUMENTS TAB ─────────────── */}
           {activeTab === 'documents' && (
             <div className="animate-fade-in">
-              {user?.role === 'staff' ? (
-                <div className="card p-10 flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center">
-                    <ShieldAlert className="w-7 h-7 text-rose-500" />
-                  </div>
-                  <h3 className="text-base font-bold text-slate-800 dark:text-white">Access Restricted</h3>
-                  <p className="text-sm text-slate-400 max-w-xs">Staff members do not have permission to view uploaded documents.</p>
-                </div>
-              ) : (
-                <PragmaticLeadDocuments
-                  lead={lead} documents={documents || []}
-                  onUpload={handleUploadDocumentPragmatic} onVerify={handleVerifyDoc}
-                  onDelete={handleDeleteDoc} onOpenAssignmentModal={() => setSearchParams({ tab: 'assignment' })}
-                  canVerifyDocs={canVerifyDocs} isAdminOrManager={isAdminOrManager}
-                  uploadingDoc={uploadingDoc} getDocUrl={getDocUrl}
-                />
-              )}
+              <PragmaticLeadDocuments
+                lead={lead} documents={documents || []}
+                onUpload={handleUploadDocumentPragmatic} onVerify={handleVerifyDoc}
+                onDelete={handleDeleteDoc} onOpenAssignmentModal={() => setSearchParams({ tab: 'assignment' })}
+                canVerifyDocs={canVerifyDocs} isAdminOrManager={isAdminOrManager}
+                uploadingDoc={uploadingDoc} getDocUrl={getDocUrl}
+                canViewDocs={user?.role !== 'staff'}
+              />
             </div>
           )}
           {/* ─────────────── AUDIT LOGS TAB ─────────────── */}

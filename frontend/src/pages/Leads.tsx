@@ -69,7 +69,7 @@ function LeadTableRow({
 }) {
   return (
     <tr className={clsx(
-      "group border-b border-slate-200 dark:border-slate-800/60 hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors",
+      "group border-b border-slate-200 dark:border-slate-800/60 hover:bg-indigo-100/50 dark:hover:bg-indigo-500/10 transition-colors",
       isSelected ? "bg-indigo-50/50 dark:bg-indigo-900/20" : ""
     )}>
       {/* Checkbox */}
@@ -651,7 +651,7 @@ export default function Leads() {
       </div>
 
       {/* ── Institutional Financial Data Grid (Comprehensive Table View) ── */}
-      <div className="bg-white dark:bg-[#162230] border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#162230] border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden shadow-sm animate-fade-in animate-in slide-in-from-bottom-2 duration-500">
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
@@ -673,11 +673,11 @@ export default function Leads() {
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto relative custom-scrollbar">
+          <div className="overflow-auto relative custom-scrollbar max-h-[600px]">
             <table className="w-full text-xs text-left border-collapse table-fixed min-w-[1150px]">
-              <thead>
+              <thead className="sticky top-0 z-30 shadow-sm">
                 <tr className="bg-slate-50 dark:bg-[#192736] border-b border-slate-200 dark:border-slate-800">
-                  <th className="sticky left-0 bg-slate-50 dark:bg-[#192736] z-20 px-2 py-3 border-r border-slate-200/80 dark:border-slate-800 text-center w-12">
+                  <th className="sticky left-0 bg-slate-50 dark:bg-[#192736] z-40 px-2 py-3 border-r border-slate-200/80 dark:border-slate-800 text-center w-12">
                     <input
                       type="checkbox"
                       checked={leads.length > 0 && selectedLeadIds.length === leads.length}
@@ -685,7 +685,7 @@ export default function Leads() {
                       className="rounded border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500/20 w-4 h-4 cursor-pointer"
                     />
                   </th>
-                  <th className="sticky left-12 bg-slate-50 dark:bg-[#192736] z-20 px-3 py-3 border-r border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead ID</th>
+                  <th className="sticky left-12 bg-slate-50 dark:bg-[#192736] z-40 px-3 py-3 border-r border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead ID</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Date</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">Customer Name</th>
                   <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">Address</th>

@@ -43,6 +43,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
     agent_id: '',
     channel_id: '',
     channel_executive_id: '',
+    financer_lead_number: '',
     lead_date: new Date().toISOString().split('T')[0],
     query_notes: ''
   });
@@ -78,6 +79,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
           agent_id: initialData.agent_id?.toString() || '',
           channel_id: initialData.channel_id?.toString() || '',
           channel_executive_id: initialData.channel_executive_id?.toString() || '',
+          financer_lead_number: initialData.financer_lead_number || '',
           lead_date: initialData.lead_date || new Date().toISOString().split('T')[0],
           query_notes: initialData.query_notes || ''
         });
@@ -100,6 +102,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
           agent_id: '',
           channel_id: '',
           channel_executive_id: '',
+          financer_lead_number: '',
           lead_date: new Date().toISOString().split('T')[0],
           query_notes: ''
         });
@@ -361,6 +364,10 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 <div>
                   <label className={labelClass}>Lead Date *</label>
                   <input required type="date" name="lead_date" value={formData.lead_date} onChange={handleChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Financer Lead No.</label>
+                  <input type="text" name="financer_lead_number" value={formData.financer_lead_number} onChange={handleChange} className={inputClass} placeholder="Enter Financer Lead No." />
                 </div>
                 {!isSelfScopedAgent && (
                   <div>

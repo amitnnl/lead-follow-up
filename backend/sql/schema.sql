@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `dealers` (
 CREATE TABLE IF NOT EXISTS `financers` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(200) NOT NULL,
+  `dsa_code` VARCHAR(100) NULL COMMENT 'DSA Code assigned by this financer',
   `contact_person` VARCHAR(150) NULL,
   `mobile` VARCHAR(15) NULL,
   `notes` TEXT NULL,
@@ -126,6 +127,7 @@ CREATE TABLE IF NOT EXISTS `leads` (
   `referred_by` VARCHAR(200) NULL,
   `agent_id` INT UNSIGNED NULL,
   `financer_id` INT UNSIGNED NULL,
+  `financer_lead_number` VARCHAR(100) NULL COMMENT 'Lead/App number given by financer',
   `dealer_id` INT UNSIGNED NULL,
   `executive_id` INT UNSIGNED NULL COMMENT 'SFE assigned',
   -- Status

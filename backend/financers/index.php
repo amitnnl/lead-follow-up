@@ -23,16 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Handle add/edit POST
     $name    = trim($_POST['name'] ?? '');
+    $dsaCode = trim($_POST['dsa_code'] ?? '');
     $contact = trim($_POST['contact_person'] ?? '');
     $mobile  = trim($_POST['mobile'] ?? '');
+    $email   = trim($_POST['email'] ?? '');
     $notes   = trim($_POST['notes'] ?? '');
     $editId  = (int)($_POST['edit_id'] ?? 0);
     if ($name) {
         if ($editId) {
-            db_query($conn,"UPDATE financers SET name=?,contact_person=?,mobile=?,notes=? WHERE id=?","ssssi",[$name,$contact,$mobile,$notes,$editId]);
+            db_query($conn,"UPDATE financers SET name=?,dsa_code=?,contact_person=?,mobile=?,email=?,notes=? WHERE id=?","ssssssi",[$name,$dsaCode,$contact,$mobile,$email,$notes,$editId]);
             flash('success','Finance unit updated.');
         } else {
-            db_query($conn,"INSERT INTO financers (name,contact_person,mobile,notes) VALUES (?,?,?,?)","ssss",[$name,$contact,$mobile,$notes]);
+            db_query($conn,"INSERT INTO financers (name,dsa_code,contact_person,mobile,email,notes) VALUES (?,?,?,?,?,?)","ssssss",[$name,$dsaCode,$contact,$mobile,$email,$notes]);
             flash('success','Finance unit added.');
         }
     }
@@ -67,8 +69,9 @@ require_once __DIR__ . '/../includes/header.php';
                 <tr>
                     <th class="w-12">#</th>
                     <th>Finance Unit</th>
-                    <th>Contact</th>
-                    <th>Mobile</th>
+                    <th>DSA Code</th>
+                    <th>Contact Person</th>
+                    <th>Contact Info</th>
                     <th class="text-center">Agents</th>
                     <th class="text-center">Leads</th>
                     <th class="text-center">Disbursed</th>
@@ -83,12 +86,22 @@ require_once __DIR__ . '/../includes/header.php';
                 <tr>
                     <td class="text-slate-400 font-mono text-xs"><?= $i+1 ?></td>
                     <td class="font-extrabold text-slate-800 dark:text-slate-200"><?= e($f['name']) ?></td>
+                    <td class="text-slate-600 dark:text-slate-400 font-mono text-sm"><?= e($f['dsa_code'] ?? '—') ?></td>
                     <td class="text-slate-600 dark:text-slate-400 text-sm"><?= e($f['contact_person'] ?? '—') ?></td>
                     <td class="text-xs">
-                        <a href="tel:<?= e($f['mobile']??'') ?>" class="hover:text-brand-500 font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                        <?php if(!empty($f['mobile'])): ?>
+                        <a href="tel:<?= e($f['mobile']) ?>" class="hover:text-brand-500 font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1 mb-1">
                             <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                            <?= e($f['mobile']??'—') ?>
+                            <?= e($f['mobile']) ?>
                         </a>
+                        <?php endif; ?>
+                        <?php if(!empty($f['email'])): ?>
+                        <a href="mailto:<?= e($f['email']) ?>" class="hover:text-brand-500 font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <?= e($f['email']) ?>
+                        </a>
+                        <?php endif; ?>
+                        <?php if(empty($f['mobile']) && empty($f['email'])) echo '—'; ?>
                     </td>
                     <td class="text-center font-extrabold text-brand-600 dark:text-brand-400"><?= $f['agents_count'] ?></td>
                     <td class="text-center font-extrabold text-slate-800 dark:text-slate-200"><?= $f['leads_count'] ?></td>
@@ -148,14 +161,22 @@ require_once __DIR__ . '/../includes/header.php';
                 <label class="form-label required-lbl">Finance Unit Name</label>
                 <input name="name" id="fName" class="form-input" required placeholder="Financer business name">
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="form-label">DSA Code</label>
+                <input name="dsa_code" id="fDsaCode" class="form-input" placeholder="e.g. HDFC-1234">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="form-label">Contact Person</label>
-                    <input name="contact_person" id="fContact" class="form-input" placeholder="e.g. Sales Executive">
+                    <input name="contact_person" id="fContact" class="form-input" placeholder="e.g. Sales Exec">
                 </div>
                 <div>
                     <label class="form-label">Mobile</label>
                     <input name="mobile" id="fMobile" class="form-input" placeholder="10-digit mobile">
+                </div>
+                <div>
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" id="fEmail" class="form-input" placeholder="Email">
                 </div>
             </div>
             <div>
@@ -176,8 +197,10 @@ function editRow(r){
     document.getElementById('modalTitle').textContent='Edit Finance Unit';
     document.getElementById('editId').value=r.id;
     document.getElementById('fName').value=r.name||'';
+    document.getElementById('fDsaCode').value=r.dsa_code||'';
     document.getElementById('fContact').value=r.contact_person||'';
     document.getElementById('fMobile').value=r.mobile||'';
+    document.getElementById('fEmail').value=r.email||'';
     document.getElementById('fNotes').value=r.notes||'';
     openModal('addModal');
 }
