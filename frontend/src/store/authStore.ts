@@ -54,3 +54,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   }
 }));
+
+// Expose store to window for Axios interceptor
+(window as any).useAuthStore = useAuthStore;

@@ -15,7 +15,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Logic to clear user store can be dispatched here or handled in the store directly
+      // Automatically log out user if session expires
+      const authStore = (window as any).useAuthStore?.getState?.();
+      if (authStore) {
+          authStore.setUser(null);
+      }
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

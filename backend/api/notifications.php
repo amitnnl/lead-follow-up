@@ -3,7 +3,11 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 
-require_login();
+if (!is_logged_in()) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
 header('Content-Type: application/json');
 
 $uid = current_user_id();
