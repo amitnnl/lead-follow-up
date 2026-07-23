@@ -705,10 +705,10 @@ switch ($path) {
 
                 db_query($conn, "
                     UPDATE leads SET
-                        financer_id = ?, executive_id = ?, assigned_date = ? $statusSql
+                        financer_id = ?, executive_id = ? $statusSql
                     WHERE id = ?
-                ", 'iisi', [
-                    $financer_id, $executive_id, $assigned_date, $id
+                ", 'iii', [
+                    $financer_id, $executive_id, $id
                 ]);
 
                 // Trigger notifications and fetch details for frontend WhatsApp modal
@@ -751,10 +751,10 @@ switch ($path) {
 
                 // 2. Financer WhatsApp Data
                 if ($financer_id) {
-                    $finRow = db_fetch_one($conn, "SELECT id, name, contact_person, mobile FROM financers WHERE id = ?", 'i', [$financer_id]);
+                    $finRow = db_fetch_one($conn, "SELECT id, name, mobile FROM financers WHERE id = ?", 'i', [$financer_id]);
                     if ($finRow && !empty($finRow['mobile'])) {
                         $assigned_fin_details = [
-                            'name' => !empty($finRow['contact_person']) ? $finRow['contact_person'] : $finRow['name'],
+                            'name' => $finRow['name'],
                             'mobile' => $finRow['mobile'],
                             'lead_id' => 'ID-' . $id
                         ];
