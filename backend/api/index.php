@@ -1985,7 +1985,7 @@ switch ($path) {
             api_require_login();
             $financers = db_fetch_all($conn, "
                 SELECT f.*, 
-                       (SELECT COUNT(*) FROM agents WHERE financer_id = f.id) as agents_count,
+                       0 as agents_count,
                        COUNT(l.id) as leads_count,
                        SUM(l.loan_amount) as total_loan,
                        SUM(CASE WHEN l.status='disbursed' THEN 1 ELSE 0 END) as disbursed
@@ -2008,9 +2008,9 @@ switch ($path) {
             if (empty($name)) json_error("Name is required.");
 
             db_query($conn, "
-                INSERT INTO financers (name, dsa_code, mobile, email, notes, is_active)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ", 'sssssi', [$name, $dsa_code, $mobile, $email, $notes, $is_active]);
+                INSERT INTO financers (name, dsa_code, mobile, notes, is_active)
+                VALUES (?, ?, ?, ?, ?)
+            ", 'ssssi', [$name, $dsa_code, $mobile, $notes, $is_active]);
 
             sync_all_user_role_entities($conn);
             json_response(['message' => 'Financer created successfully', 'id' => $conn->insert_id]);
@@ -2027,9 +2027,9 @@ switch ($path) {
             if (empty($name) || !$id) json_error("ID and Name are required.");
 
             db_query($conn, "
-                UPDATE financers SET name = ?, dsa_code = ?, mobile = ?, email = ?, notes = ?, is_active = ?
+                UPDATE financers SET name = ?, dsa_code = ?, mobile = ?, notes = ?, is_active = ?
                 WHERE id = ?
-            ", 'ssssssi', [$name, $dsa_code, $mobile, $email, $notes, $is_active, $id]);
+            ", 'sssssi', [$name, $dsa_code, $mobile, $notes, $is_active, $id]);
 
             sync_all_user_role_entities($conn);
             json_response(['message' => 'Financer updated successfully']);
