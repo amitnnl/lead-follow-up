@@ -685,6 +685,14 @@ switch ($path) {
                 if ($lead && $lead['status'] === 'disbursed') {
                     json_error("This lead has been disbursed. Lead assignments are locked.", 403);
                 }
+
+                // KYC Verification Check for Assignments
+                if ($executive_id || $financer_id) {
+                    $kyc = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM lead_documents WHERE lead_id = ? AND (LOWER(document_type) LIKE '%aadhar%' OR LOWER(document_type) LIKE '%pan%' OR category = 'kyc') AND IFNULL(verification_notes, '') != 'Archived / Removed by user'", 'i', [$id]);
+                    if (!$kyc || $kyc['cnt'] == 0) {
+                        json_error("Mandatory KYC documents (Aadhar or PAN) must be uploaded before assigning this lead.");
+                    }
+                }
                 
                 $newStatus = $lead['status'];
                 $statusSql = "";
@@ -703,13 +711,67 @@ switch ($path) {
                     $financer_id, $executive_id, $assigned_date, $id
                 ]);
 
+                // Trigger notifications and fetch details for frontend WhatsApp modal
+                $assigned_exec_details = null;
+                $assigned_fin_details = null;
+                
+                // 1. Executive WhatsApp Data
+                if ($executive_id) {
+                    $execRow = db_fetch_one($conn, "SELECT id, user_id, name, email, mobile FROM executives WHERE id = ?", 'i', [$executive_id]);
+                    if ($execRow) {
+                        $assigned_exec_details = [
+                            'name' => $execRow['name'],
+                            'mobile' => $execRow['mobile'],
+                            'lead_id' => 'ID-' . $id
+                        ];
+                        
+                        // Only send auto-email/in-app notification if it's a NEW assignment
+                        if ($executive_id != $lead['executive_id']) {
+                            if (!empty($execRow['user_id'])) {
+                                add_notification($conn, $execRow['user_id'], "You have been assigned a new lead", "/dashboard/leads/");
+                            }
+                            if (!empty($execRow['email'])) {
+                                require_once __DIR__ . '/../includes/mailer.php';
+                                $subject = "New Lead Assigned";
+                                $body = "
+                                    <div style='font-family:sans-serif; color:#333;'>
+                                        <h2>New Lead Assignment</h2>
+                                        <p>Hi <strong>{$execRow['name']}</strong>,</p>
+                                        <p>A new lead has just been assigned to you by the administrative team.</p>
+                                        <p>Please log in to your portal to view the complete details and take necessary actions.</p>
+                                        <br>
+                                        <p>Thanks,<br>LeadFlow Pro Team</p>
+                                    </div>
+                                ";
+                                send_system_email($execRow['email'], $subject, $body);
+                            }
+                        }
+                    }
+                }
+
+                // 2. Financer WhatsApp Data
+                if ($financer_id) {
+                    $finRow = db_fetch_one($conn, "SELECT id, name, contact_person, mobile FROM financers WHERE id = ?", 'i', [$financer_id]);
+                    if ($finRow && !empty($finRow['mobile'])) {
+                        $assigned_fin_details = [
+                            'name' => !empty($finRow['contact_person']) ? $finRow['contact_person'] : $finRow['name'],
+                            'mobile' => $finRow['mobile'],
+                            'lead_id' => 'ID-' . $id
+                        ];
+                    }
+                }
+
                 log_lead_action($conn, $id, 'Lead Assigned', 'Assignment updated by ' . current_user()['name'], current_user_id());
                 
                 if ($newStatus !== $lead['status']) {
                     log_lead_action($conn, $id, 'Status Changed', "From {$lead['status']} to {$newStatus} (Auto-assigned)", current_user_id());
                 }
 
-                json_response(['message' => 'Lead assignments updated successfully']);
+                json_response([
+                    'message' => 'Lead assignments updated successfully',
+                    'assigned_executive' => $assigned_exec_details,
+                    'assigned_financer' => $assigned_fin_details
+                ]);
             }
 
             // Otherwise, Update core lead data
@@ -950,6 +1012,14 @@ switch ($path) {
             }
         }
 
+        // KYC Verification Check for Assignments
+        if ($executive_id || $financer_id || $agent_id || $dealer_id) {
+            $kyc = db_fetch_one($conn, "SELECT COUNT(*) as cnt FROM lead_documents WHERE lead_id = ? AND (LOWER(document_type) LIKE '%aadhar%' OR LOWER(document_type) LIKE '%pan%' OR category = 'kyc') AND IFNULL(verification_notes, '') != 'Archived / Removed by user'", 'i', [$id]);
+            if (!$kyc || $kyc['cnt'] == 0) {
+                json_error("Mandatory KYC documents (Aadhar or PAN) must be uploaded before assigning this lead.");
+            }
+        }
+
         $statusSql = "";
         $newStatus = $lead['status'];
         if (($executive_id || $financer_id || $agent_id || $dealer_id) && in_array($lead['status'], ['new', 'rejected'])) {
@@ -969,12 +1039,54 @@ switch ($path) {
             $customer_bank_name, $customer_account_number, $customer_ifsc_code, $id
         ]);
 
+        // Trigger notifications if a NEW executive was assigned
+        $assigned_exec_details = null;
+        if ($executive_id && $executive_id != $lead['executive_id']) {
+            $execRow = db_fetch_one($conn, "SELECT id, user_id, name, email, mobile FROM executives WHERE id = ?", 'i', [$executive_id]);
+            if ($execRow) {
+                // In-App Notification
+                if (!empty($execRow['user_id'])) {
+                    add_notification($conn, $execRow['user_id'], "You have been assigned a new lead: " . $lead['lead_id'], "/dashboard/leads/" . $lead['lead_id']);
+                }
+                
+                // Email Notification
+                if (!empty($execRow['email'])) {
+                    require_once __DIR__ . '/../includes/mailer.php';
+                    $subject = "New Lead Assigned: " . $lead['lead_id'];
+                    $body = "
+                        <div style='font-family:sans-serif; color:#333;'>
+                            <h2>New Lead Assignment</h2>
+                            <p>Hi <strong>{$execRow['name']}</strong>,</p>
+                            <p>A new lead has just been assigned to you by the administrative team.</p>
+                            <ul>
+                                <li><strong>Lead ID:</strong> {$lead['lead_id']}</li>
+                                <li><strong>Customer:</strong> {$lead['customer_name']}</li>
+                            </ul>
+                            <p>Please log in to your portal to view the complete details and take necessary actions.</p>
+                            <br>
+                            <p>Thanks,<br>LeadFlow Pro Team</p>
+                        </div>
+                    ";
+                    send_system_email($execRow['email'], $subject, $body);
+                }
+
+                $assigned_exec_details = [
+                    'name' => $execRow['name'],
+                    'mobile' => $execRow['mobile'],
+                    'lead_id' => $lead['lead_id']
+                ];
+            }
+        }
+
         log_lead_action($conn, $id, 'Lead Assigned/Updated', 'Executive & checklist params updated.', current_user_id());
         if ($newStatus !== $lead['status']) {
             log_lead_action($conn, $id, 'Status Changed', "From {$lead['status']} to {$newStatus} (Auto-assigned via checklist)", current_user_id());
         }
         
-        json_response(['message' => 'Lead assignments and status gates updated.']);
+        json_response([
+            'message' => 'Lead assignments and status gates updated.',
+            'assigned_executive' => $assigned_exec_details
+        ]);
         break;
 
     case 'leads/status':

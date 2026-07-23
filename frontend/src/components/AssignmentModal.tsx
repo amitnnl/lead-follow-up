@@ -100,13 +100,15 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
     }));
   };
 
+  const [assignmentSuccessData, setAssignmentSuccessData] = useState<any>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      await api.put('/leads?action=assign', {
+      const res = await api.put('/leads?action=assign', {
         id: leadId,
         assigned_date: formData.assigned_date,
         financer_id: formData.financer_id ? parseInt(formData.financer_id) : null,
@@ -114,7 +116,15 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
         channel_id: formData.channel_id ? parseInt(formData.channel_id) : null,
         channel_executive_id: formData.channel_executive_id ? parseInt(formData.channel_executive_id) : null
       });
-      onSuccess();
+      
+      if (res.data?.assigned_executive || res.data?.assigned_financer) {
+        setAssignmentSuccessData({
+            exec: res.data.assigned_executive,
+            fin: res.data.assigned_financer
+        });
+      } else {
+        onSuccess();
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to update assignment');
     } finally {
@@ -123,6 +133,40 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
   };
 
   if (!isOpen) return null;
+
+  if (assignmentSuccessData) {
+    const { exec, fin } = assignmentSuccessData;
+    
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in select-none">
+        <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={onSuccess}></div>
+        <div className="relative w-full max-w-sm bg-white dark:bg-[#111622] rounded-2xl shadow-2xl overflow-hidden animate-scale-in border border-slate-200/80 dark:border-slate-800 p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Lead Assigned Successfully!</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+            The lead has been securely assigned. You can send a quick WhatsApp reminder using the buttons below.
+          </p>
+          <div className="space-y-3">
+            {exec && (
+                <a href={`https://wa.me/91${exec.mobile}?text=${encodeURIComponent(`Hi ${exec.name}, a new lead (${exec.lead_id}) has been assigned to you. Please log in to your dashboard to view the details.`)}`} target="_blank" rel="noopener noreferrer" className="w-full block py-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl text-sm font-bold shadow-lg shadow-[#25D366]/30 transition-all text-center">
+                  Notify Executive: {exec.name}
+                </a>
+            )}
+            {fin && (
+                <a href={`https://wa.me/91${fin.mobile}?text=${encodeURIComponent(`Hi ${fin.name}, a new lead (${fin.lead_id}) has been assigned to your bank. Please review the details.`)}`} target="_blank" rel="noopener noreferrer" className="w-full block py-3 bg-[#128C7E] hover:bg-[#075E54] text-white rounded-xl text-sm font-bold shadow-lg shadow-[#128C7E]/30 transition-all text-center">
+                  Notify Financer: {fin.name}
+                </a>
+            )}
+            <button onClick={onSuccess} className="w-full py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold transition-all mt-2">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const selectClass = "w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl text-xs outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white transition-all";
   const labelClass = "block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider";

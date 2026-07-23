@@ -2,8 +2,8 @@
 -- Vehicle Finance DSA Management System — Database Schema
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS `dsa_leads` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `dsa_leads`;
+-- CREATE DATABASE IF NOT EXISTS `dsa_leads` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `dsa_leads`;
 
 -- Users (Login Accounts)
 CREATE TABLE IF NOT EXISTS `users` (
@@ -17,11 +17,22 @@ CREATE TABLE IF NOT EXISTS `users` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Financers / Banks
+CREATE TABLE IF NOT EXISTS `financers` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(200) NOT NULL,
+  `dsa_code` VARCHAR(100) NULL COMMENT 'DSA Code assigned by this financer',
+  `contact_person` VARCHAR(150) NULL,
+  `mobile` VARCHAR(15) NULL,
+  `notes` TEXT NULL,
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 -- Agents (DSA Partners)
 CREATE TABLE IF NOT EXISTS `agents` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT UNSIGNED NULL,
-  `financer_id` INT UNSIGNED NULL,
   `name` VARCHAR(150) NOT NULL,
   `mobile` VARCHAR(15) NOT NULL,
   `email` VARCHAR(150) NULL,
@@ -31,20 +42,25 @@ CREATE TABLE IF NOT EXISTS `agents` (
   `ifsc_code` VARCHAR(15) NULL,
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
-  FOREIGN KEY (`financer_id`) REFERENCES `financers`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Field Executives / SFE
 CREATE TABLE IF NOT EXISTS `executives` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT UNSIGNED NULL,
+  `financer_id` INT UNSIGNED NULL,
   `name` VARCHAR(150) NOT NULL,
   `mobile` VARCHAR(15) NOT NULL,
   `email` VARCHAR(150) NULL,
+  `bank_account` VARCHAR(50) NULL,
+  `ifsc` VARCHAR(20) NULL,
+  `ifsc_code` VARCHAR(20) NULL,
+  `pan_number` VARCHAR(20) NULL,
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+  FOREIGN KEY (`financer_id`) REFERENCES `financers`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Channels
@@ -88,18 +104,6 @@ CREATE TABLE IF NOT EXISTS `dealers` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Financers / Banks
-CREATE TABLE IF NOT EXISTS `financers` (
-  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR(200) NOT NULL,
-  `dsa_code` VARCHAR(100) NULL COMMENT 'DSA Code assigned by this financer',
-  `contact_person` VARCHAR(150) NULL,
-  `mobile` VARCHAR(15) NULL,
-  `notes` TEXT NULL,
-  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-
 -- Leads (Core Table)
 CREATE TABLE IF NOT EXISTS `leads` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -110,10 +114,14 @@ CREATE TABLE IF NOT EXISTS `leads` (
   `customer_mobile` VARCHAR(15) NOT NULL,
   `customer_mobile2` VARCHAR(15) NULL,
   `customer_address` TEXT NULL,
+  `vehicle_condition` VARCHAR(50) NULL,
   -- Vehicle
   `vehicle_make_model` VARCHAR(200) NULL COMMENT 'e.g. TATA 1512',
   `year_of_manufacture` YEAR NULL,
   `registration_number` VARCHAR(30) NULL,
+  `insurance_company` VARCHAR(150) NULL,
+  `policy_number` VARCHAR(100) NULL,
+  `insurance_expiry_date` DATE NULL,
   `loan_amount` DECIMAL(12,2) NULL,
   `final_loan_amount` DECIMAL(15,2) NULL,
   `tenure_months` INT NULL,
@@ -126,6 +134,8 @@ CREATE TABLE IF NOT EXISTS `leads` (
   -- References
   `referred_by` VARCHAR(200) NULL,
   `agent_id` INT UNSIGNED NULL,
+  `channel_id` INT UNSIGNED NULL,
+  `channel_executive_id` INT UNSIGNED NULL,
   `financer_id` INT UNSIGNED NULL,
   `financer_lead_number` VARCHAR(100) NULL COMMENT 'Lead/App number given by financer',
   `dealer_id` INT UNSIGNED NULL,
@@ -148,6 +158,8 @@ CREATE TABLE IF NOT EXISTS `leads` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`agent_id`) REFERENCES `agents`(`id`) ON DELETE SET NULL,
+  FOREIGN KEY (`channel_id`) REFERENCES `channels`(`id`) ON DELETE SET NULL,
+  FOREIGN KEY (`channel_executive_id`) REFERENCES `channel_executives`(`id`) ON DELETE SET NULL,
   FOREIGN KEY (`financer_id`) REFERENCES `financers`(`id`) ON DELETE SET NULL,
   FOREIGN KEY (`dealer_id`) REFERENCES `dealers`(`id`) ON DELETE SET NULL,
   FOREIGN KEY (`executive_id`) REFERENCES `executives`(`id`) ON DELETE SET NULL,
@@ -185,14 +197,38 @@ CREATE TABLE IF NOT EXISTS `commissions` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `lead_id` INT UNSIGNED NOT NULL,
   `agent_id` INT UNSIGNED NULL,
-  `commission_amount` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  `paid_amount` DECIMAL(10,2) NOT NULL DEFAULT 0,
+  `commission_amount` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `paid_amount` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   `payment_date` DATE NULL,
   `payment_mode` ENUM('cash','bank_transfer','cheque') NULL,
   `notes` TEXT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `payout_90_status` ENUM('pending','paid') NOT NULL DEFAULT 'pending',
+  `payout_90_date` DATE NULL,
+  `payout_90_mode` ENUM('cash','bank_transfer','cheque') NULL,
+  `payout_10_status` ENUM('pending','paid') NOT NULL DEFAULT 'pending',
+  `payout_10_date` DATE NULL,
+  `payout_10_mode` ENUM('cash','bank_transfer','cheque') NULL,
+  `additional_payout` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `irr_percentage` DECIMAL(5,2) NULL,
+  `payout_percentage` DECIMAL(5,2) NULL,
+  `gross_payout` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `tds_rate` DECIMAL(5,2) NOT NULL DEFAULT 5.00,
+  `tds_amount` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `gst_amount` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `net_payable` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `net_payout` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `channel_paid_amount` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `channel_payment_date` DATE NULL,
+  `balance_payout` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `payout_month` VARCHAR(20) NULL,
+  `approval_status` ENUM('approved','pending_approval','rejected') NOT NULL DEFAULT 'approved',
+  `approved_by` INT UNSIGNED NULL,
+  `approval_date` DATETIME NULL,
+  `batch_id` VARCHAR(50) NULL,
   FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`agent_id`) REFERENCES `agents`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`agent_id`) REFERENCES `agents`(`id`) ON DELETE SET NULL,
+  FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Lead Documents
@@ -211,12 +247,12 @@ CREATE TABLE IF NOT EXISTS `lead_documents` (
 CREATE TABLE IF NOT EXISTS `lead_banking` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `lead_id` INT UNSIGNED NOT NULL UNIQUE,
-  `received_amount` DECIMAL(12,2) NOT NULL DEFAULT 0,
+  `received_amount` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `received_date` DATE NULL,
-  `rc_charges` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  `insurance_charges` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  `rto_charges` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  `other_charges` DECIMAL(10,2) NOT NULL DEFAULT 0,
+  `rc_charges` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `insurance_charges` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `rto_charges` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `other_charges` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   `banking_notes` TEXT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -232,10 +268,18 @@ CREATE TABLE IF NOT EXISTS `lead_transactions` (
   `payment_mode` ENUM('cash','bank_transfer','cheque') DEFAULT 'bank_transfer',
   `reference_number` VARCHAR(100) NULL,
   `notes` TEXT NULL,
+  `payout_type` ENUM('customer','dealer','org_retained','commission') NOT NULL DEFAULT 'customer',
+  `beneficiary_name` VARCHAR(200) NULL,
+  `status` VARCHAR(50) DEFAULT 'completed',
+  `approval_status` ENUM('approved','pending_approval','rejected') NOT NULL DEFAULT 'approved',
+  `approved_by` INT UNSIGNED NULL,
+  `approval_date` DATETIME NULL,
+  `rejection_reason` TEXT NULL,
   `created_by` INT UNSIGNED NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+  FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Lead Deductions
@@ -253,20 +297,23 @@ CREATE TABLE IF NOT EXISTS `lead_deductions` (
 -- Lead Notes
 CREATE TABLE IF NOT EXISTS `lead_notes` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `lead_id` INT NOT NULL,
-  `user_id` INT NOT NULL,
+  `lead_id` INT UNSIGNED NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
   `note` TEXT NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Notifications
 CREATE TABLE IF NOT EXISTS `notifications` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
   `message` TEXT NOT NULL,
   `link` VARCHAR(255) DEFAULT NULL,
   `is_read` TINYINT(1) DEFAULT 0,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- System Settings
@@ -280,8 +327,10 @@ CREATE TABLE IF NOT EXISTS `system_settings` (
 
 -- Failed Logins
 CREATE TABLE IF NOT EXISTS `failed_logins` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `ip_address` VARCHAR(45) NOT NULL,
-  `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_ip_time` (`ip_address`,`attempt_time`)
 ) ENGINE=InnoDB;
 
 -- System Logs
@@ -293,6 +342,24 @@ CREATE TABLE IF NOT EXISTS `system_logs` (
   `ip_address` VARCHAR(45) NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`performed_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Rate Limiter Hits
+CREATE TABLE IF NOT EXISTS `rate_limit_hits` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `hit_key` VARCHAR(100) NOT NULL,
+  `hit_time` INT UNSIGNED NOT NULL,
+  KEY `idx_hit` (`hit_key`, `hit_time`)
+) ENGINE=InnoDB;
+
+-- Auth Failed Attempts (Exponential Backoff)
+CREATE TABLE IF NOT EXISTS `auth_failed_attempts` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `key_type` ENUM('ip', 'account') NOT NULL,
+  `key_value` VARCHAR(150) NOT NULL,
+  `failed_count` INT UNSIGNED NOT NULL DEFAULT 1,
+  `last_attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `idx_auth_fail_unique` (`key_type`, `key_value`)
 ) ENGINE=InnoDB;
 
 -- Bank Ledger
@@ -325,33 +392,33 @@ INSERT INTO `users` (`name`, `email`, `password`, `role`) VALUES
 ('Kavinder Singh', 'kavinder@dsaleads.com', '$2y$10$eo6f87GHmMiMbXPCANcffuNoGxd2He2d7mKqK8Zpc9pZLMEAFpjiW', 'agent'),
 ('Seka Agent', 'seka@dsaleads.com', '$2y$10$eo6f87GHmMiMbXPCANcffuNoGxd2He2d7mKqK8Zpc9pZLMEAFpjiW', 'agent');
 
+-- Financers
+INSERT INTO `financers` (`id`, `name`) VALUES
+(1, 'AU Small Finance Bank'),
+(2, 'Chola Finance'),
+(3, 'HDFC Bank'),
+(4, 'ICICI Bank'),
+(5, 'Mahindra Finance'),
+(6, 'Shriram Finance');
+
 -- Executives
-INSERT INTO `executives` (`user_id`, `name`, `mobile`) VALUES
-(2, 'Vikram Kumar', '9876543210'),
-(3, 'Yogesh Sharma', '9876543211'),
-(4, 'Kavinder Singh', '9876543212');
+INSERT INTO `executives` (`user_id`, `name`, `mobile`, `financer_id`) VALUES
+(2, 'Vikram Kumar', '9876543210', 1),
+(3, 'Yogesh Sharma', '9876543211', 2),
+(4, 'Kavinder Singh', '9876543212', 3);
 
 -- Agents
 INSERT INTO `agents` (`user_id`, `name`, `mobile`) VALUES
 (5, 'Seka N', '9876500001'),
 (NULL, 'Direct', '0000000000');
 
--- Financers
-INSERT INTO `financers` (`name`) VALUES
-('AU Small Finance Bank'),
-('Chola Finance'),
-('HDFC Bank'),
-('ICICI Bank'),
-('Mahindra Finance'),
-('Shriram Finance');
-
 -- Dealers
-INSERT INTO `dealers` (`name`, `mobile`) VALUES
-('Haryana Motors', '9876511111'),
-('Rajasthan Trucks', '9876522222'),
-('Punjab Commercial Vehicles', '9876533333');
+INSERT INTO `dealers` (`id`, `name`, `mobile`) VALUES
+(1, 'Haryana Motors', '9876511111'),
+(2, 'Rajasthan Trucks', '9876522222'),
+(3, 'Punjab Commercial Vehicles', '9876533333');
 
--- Sample Leads (from prompt data)
+-- Sample Leads
 INSERT INTO `leads`
   (`lead_id`,`lead_date`,`customer_name`,`customer_mobile`,`customer_address`,`vehicle_make_model`,`year_of_manufacture`,`registration_number`,`loan_amount`,`referred_by`,`agent_id`,`financer_id`,`dealer_id`,`executive_id`,`status`,`query_notes`,`payout_amount`)
 VALUES

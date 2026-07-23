@@ -60,6 +60,12 @@ try {
     $conn->set_charset('utf8mb4');
 
     // Auto-migrate schema safely WITHOUT blocking regular requests (runs only once via lock file or explicit ?force_migrate_schema=1)
+    try {
+        // Quick patches for missing columns in local env
+        $conn->query("ALTER TABLE leads ADD COLUMN financer_lead_number VARCHAR(150) NULL");
+        $conn->query("ALTER TABLE financers ADD COLUMN contact_person VARCHAR(150) NULL");
+    } catch (Throwable $colErr) {}
+
     static $schema_checked_in_process = false;
     $lock_file = sys_get_temp_dir() . '/dsa_schema_migrated_v5.lock';
     $local_lock = __DIR__ . '/.dsa_schema_migrated_v5.lock';
