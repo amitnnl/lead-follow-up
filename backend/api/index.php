@@ -873,7 +873,18 @@ switch ($path) {
             if (!$id) json_error("Lead ID required");
             if (!is_admin() && !is_manager()) json_error("Only Admins and Managers can delete leads", 403);
             
-            // 4. Clean up dependent child tables to prevent orphaned records
+            // Fetch and delete physical document files before removing DB records
+            $docs = db_fetch_all($conn, "SELECT file_path FROM lead_documents WHERE lead_id = ?", 'i', [$id]);
+            foreach ($docs as $doc) {
+                if (!empty($doc['file_path'])) {
+                    $fullPath = __DIR__ . '/../' . ltrim($doc['file_path'], '/');
+                    if (file_exists($fullPath) && is_file($fullPath)) {
+                        @unlink($fullPath);
+                    }
+                }
+            }
+
+            // Clean up dependent child tables to prevent orphaned records
             db_query($conn, "DELETE FROM lead_followups WHERE lead_id = ?", 'i', [$id]);
             db_query($conn, "DELETE FROM lead_documents WHERE lead_id = ?", 'i', [$id]);
             // removed non-existent lead_actions_history table deletion
