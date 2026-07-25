@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../lib/axios';
 import {
@@ -542,7 +542,7 @@ export default function LeadDetails() {
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Registration / Condition</span>
               <span className="text-xs uppercase font-bold">
-                {lead.registration_number || '—'} Â· ({lead.vehicle_condition === 'new' ? 'New' : 'Used'})
+                {lead.registration_number || '—'} · ({lead.vehicle_condition === 'new' ? 'New' : 'Used'})
               </span>
             </div>
             <div>
@@ -647,7 +647,7 @@ export default function LeadDetails() {
 
         {/* Eco-Friendly Warning */}
         <div className="mt-8 flex justify-between items-center text-[9px] text-slate-500 font-mono uppercase tracking-wide border-t border-slate-200 pt-2">
-          <span>â™»ï¸ Eco-Print Layout (Fits exactly on one A4 page to save ink & paper)</span>
+          <span>♻️ Eco-Print Layout (Fits exactly on one A4 page to save ink & paper)</span>
           <span>Sourced via: {lead.referred_by || 'Direct DSA'}</span>
         </div>
 
@@ -659,14 +659,16 @@ export default function LeadDetails() {
           <ArrowLeft className="w-4 h-4" /> Leads
         </button>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
+        {/* ════════════════════════════════════════════════════════════════════════
+      ════════════════════════════════════════════════════════════════════════ */}
         <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{lead.lead_id}</span>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
         <span className="text-slate-700 dark:text-slate-200 font-medium truncate max-w-[200px]">{lead.customer_name}</span>
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ════════════════════════════════════════════════════════════════════════
           HERO HEADER CARD
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ════════════════════════════════════════════════════════════════════════ */}
       <div className="no-print bg-white dark:bg-[#111622] border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
         {/* Top gradient strip */}
         <div className="h-1.5 bg-gradient-to-r from-primary-600 via-primary-600 to-emerald-500" />
@@ -693,7 +695,7 @@ export default function LeadDetails() {
                       ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/30'
                       : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30'
                   )}>
-                    {lead.vehicle_condition === 'new' ? 'âœ¨ New Vehicle' : 'ðŸš— Used Vehicle'}
+                    {lead.vehicle_condition === 'new' ? '✨ New Vehicle' : '🚗 Used Vehicle'}
                   </span>
                   {lead.loan_type && (
                     <span className="text-[11px] font-semibold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
@@ -723,7 +725,7 @@ export default function LeadDetails() {
                   onClick={() => setShowWhatsAppTemplates(!showWhatsAppTemplates)}
                   className="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-450 border border-emerald-200 dark:border-emerald-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" /> WhatsApp â–¾
+                  <MessageCircle className="w-3.5 h-3.5" /> WhatsApp ▾
                 </button>
                 {showWhatsAppTemplates && (
                   <div className="absolute right-0 mt-1.5 w-64 bg-white dark:bg-slate-900 border border-slate-205 dark:border-slate-800 rounded-xl shadow-xl z-50 p-2 space-y-1 text-[11px] animate-in fade-in slide-in-from-top-1 text-left">
@@ -737,7 +739,7 @@ export default function LeadDetails() {
                         text: `Hi ${lead.customer_name}, please share or upload your Aadhaar Card, PAN Card, and Bank Statement so we can process your vehicle loan (${lead.lead_id}) for approval.`
                       },
                       {
-                        label: 'Loan Approved Alert ðŸŽ‰',
+                        label: 'Loan Approved Alert 🥳',
                         text: `Hi ${lead.customer_name}, congratulations! Your vehicle loan application (${lead.lead_id}) has been approved. We are finalizing the disbursal.`
                       }
                     ].map((t, idx) => (
@@ -802,8 +804,8 @@ export default function LeadDetails() {
               <div className="col-span-2 flex flex-col gap-0.5">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Insurance Policy</span>
                 <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">
-                  {lead.insurance_company} Â· <span className="font-mono">{lead.policy_number || '—'}</span>
-                  {lead.insurance_expiry_date && <span className="text-slate-400 font-normal"> Â· Exp: {lead.insurance_expiry_date}</span>}
+                  {lead.insurance_company} · <span className="font-mono">{lead.policy_number || '—'}</span>
+                  {lead.insurance_expiry_date && <span className="text-slate-400 font-normal"> · Exp: {lead.insurance_expiry_date}</span>}
                 </span>
               </div>
             )}
@@ -848,8 +850,8 @@ export default function LeadDetails() {
             <a
               href={`https://wa.me/91${lead.customer_mobile.replace(/\D/g, '')}?text=${encodeURIComponent(
                 lead.status === 'disbursed'
-                  ? `ðŸŽ‰ Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
-                  : `ðŸŽ‰ Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
+                  ? `🥳 Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
+                  : `🥳 Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
               )}`}
               target="_blank"
               rel="noreferrer"
@@ -872,9 +874,9 @@ export default function LeadDetails() {
         </div>
       )}
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ════════════════════════════════════════════════════════════════════════
           CONNECTED STATUS STEPPER
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ════════════════════════════════════════════════════════════════════════ */}
       <div className="no-print card p-5">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
@@ -966,9 +968,9 @@ export default function LeadDetails() {
         )}
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      {/* ════════════════════════════════════════════════════════════════════════
           TWO-COLUMN LAYOUT: Tabs | Right Rail
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      ════════════════════════════════════════════════════════════════════════ */}
       <div className="no-print grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
 
         {/* ── LEFT: Tab System ── */}
@@ -1118,8 +1120,8 @@ export default function LeadDetails() {
                                 <div className="flex items-center gap-1">
                                   {canVerifyDocs && status === 'pending' && (
                                     <>
-                                      <button onClick={() => handleVerifyDoc(doc.id, 'verified')} className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">âœ“</button>
-                                      <button onClick={() => handleVerifyDoc(doc.id, 'rejected')} className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">âœ—</button>
+                                      <button onClick={() => handleVerifyDoc(doc.id, 'verified')} className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✓</button>
+                                      <button onClick={() => handleVerifyDoc(doc.id, 'rejected')} className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✗</button>
                                     </>
                                   )}
                                   {isAdminOrManager && (
@@ -1391,7 +1393,7 @@ export default function LeadDetails() {
                   <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
                     <CheckCircle className="w-7 h-7 text-emerald-500" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-800 dark:text-white">Lead Disbursed âœ“</h3>
+                  <h3 className="text-base font-bold text-slate-800 dark:text-white">Lead Disbursed ✓</h3>
                   <p className="text-xs text-slate-400">This loan has been successfully disbursed. No new follow-ups can be added.</p>
                 </div>
               ) : (
@@ -1510,7 +1512,7 @@ export default function LeadDetails() {
                                       <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                                       <div>
                                         <p className="text-xs font-bold text-emerald-900 dark:text-emerald-300 truncate">{doc.label}</p>
-                                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 capitalize">âœ“ Ready ({existingDoc.verification_status})</p>
+                                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 capitalize">✓ Ready ({existingDoc.verification_status})</p>
                                       </div>
                                     </div>
                                     <a href={getDocUrl(existingDoc.file_path)} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 bg-white/80 dark:bg-slate-900/80 px-2 py-1 rounded border border-emerald-300/50 dark:border-emerald-800">View</a>
@@ -1561,7 +1563,7 @@ export default function LeadDetails() {
                           : 'bg-primary-600 hover:bg-primary-700 text-white shadow-primary-500/25'
                       )}
                     >
-                      {newStatus === 'disbursed' ? 'ðŸŽ‰ Mark as Disbursed' : 'Post Follow-up'}
+                      {newStatus === 'disbursed' ? '🥳 Mark as Disbursed' : 'Post Follow-up'}
                     </button>
                   </form>
                 </div>

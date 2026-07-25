@@ -56,7 +56,7 @@ function DealPreviewCard({ title, model, amount, status, badgeColor, delay }: {
         <span className="text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
           <Award className="w-3.5 h-3.5 text-amber-500" /> Commission (90/10 Split):
         </span>
-        <span className="text-primary-600 dark:text-primary-400 font-extrabold">Agent ₹ 28,500 Â· Org ₹ 3,166</span>
+        <span className="text-primary-600 dark:text-primary-400 font-extrabold">Agent ₹ 28,500 · Org ₹ 3,166</span>
       </div>
     </div>
   );
@@ -190,7 +190,7 @@ export default function Login() {
             <div className="grid grid-cols-1 gap-2.5">
               <DealPreviewCard
                 title="Toyota Fortuner Legender"
-                model="Rajesh Sharma Â· HDFC Bank Â· Sanctioned"
+                model="Rajesh Sharma · HDFC Bank · Sanctioned"
                 amount="₹ 38.50 L"
                 status="Approved"
                 badgeColor="bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
@@ -198,7 +198,7 @@ export default function Login() {
               />
               <DealPreviewCard
                 title="Hyundai Creta SX (O)"
-                model="Ananya Verma Â· ICICI Bank Â· Verification"
+                model="Ananya Verma · ICICI Bank · Verification"
                 amount="₹ 14.80 L"
                 status="Pending"
                 badgeColor="bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30"
@@ -212,10 +212,10 @@ export default function Login() {
 
         {/* Footer */}
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-6 font-medium">
-          <p>Â© {new Date().getFullYear()} {settings.company_name || 'LeadFollow CRM'}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {settings.company_name || 'LeadFollow CRM'}. All rights reserved.</p>
           <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> RBI & NBFC Ready</span>
-            <span>Â·</span>
+            <span>·</span>
             <span className="font-mono">v2.6.0-PRO</span>
           </div>
         </div>
@@ -372,7 +372,7 @@ export default function Login() {
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> AES-256 Encrypted
               </span>
-              <span>Â·</span>
+              <span>·</span>
               <span className="flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" /> Multi-Tier Access
               </span>

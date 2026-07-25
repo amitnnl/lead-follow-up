@@ -255,7 +255,7 @@ export default function LeadsKanban({ leads }: LeadsKanbanProps) {
             </h3>
             <p className="text-xs text-slate-300 mt-1 flex items-center gap-2 flex-wrap">
               <span>Total Applications: <strong className="text-white font-mono">{leads.length}</strong></span>
-              <span className="text-slate-600">Â·</span>
+              <span className="text-slate-600">·</span>
               <span>Sanction Pipeline Value: <strong className="text-emerald-400 font-mono">₹ {(totalLoanValue / 100000).toFixed(2)} Lakhs</strong></span>
             </p>
           </div>

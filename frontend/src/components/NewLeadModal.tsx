@@ -240,8 +240,8 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 onChange={handleChange} 
                 className={`${inputClass} font-semibold`}
               >
-                <option value="new">âœ¨ New Vehicle</option>
-                <option value="old">ðŸš— Used / Pre-Owned</option>
+                <option value="new">✨ New Vehicle</option>
+                <option value="old">🚗 Used / Pre-Owned</option>
               </select>
               <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 italic">
                 {formData.vehicle_condition === 'new' 

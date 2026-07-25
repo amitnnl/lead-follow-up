@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { 
   UsersRound, Search, Plus, Edit, Trash2, X, 
@@ -165,7 +165,7 @@ function AgentModal({
                     />
                   </div>
                   <div className="text-[11px] text-primary-700 dark:text-primary-300 bg-white/60 dark:bg-slate-900/40 p-2.5 rounded-lg border border-primary-100 dark:border-primary-800/30 flex items-center gap-1.5">
-                    <span>â„¹ï¸</span>
+                    <span>ℹ️</span>
                     <span>Agent will log into the portal using <strong>{formData.email || 'their email address'}</strong> and this password.</span>
                   </div>
                 </div>

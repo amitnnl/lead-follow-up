@@ -106,7 +106,7 @@ export default function FintechWalletDemo() {
                         : 'bg-white/10 text-slate-300 hover:bg-white/20'
                     }`}
                   >
-                    {tab === 'all' ? 'All Transactions' : tab === 'unlocked' ? 'âœ“ Unlocked Balance' : 'âŒ› Locked Pipeline'}
+                    {tab === 'all' ? 'All Transactions' : tab === 'unlocked' ? '✓ Unlocked Balance' : '⏳ Locked Pipeline'}
                   </button>
                 ))}
               </div>

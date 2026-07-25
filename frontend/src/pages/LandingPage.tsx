@@ -19,7 +19,7 @@ interface Feature { icon: React.ElementType; title: string; description: string;
 interface TrustStat { value: string; label: string; icon: React.ElementType; color: string; }
 
 const LOAN_PRODUCTS: LoanProduct[] = [
-  { title: 'New Car Loan', description: 'Finance up to 90% on-road price of passenger cars with minimal documentation and quick approval.', badge: 'Most Popular', icon: Car, features: ['Up to 90% LTV', 'Flexible tenure 1â€“7 yrs', 'Lowest interest rates'], cta: 'Apply Now', color: 'indigo' },
+  { title: 'New Car Loan', description: 'Finance up to 90% on-road price of passenger cars with minimal documentation and quick approval.', badge: 'Most Popular', icon: Car, features: ['Up to 90% LTV', 'Flexible tenure 1–7 yrs', 'Lowest interest rates'], cta: 'Apply Now', color: 'indigo' },
   { title: 'Commercial Vehicle', description: 'Secure capital for trucks, tippers, buses, and pick-up loaders at high loan-to-value ratios.', icon: Gauge, features: ['High LTV on CV assets', 'Lease & hire-purchase', 'DSA partner benefits'], cta: 'Explore CV Loan', color: 'emerald' },
   { title: 'Refinance & BT', description: 'Unlock cash from your existing vehicle or transfer balance to cut EMIs and access better rates.', icon: TrendingUp, features: ['Top-up on existing vehicle', 'Balance transfer deals', 'Reduced EMIs'], cta: 'Check Eligibility', color: 'violet' },
   { title: 'Used Car Loan', description: 'Purchase certified pre-owned vehicles with flexible valuation rates and simple documentation.', icon: ShieldCheck, features: ['Cars up to 10 years old', 'Competitive used-car rates', 'Fast disbursal'], cta: 'Get Quote', color: 'amber' }
@@ -642,7 +642,7 @@ export default function LandingPage() {
           </div>
 
           <div className="border-t border-slate-100 dark:border-slate-800 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400 dark:text-slate-500">
-            <p>Â© {new Date().getFullYear()} {settings.company_name}. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} {settings.company_name}. All rights reserved.</p>
             <div className="flex gap-6">
               <a href="#calculator" className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">EMI Calculator</a>
               <a href="#apply" className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">Apply Now</a>

@@ -412,7 +412,7 @@ export default function Commissions() {
                           <div className="text-[9px] font-semibold text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 mt-1 flex justify-between">
                             <span>Paid So Far: <FormatCurrency value={Number(c.paid_amount)} color="slate" /></span>
                             <span className={Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? 'text-emerald-500' : 'text-slate-400'}>
-                              {Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? 'âœ“ 90% Released' : 'Pending 90%'}
+                              {Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? '✓ 90% Released' : 'Pending 90%'}
                             </span>
                           </div>
                         </div>

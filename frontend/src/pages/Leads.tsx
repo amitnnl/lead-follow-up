@@ -536,7 +536,7 @@ export default function Leads() {
               <>
                 <span className="font-semibold text-slate-600">{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}
                 {totalLoanValue > 0 && (
-                  <> Â· Total value: <span className="font-semibold text-emerald-600">₹{(totalLoanValue / 100000).toFixed(1)}L</span></>
+                  <> · Total value: <span className="font-semibold text-emerald-600">₹{(totalLoanValue / 100000).toFixed(1)}L</span></>
                 )}
               </>
             )}
@@ -752,7 +752,7 @@ export default function Leads() {
             <div className="px-5 py-3.5 bg-slate-50/60 dark:bg-slate-900/20 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 Showing <span className="font-bold text-slate-800 dark:text-white">{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}
-                {totalLoanValue > 0 && <> Â· Portfolio Value: <span className="font-mono font-black text-emerald-600 dark:text-emerald-400">₹{(totalLoanValue / 100000).toFixed(2)} Lakhs</span></>}
+                {totalLoanValue > 0 && <> · Portfolio Value: <span className="font-mono font-black text-emerald-600 dark:text-emerald-400">₹{(totalLoanValue / 100000).toFixed(2)} Lakhs</span></>}
               </p>
               {isAdminOrManager && leads.length > 0 && (
                 <button onClick={exportToCSV} className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-colors cursor-pointer">

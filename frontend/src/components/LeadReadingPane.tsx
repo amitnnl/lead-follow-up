@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../lib/axios';
 import { 
@@ -322,7 +322,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
             <span>Pipeline Progression</span>
-            {stageFlash && <span className="text-emerald-600 dark:text-emerald-400 animate-fade-in font-bold">âœ“ Stage Updated</span>}
+            {stageFlash && <span className="text-emerald-600 dark:text-emerald-400 animate-fade-in font-bold">✓ Stage Updated</span>}
           </span>
           <div className="flex items-center gap-1">
             {['on_hold', 'rejected'].map((altStage) => (
@@ -336,7 +336,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                     : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
                 )}
               >
-                {altStage === 'on_hold' ? 'â¸ï¸ On Hold' : 'âŒ Reject'}
+                {altStage === 'on_hold' ? '⏸️ On Hold' : '❌ Reject'}
               </button>
             ))}
           </div>
