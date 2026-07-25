@@ -24,7 +24,6 @@ import {
   Calculator,
   Search,
   ChevronDown,
-  Plus,
   PanelLeftClose,
   PanelLeftOpen,
   Palette,
