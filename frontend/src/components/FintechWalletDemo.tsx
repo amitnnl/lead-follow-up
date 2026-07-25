@@ -62,7 +62,7 @@ export default function FintechWalletDemo() {
                   <span>Agent / DSA Earned Balance (90% Split)</span>
                 </div>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-extrabold tracking-tight font-mono text-white">â‚¹1,45,200</span>
+                  <span className="text-4xl font-extrabold tracking-tight font-mono text-white">₹1,45,200</span>
                   <span className="text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full flex items-center gap-1">
                     <CheckCircle className="w-3.5 h-3.5" /> Disbursed & Unlocked
                   </span>
@@ -78,7 +78,7 @@ export default function FintechWalletDemo() {
                   <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
                     <Clock className="w-3 h-3 text-amber-400" /> Pipeline Potential
                   </div>
-                  <div className="text-xl font-bold font-mono text-amber-400 mt-1">â‚¹62,500</div>
+                  <div className="text-xl font-bold font-mono text-amber-400 mt-1">₹62,500</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">Unlocks upon loan disbursal</div>
                 </div>
 
@@ -86,7 +86,7 @@ export default function FintechWalletDemo() {
                   <div className="text-[10px] font-bold text-primary-300 uppercase tracking-wider flex items-center gap-1">
                     <Award className="w-3 h-3 text-primary-400" /> Org Retained (10%)
                   </div>
-                  <div className="text-xl font-bold font-mono text-primary-300 mt-1">â‚¹16,133</div>
+                  <div className="text-xl font-bold font-mono text-primary-300 mt-1">₹16,133</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">Organization overhead cut</div>
                 </div>
               </div>
@@ -134,16 +134,16 @@ export default function FintechWalletDemo() {
                       <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">({item.customer})</span>
                     </div>
                     <div className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5 flex items-center gap-3 font-mono">
-                      <span>Loan: â‚¹{item.loanAmt.toLocaleString()}</span>
-                      <span>â€¢ Total Comm: â‚¹{item.commission.toLocaleString()}</span>
-                      <span>â€¢ {item.date}</span>
+                      <span>Loan: ₹{item.loanAmt.toLocaleString()}</span>
+                      <span>• Total Comm: ₹{item.commission.toLocaleString()}</span>
+                      <span>• {item.date}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 font-mono">
                   <div className="text-right">
-                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+â‚¹{item.split90.toLocaleString()}</div>
+                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+₹{item.split90.toLocaleString()}</div>
                     <div className="text-[10px] text-slate-400">Agent 90% Split</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${

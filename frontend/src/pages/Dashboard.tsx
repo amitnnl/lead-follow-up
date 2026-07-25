@@ -91,11 +91,11 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
-const formatCurrency = (n: number) => `â‚¹${n.toLocaleString('en-IN')}`;
+const formatCurrency = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 const formatCompact = (n: number) => {
-  if (n >= 1e7) return `â‚¹${(n / 1e7).toFixed(1)}Cr`;
-  if (n >= 1e5) return `â‚¹${(n / 1e5).toFixed(1)}L`;
-  return `â‚¹${n.toLocaleString('en-IN')}`;
+  if (n >= 1e7) return `₹${(n / 1e7).toFixed(1)}Cr`;
+  if (n >= 1e5) return `₹${(n / 1e5).toFixed(1)}L`;
+  return `₹${n.toLocaleString('en-IN')}`;
 };
 
 function SparklineChart({ data, color = '#4f46e5', height = 40 }: { data: number[]; color?: string; height?: number }) {
@@ -303,7 +303,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 pb-12 animate-fade-in">
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
@@ -335,14 +335,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* â”€â”€ KPI Grid â”€â”€ */}
+      {/* ── KPI Grid ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {kpiCards.map((card, i) => (
           <KPICard key={i} {...card} />
         ))}
       </div>
 
-      {/* â”€â”€ Action Banners â”€â”€ */}
+      {/* ── Action Banners ── */}
       <div className="space-y-4">
         {stats.kpis.eligibleRetentions > 0 && isAdminOrManager && (
           <div className="card p-4 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
@@ -409,7 +409,7 @@ export default function Dashboard() {
       </div>
 
 
-      {/* â”€â”€ Main Dashboard Split â”€â”€ */}
+      {/* ── Main Dashboard Split ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 animate-fade-in" style={{ animationDelay: '150ms' }}>
         
         {/* Recent Leads Table */}
@@ -468,11 +468,11 @@ export default function Dashboard() {
                     <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell truncate max-w-[140px] text-xs">
                       <div className="flex items-center gap-1">
                         <Building className="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0" />
-                        {lead.vehicle_make_model || 'â€”'}
+                        {lead.vehicle_make_model || '—'}
                       </div>
                     </td>
                     <td className="px-4 py-3 font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">
-                      {lead.loan_amount ? formatCurrency(Number(lead.loan_amount)) : 'â€”'}
+                      {lead.loan_amount ? formatCurrency(Number(lead.loan_amount)) : '—'}
                     </td>
                     <td className="px-4 py-3 text-xs">
                       {lead.executive_name ? (
@@ -511,7 +511,7 @@ export default function Dashboard() {
                   <span className="bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded">{stats.dueFollowups.length}</span>
                 )}
               </div>
-              <Link to="/followups" className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">All â†’</Link>
+              <Link to="/followups" className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">All →</Link>
             </div>
 
             <div className="divide-y divide-slate-50 dark:divide-slate-800/60 max-h-[380px] overflow-y-auto">

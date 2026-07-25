@@ -84,7 +84,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
 
     if (currentIdx !== -1 && newIdx !== -1) {
       if (newIdx > currentIdx + 1) {
-        alert('Invalid Transition: You must follow the exact pipeline order (New â†’ Pending â†’ Approved â†’ Disbursed). You cannot skip stages.');
+        alert('Invalid Transition: You must follow the exact pipeline order (New → Pending → Approved → Disbursed). You cannot skip stages.');
         return;
       }
     }
@@ -156,7 +156,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
 
     if (currentIdx !== -1 && newIdx !== -1) {
       if (newIdx > currentIdx + 1) {
-        alert('Invalid Transition: You must follow the exact pipeline order (New â†’ Pending â†’ Approved â†’ Disbursed).');
+        alert('Invalid Transition: You must follow the exact pipeline order (New → Pending → Approved → Disbursed).');
         return;
       }
     }
@@ -201,7 +201,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
   };
 
   const formatCurrency = (val?: number) => {
-    if (val === undefined || val === null) return 'â€”';
+    if (val === undefined || val === null) return '—';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -243,7 +243,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
   return (
     <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#111622] border-l border-slate-200/80 dark:border-slate-800 animate-fade-in relative overflow-y-auto custom-scrollbar">
       
-      {/* â”€â”€ Dossier Header Bar â”€â”€ */}
+      {/* ── Dossier Header Bar ── */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
         <div className="flex items-center gap-3 min-w-0">
           <button 
@@ -312,12 +312,12 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
             className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition flex items-center gap-1.5 text-xs font-semibold shrink-0"
             title="Open Full Dossier Page"
           >
-            <span>Full Dossier â†’</span>
+            <span>Full Dossier →</span>
           </Link>
         </div>
       </div>
 
-      {/* â”€â”€ Interactive Pipeline Stage Tracker Bar â”€â”€ */}
+      {/* ── Interactive Pipeline Stage Tracker Bar ── */}
       <div className="bg-slate-100/80 dark:bg-slate-900/80 px-5 py-3 border-b border-slate-200/80 dark:border-slate-800">
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
@@ -371,7 +371,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
         </div>
       </div>
 
-      {/* â”€â”€ Top-Level Action Composer (No Scrolling Needed!) â”€â”€ */}
+      {/* ── Top-Level Action Composer (No Scrolling Needed!) ── */}
       <div className="p-5 bg-primary-50/40 dark:bg-slate-900/40 border-b border-slate-200/90 dark:border-slate-800 space-y-3">
         <form onSubmit={handleAddFollowup} className="space-y-3">
           <div className="flex items-center justify-between">
@@ -467,7 +467,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
         </form>
       </div>
 
-      {/* â”€â”€ Collapsible Parameters Card & Timeline â”€â”€ */}
+      {/* ── Collapsible Parameters Card & Timeline ── */}
       <div className="p-5 space-y-5">
         
         {/* Customer & Vehicle Specs Card */}
@@ -507,12 +507,12 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Make & Model</span>
                 <span className="font-bold text-slate-800 dark:text-white flex items-center gap-1">
                   <Car className="w-3.5 h-3.5 text-primary-500 shrink-0" />
-                  <span className="truncate">{lead.vehicle_make_model || 'â€”'}</span>
+                  <span className="truncate">{lead.vehicle_make_model || '—'}</span>
                 </span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Registration No.</span>
-                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{lead.registration_number || 'â€”'}</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{lead.registration_number || '—'}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Application Date</span>
@@ -540,7 +540,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
           )}
         </div>
 
-        {/* â”€â”€ Follow-up History Audit Trail â”€â”€ */}
+        {/* ── Follow-up History Audit Trail ── */}
         <div className="space-y-3.5">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">

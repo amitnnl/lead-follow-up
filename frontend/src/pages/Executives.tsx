@@ -49,8 +49,8 @@ function ExecutiveRow({ exec, onEdit, onDelete, isAdminOrManager }: { exec: any;
         </div>
       </td>
       <td className="px-4 py-4 text-sm">
-        <div className="font-mono text-slate-600 dark:text-slate-300">{exec.mobile || 'â€”'}</div>
-        <div className="text-xs text-slate-400 mt-0.5">{exec.email || 'â€”'}</div>
+        <div className="font-mono text-slate-600 dark:text-slate-300">{exec.mobile || '—'}</div>
+        <div className="text-xs text-slate-400 mt-0.5">{exec.email || '—'}</div>
       </td>
       <td className="px-4 py-4 text-sm">
         <span className="font-medium text-slate-700 dark:text-slate-300">{exec.leads_count} Leads</span>
@@ -147,7 +147,7 @@ export default function Executives() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
 
-  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── State ──────────────────────────────────────────────────────────────
   const [executives, setExecutives] = useState<any[]>([]);
   const [financers, setFinancers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,7 +163,7 @@ export default function Executives() {
     bank_account: '', ifsc: '', pan_number: '', is_active: 1
   });
 
-  // â”€â”€ API & Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── API & Handlers ────────────────────────────────────────────────────
   const fetchData = async () => {
     try {
       const [execRes, finRes] = await Promise.all([
@@ -244,11 +244,11 @@ export default function Executives() {
     inactive: executives.filter(e => e.is_active === 0).length
   }), [executives]);
 
-  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Main Render ───────────────────────────────────────────────────────
   return (
     <div className="space-y-5 animate-fade-in select-none">
 
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -356,7 +356,7 @@ export default function Executives() {
                         <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
                         <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                       </div>
-                      <p className="text-xs text-slate-400 font-medium">Loading executivesâ€¦</p>
+                      <p className="text-xs text-slate-400 font-medium">Loading executives…</p>
                     </div>
                   </td>
                 </tr>
@@ -373,7 +373,7 @@ export default function Executives() {
                       </p>
                       {(!search && filterStatus === 'all') && (
                         <button onClick={() => handleOpenModal()} className="mt-2 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer">
-                          Add your first executive â†’
+                          Add your first executive →
                         </button>
                       )}
                     </div>

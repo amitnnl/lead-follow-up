@@ -91,7 +91,7 @@ export default function SystemAudit() {
   return (
     <div className="space-y-6 animate-fade-in select-none">
       
-      {/* â”€â”€ Header â”€â”€ */}
+      {/* ── Header ── */}
       <div>
         <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tight">
           <ShieldCheck className="text-primary-600 w-6 h-6" /> Immutable Audit Trail
@@ -108,7 +108,7 @@ export default function SystemAudit() {
         </div>
       )}
 
-      {/* â”€â”€ Filters â”€â”€ */}
+      {/* ── Filters ── */}
       <div className="card p-4 flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -135,7 +135,7 @@ export default function SystemAudit() {
         </div>
       </div>
 
-      {/* â”€â”€ Data Grid/Table â”€â”€ */}
+      {/* ── Data Grid/Table ── */}
       <div className="card overflow-hidden">
         {/* Accent top line */}
         <div className="h-0.5 bg-gradient-to-r from-primary-500 via-purple-500 to-rose-500" />

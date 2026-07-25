@@ -75,7 +75,7 @@ function FormatCurrency({ value, color = 'slate' }: { value: number; color?: str
   };
   return (
     <span className={clsx('font-mono font-bold text-xs', colors[color])}>
-      â‚¹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+      ₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
     </span>
   );
 }
@@ -223,7 +223,7 @@ export default function Reports() {
         r.lead_id, r.lead_date,
         `"${(r.customer_name || '').replace(/"/g, '""')}"`,
         `"${(r.vehicle_make_model || '').replace(/"/g, '""')}"`,
-        `"${(r.financer_name || 'â€”').replace(/"/g, '""')}"`,
+        `"${(r.financer_name || '—').replace(/"/g, '""')}"`,
         `"${(r.agent_name || 'Direct').replace(/"/g, '""')}"`,
         r.loan_amount || 0
       ]);
@@ -314,7 +314,7 @@ export default function Reports() {
   return (
     <div className="space-y-6 pb-12 select-none animate-fade-in">
 
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
@@ -356,7 +356,7 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
         
-        {/* â”€â”€ Filters Sidebar â”€â”€ */}
+        {/* ── Filters Sidebar ── */}
         <div className="col-span-1 relative z-10">
           <div className="lg:sticky lg:top-6 space-y-4">
             <form onSubmit={handleGenerate} className={clsx('card p-5 space-y-4 shadow-xl shadow-slate-200/40 dark:shadow-black/20 border-slate-200/60 dark:border-slate-800', !showFilters && 'hidden lg:block')}>
@@ -445,7 +445,7 @@ export default function Reports() {
           </div>
         </div>
 
-        {/* â”€â”€ Output Grid â”€â”€ */}
+        {/* ── Output Grid ── */}
         <div className="col-span-1 lg:col-span-3 space-y-5">
           
           {/* Report Type Header */}
@@ -521,7 +521,7 @@ export default function Reports() {
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                           <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: '#64748b' }} />
-                          <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: '#64748b' }} tickFormatter={val => val >= 1e6 ? `â‚¹${(val/1e6).toFixed(1)}Cr` : val >= 1e5 ? `â‚¹${(val/1e5).toFixed(0)}L` : `â‚¹${val}`} />
+                          <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: '#64748b' }} tickFormatter={val => val >= 1e6 ? `₹${(val/1e6).toFixed(1)}Cr` : val >= 1e5 ? `₹${(val/1e5).toFixed(0)}L` : `₹${val}`} />
                           <Tooltip contentStyle={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                           <Legend wrapperStyle={{ paddingTop: '8px' }} />
                           <Area type="monotone" dataKey="amount" name="Loan Amount" stroke="#4f46e5" strokeWidth={2} fillOpacity={1} fill="url(#areaLoan)" dot={false} activeDot={{ r: 6, strokeWidth: 2 }} />
@@ -608,10 +608,10 @@ export default function Reports() {
                               <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
                                 <div className="flex items-center gap-1">
                                   <Building className="w-3.5 h-3.5 shrink-0" />
-                                  {r.vehicle_make_model || 'â€”'}
+                                  {r.vehicle_make_model || '—'}
                                 </div>
                               </td>
-                              <td className="px-4 py-3 text-xs font-medium text-primary-500">{r.financer_name || 'â€”'}</td>
+                              <td className="px-4 py-3 text-xs font-medium text-primary-500">{r.financer_name || '—'}</td>
                               <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 font-medium">{r.agent_name || 'Direct'}</td>
                               <td className="px-4 py-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs">
                                 <FormatCurrency value={r.loan_amount || 0} color="emerald" />

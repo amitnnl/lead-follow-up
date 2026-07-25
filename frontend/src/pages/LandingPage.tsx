@@ -35,7 +35,7 @@ const WHY_US: Feature[] = [
 ];
 
 const TRUST_STATS: TrustStat[] = [
-  { value: 'â‚¹500Cr+', label: 'Loans Facilitated', icon: BarChart3, color: 'text-primary-600 bg-primary-50' },
+  { value: '₹500Cr+', label: 'Loans Facilitated', icon: BarChart3, color: 'text-primary-600 bg-primary-50' },
   { value: '15,000+', label: 'Happy Customers', icon: UserCheck, color: 'text-emerald-600 bg-emerald-50' },
   { value: '50+', label: 'Partner Financers', icon: Building2, color: 'text-violet-600 bg-violet-50' },
   { value: '4.9/5', label: 'Customer Rating', icon: Award, color: 'text-amber-600 bg-amber-50' }
@@ -47,7 +47,7 @@ const TESTIMONIALS = [
   { name: 'Amit Verma', role: 'DSA Channel Partner', quote: 'Commission tracking and tier bonuses are crystal clear. Best vehicle finance CRM I have used for my agency.', rating: 5 }
 ];
 
-const formatCurrency = (n: number) => `â‚¹${n.toLocaleString('en-IN')}`;
+const formatCurrency = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
 function useCountUp(target: number, duration = 1200) {
   const [value, setValue] = useState(0);
@@ -75,7 +75,7 @@ function AnimatedStat({ value, label, icon: Icon, color }: TrustStat) {
         <Icon className="w-5 h-5" />
       </div>
       <div className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white tracking-tight">
-        {value.includes('â‚¹') ? 'â‚¹' : ''}{count.toLocaleString('en-IN')}{suffix}
+        {value.includes('₹') ? '₹' : ''}{count.toLocaleString('en-IN')}{suffix}
       </div>
       <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">{label}</div>
     </div>
@@ -164,7 +164,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 font-sans selection:bg-primary-500 selection:text-white overflow-x-hidden">
 
-      {/* â”€â”€ Sticky Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Sticky Header ─────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#111622]/90 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800/80 shadow-sm shadow-slate-900/[0.04] dark:shadow-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
@@ -197,7 +197,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 -z-10">
@@ -287,7 +287,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Trust Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Trust Stats ───────────────────────────────────────────── */}
       <section className="border-y border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-[#0e131d]/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100 dark:divide-slate-800">
@@ -298,7 +298,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Loan Solutions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Loan Solutions ────────────────────────────────────────── */}
       <section id="solutions" className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
@@ -306,7 +306,7 @@ export default function LandingPage() {
               <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" /> Loan Solutions <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" />
             </span>
             <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Finance for Every Vehicle Need</h2>
-            <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm leading-relaxed">From personal cars to heavy commercial fleets â€” flexible schemes tailored for every use case.</p>
+            <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm leading-relaxed">From personal cars to heavy commercial fleets — flexible schemes tailored for every use case.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -341,7 +341,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Why Choose Us â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Why Choose Us ─────────────────────────────────────────── */}
       <section id="why-us" className="py-20 lg:py-28 bg-slate-50/60 dark:bg-[#0e131d]/60 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
@@ -353,7 +353,7 @@ export default function LandingPage() {
                 Built for Speed,<br />Transparency & Scale
               </h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                Whether you're a vehicle buyer, dealer, DSA partner, or bank executive â€” our CRM connects every stakeholder on a single, easy-to-use platform.
+                Whether you're a vehicle buyer, dealer, DSA partner, or bank executive — our CRM connects every stakeholder on a single, easy-to-use platform.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 {WHY_US.map((feature, idx) => (
@@ -388,7 +388,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mb-5">
-                    {[{ label: 'Total Leads', value: '1,248', color: 'text-primary-400' }, { label: 'Disbursed', value: 'â‚¹42.6Cr', color: 'text-emerald-400' }, { label: 'Pending', value: '86', color: 'text-amber-400' }, { label: 'Conversion', value: '68%', color: 'text-violet-400' }].map((kpi, i) => (
+                    {[{ label: 'Total Leads', value: '1,248', color: 'text-primary-400' }, { label: 'Disbursed', value: '₹42.6Cr', color: 'text-emerald-400' }, { label: 'Pending', value: '86', color: 'text-amber-400' }, { label: 'Conversion', value: '68%', color: 'text-violet-400' }].map((kpi, i) => (
                       <div key={i} className="bg-white/5 dark:bg-white/10 border border-white/8 rounded-xl p-3">
                         <div className="text-[10px] text-slate-400 font-semibold uppercase mb-1">{kpi.label}</div>
                         <div className={`text-lg font-black font-mono tabular-nums ${kpi.color}`}>{kpi.value}</div>
@@ -397,7 +397,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="space-y-2.5">
-                    {[{ name: 'Rajesh Transport', status: 'Disbursed', amount: 'â‚¹18,50,000', color: 'bg-emerald-500/20 text-emerald-400' }, { name: 'Mehta Motors', status: 'Approved', amount: 'â‚¹9,20,000', color: 'bg-primary-500/20 text-primary-400' }, { name: 'Sinha Logistics', status: 'Pending', amount: 'â‚¹14,00,000', color: 'bg-amber-500/20 text-amber-400' }].map((lead, i) => (
+                    {[{ name: 'Rajesh Transport', status: 'Disbursed', amount: '₹18,50,000', color: 'bg-emerald-500/20 text-emerald-400' }, { name: 'Mehta Motors', status: 'Approved', amount: '₹9,20,000', color: 'bg-primary-500/20 text-primary-400' }, { name: 'Sinha Logistics', status: 'Pending', amount: '₹14,00,000', color: 'bg-amber-500/20 text-amber-400' }].map((lead, i) => (
                       <div key={i} className="flex items-center justify-between p-3 bg-white/5 dark:bg-white/10 border border-white/5 rounded-xl">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full bg-primary-500/30 flex items-center justify-center text-[10px] font-bold">{lead.name.charAt(0)}</div>
@@ -417,7 +417,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ EMI Calculator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── EMI Calculator ────────────────────────────────────────── */}
       <section id="calculator" className="py-20 lg:py-28 border-y border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
@@ -434,7 +434,7 @@ export default function LandingPage() {
             {/* Controls */}
             <div className="lg:col-span-7 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm space-y-8">
               {[
-                { label: 'Loan Amount', value: loanAmount, min: 100000, max: 2000000, step: 50000, display: formatCurrency(loanAmount), prefix: 'â‚¹1 Lakh', suffix: 'â‚¹20 Lakhs' },
+                { label: 'Loan Amount', value: loanAmount, min: 100000, max: 2000000, step: 50000, display: formatCurrency(loanAmount), prefix: '₹1 Lakh', suffix: '₹20 Lakhs' },
                 { label: 'Tenure', value: tenureYears, min: 1, max: 7, step: 1, display: `${tenureYears} Years`, prefix: '1 Year', suffix: '7 Years' },
                 { label: 'Interest Rate', value: interestRate, min: 8.5, max: 18, step: 0.25, display: `${interestRate}% p.a.`, prefix: '8.5% p.a.', suffix: '18% p.a.' }
               ].map((field) => (
@@ -478,7 +478,7 @@ export default function LandingPage() {
                 </div>
                 <div className="bg-white/10 border border-white/10 rounded-2xl p-4 mb-4 text-xs leading-relaxed">
                   <span className="font-bold text-primary-100 block mb-0.5">Eligibility Tip:</span>
-                  Required monthly salary â‰ˆ <strong className="text-white font-mono tabular-nums">{formatCurrency(emi * 2)}</strong> for smooth approval.
+                  Required monthly salary ≈ <strong className="text-white font-mono tabular-nums">{formatCurrency(emi * 2)}</strong> for smooth approval.
                 </div>
                 <a href="#apply" onClick={() => setFormData((p) => ({ ...p, loan_amount: loanAmount.toString() }))}
                   className="block w-full py-3.5 bg-white hover:bg-primary-50 text-primary-700 rounded-2xl text-sm font-bold transition-all shadow-lg text-center">
@@ -490,7 +490,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Testimonials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Testimonials ──────────────────────────────────────────── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
@@ -519,7 +519,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Application Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Application Form ──────────────────────────────────────── */}
       <section id="apply" className="py-20 lg:py-28 bg-slate-50/60 dark:bg-[#0e131d]/60 border-t border-slate-100 dark:border-slate-800">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 sm:p-10 shadow-xl shadow-slate-200/50 dark:shadow-black/50">
@@ -550,7 +550,7 @@ export default function LandingPage() {
                 ))}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                {[{ label: 'Loan Amount (â‚¹) *', name: 'loan_amount', type: 'number', placeholder: 'e.g. 500000' }, { label: 'Vehicle Make & Model *', name: 'vehicle_make_model', type: 'text', placeholder: 'e.g. Tata Ace Gold' }].map((f) => (
+                {[{ label: 'Loan Amount (₹) *', name: 'loan_amount', type: 'number', placeholder: 'e.g. 500000' }, { label: 'Vehicle Make & Model *', name: 'vehicle_make_model', type: 'text', placeholder: 'e.g. Tata Ace Gold' }].map((f) => (
                   <div key={f.name} className="space-y-1.5">
                     <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">{f.label}</label>
                     <input type={f.type} name={f.name} required min={f.type === 'number' ? 50000 : undefined} value={(formData as any)[f.name]} onChange={handleFormChange} placeholder={f.placeholder}
@@ -577,7 +577,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ CTA Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── CTA Banner ────────────────────────────────────────────── */}
       <section className="py-16 bg-gradient-to-r from-primary-600 to-violet-700 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -590,7 +590,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Footer ────────────────────────────────────────────────── */}
       <footer className="bg-white dark:bg-[#0e131d] border-t border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -652,7 +652,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* â”€â”€ Success Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Success Modal ─────────────────────────────────────────── */}
       {successLead && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
           <div className="bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-[2rem] max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl relative overflow-hidden">
@@ -679,7 +679,7 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* â”€â”€ Floating Support Widget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Floating Support Widget ───────────────────────────────── */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
         {isSocialOpen && (
           <div className="bg-white/95 dark:bg-[#111622]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-2xl rounded-3xl p-5 w-80 space-y-4 text-slate-800 dark:text-slate-200">

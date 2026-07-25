@@ -84,7 +84,7 @@ export default function Ledger() {
         r.lead_date,
         r.lead_id,
         `"${(r.customer_name || '').replace(/"/g, '""')}"`,
-        `"${(r.financer_name || 'â€”').replace(/"/g, '""')}"`,
+        `"${(r.financer_name || '—').replace(/"/g, '""')}"`,
         `"${(r.agent_name || 'Direct').replace(/"/g, '""')}"`,
         r.loan_amount || 0,
         comm,
@@ -106,7 +106,7 @@ export default function Ledger() {
   return (
     <div className="space-y-4 animate-fade-in select-none">
       
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function Ledger() {
         )}
       </div>
 
-      {/* â”€â”€ Filters â”€â”€ */}
+      {/* ── Filters ── */}
       <div className="card p-4 flex flex-wrap gap-3 items-end">
         <div className="flex-1 min-w-[180px]">
           <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Filter by Agent (DSA)</label>
@@ -161,7 +161,7 @@ export default function Ledger() {
         )}
       </div>
 
-      {/* â”€â”€ KPI Cards â”€â”€ */}
+      {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="card p-4 flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-500 flex items-center justify-center shrink-0">
@@ -170,7 +170,7 @@ export default function Ledger() {
           <div>
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Loan Book</div>
             <div className="text-base font-bold text-slate-800 dark:text-white mt-0.5">
-              â‚¹{totalLoanAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              ₹{totalLoanAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function Ledger() {
           <div>
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Commission</div>
             <div className="text-base font-bold text-primary-600 dark:text-primary-400 mt-0.5">
-              â‚¹{totalCommission.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              ₹{totalCommission.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function Ledger() {
           <div>
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Paid Out</div>
             <div className="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-              â‚¹{totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              ₹{totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
@@ -206,13 +206,13 @@ export default function Ledger() {
           <div>
             <div className="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Outstanding</div>
             <div className="text-base font-bold text-rose-600 dark:text-rose-400 mt-0.5">
-              â‚¹{totalBalance.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              ₹{totalBalance.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
       </div>
 
-      {/* â”€â”€ Data Table â”€â”€ */}
+      {/* ── Data Table ── */}
       <div className="card overflow-hidden">
         {/* Accent top line */}
         <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
@@ -268,19 +268,19 @@ export default function Ledger() {
                         <div className="font-semibold text-slate-800 dark:text-white text-[13px]">{r.customer_name}</div>
                         <div className="text-[10px] font-mono text-primary-600 dark:text-primary-400 font-bold mt-0.5">{r.lead_id}</div>
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 font-medium">{r.financer_name || 'â€”'}</td>
+                      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 font-medium">{r.financer_name || '—'}</td>
                       <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 font-medium">{r.agent_name || 'Direct'}</td>
                       <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 text-xs font-semibold">
-                        â‚¹{Number(r.loan_amount || 0).toLocaleString('en-IN')}
+                        ₹{Number(r.loan_amount || 0).toLocaleString('en-IN')}
                       </td>
                       <td className="px-4 py-3 text-right font-mono text-primary-600 dark:text-primary-400 text-xs font-semibold">
-                        â‚¹{comm.toLocaleString('en-IN')}
+                        ₹{comm.toLocaleString('en-IN')}
                       </td>
                       <td className="px-4 py-3 text-right font-mono text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
-                        â‚¹{paid.toLocaleString('en-IN')}
+                        ₹{paid.toLocaleString('en-IN')}
                       </td>
                       <td className="px-4 py-3 text-right font-mono font-bold text-rose-600 dark:text-rose-400 text-xs">
-                        â‚¹{bal.toLocaleString('en-IN')}
+                        ₹{bal.toLocaleString('en-IN')}
                       </td>
                     </tr>
                   );

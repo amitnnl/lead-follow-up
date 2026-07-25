@@ -112,7 +112,7 @@ function UserModal({
               required={!editingUser} 
               value={formData.password} 
               onChange={e => setFormData({...formData, password: e.target.value})} 
-              placeholder={editingUser ? "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" : ""}
+              placeholder={editingUser ? "••••••••" : ""}
               className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-rose-500 text-slate-850 dark:text-white" 
             />
           </div>
@@ -152,7 +152,7 @@ function UserModal({
           {formData.role === 'channel_agent' && (
             <div className="flex items-start gap-2 mt-2 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400 p-3 rounded-lg border border-primary-200 dark:border-primary-900/30 text-xs">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <p>When creating a Channels user account, remember to link this login account under <strong>Setup â†’ Channels</strong> so their self-created leads are tracked properly.</p>
+              <p>When creating a Channels user account, remember to link this login account under <strong>Setup → Channels</strong> so their self-created leads are tracked properly.</p>
             </div>
           )}
 
@@ -255,11 +255,11 @@ export default function Users() {
     agents: users.filter(u => u.role === 'agent' || u.role === 'channel_agent').length,
   }), [users]);
 
-  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Main Render ───────────────────────────────────────────────────────
   return (
     <div className="space-y-5 animate-fade-in select-none">
 
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">

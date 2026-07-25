@@ -21,7 +21,7 @@ git add .
 
 echo.
 echo [3/3] Committing and Pushing...
-git commit -m "fix: resolve API authentication and missing DB columns for WhatsApp deployment"
+git commit -m "feat: add Command Palette, Keyboard Shortcuts, Page Transitions and fix UI character encoding"
 git push
 if %errorlevel% neq 0 (
     echo.

@@ -61,7 +61,7 @@ function FormatCurrency({ value, color = 'slate' }: { value: number; color?: str
   };
   return (
     <span className={clsx('font-mono font-bold text-xs', colors[color])}>
-      â‚¹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+      ₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
     </span>
   );
 }
@@ -214,7 +214,7 @@ export default function Commissions() {
   return (
     <div className="space-y-4 animate-fade-in select-none">
 
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function Commissions() {
         )}
       </div>
 
-      {/* â”€â”€ KPI Cards â”€â”€ */}
+      {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KPICard 
           label="Gross Commission" 
@@ -282,7 +282,7 @@ export default function Commissions() {
         />
       </div>
 
-      {/* â”€â”€ Net Payable Summary â”€â”€ */}
+      {/* ── Net Payable Summary ── */}
       <div className="card p-4 bg-gradient-to-r from-primary-500/10 to-violet-500/10 border-primary-200/50 dark:border-primary-800/30 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary-500/20 text-primary-500 flex items-center justify-center">
@@ -305,7 +305,7 @@ export default function Commissions() {
         )}
       </div>
 
-      {/* â”€â”€ Data Table â”€â”€ */}
+      {/* ── Data Table ── */}
       <div className="card overflow-hidden">
         <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
 
@@ -461,7 +461,7 @@ export default function Commissions() {
         </div>
       </div>
 
-      {/* â”€â”€ Single Payout Recording Modal â”€â”€ */}
+      {/* ── Single Payout Recording Modal ── */}
       {isModalOpen && editingComm && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white dark:bg-[#111827] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800">
@@ -488,7 +488,7 @@ export default function Commissions() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">Release Amount (â‚¹)</label>
+                  <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">Release Amount (₹)</label>
                   <input 
                     type="number" step="0.01" required 
                     value={formData.amount} 

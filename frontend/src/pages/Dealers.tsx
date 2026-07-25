@@ -4,7 +4,7 @@ import { User, Search, Plus, Edit, Trash2, X, Filter, ChevronDown } from 'lucide
 import { useAuthStore } from '../store/authStore';
 import clsx from 'clsx';
 
-// â”€â”€ Top-Level Helper Components (Extracted outside to prevent re-render focus loss) â”€â”€
+// ── Top-Level Helper Components (Extracted outside to prevent re-render focus loss) ──
 function StatusBadge({ active }: { active: boolean }) {
   return (
     <span className={clsx(
@@ -46,8 +46,8 @@ function DealerRow({ dealer, onEdit, onDelete, isAdminOrManager }: { dealer: any
         </div>
       </td>
       <td className="px-4 py-4 font-mono text-slate-600 dark:text-slate-300">{dealer.mobile}</td>
-      <td className="px-4 py-4 text-slate-600 dark:text-slate-300">{dealer.email || 'â€”'}</td>
-      <td className="px-4 py-4 font-mono uppercase text-slate-600 dark:text-slate-300">{dealer.pan_number || 'â€”'}</td>
+      <td className="px-4 py-4 text-slate-600 dark:text-slate-300">{dealer.email || '—'}</td>
+      <td className="px-4 py-4 font-mono uppercase text-slate-600 dark:text-slate-300">{dealer.pan_number || '—'}</td>
       <td className="px-4 py-4">
         <StatusBadge active={dealer.is_active === 1} />
       </td>
@@ -128,7 +128,7 @@ export default function Dealers() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
 
-  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── State ──────────────────────────────────────────────────────────────
   const [dealers, setDealers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -142,7 +142,7 @@ export default function Dealers() {
     name: '', mobile: '', email: '', pan_number: '', is_active: 1
   });
 
-  // â”€â”€ API & Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── API & Handlers ────────────────────────────────────────────────────
   const fetchData = async () => {
     try {
       const res = await api.get('/setup/agents');
@@ -212,11 +212,11 @@ export default function Dealers() {
     inactive: dealers.filter(d => d.is_active === 0).length
   }), [dealers]);
 
-  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Main Render ───────────────────────────────────────────────────────
   return (
     <div className="space-y-5 animate-fade-in select-none">
 
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -325,7 +325,7 @@ export default function Dealers() {
                         <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
                         <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                       </div>
-                      <p className="text-xs text-slate-400 font-medium">Loading dealersâ€¦</p>
+                      <p className="text-xs text-slate-400 font-medium">Loading dealers…</p>
                     </div>
                   </td>
                 </tr>
@@ -342,7 +342,7 @@ export default function Dealers() {
                       </p>
                       {(!search && filterStatus === 'all') && (
                         <button onClick={() => handleOpenModal()} className="mt-2 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer">
-                          Add your first dealer â†’
+                          Add your first dealer →
                         </button>
                       )}
                     </div>

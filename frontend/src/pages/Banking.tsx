@@ -521,7 +521,7 @@ export default function Banking() {
                         <div className="text-xs text-slate-500 mt-0.5">{t.beneficiary_name || t.notes || 'N/A'}</div>
                       </td>
                       <td className="px-4 py-3 font-mono font-bold text-slate-800 dark:text-white">
-                        â‚¹{Number(t.amount || 0).toLocaleString()}
+                        ₹{Number(t.amount || 0).toLocaleString()}
                       </td>
                       <td className="px-4 py-3 text-xs">
                         <div>{t.payment_date}</div>
@@ -632,15 +632,15 @@ export default function Banking() {
                     filteredLedgerEntries.map((row) => (
                       <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="px-4 py-3 font-mono text-xs text-slate-500">
-                          {row.post_date ? new Date(row.post_date).toLocaleDateString('en-GB') : 'â€”'}
+                          {row.post_date ? new Date(row.post_date).toLocaleDateString('en-GB') : '—'}
                         </td>
-                        <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200">{row.customer_name || 'â€”'}</td>
-                        <td className="px-4 py-3 text-slate-500 font-mono text-xs">{row.reg_no || 'â€”'}</td>
+                        <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200">{row.customer_name || '—'}</td>
+                        <td className="px-4 py-3 text-slate-500 font-mono text-xs">{row.reg_no || '—'}</td>
                         <td className="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-400">
-                          {row.loan_amount > 0 ? formatCurrency(row.loan_amount) : 'â€”'}
+                          {row.loan_amount > 0 ? formatCurrency(row.loan_amount) : '—'}
                         </td>
                         <td className="px-4 py-3 text-right text-rose-500 font-semibold font-mono">
-                          {row.deduction_info > 0 ? `-${formatCurrency(row.deduction_info)}` : 'â€”'}
+                          {row.deduction_info > 0 ? `-${formatCurrency(row.deduction_info)}` : '—'}
                         </td>
                         <td className="px-4 py-3 text-center">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold border capitalize ${
@@ -652,22 +652,22 @@ export default function Banking() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-slate-500 text-xs max-w-xs truncate" title={row.account_description}>
-                          {row.account_description || 'â€”'}
+                          {row.account_description || '—'}
                         </td>
                         <td className="px-4 py-3 text-right font-bold text-rose-600 dark:text-rose-400 font-mono">
-                          {row.debit_amount > 0 ? formatCurrency(row.debit_amount) : 'â€”'}
+                          {row.debit_amount > 0 ? formatCurrency(row.debit_amount) : '—'}
                         </td>
                         <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400 font-mono">
-                          {row.credit_amount > 0 ? formatCurrency(row.credit_amount) : 'â€”'}
+                          {row.credit_amount > 0 ? formatCurrency(row.credit_amount) : '—'}
                         </td>
                         <td className="px-4 py-3 text-right font-black text-slate-700 dark:text-white font-mono bg-slate-50/40 dark:bg-slate-900/10">
                           {formatCurrency(row.running_balance)}
                         </td>
                         <td className="px-4 py-3 text-right font-semibold text-amber-500 font-mono">
-                          {row.pending_amount > 0 ? formatCurrency(row.pending_amount) : 'â€”'}
+                          {row.pending_amount > 0 ? formatCurrency(row.pending_amount) : '—'}
                         </td>
                         <td className="px-4 py-3 text-slate-500 text-xs max-w-xs truncate" title={row.remarks}>
-                          {row.remarks || 'â€”'}
+                          {row.remarks || '—'}
                         </td>
                       </tr>
                     ))
@@ -764,7 +764,7 @@ export default function Banking() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Debit (Out) â‚¹</label>
+                    <label className="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Debit (Out) ₹</label>
                     <input 
                       type="number" 
                       placeholder="0.00" 
@@ -773,7 +773,7 @@ export default function Banking() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Credit (In) â‚¹</label>
+                    <label className="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Credit (In) ₹</label>
                     <input 
                       type="number" 
                       placeholder="0.00" 
@@ -843,7 +843,7 @@ export default function Banking() {
               <div className="mb-6 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
                 <div className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Lead Details</div>
                 <div className="font-semibold text-slate-800 dark:text-white">{activeSettlementLead.customer_name}</div>
-                <div className="text-sm text-slate-500 mt-0.5">{activeSettlementLead.lead_id} â€¢ Loan: {formatCurrency(activeSettlementLead.loan_amount || 0)}</div>
+                <div className="text-sm text-slate-500 mt-0.5">{activeSettlementLead.lead_id} • Loan: {formatCurrency(activeSettlementLead.loan_amount || 0)}</div>
               </div>
 
               <form id="settlementForm" onSubmit={handleSettlementSubmit} className="space-y-4">
@@ -851,7 +851,7 @@ export default function Banking() {
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Received Amount</label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">â‚¹</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
                       <input 
                         type="number" step="0.01" required
                         value={settlementForm.received_amount}

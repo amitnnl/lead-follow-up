@@ -24,7 +24,7 @@ interface ChannelExecutive {
   is_active: number;
 }
 
-// â”€â”€ Top-Level Modal Component (Outside parent scope to guarantee stable input focus during typing) â”€â”€
+// ── Top-Level Modal Component (Outside parent scope to guarantee stable input focus during typing) ──
 
 function AgentModal({
   isOpen,
@@ -153,7 +153,7 @@ function AgentModal({
                         }} 
                         className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1"
                       >
-                        <span>âš¡ Auto-Generate</span>
+                        <span>⚡ Auto-Generate</span>
                       </button>
                     </div>
                     <input 
@@ -213,7 +213,7 @@ function AgentModal({
 }
 
 
-// â”€â”€ Top-Level Row Component (Outside parent scope) â”€â”€
+// ── Top-Level Row Component (Outside parent scope) ──
 function AgentRow({
   ex,
   isAdminOrManager,
@@ -271,7 +271,7 @@ function AgentRow({
   );
 }
 
-// â”€â”€ Main Page Component â”€â”€
+// ── Main Page Component ──
 export default function ChannelExecutives() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';

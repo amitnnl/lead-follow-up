@@ -8,7 +8,7 @@ import {
 import { useSettingsStore } from '../store/settingsStore';
 import { useThemeStore } from '../store/themeStore';
 
-/* â”€â”€â”€ Interactive Deal Preview Card (Institutional Light/Dark Mode) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── Interactive Deal Preview Card (Institutional Light/Dark Mode) ───────────── */
 function DealPreviewCard({ title, model, amount, status, badgeColor, delay }: {
   title: string;
   model: string;
@@ -56,7 +56,7 @@ function DealPreviewCard({ title, model, amount, status, badgeColor, delay }: {
         <span className="text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
           <Award className="w-3.5 h-3.5 text-amber-500" /> Commission (90/10 Split):
         </span>
-        <span className="text-primary-600 dark:text-primary-400 font-extrabold">Agent â‚¹ 28,500 Â· Org â‚¹ 3,166</span>
+        <span className="text-primary-600 dark:text-primary-400 font-extrabold">Agent ₹ 28,500 Â· Org ₹ 3,166</span>
       </div>
     </div>
   );
@@ -127,7 +127,7 @@ export default function Login() {
         </button>
       </div>
 
-      {/* â”€â”€ AMBIENT PASTEL GLOW & MESH ORBS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── AMBIENT PASTEL GLOW & MESH ORBS ───────────────────────── */}
       <div className="absolute top-[-10%] left-[-5%] w-[650px] h-[650px] bg-primary-500/10 dark:bg-primary-500/15 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute top-[35%] left-[40%] w-[450px] h-[450px] bg-sky-400/10 dark:bg-sky-400/15 rounded-full blur-[120px] pointer-events-none" />
@@ -141,7 +141,7 @@ export default function Login() {
         }}
       />
 
-      {/* â”€â”€ LEFT PANEL: AI Vehicle Finance Cockpit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── LEFT PANEL: AI Vehicle Finance Cockpit ──────────────── */}
       <div className="hidden lg:flex lg:w-[56%] xl:w-[58%] order-2 relative flex-col justify-between p-10 xl:p-14 z-10">
         
         {/* Header brand */}
@@ -191,7 +191,7 @@ export default function Login() {
               <DealPreviewCard
                 title="Toyota Fortuner Legender"
                 model="Rajesh Sharma Â· HDFC Bank Â· Sanctioned"
-                amount="â‚¹ 38.50 L"
+                amount="₹ 38.50 L"
                 status="Approved"
                 badgeColor="bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
                 delay="0s"
@@ -199,7 +199,7 @@ export default function Login() {
               <DealPreviewCard
                 title="Hyundai Creta SX (O)"
                 model="Ananya Verma Â· ICICI Bank Â· Verification"
-                amount="â‚¹ 14.80 L"
+                amount="₹ 14.80 L"
                 status="Pending"
                 badgeColor="bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30"
                 delay="0.3s"
@@ -221,7 +221,7 @@ export default function Login() {
         </div>
       </div>
 
-      {/* â”€â”€ RIGHT PANEL: Pristine Light/Dark Glass Login Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── RIGHT PANEL: Pristine Light/Dark Glass Login Form ─────────── */}
       <div className="w-full lg:w-[44%] xl:w-[42%] order-1 flex flex-col justify-center min-h-screen relative p-6 sm:p-10 lg:p-12 z-10">
         
         <div className="max-w-md w-full mx-auto">
@@ -318,7 +318,7 @@ export default function Login() {
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); }}
                     className="w-full pl-10 pr-11 py-3 bg-slate-50 dark:bg-[#0e131d] border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition-all font-mono tracking-wider focus:bg-white dark:focus:bg-[#111622] focus:border-primary-600 dark:focus:border-primary-400 focus:ring-4 focus:ring-primary-600/10"
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••"
                     disabled={isLoading}
                   />
                   <button

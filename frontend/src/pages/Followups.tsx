@@ -47,7 +47,7 @@ export default function Followups() {
   return (
     <div className="space-y-4 select-none animate-fade-in">
       
-      {/* â”€â”€ Header â”€â”€ */}
+      {/* ── Header ── */}
       <div>
         <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tight">
           <PhoneCall className="text-primary-500 w-5 h-5"/> Follow-up Status Register
@@ -57,7 +57,7 @@ export default function Followups() {
         </p>
       </div>
 
-      {/* â”€â”€ Table Container â”€â”€ */}
+      {/* ── Table Container ── */}
       <div className="card overflow-hidden">
         {/* Accent top line */}
         <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
@@ -109,7 +109,7 @@ export default function Followups() {
                       <td className="px-4 py-3 font-mono text-xs text-slate-400">
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
-                          {f.followup_date || f.next_followup_date || 'â€”'}
+                          {f.followup_date || f.next_followup_date || '—'}
                         </span>
                       </td>
                       <td className="px-4 py-3 font-mono text-xs font-bold text-primary-650 dark:text-primary-400">
@@ -125,7 +125,7 @@ export default function Followups() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-xs truncate italic">
-                        "{f.remarks || 'â€”'}"
+                        "{f.remarks || '—'}"
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button 

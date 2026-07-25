@@ -25,7 +25,7 @@ interface LeadsKanbanProps {
   onStatusChange?: (leadId: number, newStatus: string) => void;
 }
 
-// â”€â”€â”€ Column config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Column config ────────────────────────────────────────────────────────────
 const COLUMNS = [
   {
     id: 'new',
@@ -84,7 +84,7 @@ const COLUMNS = [
   },
 ];
 
-// â”€â”€â”€ Deal Health Score Calculation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Deal Health Score Calculation ────────────────────────────────────────────
 function getDealHealthScore(lead: Lead) {
   let score = 30;
   if (lead.loan_amount && lead.loan_amount > 100000) score += 20;
@@ -129,7 +129,7 @@ function HealthBar({ score }: { score: number }) {
   );
 }
 
-// â”€â”€â”€ Modern Kanban Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Modern Kanban Card ────────────────────────────────────────────────────────
 function KanbanCard({ lead }: { lead: Lead }) {
   const health = getDealHealthScore(lead);
 
@@ -170,7 +170,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
           <DollarSign className="w-3.5 h-3.5 text-emerald-500" /> Loan Req.
         </span>
         <span className="font-mono text-sm font-black text-emerald-600 dark:text-emerald-400">
-          {lead.loan_amount ? `â‚¹ ${Number(lead.loan_amount).toLocaleString('en-IN')}` : 'â€”'}
+          {lead.loan_amount ? `₹ ${Number(lead.loan_amount).toLocaleString('en-IN')}` : '—'}
         </span>
       </div>
 
@@ -232,7 +232,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
   );
 }
 
-// â”€â”€â”€ Main Kanban Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Kanban Component ───────────────────────────────────────────────────
 export default function LeadsKanban({ leads }: LeadsKanbanProps) {
   const totalLoanValue = leads.reduce((sum, l) => sum + (Number(l.loan_amount) || 0), 0);
 
@@ -256,7 +256,7 @@ export default function LeadsKanban({ leads }: LeadsKanbanProps) {
             <p className="text-xs text-slate-300 mt-1 flex items-center gap-2 flex-wrap">
               <span>Total Applications: <strong className="text-white font-mono">{leads.length}</strong></span>
               <span className="text-slate-600">Â·</span>
-              <span>Sanction Pipeline Value: <strong className="text-emerald-400 font-mono">â‚¹ {(totalLoanValue / 100000).toFixed(2)} Lakhs</strong></span>
+              <span>Sanction Pipeline Value: <strong className="text-emerald-400 font-mono">₹ {(totalLoanValue / 100000).toFixed(2)} Lakhs</strong></span>
             </p>
           </div>
         </div>
@@ -295,7 +295,7 @@ export default function LeadsKanban({ leads }: LeadsKanbanProps) {
                   </span>
                   {colTotal > 0 && (
                     <div className="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-300 mt-1">
-                      â‚¹ {colTotal >= 100000 ? `${(colTotal / 100000).toFixed(1)}L` : colTotal.toLocaleString('en-IN')}
+                      ₹ {colTotal >= 100000 ? `${(colTotal / 100000).toFixed(1)}L` : colTotal.toLocaleString('en-IN')}
                     </div>
                   )}
                 </div>

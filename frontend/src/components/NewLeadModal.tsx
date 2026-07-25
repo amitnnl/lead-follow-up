@@ -343,7 +343,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 <div>
                   <label className={labelClass}>Requested Loan Amount *</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">â‚¹</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₹</span>
                     <input required type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} className={`${inputClass} pl-7`} placeholder="0.00" />
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                       </button>
                     </div>
                     <select required name="agent_id" value={formData.agent_id} onChange={handleChange} className={`${inputClass} text-xs`}>
-                      <option value="">â€” Direct / None â€”</option>
+                      <option value="">— Direct / None —</option>
                       {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
                     </select>
                   </div>
@@ -392,7 +392,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                       </button>
                     </div>
                     <select required name="channel_executive_id" value={formData.channel_executive_id} onChange={handleChange} className={`${inputClass} text-xs`}>
-                      <option value="">â€” Select Agent â€”</option>
+                      <option value="">— Select Agent —</option>
                       {channelExecutives.map(ce => <option key={ce.id} value={ce.id}>{ce.name}</option>)}
                     </select>
                   </div>

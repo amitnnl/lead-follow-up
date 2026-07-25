@@ -256,7 +256,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                     className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
                     style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                   >
-                    <option value="">â€” Select Financer â€”</option>
+                    <option value="">— Select Financer —</option>
                     {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                   </select>
 
@@ -316,7 +316,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                     className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-primary-900 dark:text-primary-100 shadow-sm appearance-none cursor-pointer"
                     style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                   >
-                    <option value="">â€” Select Executive â€”</option>
+                    <option value="">— Select Executive —</option>
                     {executives
                       .filter(e => !formData.financer_id || !e.financer_id || e.financer_id.toString() === formData.financer_id)
                       .map(ex => (

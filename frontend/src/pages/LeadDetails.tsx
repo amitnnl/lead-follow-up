@@ -15,7 +15,7 @@ import AssignmentModal from '../components/AssignmentModal';
 import PragmaticLeadDocuments from '../components/documents/PragmaticLeadDocuments';
 import clsx from 'clsx';
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
 function getInitials(name: string) {
   if (!name) return '?';
@@ -57,7 +57,7 @@ function InfoRow({ label, value, mono = false, accent = false }: { label: string
     <div className="flex flex-col gap-0.5">
       <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</span>
       <span className={clsx('text-[13px] font-semibold text-slate-800 dark:text-slate-100', mono && 'font-mono', accent && 'text-emerald-600 dark:text-emerald-400 text-base')}>
-        {value || <span className="text-slate-300 dark:text-slate-600 font-normal">â€”</span>}
+        {value || <span className="text-slate-300 dark:text-slate-600 font-normal">—</span>}
       </span>
     </div>
   );
@@ -83,7 +83,7 @@ function AvatarChip({ name, sub, color = 'indigo' }: { name: string; sub?: strin
   );
 }
 
-// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function LeadDetails() {
   const { id } = useParams<{ id: string }>();
@@ -400,14 +400,14 @@ export default function LeadDetails() {
     }
   };
 
-  // â”€â”€ Loading / Error states â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Loading / Error states ──────────────────────────────────────────────────
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-96 gap-4">
       <div className="relative w-12 h-12">
         <div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" />
         <div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" />
       </div>
-      <p className="text-sm text-slate-400 font-medium">Loading lead detailsâ€¦</p>
+      <p className="text-sm text-slate-400 font-medium">Loading lead details…</p>
     </div>
   );
   if (error || !data) return (
@@ -420,7 +420,7 @@ export default function LeadDetails() {
     </div>
   );
 
-  // â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Data ────────────────────────────────────────────────────────────────────
   const { lead, followups, documents, logs } = data;
 
 
@@ -495,11 +495,11 @@ export default function LeadDetails() {
     reassign:  'bg-slate-400',
   };
 
-  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-6xl mx-auto space-y-5 pb-20 animate-fade-in select-none">
 
-      {/* â”€â”€ Dynamic, Ink-Saving Print-Only Voucher (Fits exactly on 1 Page) â”€â”€ */}
+      {/* ── Dynamic, Ink-Saving Print-Only Voucher (Fits exactly on 1 Page) ── */}
       <div className="hidden print:block w-full text-black font-sans bg-white p-2 text-xs leading-tight">
         
         {/* Header Block */}
@@ -537,21 +537,21 @@ export default function LeadDetails() {
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Vehicle Make & Model</span>
-              <span className="font-bold text-xs">{lead.vehicle_make_model || 'â€”'}</span>
+              <span className="font-bold text-xs">{lead.vehicle_make_model || '—'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Registration / Condition</span>
               <span className="text-xs uppercase font-bold">
-                {lead.registration_number || 'â€”'} Â· ({lead.vehicle_condition === 'new' ? 'New' : 'Used'})
+                {lead.registration_number || '—'} Â· ({lead.vehicle_condition === 'new' ? 'New' : 'Used'})
               </span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Assigned Financer (Bank)</span>
-              <span className="text-xs font-semibold">{lead.financer_name || 'â€”'}</span>
+              <span className="text-xs font-semibold">{lead.financer_name || '—'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Sourced Dealer</span>
-              <span className="text-xs font-semibold">{lead.dealer_name || 'â€”'}</span>
+              <span className="text-xs font-semibold">{lead.dealer_name || '—'}</span>
             </div>
           </div>
         </div>
@@ -562,15 +562,15 @@ export default function LeadDetails() {
           <div className="grid grid-cols-3 gap-x-4 gap-y-2.5">
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Loan Amount</span>
-              <span className="font-bold text-sm text-emerald-700">â‚¹{lead.loan_amount ? Number(lead.loan_amount).toLocaleString('en-IN') : '0'}</span>
+              <span className="font-bold text-sm text-emerald-700">₹{lead.loan_amount ? Number(lead.loan_amount).toLocaleString('en-IN') : '0'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Interest Rate (IRR)</span>
-              <span className="font-mono text-xs font-bold">{lead.irr_rate ? `${lead.irr_rate}% p.a.` : 'â€”'}</span>
+              <span className="font-mono text-xs font-bold">{lead.irr_rate ? `${lead.irr_rate}% p.a.` : '—'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Tenure Months</span>
-              <span className="font-mono text-xs font-bold">{lead.tenure_months ? `${lead.tenure_months} Months` : 'â€”'}</span>
+              <span className="font-mono text-xs font-bold">{lead.tenure_months ? `${lead.tenure_months} Months` : '—'}</span>
             </div>
           </div>
         </div>
@@ -592,35 +592,35 @@ export default function LeadDetails() {
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans">Gross Sourced Value</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">1.00% of Sourced Loan</td>
                 <td className="p-2 text-right font-bold text-slate-800">
-                  â‚¹{(Number(lead.loan_amount || 0) * 0.01).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  ₹{(Number(lead.loan_amount || 0) * 0.01).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans font-bold">DSA Agent Commission Share</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">90% of Gross Value</td>
                 <td className="p-2 text-right font-black text-primary-700">
-                  â‚¹{(Number(lead.loan_amount || 0) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  ₹{(Number(lead.loan_amount || 0) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans">TDS Withheld (194H)</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">5.00% of DSA Share</td>
                 <td className="p-2 text-right text-slate-700">
-                  - â‚¹{(Number(lead.loan_amount || 0) * 0.009 * 0.05).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  - ₹{(Number(lead.loan_amount || 0) * 0.009 * 0.05).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr className="bg-slate-50 font-bold">
                 <td className="p-2 border-r border-slate-200 text-slate-900 font-sans">Net Payable to DSA Agent</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-950 font-sans">95.00% of DSA Share</td>
                 <td className="p-2 text-right font-extrabold text-slate-900 text-sm">
-                  â‚¹{(Number(lead.loan_amount || 0) * 0.009 * 0.95).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  ₹{(Number(lead.loan_amount || 0) * 0.009 * 0.95).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans">Organization Profit Share</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">10% of Gross Value</td>
                 <td className="p-2 text-right text-slate-700">
-                  â‚¹{(Number(lead.loan_amount || 0) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  ₹{(Number(lead.loan_amount || 0) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
             </tbody>
@@ -653,7 +653,7 @@ export default function LeadDetails() {
 
       </div>
 
-      {/* â”€â”€ Breadcrumb â”€â”€ */}
+      {/* ── Breadcrumb ── */}
       <div className="no-print flex items-center gap-2 text-sm text-slate-400">
         <button onClick={() => navigate('/leads')} className="flex items-center gap-1.5 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium cursor-pointer">
           <ArrowLeft className="w-4 h-4" /> Leads
@@ -795,14 +795,14 @@ export default function LeadDetails() {
           <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-5">
             <InfoRow label="Mobile" value={lead.customer_mobile} mono />
             <InfoRow label="Vehicle" value={lead.vehicle_make_model} />
-            <InfoRow label="Loan Amount" value={lead.loan_amount ? `â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
+            <InfoRow label="Loan Amount" value={lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
             <InfoRow label="Bank Executive" value={lead.executive_name || 'Unassigned'} />
             {lead.registration_number && <InfoRow label="Registration No." value={lead.registration_number} mono />}
             {lead.insurance_company && (
               <div className="col-span-2 flex flex-col gap-0.5">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Insurance Policy</span>
                 <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">
-                  {lead.insurance_company} Â· <span className="font-mono">{lead.policy_number || 'â€”'}</span>
+                  {lead.insurance_company} Â· <span className="font-mono">{lead.policy_number || '—'}</span>
                   {lead.insurance_expiry_date && <span className="text-slate-400 font-normal"> Â· Exp: {lead.insurance_expiry_date}</span>}
                 </span>
               </div>
@@ -812,16 +812,16 @@ export default function LeadDetails() {
           {/* Row 3: Final Disbursed Amt */}
           {lead.status === 'disbursed' && lead.final_loan_amount && (
             <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-4 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 rounded-xl">
-              <InfoRow label="Final Disbursed Amt" value={<span className="text-emerald-700 dark:text-emerald-400 font-bold">â‚¹{parseFloat(lead.final_loan_amount).toLocaleString()}</span>} />
+              <InfoRow label="Final Disbursed Amt" value={<span className="text-emerald-700 dark:text-emerald-400 font-bold">₹{parseFloat(lead.final_loan_amount).toLocaleString()}</span>} />
               <InfoRow label="Tenure (Months)" value={lead.tenure_months} mono />
               <InfoRow label="ROI (%)" value={`${lead.roi}%`} mono />
-              {lead.payout_amount && <InfoRow label="Agent Payout" value={<span className="text-primary-600 dark:text-primary-400 font-bold">â‚¹{parseFloat(lead.payout_amount).toLocaleString()}</span>} />}
+              {lead.payout_amount && <InfoRow label="Agent Payout" value={<span className="text-primary-600 dark:text-primary-400 font-bold">₹{parseFloat(lead.payout_amount).toLocaleString()}</span>} />}
             </div>
           )}
         </div>
       </div>
 
-      {/* â”€â”€ Automated Sanction / Disbursal Certificate & WhatsApp Dispatch Card â”€â”€ */}
+      {/* ── Automated Sanction / Disbursal Certificate & WhatsApp Dispatch Card ── */}
       {(lead.status === 'approved' || lead.status === 'disbursed') && (
         <div className="no-print card p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border-2 border-emerald-500/40 dark:border-emerald-500/30 shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in">
           <div className="flex items-center gap-4">
@@ -839,8 +839,8 @@ export default function LeadDetails() {
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                 {lead.status === 'disbursed'
-                  ? `Loan of â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} has been disbursed. Dispatch official certificate directly to the customer via WhatsApp.`
-                  : `Loan of â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} is approved. Send instant sanction alert or download printable official letter.`}
+                  ? `Loan of ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been disbursed. Dispatch official certificate directly to the customer via WhatsApp.`
+                  : `Loan of ₹${Number(lead.loan_amount).toLocaleString('en-IN')} is approved. Send instant sanction alert or download printable official letter.`}
               </p>
             </div>
           </div>
@@ -848,8 +848,8 @@ export default function LeadDetails() {
             <a
               href={`https://wa.me/91${lead.customer_mobile.replace(/\D/g, '')}?text=${encodeURIComponent(
                 lead.status === 'disbursed'
-                  ? `ðŸŽ‰ Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
-                  : `ðŸŽ‰ Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
+                  ? `ðŸŽ‰ Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
+                  : `ðŸŽ‰ Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
               )}`}
               target="_blank"
               rel="noreferrer"
@@ -959,7 +959,7 @@ export default function LeadDetails() {
             This lead is currently <span className="font-bold uppercase ml-1">{lead.status.replace('_', ' ')}</span>.
             {lead.status === 'rejected' && (user?.role === 'admin' || user?.role === 'staff') && (
               <button onClick={() => setSearchParams({ tab: 'assignment' })} className="ml-auto underline cursor-pointer">
-                Re-assign to fix â†’
+                Re-assign to fix →
               </button>
             )}
           </div>
@@ -971,7 +971,7 @@ export default function LeadDetails() {
       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="no-print grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
 
-        {/* â”€â”€ LEFT: Tab System â”€â”€ */}
+        {/* ── LEFT: Tab System ── */}
         <div className="lg:col-span-2 space-y-4">
 
           {/* Tab Bar */}
@@ -1003,7 +1003,7 @@ export default function LeadDetails() {
             })}
           </div>
 
-          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OVERVIEW TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ─────────────── OVERVIEW TAB ─────────────── */}
           {activeTab === 'overview' && (
             <div className="space-y-4 animate-fade-in">
 
@@ -1017,12 +1017,12 @@ export default function LeadDetails() {
                   <InfoRow label="Mobile" value={lead.customer_mobile} mono />
                   <InfoRow label="Occupation" value={lead.customer_occupation} />
                   <InfoRow label="Vehicle" value={lead.vehicle_make_model} />
-                  <InfoRow label="Loan Amount" value={lead.loan_amount ? `â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
+                  <InfoRow label="Loan Amount" value={lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
                   <InfoRow label="Loan Type" value={lead.loan_type?.replace('_', ' ')} />
                   {lead.loan_tenure && <InfoRow label="Tenure" value={`${lead.loan_tenure} months`} />}
-                  {lead.down_payment && <InfoRow label="Down Payment" value={`â‚¹${Number(lead.down_payment).toLocaleString('en-IN')}`} />}
+                  {lead.down_payment && <InfoRow label="Down Payment" value={`₹${Number(lead.down_payment).toLocaleString('en-IN')}`} />}
                   {lead.interest_rate && <InfoRow label="Interest Rate" value={`${lead.interest_rate}% p.a.`} />}
-                  {lead.emi_amount && <InfoRow label="EMI" value={`â‚¹${Number(lead.emi_amount).toLocaleString('en-IN')}/mo`} accent />}
+                  {lead.emi_amount && <InfoRow label="EMI" value={`₹${Number(lead.emi_amount).toLocaleString('en-IN')}/mo`} accent />}
                   {lead.customer_address && (
                     <div className="col-span-2 flex flex-col gap-0.5">
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Address</span>
@@ -1071,7 +1071,7 @@ export default function LeadDetails() {
                     <Shield className="w-3.5 h-3.5" /> KYC Disbursal Gate
                   </h3>
                   <button onClick={() => handleTabChange('documents')} className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1">
-                    View Vault â†’
+                    View Vault →
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1164,7 +1164,7 @@ export default function LeadDetails() {
             </div>
           )}
 
-          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ASSIGN LEAD TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ─────────────── ASSIGN LEAD TAB ─────────────── */}
           {activeTab === 'assignment' && lead?.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') && (
             <div className="card p-6 space-y-6 animate-fade-in">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
@@ -1241,7 +1241,7 @@ export default function LeadDetails() {
                             className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
                             style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                           >
-                            <option value="">â€” Select Financer â€”</option>
+                            <option value="">— Select Financer —</option>
                             {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                           </select>
 
@@ -1302,7 +1302,7 @@ export default function LeadDetails() {
                             className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-primary-900 dark:text-primary-100 shadow-sm appearance-none cursor-pointer"
                             style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                           >
-                            <option value="">â€” Select Executive â€”</option>
+                            <option value="">— Select Executive —</option>
                             {executives
                               .filter(e => !assignForm.financer_id || !e.financer_id || e.financer_id.toString() === assignForm.financer_id)
                               .map(ex => (
@@ -1370,7 +1370,7 @@ export default function LeadDetails() {
             </div>
           )}
 
-          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FOLLOW-UPS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ─────────────── FOLLOW-UPS TAB ─────────────── */}
           {activeTab === 'followups' && (
             <div className="space-y-4 animate-fade-in">
 
@@ -1402,7 +1402,7 @@ export default function LeadDetails() {
                   <form onSubmit={handleAddFollowup} className="space-y-4">
                     <textarea
                       required value={remarks} onChange={(e) => setRemarks(e.target.value)}
-                      placeholder="Enter discussion remarks, updates, or next stepsâ€¦"
+                      placeholder="Enter discussion remarks, updates, or next steps…"
                       className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 dark:focus:border-primary-400 min-h-[90px] text-slate-800 dark:text-white text-sm resize-none transition-colors"
                     />
                     <div className="grid grid-cols-2 gap-4">
@@ -1454,7 +1454,7 @@ export default function LeadDetails() {
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Final Loan Amount *</label>
-                              <input required type="number" min="1" value={disburseFinalAmount} onChange={e => setDisburseFinalAmount(e.target.value)} className="w-full text-xs font-mono" placeholder="â‚¹ Amount" />
+                              <input required type="number" min="1" value={disburseFinalAmount} onChange={e => setDisburseFinalAmount(e.target.value)} className="w-full text-xs font-mono" placeholder="₹ Amount" />
                             </div>
                             <div>
                               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tenure (Months) *</label>
@@ -1606,7 +1606,7 @@ export default function LeadDetails() {
                                       getStatusConfig(f.status_changed_to).sbClass
                                     )}>
                                       <TrendingUp className="w-2.5 h-2.5" />
-                                      â†’ {f.status_changed_to === 'reassign' ? 'Re-assigned' : f.status_changed_to}
+                                      → {f.status_changed_to === 'reassign' ? 'Re-assigned' : f.status_changed_to}
                                     </span>
                                   ) : <span />}
                                   {f.next_followup_date && (
@@ -1630,7 +1630,7 @@ export default function LeadDetails() {
             </div>
           )}
 
-          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DOCUMENTS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ─────────────── DOCUMENTS TAB ─────────────── */}
           {activeTab === 'documents' && (
             <div className="animate-fade-in">
               <PragmaticLeadDocuments
@@ -1643,7 +1643,7 @@ export default function LeadDetails() {
               />
             </div>
           )}
-          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AUDIT LOGS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ─────────────── AUDIT LOGS TAB ─────────────── */}
           {activeTab === 'logs' && (
             <div className="card p-5 animate-fade-in">
               <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-5 flex items-center gap-2">
@@ -1706,7 +1706,7 @@ export default function LeadDetails() {
             <div className="flex justify-between items-center">
               <span className="text-xs text-slate-400">Loan Amount</span>
               <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                {lead.loan_amount ? `â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')}` : 'â€”'}
+                {lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : '—'}
               </span>
             </div>
 
@@ -1717,13 +1717,13 @@ export default function LeadDetails() {
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-400">Agent (90%)</span>
                   <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
-                    â‚¹{(Number(lead.loan_amount) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                    ₹{(Number(lead.loan_amount) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-400">Organization (10%)</span>
                   <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                    â‚¹{(Number(lead.loan_amount) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                    ₹{(Number(lead.loan_amount) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
               </>
@@ -1854,7 +1854,7 @@ export default function LeadDetails() {
 
 
 
-      {/* â”€â”€ Modals (unchanged) â”€â”€ */}
+      {/* ── Modals (unchanged) ── */}
       <NewLeadModal
         isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}
         initialData={data?.lead}

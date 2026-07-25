@@ -34,7 +34,7 @@ interface ChannelExecutive {
   is_active: number;
 }
 
-// â”€â”€ Top-Level Helper Components (Out of parent scope to prevent typing focus loss) â”€â”€
+// ── Top-Level Helper Components (Out of parent scope to prevent typing focus loss) ──
 
 function AgencyModal({
   isOpen,
@@ -162,7 +162,7 @@ function AgentModal({
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Link to Outsourcing Agency</label>
                 <select value={formData.channel_id} onChange={e => setFormData({...formData, channel_id: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white">
-                  <option value="">â€” Independent / No Agency Link â€”</option>
+                  <option value="">— Independent / No Agency Link —</option>
                   {channels.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -494,7 +494,7 @@ export default function Channels() {
         </div>
       </div>
 
-      {/* â”€â”€ TAB 1: AGENCIES VIEW â”€â”€ */}
+      {/* ── TAB 1: AGENCIES VIEW ── */}
       {activeTab === 'agencies' && (
         <div className="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -517,8 +517,8 @@ export default function Channels() {
                       <div className="font-semibold text-slate-800 dark:text-white">{c.name}</div>
                       {c.notes && <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{c.notes}</div>}
                     </td>
-                    <td className="px-4 py-3.5 align-top text-slate-600 dark:text-slate-300">{c.contact_person || 'â€”'}</td>
-                    <td className="px-4 py-3.5 align-top font-mono text-slate-600 dark:text-slate-300">{c.mobile || 'â€”'}</td>
+                    <td className="px-4 py-3.5 align-top text-slate-600 dark:text-slate-300">{c.contact_person || '—'}</td>
+                    <td className="px-4 py-3.5 align-top font-mono text-slate-600 dark:text-slate-300">{c.mobile || '—'}</td>
                     <td className="px-4 py-3.5 align-top">
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border ${c.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' : 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${c.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
@@ -544,7 +544,7 @@ export default function Channels() {
         </div>
       )}
 
-      {/* â”€â”€ TAB 2: AGENTS & PAYOUT PROFILES VIEW â”€â”€ */}
+      {/* ── TAB 2: AGENTS & PAYOUT PROFILES VIEW ── */}
       {activeTab === 'agents' && (
         <div className="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -571,7 +571,7 @@ export default function Channels() {
                         <span className="inline-flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 font-medium">
                           <Building2 className="w-3 h-3" /> {ex.channel_name}
                         </span>
-                      ) : 'â€”'}
+                      ) : '—'}
                     </td>
                     <td className="px-4 py-3.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
                       <div>{ex.mobile}</div>

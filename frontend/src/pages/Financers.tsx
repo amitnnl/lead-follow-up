@@ -18,7 +18,7 @@ interface Financer {
   total_loan?: number;
 }
 
-// â”€â”€ Top-Level Helper Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Top-Level Helper Components ───────────────────────────────────────
 function StatusBadge({ active }: { active: boolean }) {
   return (
     <span className={clsx(
@@ -58,13 +58,13 @@ function FinancerRow({ financer, onEdit, onDelete, isAdmin }: { financer: Financ
             <div className="font-semibold text-slate-800 dark:text-white text-sm truncate max-w-[250px]">{financer.name}</div>
             <div className="text-[11px] text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-0.5">
               {financer.mobile && <span><a href={`tel:${financer.mobile}`} className="hover:text-primary-500">{financer.mobile}</a></span>}
-              {financer.email && <span>â€¢ <a href={`mailto:${financer.email}`} className="hover:text-primary-500">{financer.email}</a></span>}
+              {financer.email && <span>• <a href={`mailto:${financer.email}`} className="hover:text-primary-500">{financer.email}</a></span>}
             </div>
           </div>
         </div>
       </td>
       <td className="px-4 py-4">
-        <span className="font-mono text-xs text-slate-600 dark:text-slate-400">{financer.dsa_code || 'â€”'}</span>
+        <span className="font-mono text-xs text-slate-600 dark:text-slate-400">{financer.dsa_code || '—'}</span>
       </td>
       <td className="px-4 py-4 text-center">
         <span className="font-extrabold text-slate-800 dark:text-slate-200">{financer.leads_count || 0}</span>
@@ -74,7 +74,7 @@ function FinancerRow({ financer, onEdit, onDelete, isAdmin }: { financer: Financ
       </td>
       <td className="px-4 py-4">
         <span className="text-xs font-bold text-slate-700 dark:text-slate-300 font-mono whitespace-nowrap">
-          {financer.total_loan ? `â‚¹${Number(financer.total_loan).toLocaleString('en-IN')}` : 'â€”'}
+          {financer.total_loan ? `₹${Number(financer.total_loan).toLocaleString('en-IN')}` : '—'}
         </span>
       </td>
       <td className="px-4 py-4 text-center">
@@ -201,7 +201,7 @@ export default function Financers() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
 
-  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── State ──────────────────────────────────────────────────────────────
   const [financers, setFinancers] = useState<Financer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -214,7 +214,7 @@ export default function Financers() {
     name: '', dsa_code: '', mobile: '', email: '', notes: '', is_active: 1
   });
 
-  // â”€â”€ API & Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── API & Handlers ────────────────────────────────────────────────────
   const fetchFinancers = async () => {
     try {
       const res = await api.get('/setup/financers');
@@ -285,11 +285,11 @@ export default function Financers() {
     inactive: financers.filter(f => f.is_active === 0).length
   }), [financers]);
 
-  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Main Render ───────────────────────────────────────────────────────
   return (
     <div className="space-y-5 animate-fade-in select-none">
 
-      {/* â”€â”€ Page Header â”€â”€ */}
+      {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -399,7 +399,7 @@ export default function Financers() {
                         <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
                         <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                       </div>
-                      <p className="text-xs text-slate-400 font-medium">Loading financersâ€¦</p>
+                      <p className="text-xs text-slate-400 font-medium">Loading financers…</p>
                     </div>
                   </td>
                 </tr>
@@ -416,7 +416,7 @@ export default function Financers() {
                       </p>
                       {(!search && filterStatus === 'all') && (
                         <button onClick={() => handleOpenModal()} className="mt-2 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer">
-                          Add your first financer â†’
+                          Add your first financer →
                         </button>
                       )}
                     </div>

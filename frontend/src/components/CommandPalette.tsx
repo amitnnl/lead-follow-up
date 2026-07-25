@@ -164,8 +164,8 @@ export default function CommandPalette({ isOpen, onClose, onOpenNewLead, onOpenC
             <span>Command Menu</span>
           </div>
           <div className="flex items-center gap-3">
-            <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">â†‘</kbd><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">â†“</kbd> to navigate</span>
-            <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">â†µ</kbd> to select</span>
+            <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">Up</kbd><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">Down</kbd> to navigate</span>
+            <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">Enter</kbd> to select</span>
           </div>
         </div>
       </div>

@@ -52,7 +52,7 @@ interface Lead {
   insurance_expiry_date?: string;
 }
 
-// â”€â”€â”€ Status config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Status config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { dot: string; bg: string; text: string; border: string; icon: React.ElementType; label: string }> = {
   new:       { dot: 'bg-primary-500',    bg: 'bg-primary-50',    text: 'text-primary-700',    border: 'border-primary-200',    icon: Sparkles,     label: 'New' },
   pending:   { dot: 'bg-amber-500',   bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200',   icon: Clock,        label: 'Pending' },
@@ -63,7 +63,7 @@ const STATUS_CONFIG: Record<string, { dot: string; bg: string; text: string; bor
 };
 const STATUS_KEYS = ['new', 'pending', 'approved', 'disbursed', 'on_hold', 'rejected'];
 
-// â”€â”€â”€ Table Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Table Row ───────────────────────────────────────────────────────────────
 function LeadTableRow({
   lead, isAdminOrManager, onAssign, getWhatsAppLink,
   isSelected, onToggleSelect, onOpenPreview
@@ -107,7 +107,7 @@ function LeadTableRow({
       </td>
 
       <td className="px-4 py-4 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]" title={lead.customer_address}>
-        {lead.customer_address || 'â€”'}
+        {lead.customer_address || '—'}
       </td>
 
       <td className="px-4 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
@@ -121,39 +121,39 @@ function LeadTableRow({
       </td>
 
       <td className="px-4 py-4 text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]" title={lead.vehicle_make_model}>
-        {lead.vehicle_make_model || 'â€”'}
+        {lead.vehicle_make_model || '—'}
       </td>
 
       <td className="px-4 py-4 text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
-        {lead.registration_number || 'â€”'}
+        {lead.registration_number || '—'}
       </td>
 
       <td className="px-4 py-4 font-mono text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums text-right">
-        â‚¹{(lead.loan_amount || 0).toLocaleString('en-IN')}
+        ₹{(lead.loan_amount || 0).toLocaleString('en-IN')}
       </td>
 
       <td className="px-4 py-4 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
-        {lead.financer_name || 'â€”'}
+        {lead.financer_name || '—'}
       </td>
 
       <td className="px-4 py-4 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
-        {lead.executive_name || 'â€”'}
+        {lead.executive_name || '—'}
       </td>
 
       <td className="px-4 py-4 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
-        {lead.loan_type ? (lead.loan_type === 'new_loan' ? 'New Loan' : (lead.loan_type === 'used_loan' ? 'Used Loan' : lead.loan_type)) : 'â€”'}
+        {lead.loan_type ? (lead.loan_type === 'new_loan' ? 'New Loan' : (lead.loan_type === 'used_loan' ? 'Used Loan' : lead.loan_type)) : '—'}
       </td>
 
       <td className="px-4 py-4 whitespace-nowrap text-xs">
         {lead.channel_name || lead.channel_executive_name ? (
           <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.channel_name || lead.channel_executive_name || undefined}>{lead.channel_name || lead.channel_executive_name}</div>
-        ) : <span className="text-slate-400">â€”</span>}
+        ) : <span className="text-slate-400">—</span>}
       </td>
 
       <td className="px-4 py-4 whitespace-nowrap text-xs">
         {lead.dealer_name || lead.agent_name ? (
           <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.dealer_name || lead.agent_name || undefined}>{lead.dealer_name || lead.agent_name}</div>
-        ) : <span className="text-slate-400">â€”</span>}
+        ) : <span className="text-slate-400">—</span>}
       </td>
 
       <td className="px-4 py-4">
@@ -186,7 +186,7 @@ function LeadTableRow({
   );
 }
 
-// â”€â”€â”€ Interactive KPI Metric Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Interactive KPI Metric Card ──────────────────────────────────────────────
 function KpiBadge({ statusKey, count, active, onClick }: { statusKey: string; count: number; active: boolean; onClick: () => void }) {
   const cfg = STATUS_CONFIG[statusKey];
   if (!cfg || count === 0) return null;
@@ -211,7 +211,7 @@ function KpiBadge({ statusKey, count, active, onClick }: { statusKey: string; co
   );
 }
 
-// â”€â”€â”€ Modern Pill Tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Modern Pill Tab ─────────────────────────────────────────────────────────
 function Tab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button onClick={onClick}
@@ -226,7 +226,7 @@ function Tab({ label, active, onClick }: { label: string; active: boolean; onCli
   );
 }
 
-// â”€â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Page ───────────────────────────────────────────────────────────────
 export default function Leads() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
@@ -520,7 +520,7 @@ export default function Leads() {
   return (
     <div className="space-y-4 select-none animate-fade-in">
 
-      {/* â”€â”€ Page Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Page Header ──────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -532,11 +532,11 @@ export default function Leads() {
             )}
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            {loading ? 'Loadingâ€¦' : (
+            {loading ? 'Loading…' : (
               <>
                 <span className="font-semibold text-slate-600">{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}
                 {totalLoanValue > 0 && (
-                  <> Â· Total value: <span className="font-semibold text-emerald-600">â‚¹{(totalLoanValue / 100000).toFixed(1)}L</span></>
+                  <> Â· Total value: <span className="font-semibold text-emerald-600">₹{(totalLoanValue / 100000).toFixed(1)}L</span></>
                 )}
               </>
             )}
@@ -558,7 +558,7 @@ export default function Leads() {
         </div>
       </div>
 
-      {/* â”€â”€ Status KPI Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Status KPI Strip ─────────────────────────────────────────── */}
       {!loading && leads.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {STATUS_KEYS.map(key => (
@@ -574,7 +574,7 @@ export default function Leads() {
         </div>
       )}
 
-      {/* â”€â”€ Filter Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Filter Bar ───────────────────────────────────────────────── */}
       <div className="bg-white dark:bg-[#162230] border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden shadow-sm sticky top-14 z-30">
         {/* Tab row */}
         <div className="flex items-center overflow-x-auto border-b border-slate-100 dark:border-slate-800 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/20">
@@ -603,7 +603,7 @@ export default function Leads() {
             <input
               type="text"
               id="leads-search"
-              placeholder="Search by name, mobile, lead ID, vehicleâ€¦"
+              placeholder="Search by name, mobile, lead ID, vehicle…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#111622] outline-none focus:border-primary-400 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-500/20 focus:bg-white dark:focus:bg-[#162230] transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
@@ -682,7 +682,7 @@ export default function Leads() {
         </div>
       </div>
 
-      {/* â”€â”€ Institutional Financial Data Grid (Comprehensive Table View) â”€â”€ */}
+      {/* ── Institutional Financial Data Grid (Comprehensive Table View) ── */}
       <div className="bg-white dark:bg-[#162230] border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden shadow-sm animate-fade-in animate-in slide-in-from-bottom-2 duration-500">
 
         {loading ? (
@@ -691,7 +691,7 @@ export default function Leads() {
               <div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-slate-800" />
               <div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" />
             </div>
-            <p className="text-xs text-slate-400 font-bold">Loading Leads Gridâ€¦</p>
+            <p className="text-xs text-slate-400 font-bold">Loading Leads Grid…</p>
           </div>
         ) : leads.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
@@ -701,7 +701,7 @@ export default function Leads() {
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200">No leads match your criteria</p>
             <p className="text-xs text-slate-400 max-w-sm">{hasActiveFilters ? 'Try adjusting or clearing your active filters above.' : 'Create your first lead to start populating your institutional grid.'}</p>
             {hasActiveFilters && (
-              <button onClick={clearFilters} className="text-xs font-bold text-primary-600 hover:underline cursor-pointer mt-1">Clear active filters â†’</button>
+              <button onClick={clearFilters} className="text-xs font-bold text-primary-600 hover:underline cursor-pointer mt-1">Clear active filters →</button>
             )}
           </div>
         ) : (
@@ -752,7 +752,7 @@ export default function Leads() {
             <div className="px-5 py-3.5 bg-slate-50/60 dark:bg-slate-900/20 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 Showing <span className="font-bold text-slate-800 dark:text-white">{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}
-                {totalLoanValue > 0 && <> Â· Portfolio Value: <span className="font-mono font-black text-emerald-600 dark:text-emerald-400">â‚¹{(totalLoanValue / 100000).toFixed(2)} Lakhs</span></>}
+                {totalLoanValue > 0 && <> Â· Portfolio Value: <span className="font-mono font-black text-emerald-600 dark:text-emerald-400">₹{(totalLoanValue / 100000).toFixed(2)} Lakhs</span></>}
               </p>
               {isAdminOrManager && leads.length > 0 && (
                 <button onClick={exportToCSV} className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-colors cursor-pointer">
@@ -802,7 +802,7 @@ export default function Leads() {
                       defaultValue=""
                       className="bg-slate-800 text-white border border-slate-700 py-1 px-2 rounded-lg text-xs outline-none cursor-pointer hover:bg-slate-700"
                     >
-                      <option value="" disabled>â€” Assign Bank â€”</option>
+                      <option value="" disabled>— Assign Bank —</option>
                       <option value="null">Unassign</option>
                       {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                     </select>
@@ -816,7 +816,7 @@ export default function Leads() {
                       defaultValue=""
                       className="bg-slate-800 text-white border border-slate-700 py-1 px-2 rounded-lg text-xs outline-none cursor-pointer hover:bg-slate-700"
                     >
-                      <option value="" disabled>â€” Assign SFE â€”</option>
+                      <option value="" disabled>— Assign SFE —</option>
                       <option value="null">Unassign</option>
                       {executives.map(ex => <option key={ex.id} value={ex.id}>{ex.name}</option>)}
                     </select>
@@ -832,7 +832,7 @@ export default function Leads() {
                   defaultValue=""
                   className="bg-slate-800 text-white border border-slate-700 py-1 px-2 rounded-lg text-xs outline-none cursor-pointer hover:bg-slate-700"
                 >
-                  <option value="" disabled>â€” Set Status â€”</option>
+                  <option value="" disabled>— Set Status —</option>
                   <option value="new">New</option>
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
