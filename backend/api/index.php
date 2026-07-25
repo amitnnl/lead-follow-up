@@ -584,7 +584,7 @@ switch ($path) {
             $whereSql = implode(' AND ', $whereParts);
 
             $leads = db_fetch_all($conn, "
-                SELECT l.*, a.name as agent_name, f.name as financer_name, d.name as dealer_name, ex.name as executive_name, ch.name as channel_name, che.name as channel_executive_name
+                SELECT l.*, a.name as agent_name, f.name as financer_name, f.dsa_code as financer_dsa_code, f.email as financer_email, d.name as dealer_name, ex.name as executive_name, ex.mobile as executive_mobile, ch.name as channel_name, che.name as channel_executive_name
                 FROM leads l
                 LEFT JOIN agents a ON l.agent_id = a.id
                 LEFT JOIN financers f ON l.financer_id = f.id
@@ -722,6 +722,7 @@ switch ($path) {
                         $assigned_exec_details = [
                             'name' => $execRow['name'],
                             'mobile' => $execRow['mobile'],
+                            'email' => $execRow['email'],
                             'lead_id' => 'ID-' . $id
                         ];
                         
@@ -751,11 +752,12 @@ switch ($path) {
 
                 // 2. Financer WhatsApp Data
                 if ($financer_id) {
-                    $finRow = db_fetch_one($conn, "SELECT id, name, mobile FROM financers WHERE id = ?", 'i', [$financer_id]);
-                    if ($finRow && !empty($finRow['mobile'])) {
+                    $finRow = db_fetch_one($conn, "SELECT id, name, mobile, email FROM financers WHERE id = ?", 'i', [$financer_id]);
+                    if ($finRow && (!empty($finRow['mobile']) || !empty($finRow['email']))) {
                         $assigned_fin_details = [
                             'name' => $finRow['name'],
                             'mobile' => $finRow['mobile'],
+                            'email' => $finRow['email'],
                             'lead_id' => 'ID-' . $id
                         ];
                     }
@@ -1293,6 +1295,11 @@ switch ($path) {
 
         $lead = db_fetch_one($conn, "SELECT * FROM leads WHERE id = ?", 'i', [$lead_id]);
         if (!$lead) json_error("Lead not found.");
+
+        $financer_lead_number = trim($input['financer_lead_number'] ?? '');
+        if ($lead['financer_id'] && empty($lead['financer_lead_number']) && !empty($financer_lead_number)) {
+            db_query($conn, "UPDATE leads SET financer_lead_number = ? WHERE id = ?", 'si', [$financer_lead_number, $lead_id]);
+        }
 
         db_query($conn, "
             INSERT INTO lead_followups (lead_id, followup_date, next_followup_date, remarks, status_changed_to, created_by)
@@ -2131,9 +2138,9 @@ switch ($path) {
             if (empty($name)) json_error("Name is required.");
 
             db_query($conn, "
-                INSERT INTO financers (name, dsa_code, mobile, notes, is_active)
-                VALUES (?, ?, ?, ?, ?)
-            ", 'ssssi', [$name, $dsa_code, $mobile, $notes, $is_active]);
+                INSERT INTO financers (name, dsa_code, mobile, email, notes, is_active)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ", 'sssssi', [$name, $dsa_code, $mobile, $email, $notes, $is_active]);
 
             sync_all_user_role_entities($conn);
             json_response(['message' => 'Financer created successfully', 'id' => $conn->insert_id]);
@@ -2150,9 +2157,9 @@ switch ($path) {
             if (empty($name) || !$id) json_error("ID and Name are required.");
 
             db_query($conn, "
-                UPDATE financers SET name = ?, dsa_code = ?, mobile = ?, notes = ?, is_active = ?
+                UPDATE financers SET name = ?, dsa_code = ?, mobile = ?, email = ?, notes = ?, is_active = ?
                 WHERE id = ?
-            ", 'sssssi', [$name, $dsa_code, $mobile, $notes, $is_active, $id]);
+            ", 'ssssssi', [$name, $dsa_code, $mobile, $email, $notes, $is_active, $id]);
 
             sync_all_user_role_entities($conn);
             json_response(['message' => 'Financer updated successfully']);

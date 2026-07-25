@@ -467,14 +467,6 @@ export default function MainLayout() {
           {/* Right Utilities & Actions */}
           <div className="flex items-center gap-2.5 shrink-0">
             
-            {/* + New Lead Action Center CTA */}
-            <button
-              onClick={() => setIsNewLeadModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm shadow-primary-500/20 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
-            >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span className="hidden sm:inline">New Lead</span>
-            </button>
 
             <button
               onClick={() => setIsCalculatorModalOpen(true)}

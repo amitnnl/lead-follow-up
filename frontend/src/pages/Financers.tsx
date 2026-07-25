@@ -67,9 +67,6 @@ function FinancerRow({ financer, onEdit, onDelete, isAdmin }: { financer: Financ
         <span className="font-mono text-xs text-slate-600 dark:text-slate-400">{financer.dsa_code || '—'}</span>
       </td>
       <td className="px-4 py-4 text-center">
-        <span className="font-extrabold text-indigo-600 dark:text-indigo-400">{financer.agents_count || 0}</span>
-      </td>
-      <td className="px-4 py-4 text-center">
         <span className="font-extrabold text-slate-800 dark:text-slate-200">{financer.leads_count || 0}</span>
       </td>
       <td className="px-4 py-4 text-center">
@@ -79,9 +76,6 @@ function FinancerRow({ financer, onEdit, onDelete, isAdmin }: { financer: Financ
         <span className="text-xs font-bold text-slate-700 dark:text-slate-300 font-mono whitespace-nowrap">
           {financer.total_loan ? `₹${Number(financer.total_loan).toLocaleString('en-IN')}` : '—'}
         </span>
-      </td>
-      <td className="px-4 py-4">
-        <div className="text-xs text-slate-500 dark:text-slate-400 max-w-[150px] truncate" title={financer.notes}>{financer.notes || '—'}</div>
       </td>
       <td className="px-4 py-4 text-center">
         <StatusBadge active={financer.is_active === 1} />
@@ -389,11 +383,9 @@ export default function Financers() {
               <tr>
                 <th className="px-4 py-3 font-medium">Financer / Bank</th>
                 <th className="px-4 py-3 font-medium">DSA Code</th>
-                <th className="px-4 py-3 font-medium text-center">Agents</th>
                 <th className="px-4 py-3 font-medium text-center">Leads</th>
                 <th className="px-4 py-3 font-medium text-center">Disbursed</th>
                 <th className="px-4 py-3 font-medium">Total Loan</th>
-                <th className="px-4 py-3 font-medium">Notes</th>
                 <th className="px-4 py-3 font-medium text-center">Status</th>
                 <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
@@ -401,7 +393,7 @@ export default function Financers() {
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center">
+                  <td colSpan={7} className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="relative w-8 h-8">
                         <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-indigo-500/20" />
@@ -413,7 +405,7 @@ export default function Financers() {
                 </tr>
               ) : filteredFinancers.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center">
+                  <td colSpan={7} className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                         <Landmark className="w-6 h-6 text-slate-300 dark:text-slate-650" />

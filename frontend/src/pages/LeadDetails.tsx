@@ -6,7 +6,7 @@ import {
   Clock, CheckCircle, XCircle, Building,
   Edit, Trash2, Printer, RefreshCw, ShieldAlert,
   User, ChevronRight, AlertTriangle, TrendingUp, Download, Calendar, Banknote,
-  Shield, Info, CircleDot, BadgeCheck, List, Users, Plus, X
+  Shield, Info, CircleDot, BadgeCheck, List, Users, Plus, X, Mail, BellOff
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
@@ -112,6 +112,34 @@ export default function LeadDetails() {
   const [assignError, setAssignError] = useState('');
   const [assignSuccess, setAssignSuccess] = useState(false);
 
+  const [notifyExecMethod, setNotifyExecMethod] = useState<'whatsapp' | 'email' | 'none'>('whatsapp');
+  const [execMobile, setExecMobile] = useState('');
+  const [execEmail, setExecEmail] = useState('');
+
+  const [notifyFinMethod, setNotifyFinMethod] = useState<'whatsapp' | 'email' | 'none'>('whatsapp');
+  const [finMobile, setFinMobile] = useState('');
+  const [finEmail, setFinEmail] = useState('');
+
+  useEffect(() => {
+    if (assignForm.executive_id && executives.length > 0) {
+      const exec = executives.find(e => e.id.toString() === assignForm.executive_id);
+      if (exec) {
+        setExecMobile(exec.mobile || '');
+        setExecEmail(exec.email || '');
+      }
+    }
+  }, [assignForm.executive_id, executives]);
+
+  useEffect(() => {
+    if (assignForm.financer_id && financers.length > 0) {
+      const fin = financers.find(f => f.id.toString() === assignForm.financer_id);
+      if (fin) {
+        setFinMobile(fin.mobile || '');
+        setFinEmail(fin.email || '');
+      }
+    }
+  }, [assignForm.financer_id, financers]);
+
   const [quickAddType, setQuickAddType] = useState<'financer' | 'executive' | null>(null);
   const [quickAddName, setQuickAddName] = useState('');
   const [quickAddMobile, setQuickAddMobile] = useState('');
@@ -181,6 +209,8 @@ export default function LeadDetails() {
   const [disburseFinalAmount, setDisburseFinalAmount] = useState('');
   const [disburseTenure, setDisburseTenure] = useState('');
   const [disburseRoi, setDisburseRoi] = useState('');
+
+  const [financerLeadNo, setFinancerLeadNo] = useState('');
 
   const handleUploadDocumentPragmatic = async (category: string, docType: string, file: File, expiryDate?: string) => {
     if (!data?.lead?.id) return;
@@ -266,12 +296,40 @@ export default function LeadDetails() {
     setAssignError('');
     setAssignSuccess(false);
     try {
-      await api.put('/leads?action=assign', {
+      const res = await api.put('/leads?action=assign', {
         id: data?.lead?.id,
         assigned_date: assignForm.assigned_date,
         financer_id: assignForm.financer_id ? parseInt(assignForm.financer_id) : null,
         executive_id: assignForm.executive_id ? parseInt(assignForm.executive_id) : null,
       });
+
+      const { assigned_executive, assigned_financer } = res.data || {};
+      const leadIdStr = data?.lead?.id?.toString() || '';
+
+      if (assignForm.executive_id && assigned_executive && notifyExecMethod !== 'none') {
+        const personName = assigned_executive.name;
+        if (notifyExecMethod === 'whatsapp' && execMobile) {
+          const text = `Hi ${personName}, a new lead (ID-${leadIdStr}) has been assigned to you. Please log in to your dashboard to view the details.`;
+          window.open(`https://wa.me/91${execMobile}?text=${encodeURIComponent(text)}`, '_blank');
+        } else if (notifyExecMethod === 'email' && execEmail) {
+          const subject = `New Lead Assigned (ID-${leadIdStr})`;
+          const body = `Hi ${personName},\n\nA new lead (ID-${leadIdStr}) has been assigned to you. Please log in to your dashboard to view the details.\n\nThanks,\nAdministrative Team`;
+          window.open(`mailto:${execEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        }
+      }
+
+      if (assignForm.financer_id && assigned_financer && notifyFinMethod !== 'none') {
+        const personName = assigned_financer.name;
+        if (notifyFinMethod === 'whatsapp' && finMobile) {
+          const text = `Hi ${personName}, a new lead (ID-${leadIdStr}) has been assigned to your bank. Please log in to your dashboard to view the details.`;
+          window.open(`https://wa.me/91${finMobile}?text=${encodeURIComponent(text)}`, '_blank');
+        } else if (notifyFinMethod === 'email' && finEmail) {
+          const subject = `New Lead Assigned (ID-${leadIdStr})`;
+          const body = `Hi ${personName},\n\nA new lead (ID-${leadIdStr}) has been assigned to your bank. Please log in to your dashboard to view the details.\n\nThanks,\nAdministrative Team`;
+          window.open(`mailto:${finEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        }
+      }
+
       setAssignSuccess(true);
       fetchLeadDetails();
       handleTabChange('overview');
@@ -293,6 +351,9 @@ export default function LeadDetails() {
         formData.append('remarks', remarks);
         formData.append('next_followup_date', nextDate);
         formData.append('status', newStatus);
+        if (data?.lead.financer_id && !data?.lead.financer_lead_number && financerLeadNo) {
+          formData.append('financer_lead_number', financerLeadNo);
+        }
         Object.entries(disburseDocs).forEach(([key, file]) => { if (file) formData.append(`disburse_docs[${key}]`, file); });
         formData.append('customer_bank_name', bankDetails.customer_bank_name || data?.lead.customer_bank_name || '');
         formData.append('customer_account_number', bankDetails.customer_account_number || data?.lead.customer_account_number || '');
@@ -307,10 +368,17 @@ export default function LeadDetails() {
         navigate('/leads?status=disbursed');
         return;
       } else {
-        await api.post('/followups/add', { lead_id: data?.lead.id, remarks, next_followup_date: nextDate, status: newStatus });
+        await api.post('/followups/add', { 
+          lead_id: data?.lead.id, 
+          remarks, 
+          next_followup_date: nextDate, 
+          status: newStatus,
+          ...(data?.lead.financer_id && !data?.lead.financer_lead_number && financerLeadNo && { financer_lead_number: financerLeadNo })
+        });
       }
       setRemarks('');
       setNextDate('');
+      setFinancerLeadNo('');
       setDisburseDocs({ aadhaar: null, pan: null, bank_statement: null, other: null, rc: null, insurance: null });
       setDisburseFinalAmount('');
       setDisburseTenure('');
@@ -985,6 +1053,7 @@ export default function LeadDetails() {
                     { label: 'Channel', value: lead.channel_name || lead.channel_executive_name || 'Unassigned', color: 'indigo' as const },
                     { label: 'Dealer', value: lead.dealer_name || lead.agent_name || 'Direct / None', color: 'slate' as const },
                     { label: 'Financer', value: lead.financer_name || 'Unassigned', color: 'amber' as const },
+                    { label: 'Financer App No.', value: lead.financer_lead_number || 'Not Provided', color: 'slate' as const },
                     { label: 'Executive', value: lead.executive_name || 'Unassigned', color: 'emerald' as const },
                   ].map((row) => (
                     <div key={row.label} className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-800/50 last:border-0">
@@ -1130,81 +1199,173 @@ export default function LeadDetails() {
                   )}
 
                   <form onSubmit={handleAssignSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* 1. Assigned Date */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                      Assigned Date
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      value={assignForm.assigned_date}
-                      onChange={(e) => setAssignForm({ ...assignForm, assigned_date: e.target.value })}
-                      className="w-full p-2.5 bg-white dark:bg-[#111827] border border-slate-250 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-white"
-                    />
-                  </div>
+                    {/* Floating Assignment Date at the top */}
+                    <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center shadow-sm">
+                          <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date of Assignment</h4>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">When does the clock start?</p>
+                        </div>
+                      </div>
+                      <input
+                        type="date"
+                        required
+                        value={assignForm.assigned_date}
+                        onChange={(e) => setAssignForm({ ...assignForm, assigned_date: e.target.value })}
+                        className="p-3 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 text-slate-800 dark:text-white shadow-sm"
+                      />
+                    </div>
 
-                  {/* 2. Target Financer / Bank */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center">
-                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                        Financer
-                      </label>
-                      <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-0.5 cursor-pointer">
-                        <Plus className="w-3 h-3" /> Quick Add
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      
+                      {/* Left Card: Financer */}
+                      <div className="relative p-6 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-slate-200 dark:hover:border-slate-700 transition-all">
+                        <div className="absolute top-5 right-5">
+                          <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer" title="Quick Add Financer">
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+                          <Building className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+                        </div>
+                        <h4 className="text-lg font-black text-slate-800 dark:text-white tracking-tight mb-1">Target Financer</h4>
+                        <p className="text-xs text-slate-500 mb-6">Which bank or institution is funding this?</p>
+                        
+                        <div className="space-y-4">
+                          <select
+                            value={assignForm.financer_id}
+                            onChange={(e) => setAssignForm({ ...assignForm, financer_id: e.target.value, executive_id: '' })}
+                            className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
+                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
+                          >
+                            <option value="">— Select Financer —</option>
+                            {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+                          </select>
+
+                          {assignForm.financer_id && (
+                            <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm animate-fade-in">
+                              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Financer</label>
+                              <div className="grid grid-cols-3 gap-2 mb-3">
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                                  <input type="radio" name="notifyFinMethod" value="whatsapp" checked={notifyFinMethod === 'whatsapp'} onChange={() => setNotifyFinMethod('whatsapp')} className="hidden" />
+                                  <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
+                                </label>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                                  <input type="radio" name="notifyFinMethod" value="email" checked={notifyFinMethod === 'email'} onChange={() => setNotifyFinMethod('email')} className="hidden" />
+                                  <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                                </label>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                                  <input type="radio" name="notifyFinMethod" value="none" checked={notifyFinMethod === 'none'} onChange={() => setNotifyFinMethod('none')} className="hidden" />
+                                  <BellOff className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500'}`}>None</span>
+                                </label>
+                              </div>
+                              {notifyFinMethod === 'whatsapp' && (
+                                <div className="animate-fade-in relative">
+                                  <MessageCircle className="w-4 h-4 text-[#25D366] absolute left-2.5 top-2.5" />
+                                  <input type="text" value={finMobile} onChange={e => setFinMobile(e.target.value.replace(/\D/g, ''))} placeholder="10 Digit Number" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-[#25D366]/30 rounded-lg outline-none focus:border-[#25D366] focus:ring-4 focus:ring-[#25D366]/10 text-xs font-mono text-slate-800 dark:text-white transition-all shadow-sm" />
+                                </div>
+                              )}
+                              {notifyFinMethod === 'email' && (
+                                <div className="animate-fade-in relative">
+                                  <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
+                                  <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right Card: Executive */}
+                      <div className="relative p-6 bg-gradient-to-br from-indigo-50/50 to-indigo-100/30 dark:from-indigo-900/20 dark:to-indigo-900/10 border-2 border-indigo-100/50 dark:border-indigo-800/30 rounded-2xl shadow-sm hover:border-indigo-200 dark:hover:border-indigo-700/50 transition-all">
+                        <div className="absolute top-5 right-5">
+                          <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-indigo-100/50 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-400 hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer" title="Quick Add Executive">
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center mb-4">
+                          <User className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <h4 className="text-lg font-black text-indigo-900 dark:text-indigo-100 tracking-tight mb-1">Field Executive</h4>
+                        <p className="text-xs text-indigo-600/70 dark:text-indigo-300/70 mb-6">Who is the on-ground agent managing this?</p>
+                        
+                        <div className="space-y-4">
+                          <select
+                            value={assignForm.executive_id}
+                            onChange={(e) => setAssignForm({ ...assignForm, executive_id: e.target.value })}
+                            className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-indigo-200 dark:border-indigo-800/60 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-indigo-900 dark:text-indigo-100 shadow-sm appearance-none cursor-pointer"
+                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
+                          >
+                            <option value="">— Select Executive —</option>
+                            {executives
+                              .filter(e => !assignForm.financer_id || !e.financer_id || e.financer_id.toString() === assignForm.financer_id)
+                              .map(ex => (
+                                <option key={ex.id} value={ex.id}>{ex.name}</option>
+                              ))
+                            }
+                          </select>
+
+                          {assignForm.executive_id && (
+                            <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 shadow-sm animate-fade-in">
+                              <label className="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
+                              <div className="grid grid-cols-3 gap-2 mb-3">
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                                  <input type="radio" name="notifyExecMethod" value="whatsapp" checked={notifyExecMethod === 'whatsapp'} onChange={() => setNotifyExecMethod('whatsapp')} className="hidden" />
+                                  <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
+                                </label>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                                  <input type="radio" name="notifyExecMethod" value="email" checked={notifyExecMethod === 'email'} onChange={() => setNotifyExecMethod('email')} className="hidden" />
+                                  <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                                </label>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                                  <input type="radio" name="notifyExecMethod" value="none" checked={notifyExecMethod === 'none'} onChange={() => setNotifyExecMethod('none')} className="hidden" />
+                                  <BellOff className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500'}`}>None</span>
+                                </label>
+                              </div>
+                              {notifyExecMethod === 'whatsapp' && (
+                                <div className="animate-fade-in relative">
+                                  <MessageCircle className="w-4 h-4 text-[#25D366] absolute left-2.5 top-2.5" />
+                                  <input type="text" value={execMobile} onChange={e => setExecMobile(e.target.value.replace(/\D/g, ''))} placeholder="10 Digit Number" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-[#25D366]/30 rounded-lg outline-none focus:border-[#25D366] focus:ring-4 focus:ring-[#25D366]/10 text-xs font-mono text-slate-800 dark:text-white transition-all shadow-sm" />
+                                </div>
+                              )}
+                              {notifyExecMethod === 'email' && (
+                                <div className="animate-fade-in relative">
+                                  <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
+                                  <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div className="pt-6">
+                      <button
+                        type="submit"
+                        disabled={assignSaving}
+                        className="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-2xl text-sm font-black tracking-wide flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/30 disabled:opacity-70 cursor-pointer"
+                      >
+                        {assignSaving ? (
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            Save & Dispatch Assignment <ChevronRight className="w-5 h-5" />
+                          </>
+                        )}
                       </button>
                     </div>
-                    <select
-                      value={assignForm.financer_id}
-                      onChange={(e) => setAssignForm({ ...assignForm, financer_id: e.target.value, executive_id: '' })}
-                      className="w-full p-2.5 bg-white dark:bg-[#111827] border border-slate-250 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-white"
-                    >
-                      <option value="">— Unassigned —</option>
-                      {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
-                    </select>
-                  </div>
-
-                  {/* 3. Assign to Executive */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center">
-                      <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
-                        Bank Executive
-                      </label>
-                      <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-0.5 cursor-pointer">
-                        <Plus className="w-3 h-3" /> Quick Add
-                      </button>
-                    </div>
-                    <select
-                      value={assignForm.executive_id}
-                      onChange={(e) => setAssignForm({ ...assignForm, executive_id: e.target.value })}
-                      className="w-full p-2.5 bg-white dark:bg-[#111827] border border-indigo-200 dark:border-indigo-900/60 rounded-lg text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-800 dark:text-white font-medium"
-                    >
-                      <option value="">— Unassigned —</option>
-                      {executives
-                        .filter(e => !assignForm.financer_id || !e.financer_id || e.financer_id.toString() === assignForm.financer_id)
-                        .map(ex => (
-                          <option key={ex.id} value={ex.id}>{ex.name}</option>
-                        ))
-                      }
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <button
-                    type="submit"
-                    disabled={assignSaving}
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold flex items-center gap-2 transition-all shadow-sm shadow-indigo-500/20 disabled:opacity-70 cursor-pointer"
-                  >
-                    {assignSaving ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      'Save Assignment Details'
-                    )}
-                  </button>
-                </div>
-              </form>
+                  </form>
               </>
             </div>
           )}
@@ -1248,11 +1409,11 @@ export default function LeadDetails() {
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Next Follow-up Date</label>
                         <input type="date" value={nextDate} onChange={e => setNextDate(e.target.value)}
-                          className="w-full text-sm" />
+                          className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-indigo-500" />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Update Status</label>
-                        <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full text-sm">
+                        <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-indigo-500">
                           <option value="rejected">Rejected</option>
                           <option value="pending">Pending</option>
                           <option value="approved">Approved</option>
@@ -1261,6 +1422,26 @@ export default function LeadDetails() {
                         </select>
                       </div>
                     </div>
+
+                    {/* Financer Lead Number Requirement Gate */}
+                    {lead.financer_id && !lead.financer_lead_number && (
+                      <div className="p-4 bg-indigo-50/50 dark:bg-indigo-500/5 rounded-xl border border-indigo-200 dark:border-indigo-500/20">
+                        <label className="block text-xs font-bold text-indigo-700 dark:text-indigo-400 mb-1.5 uppercase tracking-wide">
+                          Financer Application No. (Required)
+                        </label>
+                        <p className="text-xs text-indigo-600/70 dark:text-indigo-300/70 mb-3">
+                          This lead is assigned to a bank. Please enter the Bank's Application/Lead Number to proceed with follow-ups.
+                        </p>
+                        <input 
+                          type="text" 
+                          required 
+                          value={financerLeadNo} 
+                          onChange={e => setFinancerLeadNo(e.target.value)}
+                          placeholder="e.g. APP-12345"
+                          className="w-full p-3 bg-white dark:bg-[#111827] border-2 border-indigo-200 dark:border-indigo-800/60 rounded-lg outline-none focus:border-indigo-500 text-sm shadow-sm font-mono"
+                        />
+                      </div>
+                    )}
 
                     {/* Disbursal extras */}
                     {newStatus === 'disbursed' && (

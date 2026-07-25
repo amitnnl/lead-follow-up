@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Users, Calendar, Building2, UserCircle2, AlertCircle, Plus } from 'lucide-react';
+import { X, Users, Calendar, Building2, UserCircle2, AlertCircle, Plus, MessageCircle, Mail, BellOff } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 
@@ -70,6 +70,14 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
     }
   };
 
+  const [notifyExecMethod, setNotifyExecMethod] = useState<'whatsapp' | 'email' | 'none'>('whatsapp');
+  const [execMobile, setExecMobile] = useState('');
+  const [execEmail, setExecEmail] = useState('');
+
+  const [notifyFinMethod, setNotifyFinMethod] = useState<'whatsapp' | 'email' | 'none'>('whatsapp');
+  const [finMobile, setFinMobile] = useState('');
+  const [finEmail, setFinEmail] = useState('');
+
   useEffect(() => {
     if (isOpen) {
       Promise.all([
@@ -87,8 +95,30 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
         channel_id: initialData?.channel_id?.toString() || '',
         channel_executive_id: initialData?.channel_executive_id?.toString() || ''
       });
+      setNotifyExecMethod('whatsapp');
+      setNotifyFinMethod('whatsapp');
     }
   }, [isOpen, initialData]);
+
+  useEffect(() => {
+    if (formData.executive_id && executives.length > 0) {
+      const exec = executives.find(e => e.id.toString() === formData.executive_id);
+      if (exec) {
+        setExecMobile(exec.mobile || '');
+        setExecEmail(exec.email || '');
+      }
+    }
+  }, [formData.executive_id, executives]);
+
+  useEffect(() => {
+    if (formData.financer_id && financers.length > 0) {
+      const fin = financers.find(f => f.id.toString() === formData.financer_id);
+      if (fin) {
+        setFinMobile(fin.mobile || '');
+        setFinEmail(fin.email || '');
+      }
+    }
+  }, [formData.financer_id, financers]);
 
   // When Financer changes, we clear the executive if it doesn't match the new financer
   const handleFinancerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -99,8 +129,6 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
       executive_id: ''
     }));
   };
-
-  const [assignmentSuccessData, setAssignmentSuccessData] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,14 +145,34 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
         channel_executive_id: formData.channel_executive_id ? parseInt(formData.channel_executive_id) : null
       });
       
-      if (res.data?.assigned_executive || res.data?.assigned_financer) {
-        setAssignmentSuccessData({
-            exec: res.data.assigned_executive,
-            fin: res.data.assigned_financer
-        });
-      } else {
-        onSuccess();
+      const { assigned_executive, assigned_financer } = res.data || {};
+
+      // Trigger notifications using the form inputs
+      if (formData.executive_id && assigned_executive && notifyExecMethod !== 'none') {
+        const personName = assigned_executive.name;
+        if (notifyExecMethod === 'whatsapp' && execMobile) {
+          const text = `Hi ${personName}, a new lead (ID-${leadId}) has been assigned to you. Please log in to your dashboard to view the details.`;
+          window.open(`https://wa.me/91${execMobile}?text=${encodeURIComponent(text)}`, '_blank');
+        } else if (notifyExecMethod === 'email' && execEmail) {
+          const subject = `New Lead Assigned (ID-${leadId})`;
+          const body = `Hi ${personName},\n\nA new lead (ID-${leadId}) has been assigned to you. Please log in to your dashboard to view the details.\n\nThanks,\nAdministrative Team`;
+          window.open(`mailto:${execEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        }
       }
+
+      if (formData.financer_id && assigned_financer && notifyFinMethod !== 'none') {
+        const personName = assigned_financer.name;
+        if (notifyFinMethod === 'whatsapp' && finMobile) {
+          const text = `Hi ${personName}, a new lead (ID-${leadId}) has been assigned to your bank. Please log in to your dashboard to view the details.`;
+          window.open(`https://wa.me/91${finMobile}?text=${encodeURIComponent(text)}`, '_blank');
+        } else if (notifyFinMethod === 'email' && finEmail) {
+          const subject = `New Lead Assigned (ID-${leadId})`;
+          const body = `Hi ${personName},\n\nA new lead (ID-${leadId}) has been assigned to your bank. Please log in to your dashboard to view the details.\n\nThanks,\nAdministrative Team`;
+          window.open(`mailto:${finEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        }
+      }
+
+      onSuccess();
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to update assignment');
     } finally {
@@ -134,42 +182,6 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
 
   if (!isOpen) return null;
 
-  if (assignmentSuccessData) {
-    const { exec, fin } = assignmentSuccessData;
-    
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in select-none">
-        <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={onSuccess}></div>
-        <div className="relative w-full max-w-sm bg-white dark:bg-[#111622] rounded-2xl shadow-2xl overflow-hidden animate-scale-in border border-slate-200/80 dark:border-slate-800 p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-          </div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Lead Assigned Successfully!</h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-            The lead has been securely assigned. You can send a quick WhatsApp reminder using the buttons below.
-          </p>
-          <div className="space-y-3">
-            {exec && (
-                <a href={`https://wa.me/91${exec.mobile}?text=${encodeURIComponent(`Hi ${exec.name}, a new lead (${exec.lead_id}) has been assigned to you. Please log in to your dashboard to view the details.`)}`} target="_blank" rel="noopener noreferrer" className="w-full block py-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-xl text-sm font-bold shadow-lg shadow-[#25D366]/30 transition-all text-center">
-                  Notify Executive: {exec.name}
-                </a>
-            )}
-            {fin && (
-                <a href={`https://wa.me/91${fin.mobile}?text=${encodeURIComponent(`Hi ${fin.name}, a new lead (${fin.lead_id}) has been assigned to your bank. Please review the details.`)}`} target="_blank" rel="noopener noreferrer" className="w-full block py-3 bg-[#128C7E] hover:bg-[#075E54] text-white rounded-xl text-sm font-bold shadow-lg shadow-[#128C7E]/30 transition-all text-center">
-                  Notify Financer: {fin.name}
-                </a>
-            )}
-            <button onClick={onSuccess} className="w-full py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold transition-all mt-2">
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const selectClass = "w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl text-xs outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white transition-all";
-  const labelClass = "block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in select-none">
@@ -186,7 +198,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
           {error && <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 rounded-xl text-xs font-semibold">{error}</div>}
 
           {initialData?.status === 'rejected' && (
@@ -205,65 +217,106 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
             </div>
           )}
 
-          <div className="bg-slate-50/50 dark:bg-slate-900/30 p-5 rounded-xl border border-slate-100 dark:border-slate-800 space-y-5">
-            
-            {/* Section 1: Internal Bank & Executive */}
-            <div>
-              <h3 className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Bank & Executive Assignment</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* 1. Assigned Date */}
-                <div>
-                  <label className={labelClass}>
-                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                    Assigned Date
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.assigned_date}
-                    onChange={(e) => setFormData({...formData, assigned_date: e.target.value})}
-                    className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl text-xs outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white transition-all"
-                  />
+          <div className="space-y-6">
+            <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center shadow-sm">
+                  <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
-
-                {/* 2. Financer / Bank */}
                 <div>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                      Financer
-                    </label>
-                    <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
-                      <Plus className="w-3 h-3" /> Quick Add
-                    </button>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date of Assignment</h4>
+                </div>
+              </div>
+              <input
+                type="date"
+                required
+                value={formData.assigned_date}
+                onChange={(e) => setFormData({ ...formData, assigned_date: e.target.value })}
+                className="p-3 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 text-slate-800 dark:text-white shadow-sm"
+              />
+            </div>
+
+            <div className="space-y-6">
+              <div className="relative p-6 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-slate-200 dark:hover:border-slate-700 transition-all">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                   </div>
+                  <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-1 cursor-pointer bg-primary-50 px-3 py-1.5 rounded-lg">
+                    <Plus className="w-3 h-3" /> Quick Add
+                  </button>
+                </div>
+                <h4 className="text-base font-black text-slate-800 dark:text-white tracking-tight mb-1">Target Financer</h4>
+                <p className="text-xs text-slate-500 mb-4">Which bank or institution is funding this?</p>
+                
+                <div className="space-y-4">
                   <select
                     value={formData.financer_id}
                     onChange={handleFinancerChange}
-                    className={selectClass}
+                    className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
+                    style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                   >
-                    <option value="">— Unassigned —</option>
+                    <option value="">— Select Financer —</option>
                     {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                   </select>
-                </div>
 
-                {/* 3. Assign to Executive (SFE) */}
-                <div>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <label className="block text-xs font-semibold text-primary-600 dark:text-primary-400 flex items-center gap-1.5 uppercase tracking-wider">
-                      <UserCircle2 className="w-3.5 h-3.5 text-primary-500" />
-                      Bank Executive
-                    </label>
-                    <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
-                      <Plus className="w-3 h-3" /> Quick Add
-                    </button>
+                  {formData.financer_id && (
+                    <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm animate-fade-in">
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Financer</label>
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                          <input type="radio" name="notifyFinMethod" value="whatsapp" checked={notifyFinMethod === 'whatsapp'} onChange={() => setNotifyFinMethod('whatsapp')} className="hidden" />
+                          <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
+                        </label>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                          <input type="radio" name="notifyFinMethod" value="email" checked={notifyFinMethod === 'email'} onChange={() => setNotifyFinMethod('email')} className="hidden" />
+                          <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                        </label>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                          <input type="radio" name="notifyFinMethod" value="none" checked={notifyFinMethod === 'none'} onChange={() => setNotifyFinMethod('none')} className="hidden" />
+                          <BellOff className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500'}`}>None</span>
+                        </label>
+                      </div>
+                      {notifyFinMethod === 'whatsapp' && (
+                        <div className="animate-fade-in relative">
+                          <MessageCircle className="w-4 h-4 text-[#25D366] absolute left-2.5 top-2.5" />
+                          <input type="text" value={finMobile} onChange={e => setFinMobile(e.target.value.replace(/\D/g, ''))} placeholder="10 Digit Number" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-[#25D366]/30 rounded-lg outline-none focus:border-[#25D366] focus:ring-4 focus:ring-[#25D366]/10 text-xs font-mono text-slate-800 dark:text-white transition-all shadow-sm" />
+                        </div>
+                      )}
+                      {notifyFinMethod === 'email' && (
+                        <div className="animate-fade-in relative">
+                          <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
+                          <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="relative p-6 bg-gradient-to-br from-indigo-50/50 to-indigo-100/30 dark:from-indigo-900/20 dark:to-indigo-900/10 border-2 border-indigo-100/50 dark:border-indigo-800/30 rounded-2xl shadow-sm hover:border-indigo-200 dark:hover:border-indigo-700/50 transition-all">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                    <UserCircle2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
+                  <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-1 cursor-pointer bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1.5 rounded-lg">
+                    <Plus className="w-3 h-3" /> Quick Add
+                  </button>
+                </div>
+                <h4 className="text-base font-black text-indigo-900 dark:text-indigo-100 tracking-tight mb-1">Field Executive</h4>
+                <p className="text-xs text-indigo-600/70 dark:text-indigo-300/70 mb-4">Who is the on-ground agent managing this?</p>
+                
+                <div className="space-y-4">
                   <select
                     value={formData.executive_id}
-                    onChange={(e) => setFormData({...formData, executive_id: e.target.value})}
-                    className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-primary-300 dark:border-primary-900/80 focus:border-primary-500 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-500/20 shadow-2xs text-slate-800 dark:text-white transition-all"
+                    onChange={(e) => setFormData({ ...formData, executive_id: e.target.value })}
+                    className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-indigo-200 dark:border-indigo-800/60 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-indigo-900 dark:text-indigo-100 shadow-sm appearance-none cursor-pointer"
+                    style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                   >
-                    <option value="">— Unassigned —</option>
+                    <option value="">— Select Executive —</option>
                     {executives
                       .filter(e => !formData.financer_id || !e.financer_id || e.financer_id.toString() === formData.financer_id)
                       .map(ex => (
@@ -271,10 +324,44 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                       ))
                     }
                   </select>
+
+                  {formData.executive_id && (
+                    <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 shadow-sm animate-fade-in">
+                      <label className="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                          <input type="radio" name="notifyExecMethod" value="whatsapp" checked={notifyExecMethod === 'whatsapp'} onChange={() => setNotifyExecMethod('whatsapp')} className="hidden" />
+                          <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
+                        </label>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                          <input type="radio" name="notifyExecMethod" value="email" checked={notifyExecMethod === 'email'} onChange={() => setNotifyExecMethod('email')} className="hidden" />
+                          <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                        </label>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                          <input type="radio" name="notifyExecMethod" value="none" checked={notifyExecMethod === 'none'} onChange={() => setNotifyExecMethod('none')} className="hidden" />
+                          <BellOff className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500'}`}>None</span>
+                        </label>
+                      </div>
+                      {notifyExecMethod === 'whatsapp' && (
+                        <div className="animate-fade-in relative">
+                          <MessageCircle className="w-4 h-4 text-[#25D366] absolute left-2.5 top-2.5" />
+                          <input type="text" value={execMobile} onChange={e => setExecMobile(e.target.value.replace(/\D/g, ''))} placeholder="10 Digit Number" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-[#25D366]/30 rounded-lg outline-none focus:border-[#25D366] focus:ring-4 focus:ring-[#25D366]/10 text-xs font-mono text-slate-800 dark:text-white transition-all shadow-sm" />
+                        </div>
+                      )}
+                      {notifyExecMethod === 'email' && (
+                        <div className="animate-fade-in relative">
+                          <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
+                          <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-
           </div>
 
           <div className="pt-3 flex gap-3 justify-end border-t border-slate-100 dark:border-slate-800">

@@ -24,6 +24,7 @@ interface Lead {
   registration_number: string;
   vehicle_condition?: string;
   loan_amount: number;
+  final_loan_amount?: number;
   loan_type: string;
   status: string;
   lead_date: string;
@@ -42,6 +43,13 @@ interface Lead {
   next_followup_date?: string | null;
   agent_kyc_verified?: boolean;
   agent_bank_verified?: boolean;
+  financer_dsa_code?: string;
+  financer_lead_number?: string;
+  executive_mobile?: string;
+  financer_email?: string;
+  insurance_company?: string;
+  policy_number?: string;
+  insurance_expiry_date?: string;
 }
 
 // ─── Status config ──────────────────────────────────────────────────────────
@@ -344,19 +352,31 @@ export default function Leads() {
   const handleBulkExport = () => {
     if (!selectedLeadIds.length) return;
     const filteredLeads = leads.filter(l => selectedLeadIds.includes(l.id));
-    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel", "Dealer", "Status"];
+    const headers = [
+      "Lead ID", "Date", "Customer Name", "Address", "Mobile",
+      "Make & Model", "Reg No", "Req. Loan Amount", "Disbursed Amount", "DSA Code", "Financer Lead No",
+      "Financer", "Executive", "Executive Mob", "Financer e-mail", "Lead Type",
+      "Channel Name", "Dealer", "Insurance Company", "Insurance Policy No", "Insurance Expiry Date", "Status"
+    ];
     const rows = filteredLeads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
       `"${(l.customer_address || '').replace(/"/g, '""')}"`,
       l.customer_mobile || '',
       `"${(l.vehicle_make_model || '').replace(/"/g, '""')}"`,
-      l.registration_number || '', l.loan_amount || 0,
+      l.registration_number || '', l.loan_amount || 0, l.final_loan_amount || 0,
+      `"${(l.financer_dsa_code || '').replace(/"/g, '""')}"`,
+      `"${(l.financer_lead_number || '').replace(/"/g, '""')}"`,
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
+      l.executive_mobile || '',
+      `"${(l.financer_email || '').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
       `"${(l.channel_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
       `"${(l.dealer_name || l.agent_name || 'Direct / None').replace(/"/g, '""')}"`,
+      `"${(l.insurance_company || '').replace(/"/g, '""')}"`,
+      `"${(l.policy_number || '').replace(/"/g, '""')}"`,
+      l.insurance_expiry_date || '',
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -430,19 +450,31 @@ export default function Leads() {
 
   const exportToCSV = () => {
     if (!leads.length) return;
-    const headers = ["Lead ID", "Date", "Customer Name", "Address", "Mobile", "Make & Model", "Reg No", "Loan Amount", "Financer", "Executive", "Lead Type", "Channel", "Dealer", "Status"];
+    const headers = [
+      "Lead ID", "Date", "Customer Name", "Address", "Mobile",
+      "Make & Model", "Reg No", "Req. Loan Amount", "Disbursed Amount", "DSA Code", "Financer Lead No",
+      "Financer", "Executive", "Executive Mob", "Financer e-mail", "Lead Type",
+      "Channel Name", "Dealer", "Insurance Company", "Insurance Policy No", "Insurance Expiry Date", "Status"
+    ];
     const rows = leads.map(l => [
       l.lead_id, l.lead_date,
       `"${(l.customer_name || '').replace(/"/g, '""')}"`,
       `"${(l.customer_address || '').replace(/"/g, '""')}"`,
       l.customer_mobile || '',
       `"${(l.vehicle_make_model || '').replace(/"/g, '""')}"`,
-      l.registration_number || '', l.loan_amount || 0,
+      l.registration_number || '', l.loan_amount || 0, l.final_loan_amount || 0,
+      `"${(l.financer_dsa_code || '').replace(/"/g, '""')}"`,
+      `"${(l.financer_lead_number || '').replace(/"/g, '""')}"`,
       `"${(l.financer_name || 'N/A').replace(/"/g, '""')}"`,
       `"${(l.executive_name || 'Unassigned').replace(/"/g, '""')}"`,
+      l.executive_mobile || '',
+      `"${(l.financer_email || '').replace(/"/g, '""')}"`,
       l.loan_type === 'new_loan' ? 'New Loan' : (l.loan_type === 'used_loan' ? 'Used Loan' : (l.loan_type || 'N/A')),
       `"${(l.channel_name || l.channel_executive_name || '').replace(/"/g, '""')}"`,
       `"${(l.dealer_name || l.agent_name || 'Direct / None').replace(/"/g, '""')}"`,
+      `"${(l.insurance_company || '').replace(/"/g, '""')}"`,
+      `"${(l.policy_number || '').replace(/"/g, '""')}"`,
+      l.insurance_expiry_date || '',
       l.status || ''
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");

@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `financers` (
   `dsa_code` VARCHAR(100) NULL COMMENT 'DSA Code assigned by this financer',
   `contact_person` VARCHAR(150) NULL,
   `mobile` VARCHAR(15) NULL,
+  `email` VARCHAR(150) NULL,
   `notes` TEXT NULL,
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
