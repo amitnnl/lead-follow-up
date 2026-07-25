@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Calculator, Download, Printer, Copy, Check,
-  TrendingUp, FilePlus, User, Car
+  TrendingUp, FilePlus, User
 } from 'lucide-react';
 import api from '../lib/axios';
 
@@ -37,8 +37,7 @@ export default function IrrCalculatorComponent({
   const calcMode = 'reducing';
 
   // Basic Inputs
-  const [vehiclePrice, setVehiclePrice] = useState<number>(Math.round(initialLoanAmount * 1.25) || 650000);
-  const [downPayment, setDownPayment] = useState<number>(Math.round((initialLoanAmount * 1.25) - initialLoanAmount) || 150000);
+
   const [loanAmount, setLoanAmount] = useState<number>(initialLoanAmount || 500000);
   const [tenureMonths, setTenureMonths] = useState<number>(36);
 
@@ -200,7 +199,6 @@ export default function IrrCalculatorComponent({
 ----------------------------------------
 *Customer Name:* ${initialCustomerName || (leadsList.find(l => l.id.toString() === selectedLeadId)?.customer_name) || 'Valued Customer'}
 *Vehicle Model:* ${vehicleName}
-*Vehicle Price:* ₹${vehiclePrice.toLocaleString()} | *Down Payment:* ₹${downPayment.toLocaleString()}
 *Loan Amount:* ₹${calculations.principal.toLocaleString()}
 *Tenure:* ${calculations.tenure} Months
 
@@ -289,14 +287,6 @@ Generated via Vehicle Finance Lead Portal`;
               <span className="font-bold text-xs">
                 {initialVehicle || (leadsList.find(l => l.id.toString() === selectedLeadId)?.vehicle_make_model) || 'Specified Vehicle'}
               </span>
-            </div>
-            <div>
-              <span className="font-semibold block text-slate-500 uppercase text-[9px]">Vehicle Price</span>
-              <span className="font-mono text-xs font-bold">₹{vehiclePrice.toLocaleString()}</span>
-            </div>
-            <div>
-              <span className="font-semibold block text-slate-500 uppercase text-[9px]">Down Payment</span>
-              <span className="font-mono text-xs font-bold">₹{downPayment.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -404,7 +394,7 @@ Generated via Vehicle Finance Lead Portal`;
             </div>
 
             {/* Lead Importer */}
-            {!leadId && leadsList.length > 0 && (
+            {!leadId && (
               <div className="flex items-center gap-2.5 bg-slate-100 dark:bg-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm">
                 <User className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0" />
                 <select
@@ -433,47 +423,6 @@ Generated via Vehicle Finance Lead Portal`;
             <fieldset disabled={isReadOnly} className="card p-6 border-slate-200/80 dark:border-slate-800 shadow-sm disabled:opacity-85 h-full flex flex-col justify-between">
               
               <div className="space-y-8">
-                {/* Vehicle Price & Down Payment */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                      <Car className="w-4 h-4 text-blue-500" /> Vehicle Price
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
-                      <input
-                        type="number"
-                        step="5000"
-                        value={vehiclePrice}
-                        onChange={(e) => {
-                          const vp = Number(e.target.value);
-                          setVehiclePrice(vp);
-                          if (vp > downPayment) setLoanAmount(Math.max(0, vp - downPayment));
-                        }}
-                        className="input pl-8 font-semibold text-base py-2.5"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                      Down Payment
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold">₹</div>
-                      <input
-                        type="number"
-                        step="5000"
-                        value={downPayment}
-                        onChange={(e) => {
-                          const dp = Number(e.target.value);
-                          setDownPayment(dp);
-                          if (vehiclePrice > dp) setLoanAmount(Math.max(0, vehiclePrice - dp));
-                        }}
-                        className="input pl-8 font-semibold text-base py-2.5"
-                      />
-                    </div>
-                  </div>
-                </div>
 
                 {/* Loan Principal Amount */}
                 <div>
@@ -489,10 +438,6 @@ Generated via Vehicle Finance Lead Portal`;
                       onChange={(e) => {
                         const amt = Number(e.target.value);
                         setLoanAmount(amt);
-                        // Optional: auto-adjust down payment if vehicle price is set
-                        if (vehiclePrice > amt) {
-                          setDownPayment(Math.max(0, vehiclePrice - amt));
-                        }
                       }}
                       className="input pl-8 font-extrabold text-xl py-3 text-primary-700 dark:text-primary-400 border-primary-200 dark:border-primary-900 focus:border-primary-500"
                     />
