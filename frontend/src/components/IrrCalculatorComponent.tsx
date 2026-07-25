@@ -451,21 +451,16 @@ Generated via Vehicle Finance Lead Portal`;
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
                       Loan Tenure (Months)
                     </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[12, 24, 36, 48, 60, 72, 84].map(t => (
-                        <button
-                          key={t}
-                          type="button"
-                          onClick={() => setTenureMonths(t)}
-                          className={`py-2 rounded-xl text-sm font-bold border-2 transition-all cursor-pointer ${
-                            tenureMonths === t
-                              ? 'bg-primary-50 dark:bg-primary-500/10 border-primary-500 text-primary-700 dark:text-primary-400 shadow-sm'
-                              : 'border-slate-100 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-300'
-                          }`}
-                        >
-                          {t}
-                        </button>
-                      ))}
+                    <div className="relative max-w-[200px]">
+                      <input
+                        type="number"
+                        step="1"
+                        min="1"
+                        value={tenureMonths}
+                        onChange={(e) => setTenureMonths(Number(e.target.value))}
+                        className="input pl-4 pr-12 font-bold text-lg py-2.5"
+                      />
+                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400 font-medium text-sm">Mo</div>
                     </div>
                   </div>
 
