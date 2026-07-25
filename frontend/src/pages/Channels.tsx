@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { 
   Share2, UsersRound, Search, Plus, Edit, Trash2, X, 
@@ -34,7 +34,7 @@ interface ChannelExecutive {
   is_active: number;
 }
 
-// ── Top-Level Helper Components (Out of parent scope to prevent typing focus loss) ──
+// â”€â”€ Top-Level Helper Components (Out of parent scope to prevent typing focus loss) â”€â”€
 
 function AgencyModal({
   isOpen,
@@ -60,7 +60,7 @@ function AgencyModal({
       <div className="relative w-full max-w-lg bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden animate-scale-in duration-200">
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <Share2 className="w-5 h-5 text-indigo-500" />
+            <Share2 className="w-5 h-5 text-primary-500" />
             {editingChannel ? 'Edit Outsourcing Agency' : 'Add Outsourcing Agency'}
           </h2>
           <button onClick={onClose} type="button" className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
@@ -72,28 +72,28 @@ function AgencyModal({
           <div className="p-6 space-y-4 overflow-y-auto flex-1">
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Agency / Firm Name *</label>
-              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="e.g. Apex Marketing Firm" />
+              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="e.g. Apex Marketing Firm" />
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Contact Person</label>
-                <input type="text" value={formData.contact_person} onChange={e => setFormData({...formData, contact_person: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="Contact Name" />
+                <input type="text" value={formData.contact_person} onChange={e => setFormData({...formData, contact_person: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="Contact Name" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mobile Number</label>
-                <input type="text" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white font-mono" placeholder="10 digits" />
+                <input type="text" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" placeholder="10 digits" />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
-                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="email@agency.com" />
+                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="email@agency.com" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status</label>
-                <select value={formData.is_active} onChange={e => setFormData({...formData, is_active: parseInt(e.target.value)})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white">
+                <select value={formData.is_active} onChange={e => setFormData({...formData, is_active: parseInt(e.target.value)})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white">
                   <option value={1}>Active</option>
                   <option value={0}>Inactive</option>
                 </select>
@@ -102,13 +102,13 @@ function AgencyModal({
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Agreement / Terms Notes</label>
-              <textarea rows={3} value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="Commission terms, partnership details..." />
+              <textarea rows={3} value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="Commission terms, partnership details..." />
             </div>
           </div>
 
           <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2 shrink-0">
             <button type="button" onClick={onClose} className="px-4 py-2.5 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200 dark:border-slate-700">Cancel</button>
-            <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg shadow-sm transition-colors cursor-pointer">
+            <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-primary-600 text-white hover:bg-primary-700 rounded-lg shadow-sm transition-colors cursor-pointer">
               {editingChannel ? 'Save Changes' : 'Add Agency'}
             </button>
           </div>
@@ -144,7 +144,7 @@ function AgentModal({
       <div className="relative w-full max-w-xl bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden animate-scale-in duration-200">
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <UsersRound className="w-5 h-5 text-indigo-500" />
+            <UsersRound className="w-5 h-5 text-primary-500" />
             {editingExec ? 'Edit Channels Profile' : 'Add Channels Profile'}
           </h2>
           <button onClick={onClose} type="button" className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
@@ -157,12 +157,12 @@ function AgentModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Agent Full Name *</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="Full Name" />
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="Full Name" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Link to Outsourcing Agency</label>
-                <select value={formData.channel_id} onChange={e => setFormData({...formData, channel_id: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white">
-                  <option value="">— Independent / No Agency Link —</option>
+                <select value={formData.channel_id} onChange={e => setFormData({...formData, channel_id: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white">
+                  <option value="">â€” Independent / No Agency Link â€”</option>
                   {channels.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -173,15 +173,15 @@ function AgentModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mobile Number *</label>
-                <input required type="text" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white font-mono" placeholder="10 digits" />
+                <input required type="text" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" placeholder="10 digits" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
-                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="email@domain.com" />
+                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="email@domain.com" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status</label>
-                <select value={formData.is_active} onChange={e => setFormData({...formData, is_active: parseInt(e.target.value)})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white">
+                <select value={formData.is_active} onChange={e => setFormData({...formData, is_active: parseInt(e.target.value)})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white">
                   <option value={1}>Active</option>
                   <option value={0}>Inactive</option>
                 </select>
@@ -191,54 +191,54 @@ function AgentModal({
             {/* Payout Banking Section */}
             <div className="p-4 bg-slate-50/80 dark:bg-slate-800/30 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-indigo-500" /> Commission Payout Banking
+                <CreditCard className="w-4 h-4 text-primary-500" /> Commission Payout Banking
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-500 mb-1">Bank Name</label>
-                  <input type="text" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
+                  <input type="text" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-500 mb-1">Account Number</label>
-                  <input type="text" value={formData.bank_account} onChange={e => setFormData({...formData, bank_account: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-indigo-500 font-mono text-slate-800 dark:text-white" placeholder="Account No" />
+                  <input type="text" value={formData.bank_account} onChange={e => setFormData({...formData, bank_account: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-primary-500 font-mono text-slate-800 dark:text-white" placeholder="Account No" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-500 mb-1">IFSC Code</label>
-                  <input type="text" value={formData.ifsc_code} onChange={e => setFormData({...formData, ifsc_code: e.target.value.toUpperCase()})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-indigo-500 font-mono uppercase text-slate-800 dark:text-white" placeholder="e.g. HDFC0001234" />
+                  <input type="text" value={formData.ifsc_code} onChange={e => setFormData({...formData, ifsc_code: e.target.value.toUpperCase()})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-primary-500 font-mono uppercase text-slate-800 dark:text-white" placeholder="e.g. HDFC0001234" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-500 mb-1">PAN Number</label>
-                  <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value.toUpperCase()})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-indigo-500 font-mono uppercase text-slate-800 dark:text-white" placeholder="e.g. ABCDE1234F" />
+                  <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value.toUpperCase()})} className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:border-primary-500 font-mono uppercase text-slate-800 dark:text-white" placeholder="e.g. ABCDE1234F" />
                 </div>
               </div>
             </div>
 
             {/* One-Click Portal Login Access */}
-            <div className="p-4 bg-indigo-50/50 dark:bg-indigo-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/30 space-y-3">
+            <div className="p-4 bg-primary-50/50 dark:bg-primary-950/20 rounded-xl border border-primary-100 dark:border-primary-900/30 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xs font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
-                    <Lock className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> Enable Portal Login Access
+                  <h3 className="text-xs font-bold text-primary-900 dark:text-primary-300 flex items-center gap-1.5">
+                    <Lock className="w-4 h-4 text-primary-600 dark:text-primary-400" /> Enable Portal Login Access
                   </h3>
-                  <p className="text-[11px] text-indigo-700/80 dark:text-indigo-400/80 mt-0.5">Allow this agent to log in and submit/track self-sourced leads.</p>
+                  <p className="text-[11px] text-primary-700/80 dark:text-primary-400/80 mt-0.5">Allow this agent to log in and submit/track self-sourced leads.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" checked={formData.enable_portal_access} onChange={e => setFormData({...formData, enable_portal_access: e.target.checked})} className="sr-only peer" />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
 
               {formData.enable_portal_access && (
-                <div className="pt-2 border-t border-indigo-200/50 dark:border-indigo-900/50 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in">
+                <div className="pt-2 border-t border-primary-200/50 dark:border-primary-900/50 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in">
                   <div>
-                    <label className="block text-[11px] font-semibold text-indigo-900 dark:text-indigo-300 mb-1">Portal Login Email *</label>
-                    <input required={formData.enable_portal_access} type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs outline-none focus:border-indigo-500 text-slate-800 dark:text-white" placeholder="Must enter agent email" />
+                    <label className="block text-[11px] font-semibold text-primary-900 dark:text-primary-300 mb-1">Portal Login Email *</label>
+                    <input required={formData.enable_portal_access} type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-primary-200 dark:border-primary-800 rounded-lg text-xs outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="Must enter agent email" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-indigo-900 dark:text-indigo-300 mb-1">
+                    <label className="block text-[11px] font-semibold text-primary-900 dark:text-primary-300 mb-1">
                       {editingExec && editingExec.user_id ? 'Reset Password (optional)' : 'Initial Password *'}
                     </label>
-                    <input required={formData.enable_portal_access && (!editingExec || !editingExec.user_id)} type="text" value={formData.portal_password} onChange={e => setFormData({...formData, portal_password: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs outline-none focus:border-indigo-500 font-mono text-slate-800 dark:text-white" placeholder={editingExec && editingExec.user_id ? 'Leave blank to keep current' : 'Set login password'} />
+                    <input required={formData.enable_portal_access && (!editingExec || !editingExec.user_id)} type="text" value={formData.portal_password} onChange={e => setFormData({...formData, portal_password: e.target.value})} className="w-full p-2 bg-white dark:bg-slate-900 border border-primary-200 dark:border-primary-800 rounded-lg text-xs outline-none focus:border-primary-500 font-mono text-slate-800 dark:text-white" placeholder={editingExec && editingExec.user_id ? 'Leave blank to keep current' : 'Set login password'} />
                   </div>
                 </div>
               )}
@@ -247,7 +247,7 @@ function AgentModal({
 
           <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2 shrink-0">
             <button type="button" onClick={onClose} className="px-4 py-2.5 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200 dark:border-slate-700">Cancel</button>
-            <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg shadow-sm transition-colors cursor-pointer">
+            <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-primary-600 text-white hover:bg-primary-700 rounded-lg shadow-sm transition-colors cursor-pointer">
               {editingExec ? 'Save Agent Profile' : 'Add Channels'}
             </button>
           </div>
@@ -425,7 +425,7 @@ export default function Channels() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
-            <Share2 className="text-indigo-600 dark:text-indigo-400 w-6 h-6" /> Channel Partners & Agents
+            <Share2 className="text-primary-600 dark:text-primary-400 w-6 h-6" /> Channel Partners & Agents
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Unified management of outsourcing agencies, sourcing partners, field agents, and payout banking details.
@@ -434,11 +434,11 @@ export default function Channels() {
 
         <div className="flex items-center gap-2.5">
           {activeTab === 'agencies' ? (
-            <button onClick={() => handleOpenAgencyModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer">
+            <button onClick={() => handleOpenAgencyModal()} className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer">
               <Plus className="w-4 h-4" /> Add Outsourcing Agency
             </button>
           ) : (
-            <button onClick={() => handleOpenAgentModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer">
+            <button onClick={() => handleOpenAgentModal()} className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer">
               <Plus className="w-4 h-4" /> Add Channels
             </button>
           )}
@@ -452,7 +452,7 @@ export default function Channels() {
             onClick={() => setActiveTab('agencies')}
             className={`px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2.5 transition-all cursor-pointer ${
               activeTab === 'agencies'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-[1.02]'
+                ? 'bg-primary-600 text-white shadow-md shadow-primary-500/25 scale-[1.02]'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
@@ -467,7 +467,7 @@ export default function Channels() {
             onClick={() => setActiveTab('agents')}
             className={`px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2.5 transition-all cursor-pointer ${
               activeTab === 'agents'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-[1.02]'
+                ? 'bg-primary-600 text-white shadow-md shadow-primary-500/25 scale-[1.02]'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
@@ -488,13 +488,13 @@ export default function Channels() {
               placeholder={activeTab === 'agencies' ? "Search agencies or contacts..." : "Search agents or accounts..."} 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white transition-all"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white transition-all"
             />
           </div>
         </div>
       </div>
 
-      {/* ── TAB 1: AGENCIES VIEW ── */}
+      {/* â”€â”€ TAB 1: AGENCIES VIEW â”€â”€ */}
       {activeTab === 'agencies' && (
         <div className="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -517,8 +517,8 @@ export default function Channels() {
                       <div className="font-semibold text-slate-800 dark:text-white">{c.name}</div>
                       {c.notes && <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{c.notes}</div>}
                     </td>
-                    <td className="px-4 py-3.5 align-top text-slate-600 dark:text-slate-300">{c.contact_person || '—'}</td>
-                    <td className="px-4 py-3.5 align-top font-mono text-slate-600 dark:text-slate-300">{c.mobile || '—'}</td>
+                    <td className="px-4 py-3.5 align-top text-slate-600 dark:text-slate-300">{c.contact_person || 'â€”'}</td>
+                    <td className="px-4 py-3.5 align-top font-mono text-slate-600 dark:text-slate-300">{c.mobile || 'â€”'}</td>
                     <td className="px-4 py-3.5 align-top">
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border ${c.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' : 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${c.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
@@ -528,7 +528,7 @@ export default function Channels() {
                     <td className="px-4 py-3.5 align-top text-right">
                       {isAdminOrManager && (
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => handleOpenAgencyModal(c)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
+                          <button onClick={() => handleOpenAgencyModal(c)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded-lg transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
                           <button onClick={() => handleAgencyDelete(c.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       )}
@@ -544,7 +544,7 @@ export default function Channels() {
         </div>
       )}
 
-      {/* ── TAB 2: AGENTS & PAYOUT PROFILES VIEW ── */}
+      {/* â”€â”€ TAB 2: AGENTS & PAYOUT PROFILES VIEW â”€â”€ */}
       {activeTab === 'agents' && (
         <div className="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -568,10 +568,10 @@ export default function Channels() {
                     <td className="px-4 py-3.5 align-top font-semibold text-slate-800 dark:text-white">{ex.name}</td>
                     <td className="px-4 py-3.5 align-top text-slate-600 dark:text-slate-300">
                       {ex.channel_name ? (
-                        <span className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                        <span className="inline-flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 font-medium">
                           <Building2 className="w-3 h-3" /> {ex.channel_name}
                         </span>
-                      ) : '—'}
+                      ) : 'â€”'}
                     </td>
                     <td className="px-4 py-3.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
                       <div>{ex.mobile}</div>
@@ -601,7 +601,7 @@ export default function Channels() {
                     <td className="px-4 py-3.5 align-top text-right">
                       {isAdminOrManager && (
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => handleOpenAgentModal(ex)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
+                          <button onClick={() => handleOpenAgentModal(ex)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded-lg transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
                           <button onClick={() => handleAgentDelete(ex.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       )}

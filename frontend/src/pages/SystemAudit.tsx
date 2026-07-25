@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Activity, Search, ShieldCheck, ShieldAlert, Monitor, Filter, Calendar, Info } from 'lucide-react';
 import api from '../lib/axios';
 import clsx from 'clsx';
@@ -51,7 +51,7 @@ export default function SystemAudit() {
     switch (type) {
       case 'Lead Action': 
         return (
-          <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-500/10 text-primary-500 flex items-center justify-center shrink-0">
             <Activity className="w-4 h-4" />
           </div>
         );
@@ -80,8 +80,8 @@ export default function SystemAudit() {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 rounded-full border-[3px] border-indigo-100 dark:border-indigo-500/20" />
-          <div className="absolute inset-0 rounded-full border-[3px] border-t-indigo-600 animate-spin" />
+          <div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" />
+          <div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" />
         </div>
         <p className="text-xs text-slate-400 font-medium">Loading audit logs...</p>
       </div>
@@ -91,10 +91,10 @@ export default function SystemAudit() {
   return (
     <div className="space-y-6 animate-fade-in select-none">
       
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div>
         <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tight">
-          <ShieldCheck className="text-indigo-600 w-6 h-6" /> Immutable Audit Trail
+          <ShieldCheck className="text-primary-600 w-6 h-6" /> Immutable Audit Trail
         </h1>
         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
           Immutable cryptographic log registry of all lead actions, system alterations, and security events.
@@ -108,7 +108,7 @@ export default function SystemAudit() {
         </div>
       )}
 
-      {/* ── Filters ── */}
+      {/* â”€â”€ Filters â”€â”€ */}
       <div className="card p-4 flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -117,7 +117,7 @@ export default function SystemAudit() {
             placeholder="Search logs by operator user name, actions, or details..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-xs text-slate-800 dark:text-white transition-all focus:ring-2 focus:ring-indigo-500/10"
+            className="w-full pl-9 p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-xs text-slate-800 dark:text-white transition-all focus:ring-2 focus:ring-primary-500/10"
           />
         </div>
         <div className="w-full sm:w-56 relative">
@@ -125,7 +125,7 @@ export default function SystemAudit() {
           <select 
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="w-full pl-9 p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-xs text-slate-800 dark:text-white appearance-none cursor-pointer transition-all"
+            className="w-full pl-9 p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-xs text-slate-800 dark:text-white appearance-none cursor-pointer transition-all"
           >
             <option value="All">All Audit Event Logs</option>
             <option value="Lead Action">Lead Interaction Logs</option>
@@ -135,10 +135,10 @@ export default function SystemAudit() {
         </div>
       </div>
 
-      {/* ── Data Grid/Table ── */}
+      {/* â”€â”€ Data Grid/Table â”€â”€ */}
       <div className="card overflow-hidden">
         {/* Accent top line */}
-        <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500" />
+        <div className="h-0.5 bg-gradient-to-r from-primary-500 via-purple-500 to-rose-500" />
         
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
@@ -163,7 +163,7 @@ export default function SystemAudit() {
                   <tr 
                     key={idx} 
                     className={clsx(
-                      'hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors',
+                      'hover:bg-primary-50/20 dark:hover:bg-primary-500/5 transition-colors',
                       idx % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : ''
                     )}
                   >
@@ -173,7 +173,7 @@ export default function SystemAudit() {
                         <div>
                           <div className="font-bold text-slate-800 dark:text-white text-[13px]">{log.log_type}</div>
                           {log.ref_id > 0 && (
-                            <div className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold mt-0.5">
+                            <div className="text-[10px] font-mono text-primary-600 dark:text-primary-400 font-bold mt-0.5">
                               FILE ID: {log.ref_id}
                             </div>
                           )}

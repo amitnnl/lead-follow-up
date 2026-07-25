@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 import { 
@@ -57,11 +57,11 @@ function FormatCurrency({ value, color = 'slate' }: { value: number; color?: str
     emerald: 'text-emerald-600 dark:text-emerald-450',
     rose: 'text-rose-600 dark:text-rose-450',
     amber: 'text-amber-600 dark:text-amber-450',
-    indigo: 'text-indigo-600 dark:text-indigo-400',
+    indigo: 'text-primary-600 dark:text-primary-400',
   };
   return (
     <span className={clsx('font-mono font-bold text-xs', colors[color])}>
-      ₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+      â‚¹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
     </span>
   );
 }
@@ -214,11 +214,11 @@ export default function Commissions() {
   return (
     <div className="space-y-4 animate-fade-in select-none">
 
-      {/* ── Page Header ── */}
+      {/* â”€â”€ Page Header â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-indigo-500" />
+            <Briefcase className="w-5 h-5 text-primary-500" />
             {isRestrictedRole ? 'My Earnings & Payouts' : 'DSA Commissions Engine'}
           </h1>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
@@ -230,12 +230,12 @@ export default function Commissions() {
         </div>
 
         {!isRestrictedRole && selectedIds.length > 0 && (
-          <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in">
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in">
             <span className="text-xs font-bold">{selectedIds.length} payout(s) selected</span>
             <button 
               onClick={handleBatchSettlement}
               disabled={batchProcessing}
-              className="bg-white text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+              className="bg-white text-primary-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
             >
               <Download className="w-3 h-3" />
               {batchProcessing ? 'Settling...' : 'Release Batch'}
@@ -244,7 +244,7 @@ export default function Commissions() {
         )}
       </div>
 
-      {/* ── KPI Cards ── */}
+      {/* â”€â”€ KPI Cards â”€â”€ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KPICard 
           label="Gross Commission" 
@@ -282,15 +282,15 @@ export default function Commissions() {
         />
       </div>
 
-      {/* ── Net Payable Summary ── */}
-      <div className="card p-4 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-indigo-200/50 dark:border-indigo-800/30 flex items-center justify-between gap-4 flex-wrap">
+      {/* â”€â”€ Net Payable Summary â”€â”€ */}
+      <div className="card p-4 bg-gradient-to-r from-primary-500/10 to-violet-500/10 border-primary-200/50 dark:border-primary-800/30 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-primary-500/20 text-primary-500 flex items-center justify-center">
             <CreditCard className="w-5 h-5" />
           </div>
           <div>
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Net Payable</p>
-            <p className="text-lg font-black text-indigo-600 dark:text-indigo-400">
+            <p className="text-lg font-black text-primary-600 dark:text-primary-400">
               <FormatCurrency value={netPayable} color="indigo" />
             </p>
           </div>
@@ -298,16 +298,16 @@ export default function Commissions() {
         {!isRestrictedRole && (
           <button
             onClick={() => { setSelectedIds(commissions.map(c => Number(c.id))); }}
-            className="px-4 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all shadow-sm shadow-indigo-500/25 flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 text-xs font-bold bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all shadow-sm shadow-primary-500/25 flex items-center gap-1.5 cursor-pointer"
           >
             <CheckSquare className="w-3.5 h-3.5" /> Select All for Batch
           </button>
         )}
       </div>
 
-      {/* ── Data Table ── */}
+      {/* â”€â”€ Data Table â”€â”€ */}
       <div className="card overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-blue-400 to-teal-400" />
+        <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
@@ -317,7 +317,7 @@ export default function Commissions() {
                   <th className="px-4 py-3 w-10">
                     <button onClick={toggleSelectAll} className="text-slate-400 hover:text-slate-650 cursor-pointer">
                       {commissions.length > 0 && selectedIds.length === commissions.length 
-                        ? <CheckSquare className="w-4 h-4 text-indigo-600" /> 
+                        ? <CheckSquare className="w-4 h-4 text-primary-600" /> 
                         : <Square className="w-4 h-4" />
                       }
                     </button>
@@ -337,8 +337,8 @@ export default function Commissions() {
                 <tr>
                   <td colSpan={isRestrictedRole ? 6 : 8} className="py-12 text-center">
                     <div className="relative w-8 h-8 mx-auto">
-                      <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-indigo-500/20" />
-                      <div className="absolute inset-0 rounded-full border-2 border-t-indigo-600 animate-spin" />
+                      <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
+                      <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                     </div>
                   </td>
                 </tr>
@@ -355,20 +355,20 @@ export default function Commissions() {
                     <tr 
                       key={c.id} 
                       className={clsx(
-                        'hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors',
+                        'hover:bg-primary-50/20 dark:hover:bg-primary-500/5 transition-colors',
                         i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : ''
                       )}
                     >
                       {!isRestrictedRole && (
                         <td className="px-4 py-3">
                           <button onClick={() => toggleSelect(Number(c.id))} className="text-slate-400 hover:text-slate-650 cursor-pointer">
-                            {isSelected ? <CheckSquare className="w-4 h-4 text-indigo-600" /> : <Square className="w-4 h-4" />}
+                            {isSelected ? <CheckSquare className="w-4 h-4 text-primary-600" /> : <Square className="w-4 h-4" />}
                           </button>
                         </td>
                       )}
                       <td className="px-4 py-3">
                         <div className="font-semibold text-slate-800 dark:text-white text-[13px]">{c.customer_name}</div>
-                        <div className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold mt-0.5">{c.lead_code || c.lead_ref}</div>
+                        <div className="text-[10px] font-mono text-primary-600 dark:text-primary-400 font-bold mt-0.5">{c.lead_code || c.lead_ref}</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="text-xs text-slate-700 dark:text-slate-350 font-semibold">{c.agent_name || 'Direct Lead'}</div>
@@ -412,7 +412,7 @@ export default function Commissions() {
                           <div className="text-[9px] font-semibold text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-1 mt-1 flex justify-between">
                             <span>Paid So Far: <FormatCurrency value={Number(c.paid_amount)} color="slate" /></span>
                             <span className={Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? 'text-emerald-500' : 'text-slate-400'}>
-                              {Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? '✓ 90% Released' : 'Pending 90%'}
+                              {Number(c.paid_amount) >= Number(c.net_payable) * 0.9 ? 'âœ“ 90% Released' : 'Pending 90%'}
                             </span>
                           </div>
                         </div>
@@ -444,7 +444,7 @@ export default function Commissions() {
                             {canManagePayouts && (
                               <button 
                                 onClick={() => handleOpenModal(c)} 
-                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 rounded-lg cursor-pointer transition-all hover:bg-indigo-100"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/20 rounded-lg cursor-pointer transition-all hover:bg-primary-100"
                               >
                                 <Edit className="w-3.5 h-3.5"/> Payout
                               </button>
@@ -461,7 +461,7 @@ export default function Commissions() {
         </div>
       </div>
 
-      {/* ── Single Payout Recording Modal ── */}
+      {/* â”€â”€ Single Payout Recording Modal â”€â”€ */}
       {isModalOpen && editingComm && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white dark:bg-[#111827] rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800">
@@ -488,12 +488,12 @@ export default function Commissions() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">Release Amount (₹)</label>
+                  <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-1.5">Release Amount (â‚¹)</label>
                   <input 
                     type="number" step="0.01" required 
                     value={formData.amount} 
                     onChange={e => setFormData({...formData, amount: parseFloat(e.target.value) || 0})} 
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 font-mono text-slate-800 dark:text-white" 
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 font-mono text-slate-800 dark:text-white" 
                   />
                 </div>
                 <div>
@@ -501,7 +501,7 @@ export default function Commissions() {
                   <select 
                     value={formData.payment_mode} 
                     onChange={e => setFormData({...formData, payment_mode: e.target.value})} 
-                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-800 dark:text-white"
+                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white"
                   >
                     <option value="NEFT">NEFT / IMPS / RTGS</option>
                     <option value="Cheque">Cheque</option>
@@ -516,7 +516,7 @@ export default function Commissions() {
                   rows={2} 
                   value={formData.notes} 
                   onChange={e => setFormData({...formData, notes: e.target.value})} 
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-xs text-slate-850 dark:text-white resize-none" 
+                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-xs text-slate-850 dark:text-white resize-none" 
                   placeholder="Enter transaction reference advice notes..."
                 ></textarea>
               </div>

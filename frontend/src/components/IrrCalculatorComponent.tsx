@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import {
   Calculator, Download, Printer, Copy, Check,
   TrendingUp, FilePlus, User
@@ -44,7 +44,7 @@ export default function IrrCalculatorComponent({
   // Mode inputs
   const [reducingRate, setReducingRate] = useState<number>(10.50); // % p.a.
   const flatRate = 5.75; // % p.a.
-  const customEmi = 16500; // ₹
+  const customEmi = 16500; // â‚¹
 
   // Upfront Deductions / Fees removed
 
@@ -199,13 +199,13 @@ export default function IrrCalculatorComponent({
 ----------------------------------------
 *Customer Name:* ${initialCustomerName || (leadsList.find(l => l.id.toString() === selectedLeadId)?.customer_name) || 'Valued Customer'}
 *Vehicle Model:* ${vehicleName}
-*Loan Amount:* ₹${calculations.principal.toLocaleString()}
+*Loan Amount:* â‚¹${calculations.principal.toLocaleString()}
 *Tenure:* ${calculations.tenure} Months
 
 *Key Financials:*
-• *Monthly EMI:* ₹${calculations.emi.toLocaleString()}
-• *Nominal Reducing Rate:* ${calculations.nominalAnnualIrr}% p.a.
-• *Equivalent Flat Rate:* ${calculations.flatRateEquivalent}% p.a.
+â€¢ *Monthly EMI:* â‚¹${calculations.emi.toLocaleString()}
+â€¢ *Nominal Reducing Rate:* ${calculations.nominalAnnualIrr}% p.a.
+â€¢ *Equivalent Flat Rate:* ${calculations.flatRateEquivalent}% p.a.
 ----------------------------------------
 Generated via Vehicle Finance Lead Portal`;
   };
@@ -259,7 +259,7 @@ Generated via Vehicle Finance Lead Portal`;
   return (
     <div className="space-y-6 animate-fade-in text-slate-800 dark:text-slate-100">
       
-      {/* ── Dynamic, Ink-Saving Print-Only Voucher (Fits neatly on A4) ── */}
+      {/* â”€â”€ Dynamic, Ink-Saving Print-Only Voucher (Fits neatly on A4) â”€â”€ */}
       <div className="hidden print:block w-full text-black font-sans bg-white p-2 text-xs leading-tight">
         {/* Header Block */}
         <div className="flex justify-between items-center pb-4 mb-4 border-b border-black">
@@ -299,7 +299,7 @@ Generated via Vehicle Finance Lead Portal`;
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px] mb-1">Monthly EMI</span>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black tracking-tight">₹{calculations.emi.toLocaleString()}</span>
+                <span className="text-3xl font-black tracking-tight">â‚¹{calculations.emi.toLocaleString()}</span>
                 <span className="text-sm font-semibold text-slate-500">/mo</span>
               </div>
             </div>
@@ -318,7 +318,7 @@ Generated via Vehicle Finance Lead Portal`;
           <div className="grid grid-cols-3 gap-x-4 gap-y-2.5">
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Loan Amount (Principal)</span>
-              <span className="font-bold text-sm text-slate-900">₹{calculations.principal.toLocaleString()}</span>
+              <span className="font-bold text-sm text-slate-900">â‚¹{calculations.principal.toLocaleString()}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Tenure</span>
@@ -326,7 +326,7 @@ Generated via Vehicle Finance Lead Portal`;
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Total Interest Charged</span>
-              <span className="font-mono text-xs font-bold text-slate-700">₹{calculations.totalInterest.toLocaleString()}</span>
+              <span className="font-mono text-xs font-bold text-slate-700">â‚¹{calculations.totalInterest.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -350,21 +350,21 @@ Generated via Vehicle Finance Lead Portal`;
               {calculations.schedule.map((row) => (
                 <tr key={row.month}>
                   <td className="p-1.5 border-r border-slate-200 text-slate-700 font-sans">{row.month}</td>
-                  <td className="p-1.5 border-r border-slate-200 text-right">₹{Math.round(row.openingBalance).toLocaleString()}</td>
-                  <td className="p-1.5 border-r border-slate-200 text-right font-bold text-slate-800">₹{Math.round(row.emi).toLocaleString()}</td>
-                  <td className="p-1.5 border-r border-slate-200 text-right">₹{Math.round(row.principal).toLocaleString()}</td>
-                  <td className="p-1.5 border-r border-slate-200 text-right">₹{Math.round(row.interest).toLocaleString()}</td>
-                  <td className="p-1.5 text-right font-semibold text-slate-700">₹{Math.round(row.closingBalance).toLocaleString()}</td>
+                  <td className="p-1.5 border-r border-slate-200 text-right">â‚¹{Math.round(row.openingBalance).toLocaleString()}</td>
+                  <td className="p-1.5 border-r border-slate-200 text-right font-bold text-slate-800">â‚¹{Math.round(row.emi).toLocaleString()}</td>
+                  <td className="p-1.5 border-r border-slate-200 text-right">â‚¹{Math.round(row.principal).toLocaleString()}</td>
+                  <td className="p-1.5 border-r border-slate-200 text-right">â‚¹{Math.round(row.interest).toLocaleString()}</td>
+                  <td className="p-1.5 text-right font-semibold text-slate-700">â‚¹{Math.round(row.closingBalance).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot className="bg-slate-50 text-[10px] font-bold border-t-2 border-slate-300">
               <tr>
                 <td colSpan={2} className="p-1.5 uppercase text-right">Total Summary:</td>
-                <td className="p-1.5 text-right text-slate-900">₹{calculations.totalPayable.toLocaleString()}</td>
-                <td className="p-1.5 text-right text-slate-900">₹{calculations.principal.toLocaleString()}</td>
-                <td className="p-1.5 text-right text-slate-900">₹{calculations.totalInterest.toLocaleString()}</td>
-                <td className="p-1.5 text-right">₹0</td>
+                <td className="p-1.5 text-right text-slate-900">â‚¹{calculations.totalPayable.toLocaleString()}</td>
+                <td className="p-1.5 text-right text-slate-900">â‚¹{calculations.principal.toLocaleString()}</td>
+                <td className="p-1.5 text-right text-slate-900">â‚¹{calculations.totalInterest.toLocaleString()}</td>
+                <td className="p-1.5 text-right">â‚¹0</td>
               </tr>
             </tfoot>
           </table>
@@ -376,13 +376,13 @@ Generated via Vehicle Finance Lead Portal`;
         </div>
       </div>
 
-      {/* ── Interactive View (Hidden on Print) ── */}
+      {/* â”€â”€ Interactive View (Hidden on Print) â”€â”€ */}
       <div className="print:hidden space-y-6">
         {/* Top Header Section */}
         {!isCompact && (
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-blue-50 dark:bg-blue-500/10 text-primary-600 dark:text-primary-400 rounded-xl border border-blue-100 dark:border-blue-500/20">
+              <div className="p-2.5 bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded-xl border border-primary-100 dark:border-primary-500/20">
                 <Calculator className="w-6 h-6" />
               </div>
               <div>
@@ -406,7 +406,7 @@ Generated via Vehicle Finance Lead Portal`;
                   <option value="" className="text-slate-800 dark:text-slate-200">-- Import from Active Lead --</option>
                   {leadsList.map(l => (
                     <option key={l.id} value={l.id} className="text-slate-800 dark:text-slate-200">
-                      {l.customer_name} (₹{Number(l.loan_amount || 0).toLocaleString()})
+                      {l.customer_name} (â‚¹{Number(l.loan_amount || 0).toLocaleString()})
                     </option>
                   ))}
                 </select>
@@ -430,7 +430,7 @@ Generated via Vehicle Finance Lead Portal`;
                     Principal Loan Amount
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-primary-600 font-bold">₹</div>
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-primary-600 font-bold">â‚¹</div>
                     <input
                       type="number"
                       step="1000"
@@ -496,7 +496,7 @@ Generated via Vehicle Finance Lead Portal`;
               <div className="relative z-10">
                 <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Monthly EMI</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-black tracking-tighter">₹{calculations.emi.toLocaleString()}</span>
+                  <span className="text-5xl font-black tracking-tighter">â‚¹{calculations.emi.toLocaleString()}</span>
                   <span className="text-lg font-medium text-slate-400">/mo</span>
                 </div>
                 
@@ -587,18 +587,18 @@ Generated via Vehicle Finance Lead Portal`;
                     <td className="px-4 py-2.5 font-bold font-mono text-slate-600 dark:text-slate-300">
                       Month {row.month}
                     </td>
-                    <td className="px-4 py-2.5 font-mono">₹{Math.round(row.openingBalance).toLocaleString()}</td>
+                    <td className="px-4 py-2.5 font-mono">â‚¹{Math.round(row.openingBalance).toLocaleString()}</td>
                     <td className="px-4 py-2.5 font-mono font-bold text-slate-800 dark:text-slate-100">
-                      ₹{Math.round(row.emi).toLocaleString()}
+                      â‚¹{Math.round(row.emi).toLocaleString()}
                     </td>
                     <td className="px-4 py-2.5 font-mono text-primary-600 dark:text-primary-400">
-                      ₹{Math.round(row.principal).toLocaleString()}
+                      â‚¹{Math.round(row.principal).toLocaleString()}
                     </td>
                     <td className="px-4 py-2.5 font-mono text-amber-600 dark:text-amber-400">
-                      ₹{Math.round(row.interest).toLocaleString()}
+                      â‚¹{Math.round(row.interest).toLocaleString()}
                     </td>
                     <td className="px-4 py-2.5 font-mono font-semibold text-slate-700 dark:text-slate-300">
-                      ₹{Math.round(row.closingBalance).toLocaleString()}
+                      â‚¹{Math.round(row.closingBalance).toLocaleString()}
                     </td>
                   </tr>
                 ))}
@@ -606,11 +606,11 @@ Generated via Vehicle Finance Lead Portal`;
               <tfoot className="bg-slate-100 dark:bg-slate-800/90 text-xs font-bold sticky bottom-0 border-t-2 border-slate-300 dark:border-slate-700">
                 <tr>
                   <td className="px-4 py-3 uppercase">Total Summary</td>
-                  <td className="px-4 py-3 font-mono">—</td>
-                  <td className="px-4 py-3 font-mono text-slate-900 dark:text-white">₹{calculations.totalPayable.toLocaleString()}</td>
-                  <td className="px-4 py-3 font-mono text-primary-600 dark:text-primary-400">₹{calculations.principal.toLocaleString()}</td>
-                  <td className="px-4 py-3 font-mono text-amber-600 dark:text-amber-400">₹{calculations.totalInterest.toLocaleString()}</td>
-                  <td className="px-4 py-3 font-mono">₹0</td>
+                  <td className="px-4 py-3 font-mono">â€”</td>
+                  <td className="px-4 py-3 font-mono text-slate-900 dark:text-white">â‚¹{calculations.totalPayable.toLocaleString()}</td>
+                  <td className="px-4 py-3 font-mono text-primary-600 dark:text-primary-400">â‚¹{calculations.principal.toLocaleString()}</td>
+                  <td className="px-4 py-3 font-mono text-amber-600 dark:text-amber-400">â‚¹{calculations.totalInterest.toLocaleString()}</td>
+                  <td className="px-4 py-3 font-mono">â‚¹0</td>
                 </tr>
               </tfoot>
             </table>

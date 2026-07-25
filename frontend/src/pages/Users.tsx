@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { ShieldCheck, Search, Plus, Edit, Trash2, X, AlertCircle, ChevronDown, UserCheck, Users as UsersIcon, UserCog, Filter } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -15,12 +15,12 @@ interface User {
 
 const ROLE_CONFIG: Record<string, { label: string; icon: any; color: string; bgColor: string }> = {
   admin: { label: 'Admin', icon: UserCog, color: 'text-purple-700 dark:text-purple-400', bgColor: 'bg-purple-50 dark:bg-purple-950/40' },
-  manager: { label: 'Manager', icon: UserCheck, color: 'text-blue-700 dark:text-blue-400', bgColor: 'bg-blue-50 dark:bg-blue-950/40' },
-  finance_manager: { label: 'Manager', icon: UserCheck, color: 'text-blue-700 dark:text-blue-400', bgColor: 'bg-blue-50 dark:bg-blue-950/40' },
+  manager: { label: 'Manager', icon: UserCheck, color: 'text-primary-700 dark:text-primary-400', bgColor: 'bg-primary-50 dark:bg-primary-950/40' },
+  finance_manager: { label: 'Manager', icon: UserCheck, color: 'text-primary-700 dark:text-primary-400', bgColor: 'bg-primary-50 dark:bg-primary-950/40' },
   staff: { label: 'Staff', icon: UsersIcon, color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-50 dark:bg-slate-800' },
   executive: { label: 'Field Exec', icon: UserCheck, color: 'text-amber-700 dark:text-amber-400', bgColor: 'bg-amber-50 dark:bg-amber-950/40' },
   agent: { label: 'DSA Agent', icon: UsersIcon, color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-50 dark:bg-slate-800' },
-  channel_agent: { label: 'Channels', icon: UsersIcon, color: 'text-indigo-700 dark:text-indigo-400', bgColor: 'bg-indigo-50 dark:bg-indigo-950/40' },
+  channel_agent: { label: 'Channels', icon: UsersIcon, color: 'text-primary-700 dark:text-primary-400', bgColor: 'bg-primary-50 dark:bg-primary-950/40' },
   rto_desk: { label: 'RTO Desk', icon: UserCog, color: 'text-rose-700 dark:text-rose-400', bgColor: 'bg-rose-50 dark:bg-rose-950/40' },
   insurance_desk: { label: 'Insurance Desk', icon: UserCog, color: 'text-emerald-700 dark:text-emerald-400', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40' },
 };
@@ -112,7 +112,7 @@ function UserModal({
               required={!editingUser} 
               value={formData.password} 
               onChange={e => setFormData({...formData, password: e.target.value})} 
-              placeholder={editingUser ? "••••••••" : ""}
+              placeholder={editingUser ? "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" : ""}
               className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-rose-500 text-slate-850 dark:text-white" 
             />
           </div>
@@ -150,9 +150,9 @@ function UserModal({
             </div>
           )}
           {formData.role === 'channel_agent' && (
-            <div className="flex items-start gap-2 mt-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 p-3 rounded-lg border border-indigo-200 dark:border-indigo-900/30 text-xs">
+            <div className="flex items-start gap-2 mt-2 bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400 p-3 rounded-lg border border-primary-200 dark:border-primary-900/30 text-xs">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <p>When creating a Channels user account, remember to link this login account under <strong>Setup → Channels</strong> so their self-created leads are tracked properly.</p>
+              <p>When creating a Channels user account, remember to link this login account under <strong>Setup â†’ Channels</strong> so their self-created leads are tracked properly.</p>
             </div>
           )}
 
@@ -255,11 +255,11 @@ export default function Users() {
     agents: users.filter(u => u.role === 'agent' || u.role === 'channel_agent').length,
   }), [users]);
 
-  // ── Main Render ───────────────────────────────────────────────────────
+  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="space-y-5 animate-fade-in select-none">
 
-      {/* ── Page Header ── */}
+      {/* â”€â”€ Page Header â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -311,9 +311,9 @@ export default function Users() {
           <div className="text-2xl font-black text-purple-600 dark:text-purple-400">{stats.admins}</div>
           <div className="text-[10px] font-bold text-purple-500 dark:text-purple-400 uppercase tracking-wider">Admins</div>
         </div>
-        <div className="bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-xl p-4 text-center">
-          <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{stats.agents}</div>
-          <div className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">Agents</div>
+        <div className="bg-primary-50/50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 rounded-xl p-4 text-center">
+          <div className="text-2xl font-black text-primary-600 dark:text-primary-400">{stats.agents}</div>
+          <div className="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wider">Agents</div>
         </div>
         <div className="bg-amber-50/50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl p-4 text-center">
           <div className="text-2xl font-black text-amber-600 dark:text-amber-400">{stats.executives}</div>

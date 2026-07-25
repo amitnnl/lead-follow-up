@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
@@ -127,10 +127,10 @@ export default function Settings() {
     } catch { alert("Failed to save settings."); }
   };
 
-  const inputClass = "w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm text-slate-800 dark:text-white transition-all";
+  const inputClass = "w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-sm text-slate-800 dark:text-white transition-all";
   const labelClass = "block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5";
 
-  if (loading) return <div className="flex flex-col items-center justify-center h-96 gap-3"><div className="relative w-10 h-10"><div className="absolute inset-0 rounded-full border-[3px] border-indigo-100 dark:border-indigo-500/20" /><div className="absolute inset-0 rounded-full border-[3px] border-t-indigo-600 animate-spin" /></div><p className="text-xs text-slate-400 font-medium">Loading settings...</p></div>;
+  if (loading) return <div className="flex flex-col items-center justify-center h-96 gap-3"><div className="relative w-10 h-10"><div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" /><div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" /></div><p className="text-xs text-slate-400 font-medium">Loading settings...</p></div>;
 
   return (
     <div className="space-y-6 pb-12 animate-fade-in select-none max-w-6xl mx-auto">
@@ -138,7 +138,7 @@ export default function Settings() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <SettingsIcon className="text-indigo-500 w-5 h-5" /> Settings
+            <SettingsIcon className="text-primary-500 w-5 h-5" /> Settings
           </h1>
           <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
             Configure user profile and global system parameters.
@@ -171,13 +171,13 @@ export default function Settings() {
                       className={clsx(
                         "w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border",
                         activeTab === tab.id 
-                          ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-slate-200 dark:border-slate-700 shadow-sm" 
+                          ? "bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 border-slate-200 dark:border-slate-700 shadow-sm" 
                           : "text-slate-600 hover:bg-slate-100/70 dark:text-slate-400 dark:hover:bg-slate-800/40 border-transparent"
                       )}
                     >
                       <tab.icon className={clsx("w-4 h-4 shrink-0", activeTab === tab.id ? "opacity-100" : "opacity-60")} />
                       {tab.label}
-                      {tab.badge && activeTab === tab.id && <span className="ml-auto px-1.5 py-0.5 text-[9px] font-extrabold uppercase rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">{tab.badge}</span>}
+                      {tab.badge && activeTab === tab.id && <span className="ml-auto px-1.5 py-0.5 text-[9px] font-extrabold uppercase rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">{tab.badge}</span>}
                     </button>
                   ))}
                 </nav>
@@ -221,9 +221,9 @@ export default function Settings() {
                 </div>
               </div>
 
-              <div className="p-4 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/5 dark:to-violet-500/5 border border-indigo-200/50 dark:border-indigo-800/30 rounded-2xl">
+              <div className="p-4 bg-gradient-to-r from-primary-500/10 to-violet-500/10 dark:from-primary-500/5 dark:to-violet-500/5 border border-primary-200/50 dark:border-primary-800/30 rounded-2xl">
                 <div className="flex items-center gap-2 mb-1">
-                  <Shield className="w-5 h-5 text-indigo-500" />
+                  <Shield className="w-5 h-5 text-primary-500" />
                   <h2 className="text-base font-bold text-slate-850 dark:text-white">Change Password</h2>
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2.5">Ensure your account is using a long, random password to stay secure.</p>
@@ -242,7 +242,7 @@ export default function Settings() {
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save Profile
               </button>
             </form>
@@ -277,13 +277,13 @@ export default function Settings() {
                 </div>
 
                 <div className="mt-4 flex items-center gap-2 p-3 bg-amber-50/50 dark:bg-amber-500/10 border border-amber-200/50 dark:border-amber-500/20 rounded-xl">
-                  <input type="checkbox" id="maintenance" checked={systemForm.maintenance_mode} onChange={e => setSystemForm({...systemForm, maintenance_mode: e.target.checked})} className="w-4 h-4 text-indigo-600 rounded border-slate-300 cursor-pointer" />
+                  <input type="checkbox" id="maintenance" checked={systemForm.maintenance_mode} onChange={e => setSystemForm({...systemForm, maintenance_mode: e.target.checked})} className="w-4 h-4 text-primary-600 rounded border-slate-300 cursor-pointer" />
                   <label htmlFor="maintenance" className="font-semibold text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
                     Enable Maintenance Mode <span className="text-slate-400 font-normal ml-1">(Locks out non-admin users)</span>
                   </label>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save Configurations
               </button>
             </form>
@@ -304,7 +304,7 @@ export default function Settings() {
                   <div><label className={labelClass}>Default Processing Fee</label><input type="number" value={financialForm.default_processing_fee} onChange={e => setFinancialForm({...financialForm, default_processing_fee: e.target.value})} className={inputClass} /></div>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save Defaults
               </button>
             </form>
@@ -325,7 +325,7 @@ export default function Settings() {
                   <div><label className={labelClass}>Follow-up SLA (Days)</label><input type="number" value={workflowForm.followup_sla_days} onChange={e => setWorkflowForm({...workflowForm, followup_sla_days: e.target.value})} className={inputClass} /></div>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save Workflow Rules
               </button>
             </form>
@@ -348,7 +348,7 @@ export default function Settings() {
                   <div><label className={labelClass}>SMTP Password</label><input type="password" value={smtpForm.smtp_pass} onChange={e => setSMTPForm({...smtpForm, smtp_pass: e.target.value})} className={inputClass} /></div>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save SMTP Config
               </button>
             </form>
@@ -357,9 +357,9 @@ export default function Settings() {
           {/* SLIDESHOW */}
           {activeTab === 'slideshow' && isAdmin && (
             <form onSubmit={e => handleSettingsSave(e, 'slideshow')} className="space-y-6 max-w-2xl text-sm">
-              <div className="p-4 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/5 dark:to-violet-500/5 border border-indigo-200/50 dark:border-indigo-800/30 rounded-2xl">
+              <div className="p-4 bg-gradient-to-r from-primary-500/10 to-violet-500/10 dark:from-primary-500/5 dark:to-violet-500/5 border border-primary-200/50 dark:border-primary-800/30 rounded-2xl">
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-5 h-5 text-indigo-500" />
+                  <Sparkles className="w-5 h-5 text-primary-500" />
                   <h2 className="text-base font-bold text-slate-850 dark:text-white">Website Hero Slideshow Customization</h2>
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2.5">
@@ -376,8 +376,8 @@ export default function Settings() {
                   return (
                     <div key={num} className="p-5 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl space-y-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-extrabold text-sm text-indigo-650 dark:text-indigo-400 uppercase tracking-wider">Slide {num} Settings</h3>
-                        <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">Landing Page</span>
+                        <h3 className="font-extrabold text-sm text-primary-650 dark:text-primary-400 uppercase tracking-wider">Slide {num} Settings</h3>
+                        <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">Landing Page</span>
                       </div>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -398,7 +398,7 @@ export default function Settings() {
                   );
                 })}
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save Slideshow Settings
               </button>
             </form>
@@ -407,9 +407,9 @@ export default function Settings() {
           {/* SOCIALS */}
           {activeTab === 'socials' && isAdmin && (
             <form onSubmit={e => handleSettingsSave(e, 'socials')} className="space-y-6 max-w-xl text-sm">
-              <div className="p-4 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/5 dark:to-violet-500/5 border border-indigo-200/50 dark:border-indigo-800/30 rounded-2xl">
+              <div className="p-4 bg-gradient-to-r from-primary-500/10 to-violet-500/10 dark:from-primary-500/5 dark:to-violet-500/5 border border-primary-200/50 dark:border-primary-800/30 rounded-2xl">
                 <div className="flex items-center gap-2 mb-1">
-                  <Share2 className="w-5 h-5 text-indigo-500" />
+                  <Share2 className="w-5 h-5 text-primary-500" />
                   <h2 className="text-base font-bold text-slate-850 dark:text-white">Social Media & Contact Hub Links</h2>
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2.5">
@@ -423,7 +423,7 @@ export default function Settings() {
                 <div><label className={labelClass}>LinkedIn Company Page URL</label><input type="url" value={socialForm.linkedin_url} onChange={e => setSocialForm({...socialForm, linkedin_url: e.target.value})} className={inputClass} placeholder="https://linkedin.com/company/yourbrand" /></div>
                 <div><label className={labelClass}>Twitter / X Profile URL</label><input type="url" value={socialForm.twitter_url} onChange={e => setSocialForm({...socialForm, twitter_url: e.target.value})} className={inputClass} placeholder="https://twitter.com/yourbrand" /></div>
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-indigo-500/25">
+              <button type="submit" className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all cursor-pointer shadow-sm shadow-primary-500/25">
                 Save Social Channels
               </button>
             </form>
@@ -434,7 +434,7 @@ export default function Settings() {
             <form onSubmit={e => handleSettingsSave(e, 'security')} className="space-y-6 max-w-2xl text-sm">
               <div className="p-4 bg-gradient-to-r from-rose-500/10 to-red-500/10 dark:from-rose-500/5 dark:to-red-500/5 border border-rose-200/50 dark:border-rose-500/20 rounded-2xl">
                 <div className="flex items-center gap-2 mb-1">
-                  <Shield className="w-5 h-5 text-indigo-500" />
+                  <Shield className="w-5 h-5 text-primary-500" />
                   <h2 className="text-base font-bold text-slate-850 dark:text-white">Endpoint Rate Limiting & Auth Backoff</h2>
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2.5">
@@ -444,7 +444,7 @@ export default function Settings() {
 
               <div className="space-y-5">
                 <div className="p-5 bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl space-y-4">
-                  <h3 className="font-extrabold text-sm text-indigo-650 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                  <h3 className="font-extrabold text-sm text-primary-650 dark:text-primary-400 uppercase tracking-wider flex items-center gap-2">
                     <Layers className="w-4 h-4" />
                     Sliding Window Rate Limits
                   </h3>

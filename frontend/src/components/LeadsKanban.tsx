@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import {
   Car, Phone, MessageCircle, ArrowRight, User, Building, Sparkles, TrendingUp,
   Clock, ShieldCheck, DollarSign
@@ -25,18 +25,18 @@ interface LeadsKanbanProps {
   onStatusChange?: (leadId: number, newStatus: string) => void;
 }
 
-// ─── Column config ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Column config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const COLUMNS = [
   {
     id: 'new',
     label: 'New Applications',
     sub: 'Fresh Leads',
-    headerText: 'text-blue-700 dark:text-blue-300',
-    headerBg: 'bg-gradient-to-r from-blue-500/15 via-blue-500/5 to-transparent dark:from-blue-500/20',
-    border: 'border-blue-200 dark:border-blue-500/30',
-    topBar: 'bg-gradient-to-r from-blue-500 to-cyan-400',
-    badgeBg: 'bg-blue-600 text-white shadow-md shadow-blue-500/30',
-    emptyText: 'text-blue-400 dark:text-blue-500',
+    headerText: 'text-primary-700 dark:text-primary-300',
+    headerBg: 'bg-gradient-to-r from-primary-500/15 via-primary-500/5 to-transparent dark:from-primary-500/20',
+    border: 'border-primary-200 dark:border-primary-500/30',
+    topBar: 'bg-gradient-to-r from-primary-500 to-cyan-400',
+    badgeBg: 'bg-primary-600 text-white shadow-md shadow-primary-500/30',
+    emptyText: 'text-primary-400 dark:text-primary-500',
   },
   {
     id: 'pending',
@@ -84,7 +84,7 @@ const COLUMNS = [
   },
 ];
 
-// ─── Deal Health Score Calculation ────────────────────────────────────────────
+// â”€â”€â”€ Deal Health Score Calculation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getDealHealthScore(lead: Lead) {
   let score = 30;
   if (lead.loan_amount && lead.loan_amount > 100000) score += 20;
@@ -129,7 +129,7 @@ function HealthBar({ score }: { score: number }) {
   );
 }
 
-// ─── Modern Kanban Card ────────────────────────────────────────────────────────
+// â”€â”€â”€ Modern Kanban Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function KanbanCard({ lead }: { lead: Lead }) {
   const health = getDealHealthScore(lead);
 
@@ -140,7 +140,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
       <div className="flex items-center justify-between gap-2">
         <Link
           to={`/leads/${lead.id}`}
-          className="inline-flex items-center gap-1 font-mono text-[11px] font-black tracking-wider bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-lg border border-indigo-200/60 dark:border-indigo-500/20 hover:bg-indigo-100 transition-colors"
+          className="inline-flex items-center gap-1 font-mono text-[11px] font-black tracking-wider bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 px-2.5 py-1 rounded-lg border border-primary-200/60 dark:border-primary-500/20 hover:bg-primary-100 transition-colors"
         >
           {lead.lead_id}
         </Link>
@@ -154,12 +154,12 @@ function KanbanCard({ lead }: { lead: Lead }) {
       <div>
         <Link
           to={`/leads/${lead.id}`}
-          className="text-sm font-extrabold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 block truncate leading-snug transition-colors"
+          className="text-sm font-extrabold text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 block truncate leading-snug transition-colors"
         >
           {lead.customer_name}
         </Link>
         <div className="flex items-center gap-1.5 mt-1 text-xs font-semibold text-slate-500 dark:text-slate-400 truncate">
-          <Car className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+          <Car className="w-3.5 h-3.5 text-primary-500 shrink-0" />
           <span className="truncate">{lead.vehicle_make_model || 'Vehicle Not Specified'}</span>
         </div>
       </div>
@@ -170,7 +170,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
           <DollarSign className="w-3.5 h-3.5 text-emerald-500" /> Loan Req.
         </span>
         <span className="font-mono text-sm font-black text-emerald-600 dark:text-emerald-400">
-          {lead.loan_amount ? `₹ ${Number(lead.loan_amount).toLocaleString('en-IN')}` : '—'}
+          {lead.loan_amount ? `â‚¹ ${Number(lead.loan_amount).toLocaleString('en-IN')}` : 'â€”'}
         </span>
       </div>
 
@@ -182,13 +182,13 @@ function KanbanCard({ lead }: { lead: Lead }) {
         <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg px-2 py-1.5 truncate border border-slate-100 dark:border-slate-800">
           <span className="text-[9px] font-bold text-slate-400 block uppercase">Exec</span>
           <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-semibold truncate" title={lead.executive_name || 'Unassigned'}>
-            <User className="w-3 h-3 text-indigo-500 shrink-0" />
+            <User className="w-3 h-3 text-primary-500 shrink-0" />
             <span className="truncate">{lead.executive_name ? lead.executive_name.split(' ')[0] : 'Unassigned'}</span>
           </span>
         </div>
         <div className="bg-slate-50 dark:bg-slate-800/30 rounded-lg px-2 py-1.5 truncate border border-slate-100 dark:border-slate-800">
           <span className="text-[9px] font-bold text-slate-400 block uppercase">Bank</span>
-          <span className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold truncate" title={lead.financer_name || 'Pending Bank'}>
+          <span className="flex items-center gap-1 text-primary-600 dark:text-primary-400 font-semibold truncate" title={lead.financer_name || 'Pending Bank'}>
             <Building className="w-3 h-3 text-violet-500 shrink-0" />
             <span className="truncate">{lead.financer_name ? lead.financer_name.split(' ')[0] : 'No Bank'}</span>
           </span>
@@ -212,7 +212,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
           {lead.customer_mobile && (
             <a
               href={`tel:${lead.customer_mobile}`}
-              className="p-1.5 rounded-lg text-blue-600 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 transition-all shadow-sm"
+              className="p-1.5 rounded-lg text-primary-600 bg-primary-50 dark:bg-primary-500/10 hover:bg-primary-500 hover:text-white dark:hover:bg-primary-600 transition-all shadow-sm"
               title="Quick Call"
               onClick={(e) => e.stopPropagation()}
             >
@@ -222,7 +222,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
         </div>
         <Link
           to={`/leads/${lead.id}`}
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 text-xs font-bold transition-all shadow-sm group/btn"
+          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 hover:bg-primary-600 hover:text-white dark:hover:bg-primary-500 text-xs font-bold transition-all shadow-sm group/btn"
         >
           <span>Examine</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
@@ -232,7 +232,7 @@ function KanbanCard({ lead }: { lead: Lead }) {
   );
 }
 
-// ─── Main Kanban Component ───────────────────────────────────────────────────
+// â”€â”€â”€ Main Kanban Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function LeadsKanban({ leads }: LeadsKanbanProps) {
   const totalLoanValue = leads.reduce((sum, l) => sum + (Number(l.loan_amount) || 0), 0);
 
@@ -240,23 +240,23 @@ export default function LeadsKanban({ leads }: LeadsKanbanProps) {
     <div className="space-y-6 select-none animate-fade-in">
 
       {/* Executive Pipeline Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-r from-slate-900 via-primary-950 to-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden">
+        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-primary-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="flex items-center gap-4 relative z-10">
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-primary-500 to-violet-600 text-white shadow-lg shadow-primary-500/30 ring-1 ring-white/20">
             <Sparkles className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-base font-black tracking-tight flex items-center gap-2">
               Pipeline Stage Progression
-              <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold uppercase tracking-wider">
+              <span className="px-2 py-0.5 rounded-full bg-primary-500/20 text-primary-300 border border-primary-500/30 text-[10px] font-bold uppercase tracking-wider">
                 Live Board
               </span>
             </h3>
             <p className="text-xs text-slate-300 mt-1 flex items-center gap-2 flex-wrap">
               <span>Total Applications: <strong className="text-white font-mono">{leads.length}</strong></span>
-              <span className="text-slate-600">·</span>
-              <span>Sanction Pipeline Value: <strong className="text-emerald-400 font-mono">₹ {(totalLoanValue / 100000).toFixed(2)} Lakhs</strong></span>
+              <span className="text-slate-600">Â·</span>
+              <span>Sanction Pipeline Value: <strong className="text-emerald-400 font-mono">â‚¹ {(totalLoanValue / 100000).toFixed(2)} Lakhs</strong></span>
             </p>
           </div>
         </div>
@@ -295,7 +295,7 @@ export default function LeadsKanban({ leads }: LeadsKanbanProps) {
                   </span>
                   {colTotal > 0 && (
                     <div className="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-300 mt-1">
-                      ₹ {colTotal >= 100000 ? `${(colTotal / 100000).toFixed(1)}L` : colTotal.toLocaleString('en-IN')}
+                      â‚¹ {colTotal >= 100000 ? `${(colTotal / 100000).toFixed(1)}L` : colTotal.toLocaleString('en-IN')}
                     </div>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { 
   Wallet, DollarSign, ShieldCheck, 
   Clock, CheckCircle, Award, Eye, EyeOff, RefreshCw
@@ -22,15 +22,15 @@ export default function FintechWalletDemo() {
   return (
     <div className="space-y-3 select-none">
       {/* Demo Widget Toggle Banner */}
-      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-900 to-indigo-950 rounded-xl border border-indigo-500/30 text-white shadow-md">
+      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-900 to-primary-950 rounded-xl border border-primary-500/30 text-white shadow-md">
         <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
             <Wallet className="w-4 h-4 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-300">UI/UX Concept Demo #2:</span>
-              <span className="text-xs font-bold bg-indigo-500/30 text-indigo-200 px-2 py-0.5 rounded-md border border-indigo-400/20">DSA Fintech Wallet Portal</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-primary-300">UI/UX Concept Demo #2:</span>
+              <span className="text-xs font-bold bg-primary-500/30 text-primary-200 px-2 py-0.5 rounded-md border border-primary-400/20">DSA Fintech Wallet Portal</span>
             </div>
             <p className="text-[11px] text-slate-300 mt-0.5">
               Live Revolut-style wallet simulation illustrating automated 90/10 commission splits and real-time pipeline earnings.
@@ -41,28 +41,28 @@ export default function FintechWalletDemo() {
           onClick={() => setIsOpen(!isOpen)}
           className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold flex items-center gap-1.5 transition-all border border-white/10 cursor-pointer shrink-0"
         >
-          {isOpen ? <EyeOff className="w-3.5 h-3.5 text-indigo-300" /> : <Eye className="w-3.5 h-3.5 text-indigo-300" />}
+          {isOpen ? <EyeOff className="w-3.5 h-3.5 text-primary-300" /> : <Eye className="w-3.5 h-3.5 text-primary-300" />}
           {isOpen ? 'Minimize Wallet Demo' : 'Inspect Wallet UI'}
         </button>
       </div>
 
       {isOpen && (
-        <div className="card overflow-hidden border border-indigo-500/30 shadow-xl animate-in fade-in slide-in-from-top-2">
+        <div className="card overflow-hidden border border-primary-500/30 shadow-xl animate-in fade-in slide-in-from-top-2">
           {/* Top Wallet Balance Gradient Card */}
           <div className="bg-gradient-to-br from-slate-900 via-[#162238] to-slate-950 p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -mt-20 -mr-20"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl pointer-events-none -mt-20 -mr-20"></div>
             <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mb-20"></div>
 
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
               
               {/* Left: Main Balance */}
               <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-indigo-300 uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-xs font-bold text-primary-300 uppercase tracking-widest">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   <span>Agent / DSA Earned Balance (90% Split)</span>
                 </div>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-extrabold tracking-tight font-mono text-white">₹1,45,200</span>
+                  <span className="text-4xl font-extrabold tracking-tight font-mono text-white">â‚¹1,45,200</span>
                   <span className="text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full flex items-center gap-1">
                     <CheckCircle className="w-3.5 h-3.5" /> Disbursed & Unlocked
                   </span>
@@ -78,15 +78,15 @@ export default function FintechWalletDemo() {
                   <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
                     <Clock className="w-3 h-3 text-amber-400" /> Pipeline Potential
                   </div>
-                  <div className="text-xl font-bold font-mono text-amber-400 mt-1">₹62,500</div>
+                  <div className="text-xl font-bold font-mono text-amber-400 mt-1">â‚¹62,500</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">Unlocks upon loan disbursal</div>
                 </div>
 
                 <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 min-w-[160px] backdrop-blur-sm">
-                  <div className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1">
-                    <Award className="w-3 h-3 text-indigo-400" /> Org Retained (10%)
+                  <div className="text-[10px] font-bold text-primary-300 uppercase tracking-wider flex items-center gap-1">
+                    <Award className="w-3 h-3 text-primary-400" /> Org Retained (10%)
                   </div>
-                  <div className="text-xl font-bold font-mono text-indigo-300 mt-1">₹16,133</div>
+                  <div className="text-xl font-bold font-mono text-primary-300 mt-1">â‚¹16,133</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">Organization overhead cut</div>
                 </div>
               </div>
@@ -102,11 +102,11 @@ export default function FintechWalletDemo() {
                     onClick={() => setActiveLedgerTab(tab)}
                     className={`px-3 py-1 rounded-lg font-bold capitalize transition-all cursor-pointer ${
                       activeLedgerTab === tab 
-                        ? 'bg-indigo-600 text-white shadow-sm' 
+                        ? 'bg-primary-600 text-white shadow-sm' 
                         : 'bg-white/10 text-slate-300 hover:bg-white/20'
                     }`}
                   >
-                    {tab === 'all' ? 'All Transactions' : tab === 'unlocked' ? '✓ Unlocked Balance' : '⌛ Locked Pipeline'}
+                    {tab === 'all' ? 'All Transactions' : tab === 'unlocked' ? 'âœ“ Unlocked Balance' : 'âŒ› Locked Pipeline'}
                   </button>
                 ))}
               </div>
@@ -134,16 +134,16 @@ export default function FintechWalletDemo() {
                       <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">({item.customer})</span>
                     </div>
                     <div className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5 flex items-center gap-3 font-mono">
-                      <span>Loan: ₹{item.loanAmt.toLocaleString()}</span>
-                      <span>• Total Comm: ₹{item.commission.toLocaleString()}</span>
-                      <span>• {item.date}</span>
+                      <span>Loan: â‚¹{item.loanAmt.toLocaleString()}</span>
+                      <span>â€¢ Total Comm: â‚¹{item.commission.toLocaleString()}</span>
+                      <span>â€¢ {item.date}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 font-mono">
                   <div className="text-right">
-                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+₹{item.split90.toLocaleString()}</div>
+                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+â‚¹{item.split90.toLocaleString()}</div>
                     <div className="text-[10px] text-slate-400">Agent 90% Split</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${

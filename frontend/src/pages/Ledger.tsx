@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import api from '../lib/axios';
 import { BookOpen, Download, FilterX, Landmark, BadgePercent, ShieldAlert, Award } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -84,7 +84,7 @@ export default function Ledger() {
         r.lead_date,
         r.lead_id,
         `"${(r.customer_name || '').replace(/"/g, '""')}"`,
-        `"${(r.financer_name || '—').replace(/"/g, '""')}"`,
+        `"${(r.financer_name || 'â€”').replace(/"/g, '""')}"`,
         `"${(r.agent_name || 'Direct').replace(/"/g, '""')}"`,
         r.loan_amount || 0,
         comm,
@@ -101,16 +101,16 @@ export default function Ledger() {
     document.body.removeChild(link);
   };
 
-  const inputClass = "w-full px-3 py-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white transition-all";
+  const inputClass = "w-full px-3 py-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white transition-all";
 
   return (
     <div className="space-y-4 animate-fade-in select-none">
       
-      {/* ── Page Header ── */}
+      {/* â”€â”€ Page Header â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <BookOpen className="text-indigo-500 w-5 h-5" /> General Ledger
+            <BookOpen className="text-primary-500 w-5 h-5" /> General Ledger
           </h1>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
             Agent and Financer account statements, commission payouts, and outstanding balances.
@@ -119,14 +119,14 @@ export default function Ledger() {
         {isAdminOrManager && records.length > 0 && (
           <button 
             onClick={exportToCSV}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm"
           >
             <Download className="w-3.5 h-3.5" /> Export Ledger
           </button>
         )}
       </div>
 
-      {/* ── Filters ── */}
+      {/* â”€â”€ Filters â”€â”€ */}
       <div className="card p-4 flex flex-wrap gap-3 items-end">
         <div className="flex-1 min-w-[180px]">
           <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Filter by Agent (DSA)</label>
@@ -161,28 +161,28 @@ export default function Ledger() {
         )}
       </div>
 
-      {/* ── KPI Cards ── */}
+      {/* â”€â”€ KPI Cards â”€â”€ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="card p-4 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-500 flex items-center justify-center shrink-0">
             <Landmark className="w-4.5 h-4.5" />
           </div>
           <div>
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Loan Book</div>
             <div className="text-base font-bold text-slate-800 dark:text-white mt-0.5">
-              ₹{totalLoanAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              â‚¹{totalLoanAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
 
         <div className="card p-4 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-500 flex items-center justify-center shrink-0">
             <BadgePercent className="w-4.5 h-4.5" />
           </div>
           <div>
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Commission</div>
-            <div className="text-base font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">
-              ₹{totalCommission.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            <div className="text-base font-bold text-primary-600 dark:text-primary-400 mt-0.5">
+              â‚¹{totalCommission.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function Ledger() {
           <div>
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Paid Out</div>
             <div className="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-              ₹{totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              â‚¹{totalPaid.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
@@ -206,16 +206,16 @@ export default function Ledger() {
           <div>
             <div className="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Outstanding</div>
             <div className="text-base font-bold text-rose-600 dark:text-rose-400 mt-0.5">
-              ₹{totalBalance.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              â‚¹{totalBalance.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Data Table ── */}
+      {/* â”€â”€ Data Table â”€â”€ */}
       <div className="card overflow-hidden">
         {/* Accent top line */}
-        <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-blue-400 to-teal-400" />
+        <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
         
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
@@ -236,8 +236,8 @@ export default function Ledger() {
                 <tr>
                   <td colSpan={8} className="py-12 text-center">
                     <div className="relative w-8 h-8 mx-auto">
-                      <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-indigo-500/20" />
-                      <div className="absolute inset-0 rounded-full border-2 border-t-indigo-600 animate-spin" />
+                      <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
+                      <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                     </div>
                   </td>
                 </tr>
@@ -257,7 +257,7 @@ export default function Ledger() {
                     <tr 
                       key={r.id} 
                       className={clsx(
-                        'hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors',
+                        'hover:bg-primary-50/20 dark:hover:bg-primary-500/5 transition-colors',
                         i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : ''
                       )}
                     >
@@ -266,21 +266,21 @@ export default function Ledger() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="font-semibold text-slate-800 dark:text-white text-[13px]">{r.customer_name}</div>
-                        <div className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold mt-0.5">{r.lead_id}</div>
+                        <div className="text-[10px] font-mono text-primary-600 dark:text-primary-400 font-bold mt-0.5">{r.lead_id}</div>
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 font-medium">{r.financer_name || '—'}</td>
+                      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 font-medium">{r.financer_name || 'â€”'}</td>
                       <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 font-medium">{r.agent_name || 'Direct'}</td>
                       <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 text-xs font-semibold">
-                        ₹{Number(r.loan_amount || 0).toLocaleString('en-IN')}
+                        â‚¹{Number(r.loan_amount || 0).toLocaleString('en-IN')}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-blue-600 dark:text-blue-400 text-xs font-semibold">
-                        ₹{comm.toLocaleString('en-IN')}
+                      <td className="px-4 py-3 text-right font-mono text-primary-600 dark:text-primary-400 text-xs font-semibold">
+                        â‚¹{comm.toLocaleString('en-IN')}
                       </td>
                       <td className="px-4 py-3 text-right font-mono text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
-                        ₹{paid.toLocaleString('en-IN')}
+                        â‚¹{paid.toLocaleString('en-IN')}
                       </td>
                       <td className="px-4 py-3 text-right font-mono font-bold text-rose-600 dark:text-rose-400 text-xs">
-                        ₹{bal.toLocaleString('en-IN')}
+                        â‚¹{bal.toLocaleString('en-IN')}
                       </td>
                     </tr>
                   );

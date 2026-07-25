@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import {
   AlertCircle,
   Phone,
@@ -71,7 +71,7 @@ interface DashboardStats {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  new: 'bg-blue-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
+  new: 'bg-primary-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
   disbursed: 'bg-teal-500', on_hold: 'bg-purple-500', rejected: 'bg-rose-500',
 };
 const STATUS_LABEL: Record<string, string> = {
@@ -91,11 +91,11 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
-const formatCurrency = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+const formatCurrency = (n: number) => `â‚¹${n.toLocaleString('en-IN')}`;
 const formatCompact = (n: number) => {
-  if (n >= 1e7) return `₹${(n / 1e7).toFixed(1)}Cr`;
-  if (n >= 1e5) return `₹${(n / 1e5).toFixed(1)}L`;
-  return `₹${n.toLocaleString('en-IN')}`;
+  if (n >= 1e7) return `â‚¹${(n / 1e7).toFixed(1)}Cr`;
+  if (n >= 1e5) return `â‚¹${(n / 1e5).toFixed(1)}L`;
+  return `â‚¹${n.toLocaleString('en-IN')}`;
 };
 
 function SparklineChart({ data, color = '#4f46e5', height = 40 }: { data: number[]; color?: string; height?: number }) {
@@ -224,8 +224,8 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] gap-4">
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 rounded-full border-[3px] border-indigo-100 dark:border-indigo-500/20" />
-          <div className="absolute inset-0 rounded-full border-[3px] border-t-indigo-600 animate-spin" />
+          <div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" />
+          <div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" />
         </div>
         <p className="text-xs text-slate-400 font-medium">Loading dashboard...</p>
       </div>
@@ -303,7 +303,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 pb-12 animate-fade-in">
-      {/* ── Page Header ── */}
+      {/* â”€â”€ Page Header â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
@@ -318,16 +318,16 @@ export default function Dashboard() {
           <button 
             onClick={fetchStats}
             disabled={refreshing}
-            className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer transition-all hover:border-indigo-300 dark:hover:border-indigo-700"
+            className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer transition-all hover:border-primary-300 dark:hover:border-primary-700"
             title="Refresh statistics"
           >
-            <RefreshCw className={clsx('w-4 h-4', refreshing && 'animate-spin text-indigo-500')} />
+            <RefreshCw className={clsx('w-4 h-4', refreshing && 'animate-spin text-primary-500')} />
           </button>
 
           {!isExecutive && (
             <button 
               onClick={() => setIsNewLeadModalOpen(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-indigo-500/25 flex items-center gap-1.5 cursor-pointer hover:shadow-md hover:shadow-indigo-500/30"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-primary-500/25 flex items-center gap-1.5 cursor-pointer hover:shadow-md hover:shadow-primary-500/30"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> New Lead
             </button>
@@ -335,14 +335,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── KPI Grid ── */}
+      {/* â”€â”€ KPI Grid â”€â”€ */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {kpiCards.map((card, i) => (
           <KPICard key={i} {...card} />
         ))}
       </div>
 
-      {/* ── Action Banners ── */}
+      {/* â”€â”€ Action Banners â”€â”€ */}
       <div className="space-y-4">
         {stats.kpis.eligibleRetentions > 0 && isAdminOrManager && (
           <div className="card p-4 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
@@ -385,7 +385,7 @@ export default function Dashboard() {
                       <strong className="text-amber-600 dark:text-amber-400 font-bold">{((stats.dsaTiering.multiplier * 100 - 100).toFixed(0))}% Bonus Payouts</strong>!
                     </>
                   ) : (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">🎉 Congratulations! You have achieved the highest Platinum Partner Tier!</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">ðŸŽ‰ Congratulations! You have achieved the highest Platinum Partner Tier!</span>
                   )}
                 </p>
               </div>
@@ -409,17 +409,17 @@ export default function Dashboard() {
       </div>
 
 
-      {/* ── Main Dashboard Split ── */}
+      {/* â”€â”€ Main Dashboard Split â”€â”€ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 animate-fade-in" style={{ animationDelay: '150ms' }}>
         
         {/* Recent Leads Table */}
         <div className="lg:col-span-2 card overflow-hidden flex flex-col">
           <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/10">
             <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-500" />
               <h2 className="font-bold text-slate-800 dark:text-white text-xs uppercase tracking-wider">Recent Leads</h2>
             </div>
-            <Link to="/leads" className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+            <Link to="/leads" className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -441,10 +441,10 @@ export default function Dashboard() {
                   <tr key={lead.id} className={clsx(
                     'group transition-colors',
                     i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : '',
-                    'hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5'
+                    'hover:bg-primary-50/30 dark:hover:bg-primary-500/5'
                   )}>
                     <td className="px-4 py-3">
-                      <Link to={`/leads/${lead.id}`} className="text-indigo-600 dark:text-indigo-400 hover:underline font-mono text-xs font-bold">
+                      <Link to={`/leads/${lead.id}`} className="text-primary-600 dark:text-primary-400 hover:underline font-mono text-xs font-bold">
                         {lead.lead_id}
                       </Link>
                     </td>
@@ -468,11 +468,11 @@ export default function Dashboard() {
                     <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell truncate max-w-[140px] text-xs">
                       <div className="flex items-center gap-1">
                         <Building className="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0" />
-                        {lead.vehicle_make_model || '—'}
+                        {lead.vehicle_make_model || 'â€”'}
                       </div>
                     </td>
                     <td className="px-4 py-3 font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">
-                      {lead.loan_amount ? formatCurrency(Number(lead.loan_amount)) : '—'}
+                      {lead.loan_amount ? formatCurrency(Number(lead.loan_amount)) : 'â€”'}
                     </td>
                     <td className="px-4 py-3 text-xs">
                       {lead.executive_name ? (
@@ -511,18 +511,18 @@ export default function Dashboard() {
                   <span className="bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded">{stats.dueFollowups.length}</span>
                 )}
               </div>
-              <Link to="/followups" className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">All →</Link>
+              <Link to="/followups" className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">All â†’</Link>
             </div>
 
             <div className="divide-y divide-slate-50 dark:divide-slate-800/60 max-h-[380px] overflow-y-auto">
               {stats.dueFollowups.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-xs italic">No overdue follow-ups 🎉</div>
+                <div className="p-8 text-center text-slate-400 text-xs italic">No overdue follow-ups ðŸŽ‰</div>
               ) : (
                 stats.dueFollowups.map((f, i) => (
                   <div key={i} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors border-b border-slate-100/50 dark:border-slate-800/50 last:border-0">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0 flex-1">
-                        <Link to={`/leads/${f.lead_real_id}`} className="text-xs font-bold text-slate-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 truncate block">
+                        <Link to={`/leads/${f.lead_real_id}`} className="text-xs font-bold text-slate-800 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 truncate block">
                           {f.customer_name}
                         </Link>
                         <div className="text-[10px] font-mono text-slate-400 mt-0.5">{f.lead_id}</div>
@@ -544,7 +544,7 @@ export default function Dashboard() {
                           </a>
                           <a 
                             href={`tel:${f.customer_mobile}`}
-                            className="p-1.5 rounded-lg text-blue-600 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
+                            className="p-1.5 rounded-lg text-primary-600 bg-primary-50 dark:bg-primary-500/10 hover:bg-primary-100 dark:hover:bg-primary-500/20 transition-colors"
                             title="Call"
                           >
                             <Phone className="w-4 h-4" />
@@ -564,7 +564,7 @@ export default function Dashboard() {
               {/* Top Executives */}
               <div className="card p-5 flex flex-col gap-4">
                 <div className="flex items-center gap-1.5">
-                  <UserCheck className="w-4 h-4 text-indigo-500" />
+                  <UserCheck className="w-4 h-4 text-primary-500" />
                   <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Top Executives</h3>
                 </div>
                 <div className="space-y-4">
@@ -578,7 +578,7 @@ export default function Dashboard() {
                         </div>
                         <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                           <div 
-                            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-500"
+                            className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500"
                             style={{ width: `${Math.min(100, pct)}%` }}
                           />
                         </div>
@@ -624,7 +624,7 @@ export default function Dashboard() {
                       <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">DSA Leaderboard</h3>
                     </div>
                     <span className="text-[10px] bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 font-extrabold px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/20">
-                      🏆 Monthly Top
+                      ðŸ† Monthly Top
                     </span>
                   </div>
                   <div className="space-y-4">
@@ -636,7 +636,7 @@ export default function Dashboard() {
                         <div key={i} className="space-y-1.5">
                           <div className="flex justify-between items-center text-xs font-semibold">
                             <span className="text-slate-700 dark:text-slate-300 truncate pr-2 flex items-center gap-1">
-                              {isTop && <span title="#1 Performer" className="text-amber-500">👑</span>}
+                              {isTop && <span title="#1 Performer" className="text-amber-500">ðŸ‘‘</span>}
                               <span>{ag.name}</span>
                             </span>
                             <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold shrink-0">

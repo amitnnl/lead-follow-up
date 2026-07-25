@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { PhoneCall, Calendar, ChevronRight, MessageSquareDashed } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
@@ -16,7 +16,7 @@ interface FollowupRecord {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  new: 'bg-blue-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
+  new: 'bg-primary-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
   disbursed: 'bg-teal-500', on_hold: 'bg-purple-500', rejected: 'bg-rose-500',
 };
 const STATUS_LABEL: Record<string, string> = {
@@ -47,20 +47,20 @@ export default function Followups() {
   return (
     <div className="space-y-4 select-none animate-fade-in">
       
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div>
         <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tight">
-          <PhoneCall className="text-indigo-500 w-5 h-5"/> Follow-up Status Register
+          <PhoneCall className="text-primary-500 w-5 h-5"/> Follow-up Status Register
         </h1>
         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
           Overview of the last recorded follow-up remarks and next action dates across all active leads.
         </p>
       </div>
 
-      {/* ── Table Container ── */}
+      {/* â”€â”€ Table Container â”€â”€ */}
       <div className="card overflow-hidden">
         {/* Accent top line */}
-        <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-blue-400 to-teal-400" />
+        <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
         
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
@@ -79,8 +79,8 @@ export default function Followups() {
                 <tr>
                   <td colSpan={6} className="py-12 text-center">
                     <div className="relative w-8 h-8 mx-auto">
-                      <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-indigo-500/20" />
-                      <div className="absolute inset-0 rounded-full border-2 border-t-indigo-600 animate-spin" />
+                      <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
+                      <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                     </div>
                   </td>
                 </tr>
@@ -102,17 +102,17 @@ export default function Followups() {
                     <tr 
                       key={f.lead_real_id || i} 
                       className={clsx(
-                        'hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors',
+                        'hover:bg-primary-50/20 dark:hover:bg-primary-500/5 transition-colors',
                         i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : ''
                       )}
                     >
                       <td className="px-4 py-3 font-mono text-xs text-slate-400">
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
-                          {f.followup_date || f.next_followup_date || '—'}
+                          {f.followup_date || f.next_followup_date || 'â€”'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs font-bold text-indigo-650 dark:text-indigo-400">
+                      <td className="px-4 py-3 font-mono text-xs font-bold text-primary-650 dark:text-primary-400">
                         {f.lead_id}
                       </td>
                       <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white text-[13px]">
@@ -125,12 +125,12 @@ export default function Followups() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-xs truncate italic">
-                        "{f.remarks || '—'}"
+                        "{f.remarks || 'â€”'}"
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button 
                           onClick={() => navigate(`/leads/${f.lead_real_id}`)} 
-                          className="inline-flex items-center gap-0.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                          className="inline-flex items-center gap-0.5 text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
                         >
                           Open File <ChevronRight className="w-3.5 h-3.5" />
                         </button>

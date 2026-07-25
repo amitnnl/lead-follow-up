@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../lib/axios';
 import { 
@@ -16,7 +16,7 @@ interface LeadReadingPaneProps {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  new: 'bg-blue-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
+  new: 'bg-primary-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
   disbursed: 'bg-teal-500', on_hold: 'bg-purple-500', rejected: 'bg-rose-500',
 };
 const STATUS_LABEL: Record<string, string> = {
@@ -84,7 +84,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
 
     if (currentIdx !== -1 && newIdx !== -1) {
       if (newIdx > currentIdx + 1) {
-        alert('Invalid Transition: You must follow the exact pipeline order (New → Pending → Approved → Disbursed). You cannot skip stages.');
+        alert('Invalid Transition: You must follow the exact pipeline order (New â†’ Pending â†’ Approved â†’ Disbursed). You cannot skip stages.');
         return;
       }
     }
@@ -156,7 +156,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
 
     if (currentIdx !== -1 && newIdx !== -1) {
       if (newIdx > currentIdx + 1) {
-        alert('Invalid Transition: You must follow the exact pipeline order (New → Pending → Approved → Disbursed).');
+        alert('Invalid Transition: You must follow the exact pipeline order (New â†’ Pending â†’ Approved â†’ Disbursed).');
         return;
       }
     }
@@ -201,7 +201,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
   };
 
   const formatCurrency = (val?: number) => {
-    if (val === undefined || val === null) return '—';
+    if (val === undefined || val === null) return 'â€”';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -213,8 +213,8 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-slate-900/40">
         <div className="relative w-12 h-12 mb-3">
-          <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-indigo-500/20" />
-          <div className="absolute inset-0 rounded-full border-2 border-t-blue-600 animate-spin" />
+          <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
+          <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
         </div>
         <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Loading Lead Dossier...</span>
       </div>
@@ -243,7 +243,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
   return (
     <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#111622] border-l border-slate-200/80 dark:border-slate-800 animate-fade-in relative overflow-y-auto custom-scrollbar">
       
-      {/* ── Dossier Header Bar ── */}
+      {/* â”€â”€ Dossier Header Bar â”€â”€ */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
         <div className="flex items-center gap-3 min-w-0">
           <button 
@@ -259,7 +259,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
           {/* Customer & Status Badge */}
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] font-extrabold bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-md border border-blue-200/60 dark:border-blue-700/40 shrink-0">
+              <span className="font-mono text-[10px] font-extrabold bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-2 py-0.5 rounded-md border border-primary-200/60 dark:border-primary-700/40 shrink-0">
                 {lead.lead_id}
               </span>
               <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 truncate">
@@ -283,7 +283,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
           {lead.customer_mobile && (
             <a 
               href={`tel:${lead.customer_mobile}`} 
-              className="p-2 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl transition bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1 text-xs font-bold"
+              className="p-2 hover:bg-primary-50 dark:hover:bg-primary-500/20 text-primary-600 dark:text-primary-400 rounded-xl transition bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1 text-xs font-bold"
               title="Call Customer"
             >
               <Phone className="w-3.5 h-3.5" />
@@ -309,20 +309,20 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
           {/* Full screen */}
           <Link 
             to={`/leads/${lead.id}`}
-            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition flex items-center gap-1.5 text-xs font-semibold shrink-0"
+            className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition flex items-center gap-1.5 text-xs font-semibold shrink-0"
             title="Open Full Dossier Page"
           >
-            <span>Full Dossier →</span>
+            <span>Full Dossier â†’</span>
           </Link>
         </div>
       </div>
 
-      {/* ── Interactive Pipeline Stage Tracker Bar ── */}
+      {/* â”€â”€ Interactive Pipeline Stage Tracker Bar â”€â”€ */}
       <div className="bg-slate-100/80 dark:bg-slate-900/80 px-5 py-3 border-b border-slate-200/80 dark:border-slate-800">
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
             <span>Pipeline Progression</span>
-            {stageFlash && <span className="text-emerald-600 dark:text-emerald-400 animate-fade-in font-bold">✓ Stage Updated</span>}
+            {stageFlash && <span className="text-emerald-600 dark:text-emerald-400 animate-fade-in font-bold">âœ“ Stage Updated</span>}
           </span>
           <div className="flex items-center gap-1">
             {['on_hold', 'rejected'].map((altStage) => (
@@ -336,7 +336,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                     : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
                 )}
               >
-                {altStage === 'on_hold' ? '⏸️ On Hold' : '❌ Reject'}
+                {altStage === 'on_hold' ? 'â¸ï¸ On Hold' : 'âŒ Reject'}
               </button>
             ))}
           </div>
@@ -356,7 +356,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                 className={clsx(
                   'flex items-center justify-center gap-1 py-1.5 px-2 rounded-md text-xs font-semibold transition-colors border cursor-pointer',
                   isCurrent
-                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                    ? 'bg-primary-50 text-primary-700 border-primary-200'
                     : isPast
                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                     : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -371,12 +371,12 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
         </div>
       </div>
 
-      {/* ── Top-Level Action Composer (No Scrolling Needed!) ── */}
-      <div className="p-5 bg-blue-50/40 dark:bg-slate-900/40 border-b border-slate-200/90 dark:border-slate-800 space-y-3">
+      {/* â”€â”€ Top-Level Action Composer (No Scrolling Needed!) â”€â”€ */}
+      <div className="p-5 bg-primary-50/40 dark:bg-slate-900/40 border-b border-slate-200/90 dark:border-slate-800 space-y-3">
         <form onSubmit={handleAddFollowup} className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-pulse" />
+              <Sparkles className="w-4 h-4 text-primary-600 dark:text-primary-400 animate-pulse" />
               <span>Log Follow-Up & Next Step</span>
             </span>
             <span className="text-[10px] font-semibold text-slate-400">Protects against forgotten reminders</span>
@@ -389,7 +389,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                 key={idx}
                 type="button"
                 onClick={() => setRemarks(prev => prev ? `${prev} ${qNote}` : qNote)}
-                className="text-[10px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-1 rounded-lg border border-slate-200/90 dark:border-slate-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 shrink-0 transition cursor-pointer shadow-2xs"
+                className="text-[10px] font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-1 rounded-lg border border-slate-200/90 dark:border-slate-700 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 shrink-0 transition cursor-pointer shadow-2xs"
               >
                 + {qNote}
               </button>
@@ -401,7 +401,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
             placeholder="Record follow-up remarks, verification progress, or customer agreement terms..."
-            className="w-full text-xs p-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-[#162230] resize-none min-h-[4rem] text-slate-800 dark:text-slate-100 outline-none transition font-medium shadow-inner"
+            className="w-full text-xs p-3 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-[#162230] resize-none min-h-[4rem] text-slate-800 dark:text-slate-100 outline-none transition font-medium shadow-inner"
           />
 
           {/* Controls row */}
@@ -413,7 +413,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                 <select
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
-                  className="h-8 text-xs py-1 px-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-[#162230] text-slate-800 dark:text-white font-semibold outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
+                  className="h-8 text-xs py-1 px-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-[#162230] text-slate-800 dark:text-white font-semibold outline-none focus:border-primary-500 cursor-pointer shadow-2xs"
                 >
                   <option value="new">New</option>
                   <option value="pending">Pending Verification</option>
@@ -426,14 +426,14 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
 
               {/* Next Followup Date + Quick Presets */}
               <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
-                <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                <Calendar className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0" />
                 <span>Next Date:</span>
                 <input
                   type="date"
                   value={nextDate}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setNextDate(e.target.value)}
-                  className="h-8 text-xs py-1 px-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-[#162230] text-slate-800 dark:text-white font-mono font-bold outline-none focus:border-blue-500 w-36 shadow-2xs"
+                  className="h-8 text-xs py-1 px-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-[#162230] text-slate-800 dark:text-white font-mono font-bold outline-none focus:border-primary-500 w-36 shadow-2xs"
                 />
                 <div className="flex items-center gap-1 ml-0.5">
                   {[
@@ -445,7 +445,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                       key={p.label}
                       type="button"
                       onClick={() => setPresetDate(p.days)}
-                      className="px-2 py-1 rounded text-[10px] font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white transition cursor-pointer"
+                      className="px-2 py-1 rounded text-[10px] font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary-600 hover:text-white transition cursor-pointer"
                     >
                       {p.label}
                     </button>
@@ -458,7 +458,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 text-white rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-md shadow-blue-600/25 ml-auto"
+              className="px-5 py-2 bg-gradient-to-r from-primary-600 to-primary-600 hover:brightness-110 text-white rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-md shadow-primary-600/25 ml-auto"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{submitting ? 'Saving...' : 'Save Note & Set Reminder'}</span>
@@ -467,7 +467,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
         </form>
       </div>
 
-      {/* ── Collapsible Parameters Card & Timeline ── */}
+      {/* â”€â”€ Collapsible Parameters Card & Timeline â”€â”€ */}
       <div className="p-5 space-y-5">
         
         {/* Customer & Vehicle Specs Card */}
@@ -477,7 +477,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
             className="bg-slate-50 dark:bg-slate-900/60 px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-900 transition-colors"
           >
             <div className="flex items-center gap-2 text-xs font-black text-slate-800 dark:text-white">
-              <FileText className="w-4 h-4 text-blue-600" />
+              <FileText className="w-4 h-4 text-primary-600" />
               <span>Application Parameters & Assigned Team</span>
             </div>
             <div className="flex items-center gap-2">
@@ -506,13 +506,13 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Make & Model</span>
                 <span className="font-bold text-slate-800 dark:text-white flex items-center gap-1">
-                  <Car className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                  <span className="truncate">{lead.vehicle_make_model || '—'}</span>
+                  <Car className="w-3.5 h-3.5 text-primary-500 shrink-0" />
+                  <span className="truncate">{lead.vehicle_make_model || 'â€”'}</span>
                 </span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Registration No.</span>
-                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{lead.registration_number || '—'}</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{lead.registration_number || 'â€”'}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Application Date</span>
@@ -520,7 +520,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Source / Partner</span>
-                <span className="font-bold text-blue-600 dark:text-blue-400">{lead.agent_name || 'Direct / Org Team'}</span>
+                <span className="font-bold text-primary-600 dark:text-primary-400">{lead.agent_name || 'Direct / Org Team'}</span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Mapped Bank</span>
@@ -532,7 +532,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
               <div>
                 <span className="text-[10px] text-slate-400 uppercase font-bold block tracking-wider mb-0.5">Field Executive</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
-                  <User className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  <User className="w-3.5 h-3.5 text-primary-500 shrink-0" />
                   <span className="truncate">{lead.executive_name || 'Unassigned'}</span>
                 </span>
               </div>
@@ -540,11 +540,11 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
           )}
         </div>
 
-        {/* ── Follow-up History Audit Trail ── */}
+        {/* â”€â”€ Follow-up History Audit Trail â”€â”€ */}
         <div className="space-y-3.5">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-600" /> Communication History & Audit Trail
+              <Clock className="w-4 h-4 text-primary-600" /> Communication History & Audit Trail
             </h4>
             <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md font-bold border border-slate-200/80 dark:border-slate-700">
               {history.length} Logs
@@ -553,7 +553,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
           
           {history.length === 0 ? (
             <div className="p-8 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 text-xs space-y-2 bg-slate-50/50 dark:bg-slate-900/20">
-              <Sparkles className="w-6 h-6 mx-auto text-blue-400 opacity-60" />
+              <Sparkles className="w-6 h-6 mx-auto text-primary-400 opacity-60" />
               <p className="font-semibold">No follow-up notes recorded yet.</p>
               <p className="text-[11px] text-slate-400">Use the Quick Composer above to log your first interaction!</p>
             </div>
@@ -566,7 +566,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                 return (
                   <div key={h.id || index} className="relative pl-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 shadow-sm transition">
                     {/* Left Timeline Node */}
-                    <div className="absolute left-1.5 top-4 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-white dark:ring-slate-900">
+                    <div className="absolute left-1.5 top-4 w-2 h-2 rounded-full bg-primary-500 ring-4 ring-white dark:ring-slate-900">
                     </div>
 
                     <div className="flex items-baseline justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-2 mb-2">
@@ -585,7 +585,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
                     {h.status && (
                       <div className="mt-2.5 flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
                         <span>Status Transition:</span>
-                        <span className="font-extrabold uppercase text-blue-600 dark:text-blue-400">
+                        <span className="font-extrabold uppercase text-primary-600 dark:text-primary-400">
                           {STATUS_LABEL[h.status] || h.status}
                         </span>
                       </div>
@@ -593,7 +593,7 @@ export default function LeadReadingPane({ leadId, onClose, onStatusChanged }: Le
 
                     {/* Next Action Date info */}
                     {h.next_followup_date && (
-                      <div className="mt-2 flex items-center gap-1.5 text-[11px] text-blue-600 dark:text-blue-400 font-bold bg-blue-50/60 dark:bg-blue-500/10 px-2.5 py-1 rounded-md border border-blue-200/50 dark:border-blue-800/40">
+                      <div className="mt-2 flex items-center gap-1.5 text-[11px] text-primary-600 dark:text-primary-400 font-bold bg-primary-50/60 dark:bg-primary-500/10 px-2.5 py-1 rounded-md border border-primary-200/50 dark:border-primary-800/40">
                         <Clock className="w-3.5 h-3.5 shrink-0" />
                         <span>Next Action Reminder: {new Date(h.next_followup_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, Users, Calendar, Building2, UserCircle2, AlertCircle, Plus, MessageCircle, Mail, BellOff } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
@@ -220,8 +220,8 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
           <div className="space-y-6">
             <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center shadow-sm">
-                  <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-500/20 flex items-center justify-center shadow-sm">
+                  <Calendar className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date of Assignment</h4>
@@ -232,7 +232,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                 required
                 value={formData.assigned_date}
                 onChange={(e) => setFormData({ ...formData, assigned_date: e.target.value })}
-                className="p-3 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 text-slate-800 dark:text-white shadow-sm"
+                className="p-3 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-primary-500 text-slate-800 dark:text-white shadow-sm"
               />
             </div>
 
@@ -256,7 +256,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                     className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
                     style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                   >
-                    <option value="">— Select Financer —</option>
+                    <option value="">â€” Select Financer â€”</option>
                     {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                   </select>
 
@@ -269,10 +269,10 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                           <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
                           <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
                         </label>
-                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'email' ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 shadow-sm shadow-primary-500/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
                           <input type="radio" name="notifyFinMethod" value="email" checked={notifyFinMethod === 'email'} onChange={() => setNotifyFinMethod('email')} className="hidden" />
-                          <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
-                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                          <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500'}`}>Email</span>
                         </label>
                         <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
                           <input type="radio" name="notifyFinMethod" value="none" checked={notifyFinMethod === 'none'} onChange={() => setNotifyFinMethod('none')} className="hidden" />
@@ -288,8 +288,8 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                       )}
                       {notifyFinMethod === 'email' && (
                         <div className="animate-fade-in relative">
-                          <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
-                          <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                          <Mail className="w-4 h-4 text-primary-500 absolute left-2.5 top-2.5" />
+                          <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-primary-500/30 rounded-lg outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
                         </div>
                       )}
                     </div>
@@ -297,26 +297,26 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                 </div>
               </div>
 
-              <div className="relative p-6 bg-gradient-to-br from-indigo-50/50 to-indigo-100/30 dark:from-indigo-900/20 dark:to-indigo-900/10 border-2 border-indigo-100/50 dark:border-indigo-800/30 rounded-2xl shadow-sm hover:border-indigo-200 dark:hover:border-indigo-700/50 transition-all">
+              <div className="relative p-6 bg-gradient-to-br from-primary-50/50 to-primary-100/30 dark:from-primary-900/20 dark:to-primary-900/10 border-2 border-primary-100/50 dark:border-primary-800/30 rounded-2xl shadow-sm hover:border-primary-200 dark:hover:border-primary-700/50 transition-all">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
-                    <UserCircle2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
+                    <UserCircle2 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   </div>
-                  <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-1 cursor-pointer bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1.5 rounded-lg">
+                  <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-1 cursor-pointer bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-lg">
                     <Plus className="w-3 h-3" /> Quick Add
                   </button>
                 </div>
-                <h4 className="text-base font-black text-indigo-900 dark:text-indigo-100 tracking-tight mb-1">Field Executive</h4>
-                <p className="text-xs text-indigo-600/70 dark:text-indigo-300/70 mb-4">Who is the on-ground agent managing this?</p>
+                <h4 className="text-base font-black text-primary-900 dark:text-primary-100 tracking-tight mb-1">Field Executive</h4>
+                <p className="text-xs text-primary-600/70 dark:text-primary-300/70 mb-4">Who is the on-ground agent managing this?</p>
                 
                 <div className="space-y-4">
                   <select
                     value={formData.executive_id}
                     onChange={(e) => setFormData({ ...formData, executive_id: e.target.value })}
-                    className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-indigo-200 dark:border-indigo-800/60 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-indigo-900 dark:text-indigo-100 shadow-sm appearance-none cursor-pointer"
+                    className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-primary-900 dark:text-primary-100 shadow-sm appearance-none cursor-pointer"
                     style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                   >
-                    <option value="">— Select Executive —</option>
+                    <option value="">â€” Select Executive â€”</option>
                     {executives
                       .filter(e => !formData.financer_id || !e.financer_id || e.financer_id.toString() === formData.financer_id)
                       .map(ex => (
@@ -326,20 +326,20 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                   </select>
 
                   {formData.executive_id && (
-                    <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 shadow-sm animate-fade-in">
-                      <label className="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
+                    <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-primary-100/50 dark:border-primary-900/30 shadow-sm animate-fade-in">
+                      <label className="block text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
                       <div className="grid grid-cols-3 gap-2 mb-3">
-                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-primary-200 dark:hover:border-slate-700'}`}>
                           <input type="radio" name="notifyExecMethod" value="whatsapp" checked={notifyExecMethod === 'whatsapp'} onChange={() => setNotifyExecMethod('whatsapp')} className="hidden" />
                           <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
                           <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
                         </label>
-                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'email' ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 shadow-sm shadow-primary-500/10' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-primary-200 dark:hover:border-slate-700'}`}>
                           <input type="radio" name="notifyExecMethod" value="email" checked={notifyExecMethod === 'email'} onChange={() => setNotifyExecMethod('email')} className="hidden" />
-                          <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
-                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                          <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+                          <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500'}`}>Email</span>
                         </label>
-                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                        <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-primary-200 dark:hover:border-slate-700'}`}>
                           <input type="radio" name="notifyExecMethod" value="none" checked={notifyExecMethod === 'none'} onChange={() => setNotifyExecMethod('none')} className="hidden" />
                           <BellOff className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`} />
                           <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500'}`}>None</span>
@@ -353,8 +353,8 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                       )}
                       {notifyExecMethod === 'email' && (
                         <div className="animate-fade-in relative">
-                          <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
-                          <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                          <Mail className="w-4 h-4 text-primary-500 absolute left-2.5 top-2.5" />
+                          <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-primary-500/30 rounded-lg outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
                         </div>
                       )}
                     </div>

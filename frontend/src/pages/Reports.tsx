@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import { 
   FileText, Download, BarChart3, XCircle, SlidersHorizontal, Building,
   Filter, Users, DollarSign, CreditCard, TrendingUp
@@ -52,7 +52,7 @@ function StatusBadge({ status }: { status: string }) {
   const configs: Record<string, { label: string; className: string }> = {
     paid: { label: 'Paid', className: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' },
     released: { label: 'Released', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-    eligible: { label: 'Eligible', className: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20' },
+    eligible: { label: 'Eligible', className: 'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-500/10 dark:text-primary-400 dark:border-primary-500/20' },
     pending: { label: 'Pending', className: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20' },
     received: { label: 'Received', className: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' },
     done: { label: 'Done', className: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' },
@@ -70,12 +70,12 @@ function FormatCurrency({ value, color = 'slate' }: { value: number; color?: str
   const colors: Record<string, string> = {
     slate: 'text-slate-850 dark:text-white',
     emerald: 'text-emerald-600 dark:text-emerald-400',
-    indigo: 'text-indigo-600 dark:text-indigo-400',
+    indigo: 'text-primary-600 dark:text-primary-400',
     amber: 'text-amber-600 dark:text-amber-400',
   };
   return (
     <span className={clsx('font-mono font-bold text-xs', colors[color])}>
-      ₹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+      â‚¹{value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
     </span>
   );
 }
@@ -124,7 +124,7 @@ function SelectInput({ value, onChange, children, className = '' }: {
 }) {
   return (
     <select value={value} onChange={onChange} className={clsx(
-      'w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-xs text-slate-800 dark:text-white transition-all',
+      'w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all',
       className
     )}>
       {children}
@@ -139,7 +139,7 @@ function DateInput({ value, onChange, className = '' }: {
 }) {
   return (
     <input type="date" value={value} onChange={onChange} className={clsx(
-      'w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-xs text-slate-800 dark:text-white transition-all',
+      'w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all',
       className
     )} />
   );
@@ -223,7 +223,7 @@ export default function Reports() {
         r.lead_id, r.lead_date,
         `"${(r.customer_name || '').replace(/"/g, '""')}"`,
         `"${(r.vehicle_make_model || '').replace(/"/g, '""')}"`,
-        `"${(r.financer_name || '—').replace(/"/g, '""')}"`,
+        `"${(r.financer_name || 'â€”').replace(/"/g, '""')}"`,
         `"${(r.agent_name || 'Direct').replace(/"/g, '""')}"`,
         r.loan_amount || 0
       ]);
@@ -314,11 +314,11 @@ export default function Reports() {
   return (
     <div className="space-y-6 pb-12 select-none animate-fade-in">
 
-      {/* ── Page Header ── */}
+      {/* â”€â”€ Page Header â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-            <FileText className="text-indigo-500 w-5 h-5" /> MIS Reports & Analytics
+            <FileText className="text-primary-500 w-5 h-5" /> MIS Reports & Analytics
           </h1>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
             Generate audit-ready statements, payout logs, and pipeline performance sheets.
@@ -329,7 +329,7 @@ export default function Reports() {
             <button 
               onClick={handleExportCSV} 
               disabled={exporting}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-500/25 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold bg-primary-600 hover:bg-primary-700 text-white shadow-sm shadow-primary-500/25 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
             >
               {exporting ? (
                 <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -344,7 +344,7 @@ export default function Reports() {
             className={clsx(
               'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer',
               showFilters 
-                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30' 
+                ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-500/30' 
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
             )}
           >
@@ -356,7 +356,7 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
         
-        {/* ── Filters Sidebar ── */}
+        {/* â”€â”€ Filters Sidebar â”€â”€ */}
         <div className="col-span-1 relative z-10">
           <div className="lg:sticky lg:top-6 space-y-4">
             <form onSubmit={handleGenerate} className={clsx('card p-5 space-y-4 shadow-xl shadow-slate-200/40 dark:shadow-black/20 border-slate-200/60 dark:border-slate-800', !showFilters && 'hidden lg:block')}>
@@ -376,11 +376,11 @@ export default function Reports() {
                       className={clsx(
                         'p-3 rounded-xl border-2 transition-all cursor-pointer text-left',
                         reportType === opt.value
-                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700'
+                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-primary-700'
                       )}
                     >
-                      <opt.icon className={clsx('w-4 h-4 mb-2', reportType === opt.value ? 'text-indigo-500' : 'text-slate-400')} />
+                      <opt.icon className={clsx('w-4 h-4 mb-2', reportType === opt.value ? 'text-primary-500' : 'text-slate-400')} />
                       <div className="font-bold text-xs text-slate-800 dark:text-white">{opt.label}</div>
                       <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{opt.desc}</div>
                     </button>
@@ -427,7 +427,7 @@ export default function Reports() {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white py-2.5 rounded-lg font-bold text-xs mt-2 transition-all cursor-pointer shadow-sm shadow-indigo-500/25 disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-500 hover:to-primary-600 text-white py-2.5 rounded-lg font-bold text-xs mt-2 transition-all cursor-pointer shadow-sm shadow-primary-500/25 disabled:opacity-50"
               >
                 {loading ? 'Generating...' : 'Generate Report'}
               </button>
@@ -437,7 +437,7 @@ export default function Reports() {
           {!showFilters && (
             <button 
               onClick={() => setShowFilters(true)}
-              className="lg:hidden w-full text-center text-indigo-600 dark:text-indigo-400 font-semibold text-sm py-2 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-lg transition"
+              className="lg:hidden w-full text-center text-primary-600 dark:text-primary-400 font-semibold text-sm py-2 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded-lg transition"
             >
               Show Filters <Filter className="w-4 h-4 inline-block ml-1" />
             </button>
@@ -445,21 +445,21 @@ export default function Reports() {
           </div>
         </div>
 
-        {/* ── Output Grid ── */}
+        {/* â”€â”€ Output Grid â”€â”€ */}
         <div className="col-span-1 lg:col-span-3 space-y-5">
           
           {/* Report Type Header */}
-          <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/5 dark:to-violet-500/5 border border-indigo-200/50 dark:border-indigo-800/30 rounded-xl">
+          <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-primary-500/10 to-violet-500/10 dark:from-primary-500/5 dark:to-violet-500/5 border border-primary-200/50 dark:border-primary-800/30 rounded-xl">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                <activeReport.icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center">
+                <activeReport.icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-800 dark:text-white">{activeReport.label}</h3>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">{activeReport.desc}</p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+            <span className="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
               {reportType}
             </span>
           </div>
@@ -468,13 +468,13 @@ export default function Reports() {
           {loading ? (
             <div className="card min-h-[350px] flex flex-col items-center justify-center gap-3">
               <div className="relative w-10 h-10">
-                <div className="absolute inset-0 rounded-full border-[3px] border-indigo-100 dark:border-indigo-500/20" />
-                <div className="absolute inset-0 rounded-full border-[3px] border-t-indigo-600 animate-spin" />
+                <div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" />
+                <div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" />
               </div>
               <p className="text-xs text-slate-400 font-medium">Generating report register...</p>
             </div>
           ) : !hasGenerated ? (
-            <div className="card min-h-[350px] flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent">
+            <div className="card min-h-[350px] flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-primary-500/5 via-transparent to-transparent">
               <BarChart3 className="w-14 h-14 text-slate-200 dark:text-slate-800 mb-3" />
               <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200">No report generated yet</h3>
               <p className="text-slate-400 dark:text-slate-500 text-xs mt-1 max-w-xs">
@@ -491,10 +491,10 @@ export default function Reports() {
             <>
               {/* Summary Cards with Visual Charts */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 animate-fade-in" style={{ animationDelay: '50ms' }}>
-                <KPICard label="Total Loan Book" value={<FormatCurrency value={summary?.totalLoanAmount || 0} color="indigo" />} icon={Building} color="#4f46e5" bgColor="bg-indigo-50/30 dark:bg-indigo-500/5" />
-                <KPICard label="Total Commissions" value={<FormatCurrency value={summary?.totalCommission || 0} color="indigo" />} icon={DollarSign} color="#4f46e5" bgColor="bg-indigo-50/30 dark:bg-indigo-500/5" />
+                <KPICard label="Total Loan Book" value={<FormatCurrency value={summary?.totalLoanAmount || 0} color="indigo" />} icon={Building} color="#4f46e5" bgColor="bg-primary-50/30 dark:bg-primary-500/5" />
+                <KPICard label="Total Commissions" value={<FormatCurrency value={summary?.totalCommission || 0} color="indigo" />} icon={DollarSign} color="#4f46e5" bgColor="bg-primary-50/30 dark:bg-primary-500/5" />
                 <KPICard label="Paid Out" value={<FormatCurrency value={summary?.totalPaid || 0} color="emerald" />} icon={CreditCard} color="#10b981" bgColor="bg-emerald-50/30 dark:bg-emerald-500/5" />
-                <KPICard label="Total Leads" value={summary?.totalLeads || 0} icon={Users} color="#3b82f6" bgColor="bg-blue-50/30 dark:bg-blue-500/5" />
+                <KPICard label="Total Leads" value={summary?.totalLeads || 0} icon={Users} color="#3b82f6" bgColor="bg-primary-50/30 dark:bg-primary-500/5" />
               </div>
 
               {/* Visual Analytics Row */}
@@ -504,7 +504,7 @@ export default function Reports() {
                   {chartData.length > 0 && (
                     <div className="card p-4">
                       <h4 className="font-bold text-sm text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <TrendingUp className="w-4 h-4 text-primary-600 dark:text-primary-400" />
                         Monthly Trend
                       </h4>
                       <ResponsiveContainer width="100%" height={200}>
@@ -521,7 +521,7 @@ export default function Reports() {
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                           <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: '#64748b' }} />
-                          <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: '#64748b' }} tickFormatter={val => val >= 1e6 ? `₹${(val/1e6).toFixed(1)}Cr` : val >= 1e5 ? `₹${(val/1e5).toFixed(0)}L` : `₹${val}`} />
+                          <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} tick={{ fill: '#64748b' }} tickFormatter={val => val >= 1e6 ? `â‚¹${(val/1e6).toFixed(1)}Cr` : val >= 1e5 ? `â‚¹${(val/1e5).toFixed(0)}L` : `â‚¹${val}`} />
                           <Tooltip contentStyle={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                           <Legend wrapperStyle={{ paddingTop: '8px' }} />
                           <Area type="monotone" dataKey="amount" name="Loan Amount" stroke="#4f46e5" strokeWidth={2} fillOpacity={1} fill="url(#areaLoan)" dot={false} activeDot={{ r: 6, strokeWidth: 2 }} />
@@ -535,7 +535,7 @@ export default function Reports() {
                   {statusBreakdown.length > 0 && (
                     <div className="card p-4">
                       <h4 className="font-bold text-sm text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                        <BarChart3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <BarChart3 className="w-4 h-4 text-primary-600 dark:text-primary-400" />
                         Lead Status Breakdown
                       </h4>
                       <ResponsiveContainer width="100%" height={200}>
@@ -558,7 +558,7 @@ export default function Reports() {
 
               {/* Data Table */}
               <div className="card overflow-hidden animate-fade-in" style={{ animationDelay: '150ms' }}>
-                <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-blue-400 to-teal-400" />
+                <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
                 
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left whitespace-nowrap">
@@ -597,21 +597,21 @@ export default function Reports() {
                     <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
                       {records.map((r, i) => (
                         <tr key={i} className={clsx(
-                          'hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors',
+                          'hover:bg-primary-50/20 dark:hover:bg-primary-500/5 transition-colors',
                           i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : ''
                         )}>
                           {reportType === 'disbursement' && (
                             <>
-                              <td className="px-4 py-3 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">{r.lead_id}</td>
+                              <td className="px-4 py-3 font-mono text-xs font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
                               <td className="px-4 py-3 text-xs text-slate-400 font-mono">{r.lead_date}</td>
                               <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white text-[13px]">{r.customer_name}</td>
                               <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
                                 <div className="flex items-center gap-1">
                                   <Building className="w-3.5 h-3.5 shrink-0" />
-                                  {r.vehicle_make_model || '—'}
+                                  {r.vehicle_make_model || 'â€”'}
                                 </div>
                               </td>
-                              <td className="px-4 py-3 text-xs font-medium text-indigo-500">{r.financer_name || '—'}</td>
+                              <td className="px-4 py-3 text-xs font-medium text-primary-500">{r.financer_name || 'â€”'}</td>
                               <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 font-medium">{r.agent_name || 'Direct'}</td>
                               <td className="px-4 py-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs">
                                 <FormatCurrency value={r.loan_amount || 0} color="emerald" />
@@ -621,7 +621,7 @@ export default function Reports() {
 
                           {reportType === 'payouts' && (
                             <>
-                              <td className="px-4 py-3 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">{r.lead_id}</td>
+                              <td className="px-4 py-3 font-mono text-xs font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
                               <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white text-[13px]">{r.customer_name}</td>
                               <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 font-medium">{r.agent_name || 'Direct'}</td>
                               <td className="px-4 py-3 font-mono text-slate-850 dark:text-slate-200 text-xs">
@@ -641,7 +641,7 @@ export default function Reports() {
 
                           {reportType === 'pending_docs' && (
                             <>
-                              <td className="px-4 py-3 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">{r.lead_id}</td>
+                              <td className="px-4 py-3 font-mono text-xs font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
                               <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white text-[13px]">{r.customer_name}</td>
                               <td className="px-4 py-3 text-xs capitalize font-medium">{r.status}</td>
                               <td className="px-4 py-3">
@@ -658,7 +658,7 @@ export default function Reports() {
 
                           {reportType === 'executive_perf' && (
                             <>
-                              <td className="px-4 py-3 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">{r.lead_id}</td>
+                              <td className="px-4 py-3 font-mono text-xs font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
                               <td className="px-4 py-3 text-xs text-slate-400 font-mono">{r.lead_date}</td>
                               <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white text-[13px]">{r.customer_name}</td>
                               <td className="px-4 py-3 text-xs font-semibold text-slate-700 dark:text-slate-300">{r.executive_name || 'Unassigned'}</td>
@@ -680,7 +680,7 @@ export default function Reports() {
                     Showing <span className="font-semibold text-slate-600 dark:text-slate-350">{records.length}</span> record{records.length !== 1 ? 's' : ''}
                   </p>
                   {isAdminOrManager && records.length > 0 && (
-                    <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer">
+                    <button onClick={handleExportCSV} className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer">
                       <Download className="w-3.5 h-3.5" /> Export CSV
                     </button>
                   )}

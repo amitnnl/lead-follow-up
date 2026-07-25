@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { User, Search, Plus, Edit, Trash2, X, Filter, ChevronDown } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import clsx from 'clsx';
 
-// ── Top-Level Helper Components (Extracted outside to prevent re-render focus loss) ──
+// â”€â”€ Top-Level Helper Components (Extracted outside to prevent re-render focus loss) â”€â”€
 function StatusBadge({ active }: { active: boolean }) {
   return (
     <span className={clsx(
@@ -22,7 +22,7 @@ function StatusBadge({ active }: { active: boolean }) {
 function ActionButtons({ onEdit, onDelete, disabled }: { onEdit: () => void; onDelete: () => void; disabled?: boolean }) {
   return (
     <div className="flex items-center justify-end gap-1">
-      <button onClick={onEdit} disabled={disabled} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl transition-colors cursor-pointer" title="Edit">
+      <button onClick={onEdit} disabled={disabled} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded-xl transition-colors cursor-pointer" title="Edit">
         <Edit className="w-4 h-4" />
       </button>
       <button onClick={onDelete} disabled={disabled} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer" title="Delete">
@@ -34,11 +34,11 @@ function ActionButtons({ onEdit, onDelete, disabled }: { onEdit: () => void; onD
 
 function DealerRow({ dealer, onEdit, onDelete, isAdminOrManager }: { dealer: any; onEdit: () => void; onDelete: () => void; isAdminOrManager?: boolean }) {
   return (
-    <tr className="hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5 transition-colors group">
+    <tr className="hover:bg-primary-50/20 dark:hover:bg-primary-500/5 transition-colors group">
       <td className="px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0">
-            <User className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+          <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center shrink-0">
+            <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           </div>
           <div className="min-w-0">
             <div className="font-semibold text-slate-800 dark:text-white text-sm truncate max-w-[250px]">{dealer.name}</div>
@@ -46,8 +46,8 @@ function DealerRow({ dealer, onEdit, onDelete, isAdminOrManager }: { dealer: any
         </div>
       </td>
       <td className="px-4 py-4 font-mono text-slate-600 dark:text-slate-300">{dealer.mobile}</td>
-      <td className="px-4 py-4 text-slate-600 dark:text-slate-300">{dealer.email || '—'}</td>
-      <td className="px-4 py-4 font-mono uppercase text-slate-600 dark:text-slate-300">{dealer.pan_number || '—'}</td>
+      <td className="px-4 py-4 text-slate-600 dark:text-slate-300">{dealer.email || 'â€”'}</td>
+      <td className="px-4 py-4 font-mono uppercase text-slate-600 dark:text-slate-300">{dealer.pan_number || 'â€”'}</td>
       <td className="px-4 py-4">
         <StatusBadge active={dealer.is_active === 1} />
       </td>
@@ -80,7 +80,7 @@ function DealerModal({
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-in border border-slate-200 dark:border-slate-800">
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-indigo-500" />
+            <User className="w-5 h-5 text-primary-500" />
             {editingDealer ? 'Edit Dealer' : 'Add Dealer'}
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
@@ -91,30 +91,30 @@ function DealerModal({
           <div className="space-y-4">
             <div>
               <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Dealer Name *</label>
-              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white" placeholder="e.g. Maruti Motors / Rajesh" />
+              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white" placeholder="e.g. Maruti Motors / Rajesh" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Mobile Number *</label>
-                <input required type="text" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white font-mono" placeholder="10 digits" />
+                <input required type="text" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white font-mono" placeholder="10 digits" />
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">PAN Number</label>
-                <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white uppercase font-mono" placeholder="ABCDE1234F" />
+                <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white uppercase font-mono" placeholder="ABCDE1234F" />
               </div>
             </div>
             <div>
               <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
-              <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white" placeholder="dealer@example.com" />
+              <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white" placeholder="dealer@example.com" />
             </div>
             <div className="flex items-center gap-2 pt-2">
-              <input type="checkbox" id="is_active" checked={formData.is_active === 1} onChange={e => setFormData({...formData, is_active: e.target.checked ? 1 : 0})} className="rounded text-indigo-600 focus:ring-indigo-600 cursor-pointer" />
+              <input type="checkbox" id="is_active" checked={formData.is_active === 1} onChange={e => setFormData({...formData, is_active: e.target.checked ? 1 : 0})} className="rounded text-primary-600 focus:ring-primary-600 cursor-pointer" />
               <label htmlFor="is_active" className="font-medium text-sm text-slate-600 dark:text-slate-300 cursor-pointer">Active Status</label>
             </div>
           </div>
           <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
             <button type="button" onClick={onClose} className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer">Cancel</button>
-            <button type="submit" className="px-5 py-2.5 text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl shadow-sm transition-colors cursor-pointer">
+            <button type="submit" className="px-5 py-2.5 text-sm font-semibold bg-primary-600 text-white hover:bg-primary-700 rounded-xl shadow-sm transition-colors cursor-pointer">
               {editingDealer ? 'Save Changes' : 'Add Dealer'}
             </button>
           </div>
@@ -128,7 +128,7 @@ export default function Dealers() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
 
-  // ── State ──────────────────────────────────────────────────────────────
+  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [dealers, setDealers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -142,7 +142,7 @@ export default function Dealers() {
     name: '', mobile: '', email: '', pan_number: '', is_active: 1
   });
 
-  // ── API & Handlers ────────────────────────────────────────────────────
+  // â”€â”€ API & Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchData = async () => {
     try {
       const res = await api.get('/setup/agents');
@@ -212,16 +212,16 @@ export default function Dealers() {
     inactive: dealers.filter(d => d.is_active === 0).length
   }), [dealers]);
 
-  // ── Main Render ───────────────────────────────────────────────────────
+  // â”€â”€ Main Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="space-y-5 animate-fade-in select-none">
 
-      {/* ── Page Header ── */}
+      {/* â”€â”€ Page Header â”€â”€ */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/15 flex items-center justify-center">
-              <User className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="w-8 h-8 rounded-xl bg-primary-500/15 flex items-center justify-center">
+              <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
             </div>
             Dealer's
           </h1>
@@ -234,7 +234,7 @@ export default function Dealers() {
             className={clsx(
               'inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer',
               showFilters 
-                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30' 
+                ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-500/30' 
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent'
             )}
           >
@@ -243,7 +243,7 @@ export default function Dealers() {
           </button>
           <button 
             onClick={() => handleOpenModal()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-sm shadow-indigo-500/25 cursor-pointer hover:shadow-md hover:shadow-indigo-500/30"
+            className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-sm shadow-primary-500/25 cursor-pointer hover:shadow-md hover:shadow-primary-500/30"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> Add Dealer
           </button>
@@ -277,7 +277,7 @@ export default function Dealers() {
                 placeholder="Search dealers by name or mobile..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white"
+                className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white"
               />
               {search && (
                 <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -289,7 +289,7 @@ export default function Dealers() {
             {showFilters && (
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <label className="text-xs font-semibold text-slate-500 dark:text-slate-400">Status:</label>
-                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as any)} className="px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-slate-800 dark:text-white">
+                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as any)} className="px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white">
                   <option value="all">All Statuses</option>
                   <option value="active">Active Only</option>
                   <option value="inactive">Inactive Only</option>
@@ -302,7 +302,7 @@ export default function Dealers() {
 
       {/* Data Table */}
       <div className="card overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-indigo-500 via-blue-400 to-teal-400" />
+        <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
         
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
@@ -322,10 +322,10 @@ export default function Dealers() {
                   <td colSpan={6} className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="relative w-8 h-8">
-                        <div className="absolute inset-0 rounded-full border-2 border-indigo-100 dark:border-indigo-500/20" />
-                        <div className="absolute inset-0 rounded-full border-2 border-t-indigo-600 animate-spin" />
+                        <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
+                        <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                       </div>
-                      <p className="text-xs text-slate-400 font-medium">Loading dealers…</p>
+                      <p className="text-xs text-slate-400 font-medium">Loading dealersâ€¦</p>
                     </div>
                   </td>
                 </tr>
@@ -341,8 +341,8 @@ export default function Dealers() {
                         {search || filterStatus !== 'all' ? 'Try adjusting your search or filters.' : 'Create your first dealer to get started.'}
                       </p>
                       {(!search && filterStatus === 'all') && (
-                        <button onClick={() => handleOpenModal()} className="mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
-                          Add your first dealer →
+                        <button onClick={() => handleOpenModal()} className="mt-2 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer">
+                          Add your first dealer â†’
                         </button>
                       )}
                     </div>

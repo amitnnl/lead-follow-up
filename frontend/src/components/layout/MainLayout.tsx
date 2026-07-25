@@ -33,6 +33,7 @@ import clsx from 'clsx';
 import { useThemeStore, type AccentTheme } from '../../store/themeStore';
 import api from '../../lib/axios';
 import { useSettingsStore } from '../../store/settingsStore';
+import CommandPalette from '../CommandPalette';
 import NewLeadModal from '../NewLeadModal';
 import IrrCalculatorComponent from '../IrrCalculatorComponent';
 
@@ -40,8 +41,9 @@ export default function MainLayout() {
   const { user, logout } = useAuthStore();
   const { settings } = useSettingsStore();
   const logoLetters = settings.app_name ? settings.app_name.substring(0, 2).toUpperCase() : 'LF';
-  const { isDark, toggleTheme, accent, setAccent, density, setDensity } = useThemeStore();
+  const { isDark, toggleTheme, accent, setAccent, density, setDensity, appFont, setAppFont, appRadius, setAppRadius } = useThemeStore();
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,6 +73,18 @@ export default function MainLayout() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         handleToggleSidebar();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        setIsNewLeadModalOpen(true);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        setIsCalculatorModalOpen(true);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -251,7 +265,7 @@ export default function MainLayout() {
         {isSidebarOpen ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs shadow-md shadow-primary-500/25 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-600 flex items-center justify-center text-white font-extrabold text-xs shadow-md shadow-primary-500/25 shrink-0">
                 {logoLetters}
               </div>
               <div className="min-w-0 flex-1">
@@ -272,7 +286,7 @@ export default function MainLayout() {
           </div>
         ) : (
           <div className="flex justify-center py-0.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs shadow-md shadow-primary-500/25 cursor-pointer transform hover:scale-105 transition-all" title="Workspace: PRO">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-600 flex items-center justify-center text-white font-extrabold text-xs shadow-md shadow-primary-500/25 cursor-pointer transform hover:scale-105 transition-all" title="Workspace: PRO">
               {logoLetters}
             </div>
           </div>
@@ -323,7 +337,7 @@ export default function MainLayout() {
         {isSidebarOpen ? (
           <div className="glass-panel flex items-center justify-between gap-2 rounded-xl p-2.5">
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-indigo-600 flex items-center justify-center font-bold text-white text-xs shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-600 flex items-center justify-center font-bold text-white text-xs shrink-0 shadow-2xs">
                 {user?.name?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className="min-w-0 flex-1">
@@ -528,7 +542,7 @@ export default function MainLayout() {
                             isDark ? "bg-primary-500/10 border-primary-500 text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
                           )}
                         >
-                          <Moon className="w-3.5 h-3.5 text-indigo-400" /> Dark
+                          <Moon className="w-3.5 h-3.5 text-primary-400" /> Dark
                         </button>
                       </div>
                     </div>
@@ -538,7 +552,7 @@ export default function MainLayout() {
                       <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Accent Color Preset</label>
                       <div className="grid grid-cols-5 gap-2">
                         {[
-                          { id: 'indigo', name: 'Sapphire', color: 'bg-indigo-600' },
+                          { id: 'indigo', name: 'Sapphire', color: 'bg-primary-600' },
                           { id: 'emerald', name: 'Emerald', color: 'bg-emerald-500' },
                           { id: 'violet', name: 'Violet', color: 'bg-violet-600' },
                           { id: 'cyan', name: 'Cyan', color: 'bg-cyan-500' },
@@ -582,6 +596,54 @@ export default function MainLayout() {
                         >
                           Compact
                         </button>
+                      </div>
+                    </div>
+
+                    {/* Typography Font */}
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Typography Font</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: 'inter', name: 'Inter' },
+                          { id: 'outfit', name: 'Outfit' },
+                          { id: 'playfair', name: 'Playfair' },
+                        ].map((f) => (
+                          <button
+                            key={f.id}
+                            onClick={() => setAppFont(f.id as any)}
+                            style={{ fontFamily: f.id === 'playfair' ? '"Playfair Display", serif' : f.id === 'outfit' ? '"Outfit", sans-serif' : '"Inter", sans-serif' }}
+                            className={clsx(
+                              "py-1.5 px-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer text-center",
+                              appFont === f.id ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                            )}
+                          >
+                            {f.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Corner Radius */}
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Corner Radius</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: 'sharp', name: 'Sharp', radiusClass: 'rounded-none' },
+                          { id: 'rounded', name: 'Rounded', radiusClass: 'rounded-lg' },
+                          { id: 'pill', name: 'Pill', radiusClass: 'rounded-full' },
+                        ].map((r) => (
+                          <button
+                            key={r.id}
+                            onClick={() => setAppRadius(r.id as any)}
+                            className={clsx(
+                              "py-1.5 px-2 text-[11px] font-bold border transition-all cursor-pointer text-center",
+                              r.radiusClass,
+                              appRadius === r.id ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
+                            )}
+                          >
+                            {r.name}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -657,7 +719,7 @@ export default function MainLayout() {
                 className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer select-none"
                 title="Account menu"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                   {user?.name?.charAt(0).toUpperCase() || 'A'}
                 </div>
                 <ChevronDown className={clsx("w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block", showProfileMenu && "rotate-180")} />
@@ -712,7 +774,9 @@ export default function MainLayout() {
           "print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none print:overflow-visible",
           isCalculatorModalOpen && "print:hidden"
         )}>
-          <Outlet />
+          <div key={location.pathname} className="animate-page-enter h-full">
+            <Outlet />
+          </div>
         </main>
         
         {isNewLeadModalOpen && (
@@ -742,6 +806,13 @@ export default function MainLayout() {
             </div>
           </div>
         )}
+
+        <CommandPalette 
+          isOpen={isCommandPaletteOpen}
+          onClose={() => setIsCommandPaletteOpen(false)}
+          onOpenNewLead={() => setIsNewLeadModalOpen(true)}
+          onOpenCalculator={() => setIsCalculatorModalOpen(true)}
+        />
       </div>
     </div>
   );

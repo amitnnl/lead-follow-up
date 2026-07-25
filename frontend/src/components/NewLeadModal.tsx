@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, User, Car, IndianRupee, MapPin, Plus } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
@@ -240,8 +240,8 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 onChange={handleChange} 
                 className={`${inputClass} font-semibold`}
               >
-                <option value="new">✨ New Vehicle</option>
-                <option value="old">🚗 Used / Pre-Owned</option>
+                <option value="new">âœ¨ New Vehicle</option>
+                <option value="old">ðŸš— Used / Pre-Owned</option>
               </select>
               <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 italic">
                 {formData.vehicle_condition === 'new' 
@@ -279,7 +279,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
 
             {/* Vehicle Details */}
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+              <h3 className="text-xs font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
                 <Car className="w-4 h-4" /> Vehicle Information
               </h3>
               
@@ -343,7 +343,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                 <div>
                   <label className={labelClass}>Requested Loan Amount *</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₹</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">â‚¹</span>
                     <input required type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} className={`${inputClass} pl-7`} placeholder="0.00" />
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                       </button>
                     </div>
                     <select required name="agent_id" value={formData.agent_id} onChange={handleChange} className={`${inputClass} text-xs`}>
-                      <option value="">— Direct / None —</option>
+                      <option value="">â€” Direct / None â€”</option>
                       {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
                     </select>
                   </div>
@@ -392,7 +392,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
                       </button>
                     </div>
                     <select required name="channel_executive_id" value={formData.channel_executive_id} onChange={handleChange} className={`${inputClass} text-xs`}>
-                      <option value="">— Select Agent —</option>
+                      <option value="">â€” Select Agent â€”</option>
                       {channelExecutives.map(ce => <option key={ce.id} value={ce.id}>{ce.name}</option>)}
                     </select>
                   </div>

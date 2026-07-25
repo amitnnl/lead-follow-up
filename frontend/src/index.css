@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -109,6 +110,43 @@ html[data-density="compact"] select {
   font-size: 12px !important;
 }
 
+/* ── Typography (Font) Themes ── */
+html[data-font="inter"] {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+html[data-font="outfit"] {
+  --font-sans: 'Outfit', system-ui, sans-serif;
+}
+html[data-font="playfair"] {
+  --font-sans: 'Playfair Display', serif;
+}
+
+/* ── Corner Radius Themes ── */
+html[data-radius="sharp"] {
+  --radius-2xl: 0px;
+  --radius-xl: 0px;
+  --radius-lg: 0px;
+  --radius-md: 0px;
+  --radius-sm: 0px;
+  --radius-xs: 0px;
+}
+html[data-radius="rounded"] {
+  --radius-2xl: 1rem;
+  --radius-xl: 0.75rem;
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+  --radius-xs: 0.125rem;
+}
+html[data-radius="pill"] {
+  --radius-2xl: 2rem;
+  --radius-xl: 1.5rem;
+  --radius-lg: 1.25rem;
+  --radius-md: 1rem;
+  --radius-sm: 0.75rem;
+  --radius-xs: 0.5rem;
+}
+
 @layer base {
   *,
   *::before,
@@ -124,7 +162,7 @@ html[data-density="compact"] select {
   }
 
   body {
-    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 40%, #f8fafc 100%);
+    background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-primary-100) 40%, var(--color-accent-50) 100%);
     background-size: 400% 400%;
     animation: gradientBG 18s ease infinite;
     color: #0f172a;
@@ -677,4 +715,21 @@ html[data-density="compact"] select {
   tr    { page-break-inside: avoid; page-break-after: auto; }
   thead { display: table-header-group; }
   tfoot { display: table-footer-group; }
+}
+
+@layer utilities {
+  .animate-page-enter {
+    animation: pageEnter 0.35s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes pageEnter {
+    0% {
+      opacity: 0;
+      transform: translateY(12px) scale(0.99);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 }

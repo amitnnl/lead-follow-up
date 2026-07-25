@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { 
   UsersRound, Search, Plus, Edit, Trash2, X, 
@@ -24,7 +24,7 @@ interface ChannelExecutive {
   is_active: number;
 }
 
-// ── Top-Level Modal Component (Outside parent scope to guarantee stable input focus during typing) ──
+// â”€â”€ Top-Level Modal Component (Outside parent scope to guarantee stable input focus during typing) â”€â”€
 
 function AgentModal({
   isOpen,
@@ -153,7 +153,7 @@ function AgentModal({
                         }} 
                         className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1"
                       >
-                        <span>⚡ Auto-Generate</span>
+                        <span>âš¡ Auto-Generate</span>
                       </button>
                     </div>
                     <input 
@@ -165,7 +165,7 @@ function AgentModal({
                     />
                   </div>
                   <div className="text-[11px] text-primary-700 dark:text-primary-300 bg-white/60 dark:bg-slate-900/40 p-2.5 rounded-lg border border-primary-100 dark:border-primary-800/30 flex items-center gap-1.5">
-                    <span>ℹ️</span>
+                    <span>â„¹ï¸</span>
                     <span>Agent will log into the portal using <strong>{formData.email || 'their email address'}</strong> and this password.</span>
                   </div>
                 </div>
@@ -213,7 +213,7 @@ function AgentModal({
 }
 
 
-// ── Top-Level Row Component (Outside parent scope) ──
+// â”€â”€ Top-Level Row Component (Outside parent scope) â”€â”€
 function AgentRow({
   ex,
   isAdminOrManager,
@@ -271,7 +271,7 @@ function AgentRow({
   );
 }
 
-// ── Main Page Component ──
+// â”€â”€ Main Page Component â”€â”€
 export default function ChannelExecutives() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
@@ -407,9 +407,9 @@ export default function ChannelExecutives() {
         <div className="bg-white dark:bg-[#111827] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Portal Logins</p>
-            <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 mt-1">{portalEnabled}</p>
+            <p className="text-2xl font-extrabold text-primary-600 dark:text-primary-400 mt-1">{portalEnabled}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center">
             <Lock className="w-6 h-6" />
           </div>
         </div>

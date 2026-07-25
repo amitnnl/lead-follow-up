@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../lib/axios';
 import {
@@ -15,7 +15,7 @@ import AssignmentModal from '../components/AssignmentModal';
 import PragmaticLeadDocuments from '../components/documents/PragmaticLeadDocuments';
 import clsx from 'clsx';
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function getInitials(name: string) {
   if (!name) return '?';
@@ -23,7 +23,7 @@ function getInitials(name: string) {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  new: 'bg-blue-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
+  new: 'bg-primary-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
   disbursed: 'bg-teal-500', on_hold: 'bg-purple-500', rejected: 'bg-rose-500',
 };
 const STATUS_LABEL: Record<string, string> = {
@@ -57,7 +57,7 @@ function InfoRow({ label, value, mono = false, accent = false }: { label: string
     <div className="flex flex-col gap-0.5">
       <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</span>
       <span className={clsx('text-[13px] font-semibold text-slate-800 dark:text-slate-100', mono && 'font-mono', accent && 'text-emerald-600 dark:text-emerald-400 text-base')}>
-        {value || <span className="text-slate-300 dark:text-slate-600 font-normal">—</span>}
+        {value || <span className="text-slate-300 dark:text-slate-600 font-normal">â€”</span>}
       </span>
     </div>
   );
@@ -65,7 +65,7 @@ function InfoRow({ label, value, mono = false, accent = false }: { label: string
 
 function AvatarChip({ name, sub, color = 'indigo' }: { name: string; sub?: string; color?: string }) {
   const colorMap: Record<string, string> = {
-    indigo: 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300',
+    indigo: 'bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300',
     emerald: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
     amber: 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300',
     slate: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300',
@@ -83,7 +83,7 @@ function AvatarChip({ name, sub, color = 'indigo' }: { name: string; sub?: strin
   );
 }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function LeadDetails() {
   const { id } = useParams<{ id: string }>();
@@ -400,14 +400,14 @@ export default function LeadDetails() {
     }
   };
 
-  // ── Loading / Error states ──────────────────────────────────────────────────
+  // â”€â”€ Loading / Error states â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-96 gap-4">
       <div className="relative w-12 h-12">
-        <div className="absolute inset-0 rounded-full border-[3px] border-indigo-100 dark:border-indigo-500/20" />
-        <div className="absolute inset-0 rounded-full border-[3px] border-t-indigo-600 animate-spin" />
+        <div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" />
+        <div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" />
       </div>
-      <p className="text-sm text-slate-400 font-medium">Loading lead details…</p>
+      <p className="text-sm text-slate-400 font-medium">Loading lead detailsâ€¦</p>
     </div>
   );
   if (error || !data) return (
@@ -420,7 +420,7 @@ export default function LeadDetails() {
     </div>
   );
 
-  // ── Data ────────────────────────────────────────────────────────────────────
+  // â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const { lead, followups, documents, logs } = data;
 
 
@@ -495,11 +495,11 @@ export default function LeadDetails() {
     reassign:  'bg-slate-400',
   };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="max-w-6xl mx-auto space-y-5 pb-20 animate-fade-in select-none">
 
-      {/* ── Dynamic, Ink-Saving Print-Only Voucher (Fits exactly on 1 Page) ── */}
+      {/* â”€â”€ Dynamic, Ink-Saving Print-Only Voucher (Fits exactly on 1 Page) â”€â”€ */}
       <div className="hidden print:block w-full text-black font-sans bg-white p-2 text-xs leading-tight">
         
         {/* Header Block */}
@@ -537,21 +537,21 @@ export default function LeadDetails() {
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Vehicle Make & Model</span>
-              <span className="font-bold text-xs">{lead.vehicle_make_model || '—'}</span>
+              <span className="font-bold text-xs">{lead.vehicle_make_model || 'â€”'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Registration / Condition</span>
               <span className="text-xs uppercase font-bold">
-                {lead.registration_number || '—'} · ({lead.vehicle_condition === 'new' ? 'New' : 'Used'})
+                {lead.registration_number || 'â€”'} Â· ({lead.vehicle_condition === 'new' ? 'New' : 'Used'})
               </span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Assigned Financer (Bank)</span>
-              <span className="text-xs font-semibold">{lead.financer_name || '—'}</span>
+              <span className="text-xs font-semibold">{lead.financer_name || 'â€”'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Sourced Dealer</span>
-              <span className="text-xs font-semibold">{lead.dealer_name || '—'}</span>
+              <span className="text-xs font-semibold">{lead.dealer_name || 'â€”'}</span>
             </div>
           </div>
         </div>
@@ -562,15 +562,15 @@ export default function LeadDetails() {
           <div className="grid grid-cols-3 gap-x-4 gap-y-2.5">
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Loan Amount</span>
-              <span className="font-bold text-sm text-emerald-700">₹{lead.loan_amount ? Number(lead.loan_amount).toLocaleString('en-IN') : '0'}</span>
+              <span className="font-bold text-sm text-emerald-700">â‚¹{lead.loan_amount ? Number(lead.loan_amount).toLocaleString('en-IN') : '0'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Interest Rate (IRR)</span>
-              <span className="font-mono text-xs font-bold">{lead.irr_rate ? `${lead.irr_rate}% p.a.` : '—'}</span>
+              <span className="font-mono text-xs font-bold">{lead.irr_rate ? `${lead.irr_rate}% p.a.` : 'â€”'}</span>
             </div>
             <div>
               <span className="font-semibold block text-slate-500 uppercase text-[9px]">Tenure Months</span>
-              <span className="font-mono text-xs font-bold">{lead.tenure_months ? `${lead.tenure_months} Months` : '—'}</span>
+              <span className="font-mono text-xs font-bold">{lead.tenure_months ? `${lead.tenure_months} Months` : 'â€”'}</span>
             </div>
           </div>
         </div>
@@ -592,35 +592,35 @@ export default function LeadDetails() {
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans">Gross Sourced Value</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">1.00% of Sourced Loan</td>
                 <td className="p-2 text-right font-bold text-slate-800">
-                  ₹{(Number(lead.loan_amount || 0) * 0.01).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  â‚¹{(Number(lead.loan_amount || 0) * 0.01).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans font-bold">DSA Agent Commission Share</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">90% of Gross Value</td>
-                <td className="p-2 text-right font-black text-indigo-700">
-                  ₹{(Number(lead.loan_amount || 0) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                <td className="p-2 text-right font-black text-primary-700">
+                  â‚¹{(Number(lead.loan_amount || 0) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans">TDS Withheld (194H)</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">5.00% of DSA Share</td>
                 <td className="p-2 text-right text-slate-700">
-                  - ₹{(Number(lead.loan_amount || 0) * 0.009 * 0.05).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  - â‚¹{(Number(lead.loan_amount || 0) * 0.009 * 0.05).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr className="bg-slate-50 font-bold">
                 <td className="p-2 border-r border-slate-200 text-slate-900 font-sans">Net Payable to DSA Agent</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-950 font-sans">95.00% of DSA Share</td>
                 <td className="p-2 text-right font-extrabold text-slate-900 text-sm">
-                  ₹{(Number(lead.loan_amount || 0) * 0.009 * 0.95).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  â‚¹{(Number(lead.loan_amount || 0) * 0.009 * 0.95).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
                 <td className="p-2 border-r border-slate-200 text-slate-700 font-sans">Organization Profit Share</td>
                 <td className="p-2 border-r border-slate-200 text-right text-slate-500 font-sans">10% of Gross Value</td>
                 <td className="p-2 text-right text-slate-700">
-                  ₹{(Number(lead.loan_amount || 0) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  â‚¹{(Number(lead.loan_amount || 0) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                 </td>
               </tr>
             </tbody>
@@ -647,15 +647,15 @@ export default function LeadDetails() {
 
         {/* Eco-Friendly Warning */}
         <div className="mt-8 flex justify-between items-center text-[9px] text-slate-500 font-mono uppercase tracking-wide border-t border-slate-200 pt-2">
-          <span>♻️ Eco-Print Layout (Fits exactly on one A4 page to save ink & paper)</span>
+          <span>â™»ï¸ Eco-Print Layout (Fits exactly on one A4 page to save ink & paper)</span>
           <span>Sourced via: {lead.referred_by || 'Direct DSA'}</span>
         </div>
 
       </div>
 
-      {/* ── Breadcrumb ── */}
+      {/* â”€â”€ Breadcrumb â”€â”€ */}
       <div className="no-print flex items-center gap-2 text-sm text-slate-400">
-        <button onClick={() => navigate('/leads')} className="flex items-center gap-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium cursor-pointer">
+        <button onClick={() => navigate('/leads')} className="flex items-center gap-1.5 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium cursor-pointer">
           <ArrowLeft className="w-4 h-4" /> Leads
         </button>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
@@ -664,12 +664,12 @@ export default function LeadDetails() {
         <span className="text-slate-700 dark:text-slate-200 font-medium truncate max-w-[200px]">{lead.customer_name}</span>
       </div>
 
-      {/* ══════════════════════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           HERO HEADER CARD
-      ══════════════════════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="no-print bg-white dark:bg-[#111622] border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
         {/* Top gradient strip */}
-        <div className="h-1.5 bg-gradient-to-r from-primary-600 via-indigo-600 to-emerald-500" />
+        <div className="h-1.5 bg-gradient-to-r from-primary-600 via-primary-600 to-emerald-500" />
 
         <div className="p-6 lg:p-7">
           {/* Row 1: Avatar + Info + Badges + Actions */}
@@ -677,13 +677,13 @@ export default function LeadDetails() {
 
             {/* Avatar + primary info */}
             <div className="flex items-start gap-4 flex-1 min-w-0">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-600 to-indigo-700 flex items-center justify-center text-white font-bold text-xl shrink-0 shadow-lg shadow-primary-500/25">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center text-white font-bold text-xl shrink-0 shadow-lg shadow-primary-500/25">
                 {getInitials(lead.customer_name)}
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight truncate">{lead.customer_name}</h1>
                 <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                  <span className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 px-2 py-0.5 rounded">
+                  <span className="font-mono text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/30 px-2 py-0.5 rounded">
                     {lead.lead_id}
                   </span>
                   <StatusBadge status={lead.status} size="md" />
@@ -693,7 +693,7 @@ export default function LeadDetails() {
                       ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/30'
                       : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30'
                   )}>
-                    {lead.vehicle_condition === 'new' ? '✨ New Vehicle' : '🚗 Used Vehicle'}
+                    {lead.vehicle_condition === 'new' ? 'âœ¨ New Vehicle' : 'ðŸš— Used Vehicle'}
                   </span>
                   {lead.loan_type && (
                     <span className="text-[11px] font-semibold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
@@ -713,7 +713,7 @@ export default function LeadDetails() {
               <a
                 href={`tel:${lead.customer_mobile}`}
                 onClick={() => handleLogInteraction('Call')}
-                className="inline-flex items-center gap-2 px-3.5 py-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-primary-50 hover:bg-primary-100 dark:bg-primary-500/10 dark:hover:bg-primary-500/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
               >
                 <PhoneCall className="w-3.5 h-3.5" /> Call
               </a>
@@ -723,7 +723,7 @@ export default function LeadDetails() {
                   onClick={() => setShowWhatsAppTemplates(!showWhatsAppTemplates)}
                   className="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-450 border border-emerald-200 dark:border-emerald-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" /> WhatsApp ▾
+                  <MessageCircle className="w-3.5 h-3.5" /> WhatsApp â–¾
                 </button>
                 {showWhatsAppTemplates && (
                   <div className="absolute right-0 mt-1.5 w-64 bg-white dark:bg-slate-900 border border-slate-205 dark:border-slate-800 rounded-xl shadow-xl z-50 p-2 space-y-1 text-[11px] animate-in fade-in slide-in-from-top-1 text-left">
@@ -737,7 +737,7 @@ export default function LeadDetails() {
                         text: `Hi ${lead.customer_name}, please share or upload your Aadhaar Card, PAN Card, and Bank Statement so we can process your vehicle loan (${lead.lead_id}) for approval.`
                       },
                       {
-                        label: 'Loan Approved Alert 🎉',
+                        label: 'Loan Approved Alert ðŸŽ‰',
                         text: `Hi ${lead.customer_name}, congratulations! Your vehicle loan application (${lead.lead_id}) has been approved. We are finalizing the disbursal.`
                       }
                     ].map((t, idx) => (
@@ -769,7 +769,7 @@ export default function LeadDetails() {
               {isAdminOrManager && (
                 <button
                   onClick={handleDownloadDocs}
-                  className="inline-flex items-center gap-2 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-3.5 py-2 bg-primary-50 hover:bg-primary-100 dark:bg-primary-500/10 dark:hover:bg-primary-500/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" /> Download Docs
                 </button>
@@ -795,15 +795,15 @@ export default function LeadDetails() {
           <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-5">
             <InfoRow label="Mobile" value={lead.customer_mobile} mono />
             <InfoRow label="Vehicle" value={lead.vehicle_make_model} />
-            <InfoRow label="Loan Amount" value={lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
+            <InfoRow label="Loan Amount" value={lead.loan_amount ? `â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
             <InfoRow label="Bank Executive" value={lead.executive_name || 'Unassigned'} />
             {lead.registration_number && <InfoRow label="Registration No." value={lead.registration_number} mono />}
             {lead.insurance_company && (
               <div className="col-span-2 flex flex-col gap-0.5">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Insurance Policy</span>
                 <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">
-                  {lead.insurance_company} · <span className="font-mono">{lead.policy_number || '—'}</span>
-                  {lead.insurance_expiry_date && <span className="text-slate-400 font-normal"> · Exp: {lead.insurance_expiry_date}</span>}
+                  {lead.insurance_company} Â· <span className="font-mono">{lead.policy_number || 'â€”'}</span>
+                  {lead.insurance_expiry_date && <span className="text-slate-400 font-normal"> Â· Exp: {lead.insurance_expiry_date}</span>}
                 </span>
               </div>
             )}
@@ -812,16 +812,16 @@ export default function LeadDetails() {
           {/* Row 3: Final Disbursed Amt */}
           {lead.status === 'disbursed' && lead.final_loan_amount && (
             <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-4 bg-emerald-50/50 dark:bg-emerald-900/10 p-4 rounded-xl">
-              <InfoRow label="Final Disbursed Amt" value={<span className="text-emerald-700 dark:text-emerald-400 font-bold">₹{parseFloat(lead.final_loan_amount).toLocaleString()}</span>} />
+              <InfoRow label="Final Disbursed Amt" value={<span className="text-emerald-700 dark:text-emerald-400 font-bold">â‚¹{parseFloat(lead.final_loan_amount).toLocaleString()}</span>} />
               <InfoRow label="Tenure (Months)" value={lead.tenure_months} mono />
               <InfoRow label="ROI (%)" value={`${lead.roi}%`} mono />
-              {lead.payout_amount && <InfoRow label="Agent Payout" value={<span className="text-indigo-600 dark:text-indigo-400 font-bold">₹{parseFloat(lead.payout_amount).toLocaleString()}</span>} />}
+              {lead.payout_amount && <InfoRow label="Agent Payout" value={<span className="text-primary-600 dark:text-primary-400 font-bold">â‚¹{parseFloat(lead.payout_amount).toLocaleString()}</span>} />}
             </div>
           )}
         </div>
       </div>
 
-      {/* ── Automated Sanction / Disbursal Certificate & WhatsApp Dispatch Card ── */}
+      {/* â”€â”€ Automated Sanction / Disbursal Certificate & WhatsApp Dispatch Card â”€â”€ */}
       {(lead.status === 'approved' || lead.status === 'disbursed') && (
         <div className="no-print card p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border-2 border-emerald-500/40 dark:border-emerald-500/30 shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in">
           <div className="flex items-center gap-4">
@@ -839,8 +839,8 @@ export default function LeadDetails() {
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                 {lead.status === 'disbursed'
-                  ? `Loan of ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been disbursed. Dispatch official certificate directly to the customer via WhatsApp.`
-                  : `Loan of ₹${Number(lead.loan_amount).toLocaleString('en-IN')} is approved. Send instant sanction alert or download printable official letter.`}
+                  ? `Loan of â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} has been disbursed. Dispatch official certificate directly to the customer via WhatsApp.`
+                  : `Loan of â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} is approved. Send instant sanction alert or download printable official letter.`}
               </p>
             </div>
           </div>
@@ -848,8 +848,8 @@ export default function LeadDetails() {
             <a
               href={`https://wa.me/91${lead.customer_mobile.replace(/\D/g, '')}?text=${encodeURIComponent(
                 lead.status === 'disbursed'
-                  ? `🎉 Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
-                  : `🎉 Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
+                  ? `ðŸŽ‰ Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
+                  : `ðŸŽ‰ Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
               )}`}
               target="_blank"
               rel="noreferrer"
@@ -872,13 +872,13 @@ export default function LeadDetails() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           CONNECTED STATUS STEPPER
-      ══════════════════════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="no-print card p-5">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
-            <TrendingUp className="w-3.5 h-3.5 text-indigo-500" /> Lead Lifecycle
+            <TrendingUp className="w-3.5 h-3.5 text-primary-500" /> Lead Lifecycle
           </span>
           {isTerminal && (
             <span className={clsx(
@@ -920,7 +920,7 @@ export default function LeadDetails() {
                       : <Icon className="w-4 h-4" />
                     }
                     {isCurrent && (
-                      <span className="absolute inset-0 rounded-full bg-indigo-500 opacity-30 animate-ping" />
+                      <span className="absolute inset-0 rounded-full bg-primary-500 opacity-30 animate-ping" />
                     )}
                   </div>
                   {/* Labels */}
@@ -928,7 +928,7 @@ export default function LeadDetails() {
                     <p className={clsx(
                       'text-[11px] font-bold capitalize',
                       isPassed ? 'text-emerald-600 dark:text-emerald-400'
-                        : isCurrent ? 'text-indigo-600 dark:text-indigo-400'
+                        : isCurrent ? 'text-primary-600 dark:text-primary-400'
                           : 'text-slate-400 dark:text-slate-500'
                     )}>{meta.label}</p>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 hidden sm:block">{meta.sub}</p>
@@ -959,19 +959,19 @@ export default function LeadDetails() {
             This lead is currently <span className="font-bold uppercase ml-1">{lead.status.replace('_', ' ')}</span>.
             {lead.status === 'rejected' && (user?.role === 'admin' || user?.role === 'staff') && (
               <button onClick={() => setSearchParams({ tab: 'assignment' })} className="ml-auto underline cursor-pointer">
-                Re-assign to fix →
+                Re-assign to fix â†’
               </button>
             )}
           </div>
         )}
       </div>
 
-      {/* ══════════════════════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           TWO-COLUMN LAYOUT: Tabs | Right Rail
-      ══════════════════════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="no-print grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
 
-        {/* ── LEFT: Tab System ── */}
+        {/* â”€â”€ LEFT: Tab System â”€â”€ */}
         <div className="lg:col-span-2 space-y-4">
 
           {/* Tab Bar */}
@@ -986,7 +986,7 @@ export default function LeadDetails() {
                   className={clsx(
                     'relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer',
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/30'
+                      ? 'bg-primary-600 text-white shadow-sm shadow-primary-500/30'
                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
                   )}
                 >
@@ -995,7 +995,7 @@ export default function LeadDetails() {
                   {tab.badge && (
                     <span className={clsx(
                       'absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-black flex items-center justify-center',
-                      isActive ? 'bg-white text-indigo-600' : 'bg-rose-500 text-white'
+                      isActive ? 'bg-white text-primary-600' : 'bg-rose-500 text-white'
                     )}>{tab.badge}</span>
                   )}
                 </button>
@@ -1003,7 +1003,7 @@ export default function LeadDetails() {
             })}
           </div>
 
-          {/* ─────────────── OVERVIEW TAB ─────────────── */}
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OVERVIEW TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {activeTab === 'overview' && (
             <div className="space-y-4 animate-fade-in">
 
@@ -1017,12 +1017,12 @@ export default function LeadDetails() {
                   <InfoRow label="Mobile" value={lead.customer_mobile} mono />
                   <InfoRow label="Occupation" value={lead.customer_occupation} />
                   <InfoRow label="Vehicle" value={lead.vehicle_make_model} />
-                  <InfoRow label="Loan Amount" value={lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
+                  <InfoRow label="Loan Amount" value={lead.loan_amount ? `â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
                   <InfoRow label="Loan Type" value={lead.loan_type?.replace('_', ' ')} />
                   {lead.loan_tenure && <InfoRow label="Tenure" value={`${lead.loan_tenure} months`} />}
-                  {lead.down_payment && <InfoRow label="Down Payment" value={`₹${Number(lead.down_payment).toLocaleString('en-IN')}`} />}
+                  {lead.down_payment && <InfoRow label="Down Payment" value={`â‚¹${Number(lead.down_payment).toLocaleString('en-IN')}`} />}
                   {lead.interest_rate && <InfoRow label="Interest Rate" value={`${lead.interest_rate}% p.a.`} />}
-                  {lead.emi_amount && <InfoRow label="EMI" value={`₹${Number(lead.emi_amount).toLocaleString('en-IN')}/mo`} accent />}
+                  {lead.emi_amount && <InfoRow label="EMI" value={`â‚¹${Number(lead.emi_amount).toLocaleString('en-IN')}/mo`} accent />}
                   {lead.customer_address && (
                     <div className="col-span-2 flex flex-col gap-0.5">
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Address</span>
@@ -1041,7 +1041,7 @@ export default function LeadDetails() {
                   {lead.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') && (
                     <button
                       onClick={() => setSearchParams({ tab: 'assignment' })}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-500/30 hover:bg-primary-100 dark:hover:bg-primary-500/20"
                     >
                       <Building className="w-3.5 h-3.5" />
                       {((lead.agent_name && lead.agent_name !== 'Direct / None') || lead.financer_name || lead.executive_name) ? 'Edit Assigned' : 'Assign Lead'}
@@ -1070,8 +1070,8 @@ export default function LeadDetails() {
                   <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5" /> KYC Disbursal Gate
                   </h3>
-                  <button onClick={() => handleTabChange('documents')} className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer flex items-center gap-1">
-                    View Vault →
+                  <button onClick={() => handleTabChange('documents')} className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1">
+                    View Vault â†’
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1118,8 +1118,8 @@ export default function LeadDetails() {
                                 <div className="flex items-center gap-1">
                                   {canVerifyDocs && status === 'pending' && (
                                     <>
-                                      <button onClick={() => handleVerifyDoc(doc.id, 'verified')} className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✓</button>
-                                      <button onClick={() => handleVerifyDoc(doc.id, 'rejected')} className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">✗</button>
+                                      <button onClick={() => handleVerifyDoc(doc.id, 'verified')} className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">âœ“</button>
+                                      <button onClick={() => handleVerifyDoc(doc.id, 'rejected')} className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold cursor-pointer transition-colors">âœ—</button>
                                     </>
                                   )}
                                   {isAdminOrManager && (
@@ -1131,7 +1131,7 @@ export default function LeadDetails() {
                               </>
                             ) : (
                               user?.role !== 'staff' ? (
-                                <label className="font-semibold hover:underline cursor-pointer flex items-center gap-1 text-indigo-600 dark:text-indigo-400">
+                                <label className="font-semibold hover:underline cursor-pointer flex items-center gap-1 text-primary-600 dark:text-primary-400">
                                   {uploadingDoc ? (
                                     <span className="opacity-70 animate-pulse">Uploading...</span>
                                   ) : (
@@ -1164,7 +1164,7 @@ export default function LeadDetails() {
             </div>
           )}
 
-          {/* ─────────────── ASSIGN LEAD TAB ─────────────── */}
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ASSIGN LEAD TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {activeTab === 'assignment' && lead?.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') && (
             <div className="card p-6 space-y-6 animate-fade-in">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
@@ -1202,8 +1202,8 @@ export default function LeadDetails() {
                     {/* Floating Assignment Date at the top */}
                     <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center shadow-sm">
-                          <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                        <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-500/20 flex items-center justify-center shadow-sm">
+                          <Calendar className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                         </div>
                         <div>
                           <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date of Assignment</h4>
@@ -1215,7 +1215,7 @@ export default function LeadDetails() {
                         required
                         value={assignForm.assigned_date}
                         onChange={(e) => setAssignForm({ ...assignForm, assigned_date: e.target.value })}
-                        className="p-3 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 text-slate-800 dark:text-white shadow-sm"
+                        className="p-3 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-primary-500 text-slate-800 dark:text-white shadow-sm"
                       />
                     </div>
 
@@ -1224,7 +1224,7 @@ export default function LeadDetails() {
                       {/* Left Card: Financer */}
                       <div className="relative p-6 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-slate-200 dark:hover:border-slate-700 transition-all">
                         <div className="absolute top-5 right-5">
-                          <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer" title="Quick Add Financer">
+                          <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer" title="Quick Add Financer">
                             <Plus className="w-4 h-4" />
                           </button>
                         </div>
@@ -1241,7 +1241,7 @@ export default function LeadDetails() {
                             className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
                             style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                           >
-                            <option value="">— Select Financer —</option>
+                            <option value="">â€” Select Financer â€”</option>
                             {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                           </select>
 
@@ -1254,10 +1254,10 @@ export default function LeadDetails() {
                                   <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
                                   <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
                                 </label>
-                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'email' ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 shadow-sm shadow-primary-500/10' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
                                   <input type="radio" name="notifyFinMethod" value="email" checked={notifyFinMethod === 'email'} onChange={() => setNotifyFinMethod('email')} className="hidden" />
-                                  <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
-                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                                  <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyFinMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyFinMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500'}`}>Email</span>
                                 </label>
                                 <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyFinMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-slate-300 dark:hover:border-slate-700'}`}>
                                   <input type="radio" name="notifyFinMethod" value="none" checked={notifyFinMethod === 'none'} onChange={() => setNotifyFinMethod('none')} className="hidden" />
@@ -1273,8 +1273,8 @@ export default function LeadDetails() {
                               )}
                               {notifyFinMethod === 'email' && (
                                 <div className="animate-fade-in relative">
-                                  <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
-                                  <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                                  <Mail className="w-4 h-4 text-primary-500 absolute left-2.5 top-2.5" />
+                                  <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-primary-500/30 rounded-lg outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
                                 </div>
                               )}
                             </div>
@@ -1283,26 +1283,26 @@ export default function LeadDetails() {
                       </div>
 
                       {/* Right Card: Executive */}
-                      <div className="relative p-6 bg-gradient-to-br from-indigo-50/50 to-indigo-100/30 dark:from-indigo-900/20 dark:to-indigo-900/10 border-2 border-indigo-100/50 dark:border-indigo-800/30 rounded-2xl shadow-sm hover:border-indigo-200 dark:hover:border-indigo-700/50 transition-all">
+                      <div className="relative p-6 bg-gradient-to-br from-primary-50/50 to-primary-100/30 dark:from-primary-900/20 dark:to-primary-900/10 border-2 border-primary-100/50 dark:border-primary-800/30 rounded-2xl shadow-sm hover:border-primary-200 dark:hover:border-primary-700/50 transition-all">
                         <div className="absolute top-5 right-5">
-                          <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-indigo-100/50 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-400 hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer" title="Quick Add Executive">
+                          <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-primary-100/50 dark:bg-primary-900/50 flex items-center justify-center text-primary-400 hover:bg-primary-500 hover:text-white transition-colors cursor-pointer" title="Quick Add Executive">
                             <Plus className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center mb-4">
-                          <User className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center mb-4">
+                          <User className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                         </div>
-                        <h4 className="text-lg font-black text-indigo-900 dark:text-indigo-100 tracking-tight mb-1">Field Executive</h4>
-                        <p className="text-xs text-indigo-600/70 dark:text-indigo-300/70 mb-6">Who is the on-ground agent managing this?</p>
+                        <h4 className="text-lg font-black text-primary-900 dark:text-primary-100 tracking-tight mb-1">Field Executive</h4>
+                        <p className="text-xs text-primary-600/70 dark:text-primary-300/70 mb-6">Who is the on-ground agent managing this?</p>
                         
                         <div className="space-y-4">
                           <select
                             value={assignForm.executive_id}
                             onChange={(e) => setAssignForm({ ...assignForm, executive_id: e.target.value })}
-                            className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-indigo-200 dark:border-indigo-800/60 rounded-xl text-sm font-bold outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-indigo-900 dark:text-indigo-100 shadow-sm appearance-none cursor-pointer"
+                            className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-primary-900 dark:text-primary-100 shadow-sm appearance-none cursor-pointer"
                             style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                           >
-                            <option value="">— Select Executive —</option>
+                            <option value="">â€” Select Executive â€”</option>
                             {executives
                               .filter(e => !assignForm.financer_id || !e.financer_id || e.financer_id.toString() === assignForm.financer_id)
                               .map(ex => (
@@ -1312,20 +1312,20 @@ export default function LeadDetails() {
                           </select>
 
                           {assignForm.executive_id && (
-                            <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30 shadow-sm animate-fade-in">
-                              <label className="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
+                            <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-primary-100/50 dark:border-primary-900/30 shadow-sm animate-fade-in">
+                              <label className="block text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
                               <div className="grid grid-cols-3 gap-2 mb-3">
-                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/5 dark:bg-[#25D366]/10 shadow-sm shadow-[#25D366]/10' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-primary-200 dark:hover:border-slate-700'}`}>
                                   <input type="radio" name="notifyExecMethod" value="whatsapp" checked={notifyExecMethod === 'whatsapp'} onChange={() => setNotifyExecMethod('whatsapp')} className="hidden" />
                                   <MessageCircle className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-400'}`} />
                                   <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'whatsapp' ? 'text-[#25D366]' : 'text-slate-500'}`}>WhatsApp</span>
                                 </label>
-                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'email' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 shadow-sm shadow-indigo-500/10' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'email' ? 'border-primary-500 bg-primary-50 dark:bg-primary-500/10 shadow-sm shadow-primary-500/10' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-primary-200 dark:hover:border-slate-700'}`}>
                                   <input type="radio" name="notifyExecMethod" value="email" checked={notifyExecMethod === 'email'} onChange={() => setNotifyExecMethod('email')} className="hidden" />
-                                  <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
-                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'email' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500'}`}>Email</span>
+                                  <Mail className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'}`} />
+                                  <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'email' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500'}`}>Email</span>
                                 </label>
-                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-indigo-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-indigo-200 dark:hover:border-slate-700'}`}>
+                                <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border-2 transition-all ${notifyExecMethod === 'none' ? 'border-slate-400 bg-slate-100 dark:bg-slate-800 shadow-sm' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-primary-200 dark:hover:border-slate-700'}`}>
                                   <input type="radio" name="notifyExecMethod" value="none" checked={notifyExecMethod === 'none'} onChange={() => setNotifyExecMethod('none')} className="hidden" />
                                   <BellOff className={`w-4 h-4 mb-1 transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'}`} />
                                   <span className={`text-[9px] font-bold tracking-wide transition-colors ${notifyExecMethod === 'none' ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500'}`}>None</span>
@@ -1339,8 +1339,8 @@ export default function LeadDetails() {
                               )}
                               {notifyExecMethod === 'email' && (
                                 <div className="animate-fade-in relative">
-                                  <Mail className="w-4 h-4 text-indigo-500 absolute left-2.5 top-2.5" />
-                                  <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-indigo-500/30 rounded-lg outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
+                                  <Mail className="w-4 h-4 text-primary-500 absolute left-2.5 top-2.5" />
+                                  <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border-2 border-primary-500/30 rounded-lg outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-xs text-slate-800 dark:text-white transition-all shadow-sm" />
                                 </div>
                               )}
                             </div>
@@ -1354,7 +1354,7 @@ export default function LeadDetails() {
                       <button
                         type="submit"
                         disabled={assignSaving}
-                        className="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-2xl text-sm font-black tracking-wide flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-500/30 disabled:opacity-70 cursor-pointer"
+                        className="w-full py-4 bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-700 hover:to-violet-700 text-white rounded-2xl text-sm font-black tracking-wide flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary-500/30 disabled:opacity-70 cursor-pointer"
                       >
                         {assignSaving ? (
                           <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1370,7 +1370,7 @@ export default function LeadDetails() {
             </div>
           )}
 
-          {/* ─────────────── FOLLOW-UPS TAB ─────────────── */}
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FOLLOW-UPS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {activeTab === 'followups' && (
             <div className="space-y-4 animate-fade-in">
 
@@ -1391,29 +1391,29 @@ export default function LeadDetails() {
                   <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
                     <CheckCircle className="w-7 h-7 text-emerald-500" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-800 dark:text-white">Lead Disbursed ✓</h3>
+                  <h3 className="text-base font-bold text-slate-800 dark:text-white">Lead Disbursed âœ“</h3>
                   <p className="text-xs text-slate-400">This loan has been successfully disbursed. No new follow-ups can be added.</p>
                 </div>
               ) : (
                 <div className="card p-5">
                   <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-indigo-500" /> Log Interaction
+                    <MessageCircle className="w-4 h-4 text-primary-500" /> Log Interaction
                   </h3>
                   <form onSubmit={handleAddFollowup} className="space-y-4">
                     <textarea
                       required value={remarks} onChange={(e) => setRemarks(e.target.value)}
-                      placeholder="Enter discussion remarks, updates, or next steps…"
-                      className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[90px] text-slate-800 dark:text-white text-sm resize-none transition-colors"
+                      placeholder="Enter discussion remarks, updates, or next stepsâ€¦"
+                      className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 dark:focus:border-primary-400 min-h-[90px] text-slate-800 dark:text-white text-sm resize-none transition-colors"
                     />
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Next Follow-up Date</label>
                         <input type="date" value={nextDate} onChange={e => setNextDate(e.target.value)}
-                          className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-indigo-500" />
+                          className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-primary-500" />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Update Status</label>
-                        <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-indigo-500">
+                        <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-primary-500">
                           <option value="rejected">Rejected</option>
                           <option value="pending">Pending</option>
                           <option value="approved">Approved</option>
@@ -1425,11 +1425,11 @@ export default function LeadDetails() {
 
                     {/* Financer Lead Number Requirement Gate */}
                     {lead.financer_id && !lead.financer_lead_number && (
-                      <div className="p-4 bg-indigo-50/50 dark:bg-indigo-500/5 rounded-xl border border-indigo-200 dark:border-indigo-500/20">
-                        <label className="block text-xs font-bold text-indigo-700 dark:text-indigo-400 mb-1.5 uppercase tracking-wide">
+                      <div className="p-4 bg-primary-50/50 dark:bg-primary-500/5 rounded-xl border border-primary-200 dark:border-primary-500/20">
+                        <label className="block text-xs font-bold text-primary-700 dark:text-primary-400 mb-1.5 uppercase tracking-wide">
                           Financer Application No. (Required)
                         </label>
-                        <p className="text-xs text-indigo-600/70 dark:text-indigo-300/70 mb-3">
+                        <p className="text-xs text-primary-600/70 dark:text-primary-300/70 mb-3">
                           This lead is assigned to a bank. Please enter the Bank's Application/Lead Number to proceed with follow-ups.
                         </p>
                         <input 
@@ -1438,7 +1438,7 @@ export default function LeadDetails() {
                           value={financerLeadNo} 
                           onChange={e => setFinancerLeadNo(e.target.value)}
                           placeholder="e.g. APP-12345"
-                          className="w-full p-3 bg-white dark:bg-[#111827] border-2 border-indigo-200 dark:border-indigo-800/60 rounded-lg outline-none focus:border-indigo-500 text-sm shadow-sm font-mono"
+                          className="w-full p-3 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-lg outline-none focus:border-primary-500 text-sm shadow-sm font-mono"
                         />
                       </div>
                     )}
@@ -1454,7 +1454,7 @@ export default function LeadDetails() {
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Final Loan Amount *</label>
-                              <input required type="number" min="1" value={disburseFinalAmount} onChange={e => setDisburseFinalAmount(e.target.value)} className="w-full text-xs font-mono" placeholder="₹ Amount" />
+                              <input required type="number" min="1" value={disburseFinalAmount} onChange={e => setDisburseFinalAmount(e.target.value)} className="w-full text-xs font-mono" placeholder="â‚¹ Amount" />
                             </div>
                             <div>
                               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Tenure (Months) *</label>
@@ -1510,7 +1510,7 @@ export default function LeadDetails() {
                                       <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                                       <div>
                                         <p className="text-xs font-bold text-emerald-900 dark:text-emerald-300 truncate">{doc.label}</p>
-                                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 capitalize">✓ Ready ({existingDoc.verification_status})</p>
+                                        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 capitalize">âœ“ Ready ({existingDoc.verification_status})</p>
                                       </div>
                                     </div>
                                     <a href={getDocUrl(existingDoc.file_path)} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 bg-white/80 dark:bg-slate-900/80 px-2 py-1 rounded border border-emerald-300/50 dark:border-emerald-800">View</a>
@@ -1558,10 +1558,10 @@ export default function LeadDetails() {
                         'px-6 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-all cursor-pointer',
                         newStatus === 'disbursed'
                           ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-teal-500/25'
-                          : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/25'
+                          : 'bg-primary-600 hover:bg-primary-700 text-white shadow-primary-500/25'
                       )}
                     >
-                      {newStatus === 'disbursed' ? '🎉 Mark as Disbursed' : 'Post Follow-up'}
+                      {newStatus === 'disbursed' ? 'ðŸŽ‰ Mark as Disbursed' : 'Post Follow-up'}
                     </button>
                   </form>
                 </div>
@@ -1578,21 +1578,21 @@ export default function LeadDetails() {
                     <div className="absolute left-[19px] top-0 bottom-0 w-0.5 bg-slate-100 dark:bg-slate-800" />
                     <div className="space-y-4">
                       {followups.map((f: any, idx: number) => {
-                        const dotColor = f.status_changed_to ? (followupDotColor[f.status_changed_to] ?? 'bg-indigo-500') : 'bg-slate-300 dark:bg-slate-600';
+                        const dotColor = f.status_changed_to ? (followupDotColor[f.status_changed_to] ?? 'bg-primary-500') : 'bg-slate-300 dark:bg-slate-600';
                         return (
                           <div key={f.id} className="relative flex gap-4">
                             {/* Dot */}
                             <div className="relative z-10 mt-1 shrink-0">
-                              <div className={clsx('w-10 h-10 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-sm', idx === 0 && 'ring-2 ring-offset-1 ring-indigo-500/20')}>
+                              <div className={clsx('w-10 h-10 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-sm', idx === 0 && 'ring-2 ring-offset-1 ring-primary-500/20')}>
                                 <div className={clsx('w-3 h-3 rounded-full', dotColor)} />
                               </div>
                             </div>
                             {/* Content */}
                             <div className="flex-1 min-w-0 pb-4">
-                              <div className="card p-3.5 hover:border-indigo-200 dark:hover:border-indigo-500/30 transition-colors">
+                              <div className="card p-3.5 hover:border-primary-200 dark:hover:border-primary-500/30 transition-colors">
                                 <div className="flex items-start justify-between gap-2 mb-2">
                                   <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-[10px] font-bold text-indigo-600 dark:text-indigo-400">
+                                    <div className="w-6 h-6 rounded-md bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center text-[10px] font-bold text-primary-600 dark:text-primary-400">
                                       {getInitials(f.creator_name || 'S')}
                                     </div>
                                     <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{f.creator_name || 'System'}</span>
@@ -1606,7 +1606,7 @@ export default function LeadDetails() {
                                       getStatusConfig(f.status_changed_to).sbClass
                                     )}>
                                       <TrendingUp className="w-2.5 h-2.5" />
-                                      → {f.status_changed_to === 'reassign' ? 'Re-assigned' : f.status_changed_to}
+                                      â†’ {f.status_changed_to === 'reassign' ? 'Re-assigned' : f.status_changed_to}
                                     </span>
                                   ) : <span />}
                                   {f.next_followup_date && (
@@ -1630,7 +1630,7 @@ export default function LeadDetails() {
             </div>
           )}
 
-          {/* ─────────────── DOCUMENTS TAB ─────────────── */}
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DOCUMENTS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {activeTab === 'documents' && (
             <div className="animate-fade-in">
               <PragmaticLeadDocuments
@@ -1643,7 +1643,7 @@ export default function LeadDetails() {
               />
             </div>
           )}
-          {/* ─────────────── AUDIT LOGS TAB ─────────────── */}
+          {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AUDIT LOGS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {activeTab === 'logs' && (
             <div className="card p-5 animate-fade-in">
               <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-5 flex items-center gap-2">
@@ -1655,7 +1655,7 @@ export default function LeadDetails() {
                   const actionLower = (l.action || '').toLowerCase();
                   const actionColor =
                     actionLower.includes('create') || actionLower.includes('add') || actionLower.includes('upload')
-                      ? 'text-blue-600 dark:text-blue-400'
+                      ? 'text-primary-600 dark:text-primary-400'
                       : actionLower.includes('verify') || actionLower.includes('approve') || actionLower.includes('disburse')
                         ? 'text-emerald-600 dark:text-emerald-400'
                         : actionLower.includes('reject') || actionLower.includes('delete') || actionLower.includes('remov')
@@ -1692,9 +1692,9 @@ export default function LeadDetails() {
           )}
         </div>
 
-        {/* ══════════════════════════════════════════════════════════
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
             RIGHT RAIL
-        ══════════════════════════════════════════════════════════ */}
+        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         <div className="no-print space-y-4 lg:sticky lg:top-6">
 
           {/* Quick Stats */}
@@ -1706,7 +1706,7 @@ export default function LeadDetails() {
             <div className="flex justify-between items-center">
               <span className="text-xs text-slate-400">Loan Amount</span>
               <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                {lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : '—'}
+                {lead.loan_amount ? `â‚¹${Number(lead.loan_amount).toLocaleString('en-IN')}` : 'â€”'}
               </span>
             </div>
 
@@ -1716,14 +1716,14 @@ export default function LeadDetails() {
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Commission Split</p>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-400">Agent (90%)</span>
-                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                    ₹{(Number(lead.loan_amount) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                  <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
+                    â‚¹{(Number(lead.loan_amount) * 0.009).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-400">Organization (10%)</span>
                   <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                    ₹{(Number(lead.loan_amount) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                    â‚¹{(Number(lead.loan_amount) * 0.001).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
               </>
@@ -1772,7 +1772,7 @@ export default function LeadDetails() {
                       <div className={clsx(
                         'w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs transition-all',
                         isPassed ? 'bg-emerald-500 text-white' :
-                        isCurrent && !isTerminal ? 'bg-indigo-600 text-white ring-2 ring-indigo-500/20' :
+                        isCurrent && !isTerminal ? 'bg-primary-600 text-white ring-2 ring-primary-500/20' :
                         'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
                       )}>
                         {isPassed ? <CheckCircle className="w-3.5 h-3.5" /> : <Icon className="w-3 h-3" />}
@@ -1785,7 +1785,7 @@ export default function LeadDetails() {
                     <div className="pt-1 pb-4">
                       <p className={clsx('text-xs font-semibold capitalize',
                         isPassed ? 'text-emerald-600 dark:text-emerald-400' :
-                        isCurrent && !isTerminal ? 'text-indigo-600 dark:text-indigo-400' :
+                        isCurrent && !isTerminal ? 'text-primary-600 dark:text-primary-400' :
                         'text-slate-400 dark:text-slate-500'
                       )}>{meta.label}</p>
                       <p className="text-[10px] text-slate-400 dark:text-slate-600">{meta.sub}</p>
@@ -1816,7 +1816,7 @@ export default function LeadDetails() {
               {lead.status !== 'disbursed' && (
                 <button
                   onClick={() => { handleTabChange('followups'); }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-500/20"
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-primary-600 hover:bg-primary-700 text-white shadow-sm shadow-primary-500/20"
                 >
                   <MessageCircle className="w-4 h-4" /> Log Follow-up
                 </button>
@@ -1824,7 +1824,7 @@ export default function LeadDetails() {
               {lead.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') && (
                 <button
                   onClick={() => setSearchParams({ tab: 'assignment' })}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400"
                 >
                   <Building className="w-4 h-4" />
                   {lead.executive_name ? 'Re-assign Lead' : 'Assign Lead'}
@@ -1854,7 +1854,7 @@ export default function LeadDetails() {
 
 
 
-      {/* ── Modals (unchanged) ── */}
+      {/* â”€â”€ Modals (unchanged) â”€â”€ */}
       <NewLeadModal
         isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}
         initialData={data?.lead}
@@ -1871,7 +1871,7 @@ export default function LeadDetails() {
           <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Plus className="w-4 h-4 text-indigo-600" />
+                <Plus className="w-4 h-4 text-primary-600" />
                 Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
               </h3>
               <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
@@ -1881,17 +1881,17 @@ export default function LeadDetails() {
             <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
               <div>
                 <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
-                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 dark:text-white transition-all" />
+                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs text-slate-800 dark:text-white transition-all" />
               </div>
               {quickAddType === 'executive' && (
                 <div>
                   <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
-                  <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+                  <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
                 </div>
               )}
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
-                <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-indigo-500/20">
+                <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-primary-500/20">
                   {quickAddLoading ? 'Saving...' : 'Save & Select'}
                 </button>
               </div>
