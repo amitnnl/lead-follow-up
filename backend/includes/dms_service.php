@@ -260,7 +260,15 @@ function dms_generate_signed_bundle_url($lead_id, $expires_in_seconds = 604800) 
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     
     $basePath = defined('BASE_URL') ? rtrim(BASE_URL, '/') : "/lead-follow-up/backend";
-    $absoluteBase = (strpos($basePath, 'http') === 0) ? $basePath : "{$scheme}://{$host}{$basePath}";
+    
+    if (empty($basePath)) {
+        $absoluteBase = "{$scheme}://{$host}";
+    } elseif (strpos($basePath, 'http') === 0) {
+        $absoluteBase = $basePath;
+    } else {
+        if (strpos($basePath, '/') !== 0) $basePath = '/' . $basePath;
+        $absoluteBase = "{$scheme}://{$host}{$basePath}";
+    }
     
     return "{$absoluteBase}/api/dms.php?action=download_bundle&lead_id={$lead_id}&expires={$expires}&token={$token}";
 }
