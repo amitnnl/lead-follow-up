@@ -11,7 +11,6 @@ import Dashboard from './pages/Dashboard';
 import LandingPage from './pages/LandingPage';
 import Leads from './pages/Leads';
 import LeadDetails from './pages/LeadDetails';
-import Commissions from './pages/Commissions';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Financers from './pages/Financers';
@@ -20,10 +19,14 @@ import Dealers from './pages/Dealers';
 import ChannelExecutives from './pages/ChannelExecutives';
 import Users from './pages/Users';
 import SystemAudit from './pages/SystemAudit';
-import Banking from './pages/Banking';
-import Ledger from './pages/Ledger';
 import Followups from './pages/Followups';
 import IrrCalculator from './pages/IrrCalculator';
+import FinanceDashboard from './pages/finance-dashboard/FinanceDashboard';
+import BankingTab from './pages/finance-dashboard/BankingTab';
+import PayoutTab from './pages/finance-dashboard/PayoutTab';
+import LedgerTab from './pages/finance-dashboard/LedgerTab';
+import OfficeExpensesTab from './pages/finance-dashboard/OfficeExpensesTab';
+import CustomerSettlementTab from './pages/finance-dashboard/CustomerSettlementTab';
 const RouteLoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
     <div className="relative flex items-center justify-center">
@@ -92,10 +95,15 @@ function App() {
           <Route path="channel-executives" element={<ChannelExecutives />} />
           
           {/* Finance Module */}
-          <Route path="banking" element={<Banking />} />
-          <Route path="ledger" element={<Ledger />} />
-          <Route path="commissions" element={<Commissions />} />
           <Route path="calculator" element={<IrrCalculator />} />
+          <Route path="finance" element={<FinanceDashboard />}>
+            <Route path="banking" element={<BankingTab />} />
+            <Route path="payout" element={<PayoutTab />} />
+            <Route path="ledger" element={<LedgerTab />} />
+            <Route path="settlement" element={<CustomerSettlementTab />} />
+            <Route path="expenses" element={<OfficeExpensesTab />} />
+            <Route index element={<Navigate to="banking" replace />} />
+          </Route>
           
           {/* System Module */}
           <Route path="reports" element={<Reports />} />

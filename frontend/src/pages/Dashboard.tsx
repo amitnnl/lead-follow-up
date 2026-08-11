@@ -1,28 +1,17 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  AlertCircle,
-  Phone,
-  MessageCircle,
-  RefreshCw,
-  Plus,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Layers,
-  ArrowRight,
-  Sparkles,
-  Building,
-  UserCheck,
-  Trophy,
-  ChevronDown,
-  ChevronUp
+  AlertCircle, Phone, MessageCircle, RefreshCw, Plus,
+  TrendingUp, Clock, CheckCircle, XCircle, Layers, ArrowRight,
+  Sparkles, Building, UserCheck, Trophy, ChevronDown, ChevronUp
 } from 'lucide-react';
 import api from '../lib/axios';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import NewLeadModal from '../components/NewLeadModal';
 import clsx from 'clsx';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import Button from '../components/ui/Button';
 
 interface DashboardStats {
   kpis: {
@@ -70,26 +59,10 @@ interface DashboardStats {
   };
 }
 
-const STATUS_DOT: Record<string, string> = {
-  new: 'bg-primary-500', pending: 'bg-amber-500', approved: 'bg-emerald-500',
-  disbursed: 'bg-teal-500', on_hold: 'bg-purple-500', rejected: 'bg-rose-500',
-};
 const STATUS_LABEL: Record<string, string> = {
   new: 'New', pending: 'Pending', approved: 'Approved',
   disbursed: 'Disbursed', on_hold: 'On Hold', rejected: 'Rejected',
 };
-
-function StatusPill({ status }: { status: string }) {
-  const dot = STATUS_DOT[status] || 'bg-slate-400';
-  const label = STATUS_LABEL[status] || status.replace('_', ' ');
-  const sbClass = `sb-${status}`;
-  return (
-    <span className={clsx('inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border', sbClass || 'sb-default')}>
-      <span className={clsx('w-1.5 h-1.5 rounded-full', dot)} />
-      {label}
-    </span>
-  );
-}
 
 const formatCurrency = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 const formatCompact = (n: number) => {
@@ -146,12 +119,15 @@ function KPICard({
   sparklineData?: number[];
 }) {
   const content = (
-    <div className="card border p-4.5 rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-[134px] relative overflow-hidden group animate-in zoom-in-95 duration-500"
+    <Card 
+      hoverable 
+      className="p-4.5 flex flex-col justify-between h-[134px] group"
       style={{ 
         borderColor: `${color}40`, 
         boxShadow: `0 8px 24px -10px ${color}50`,
         background: `linear-gradient(145deg, rgba(255,255,255,1) 0%, ${color}08 100%)`
-      }}>
+      }}
+    >
       <div className="relative flex items-start justify-between gap-1 z-10">
         <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate pr-2">
           {label}
@@ -181,11 +157,11 @@ function KPICard({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 
   return link ? (
-    <Link to={link} className="block transition-transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2 dark:focus:ring-offset-slate-900 rounded-xl">
+    <Link to={link} className="block focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2 dark:focus:ring-offset-slate-900 rounded-xl">
       {content}
     </Link>
   ) : (
@@ -234,71 +210,16 @@ export default function Dashboard() {
 
   if (!stats) return null;
 
-  // Derived data (computed inline, no useMemo needed for these simple calculations)
   const disbursementTrend = stats.chartData?.monthlyDisbursements?.map(d => d.amount) || [];
   const leadTrend = stats.chartData?.monthlyDisbursements?.map(d => d.count) || [];
 
   const kpiCards = [
-    { 
-      label: 'Total Leads', 
-      value: stats.kpis.total, 
-      icon: Layers, 
-      color: '#4f46e5', 
-      trend: 12, 
-      trendLabel: 'vs last month',
-      link: '/leads?assigned=all',
-      sparklineData: leadTrend.slice(-6)
-    },
-    { 
-      label: 'Pending', 
-      value: stats.kpis.pending, 
-      icon: Clock, 
-      color: '#f59e0b', 
-      trend: -5, 
-      trendLabel: 'vs last month',
-      link: '/leads?status=pending',
-      sparklineData: [3, 5, 2, 6, 4, stats.kpis.pending]
-    },
-    { 
-      label: 'Approved', 
-      value: stats.kpis.approved, 
-      icon: CheckCircle, 
-      color: '#3b82f6', 
-      trend: 8, 
-      trendLabel: 'vs last month',
-      link: '/leads?status=approved',
-      sparklineData: [2, 4, 3, 5, 4, stats.kpis.approved]
-    },
-    { 
-      label: 'Disbursed', 
-      value: stats.kpis.disbursed, 
-      icon: TrendingUp, 
-      color: '#10b981', 
-      trend: 15, 
-      trendLabel: 'vs last month',
-      link: '/leads?status=disbursed',
-      sparklineData: disbursementTrend.slice(-6)
-    },
-    { 
-      label: 'Rejected', 
-      value: stats.kpis.rejected, 
-      icon: XCircle, 
-      color: '#f43f5e', 
-      trend: -3, 
-      trendLabel: 'vs last month',
-      link: '/leads?status=rejected',
-      sparklineData: [1, 2, 1, 0, 1, stats.kpis.rejected]
-    },
-    { 
-      label: 'Conversion', 
-      value: `${stats.kpis.conversionRate}%`, 
-      icon: Sparkles, 
-      color: '#8b5cf6', 
-      trend: 2.5, 
-      trendLabel: 'improvement',
-      link: '#',
-      sparklineData: [12, 15, 18, 22, 20, stats.kpis.conversionRate]
-    },
+    { label: 'Total Leads', value: stats.kpis.total, icon: Layers, color: '#4f46e5', trend: 12, trendLabel: 'vs last month', link: '/leads?assigned=all', sparklineData: leadTrend.slice(-6) },
+    { label: 'Pending', value: stats.kpis.pending, icon: Clock, color: '#f59e0b', trend: -5, trendLabel: 'vs last month', link: '/leads?status=pending', sparklineData: [3, 5, 2, 6, 4, stats.kpis.pending] },
+    { label: 'Approved', value: stats.kpis.approved, icon: CheckCircle, color: '#3b82f6', trend: 8, trendLabel: 'vs last month', link: '/leads?status=approved', sparklineData: [2, 4, 3, 5, 4, stats.kpis.approved] },
+    { label: 'Disbursed', value: stats.kpis.disbursed, icon: TrendingUp, color: '#10b981', trend: 15, trendLabel: 'vs last month', link: '/leads?status=disbursed', sparklineData: disbursementTrend.slice(-6) },
+    { label: 'Rejected', value: stats.kpis.rejected, icon: XCircle, color: '#f43f5e', trend: -3, trendLabel: 'vs last month', link: '/leads?status=rejected', sparklineData: [1, 2, 1, 0, 1, stats.kpis.rejected] },
+    { label: 'Conversion', value: `${stats.kpis.conversionRate}%`, icon: Sparkles, color: '#8b5cf6', trend: 2.5, trendLabel: 'improvement', link: '#', sparklineData: [12, 15, 18, 22, 20, stats.kpis.conversionRate] },
   ];
 
   return (
@@ -315,22 +236,20 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <button 
+          <Button 
+            variant="secondary"
             onClick={fetchStats}
             disabled={refreshing}
-            className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 cursor-pointer transition-all hover:border-primary-300 dark:hover:border-primary-700"
             title="Refresh statistics"
+            className="p-2.5 h-10 w-10"
           >
             <RefreshCw className={clsx('w-4 h-4', refreshing && 'animate-spin text-primary-500')} />
-          </button>
+          </Button>
 
           {!isExecutive && (
-            <button 
-              onClick={() => setIsNewLeadModalOpen(true)}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-primary-500/25 flex items-center gap-1.5 cursor-pointer hover:shadow-md hover:shadow-primary-500/30"
-            >
+            <Button onClick={() => setIsNewLeadModalOpen(true)}>
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> New Lead
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -345,7 +264,7 @@ export default function Dashboard() {
       {/* ── Action Banners ── */}
       <div className="space-y-4">
         {stats.kpis.eligibleRetentions > 0 && isAdminOrManager && (
-          <div className="card p-4 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
+          <Card className="p-4 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-600 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-500/20">
               <AlertCircle className="w-5 h-5" />
             </div>
@@ -360,11 +279,11 @@ export default function Dashboard() {
             <Link to="/commissions" className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer shadow-sm">
               Process <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-          </div>
+          </Card>
         )}
 
         {stats.dsaTiering && (
-          <div className="card p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-amber-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-sm transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-slide-up">
+          <Card className="p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-amber-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-sm transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-slide-up">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20 shrink-0">
                 <Sparkles className="w-6 h-6 animate-pulse" />
@@ -385,7 +304,7 @@ export default function Dashboard() {
                       <strong className="text-amber-600 dark:text-amber-400 font-bold">{((stats.dsaTiering.multiplier * 100 - 100).toFixed(0))}% Bonus Payouts</strong>!
                     </>
                   ) : (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">ðŸŽ‰ Congratulations! You have achieved the highest Platinum Partner Tier!</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">Congratulations! You have achieved the highest Platinum Partner Tier!</span>
                   )}
                 </p>
               </div>
@@ -404,7 +323,7 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         )}
       </div>
 
@@ -413,7 +332,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 animate-fade-in" style={{ animationDelay: '150ms' }}>
         
         {/* Recent Leads Table */}
-        <div className="lg:col-span-2 card overflow-hidden flex flex-col">
+        <Card className="lg:col-span-2 flex flex-col p-0">
           <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/10">
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500" />
@@ -425,7 +344,7 @@ export default function Dashboard() {
           </div>
 
           <div className="overflow-x-auto flex-1">
-            <table className="w-full text-sm text-left">
+            <table className="w-full text-sm text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase tracking-wider">
                   <th className="px-4 py-3">Lead ID</th>
@@ -484,7 +403,7 @@ export default function Dashboard() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <StatusPill status={lead.status} />
+                      <Badge status={lead.status}>{STATUS_LABEL[lead.status] || lead.status}</Badge>
                     </td>
                   </tr>
                 ))}
@@ -496,13 +415,13 @@ export default function Dashboard() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
 
         {/* Right Sidebar */}
         <div className="space-y-5">
           
           {/* Due Follow-ups */}
-          <div className="card overflow-hidden flex flex-col">
+          <Card className="flex flex-col p-0">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/10">
               <div className="flex items-center gap-2">
                 {stats.dueFollowups.length > 0 && <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />}
@@ -516,7 +435,7 @@ export default function Dashboard() {
 
             <div className="divide-y divide-slate-50 dark:divide-slate-800/60 max-h-[380px] overflow-y-auto">
               {stats.dueFollowups.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-xs italic">No overdue follow-ups ðŸŽ‰</div>
+                <div className="p-8 text-center text-slate-400 text-xs italic">No overdue follow-ups</div>
               ) : (
                 stats.dueFollowups.map((f, i) => (
                   <div key={i} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors border-b border-slate-100/50 dark:border-slate-800/50 last:border-0">
@@ -556,13 +475,12 @@ export default function Dashboard() {
                 ))
               )}
             </div>
-          </div>
+          </Card>
 
           {isAdminOrManager && (
             <>
-
               {/* Top Executives */}
-              <div className="card p-5 flex flex-col gap-4">
+              <Card className="p-5 flex flex-col gap-4">
                 <div className="flex items-center gap-1.5">
                   <UserCheck className="w-4 h-4 text-primary-500" />
                   <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Top Executives</h3>
@@ -586,10 +504,10 @@ export default function Dashboard() {
                     );
                   })}
                 </div>
-              </div>
+              </Card>
 
               {/* Top Financers */}
-              <div className="card p-5 flex flex-col gap-4">
+              <Card className="p-5 flex flex-col gap-4">
                 <div className="flex items-center gap-1.5">
                   <Building className="w-4 h-4 text-emerald-500" />
                   <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Top Financers</h3>
@@ -613,18 +531,18 @@ export default function Dashboard() {
                     );
                   })}
                 </div>
-              </div>
+              </Card>
 
               {/* Top DSA Partners Leaderboard */}
               {stats.topAgents && stats.topAgents.length > 0 && (
-                <div className="card p-5 flex flex-col gap-4 border-t-2 border-t-amber-500">
+                <Card className="p-5 flex flex-col gap-4 border-t-2 border-t-amber-500">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <Trophy className="w-4 h-4 text-amber-500" />
                       <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">DSA Leaderboard</h3>
                     </div>
                     <span className="text-[10px] bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 font-extrabold px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/20">
-                      ðŸ† Monthly Top
+                      Monthly Top
                     </span>
                   </div>
                   <div className="space-y-4">
@@ -636,7 +554,6 @@ export default function Dashboard() {
                         <div key={i} className="space-y-1.5">
                           <div className="flex justify-between items-center text-xs font-semibold">
                             <span className="text-slate-700 dark:text-slate-300 truncate pr-2 flex items-center gap-1">
-                              {isTop && <span title="#1 Performer" className="text-amber-500">ðŸ‘‘</span>}
                               <span>{ag.name}</span>
                             </span>
                             <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold shrink-0">
@@ -653,7 +570,7 @@ export default function Dashboard() {
                       );
                     })}
                   </div>
-                </div>
+                </Card>
               )}
             </>
           )}

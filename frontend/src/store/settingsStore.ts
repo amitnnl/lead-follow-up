@@ -54,8 +54,8 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     slide3_description: 'Transfer your high-interest auto loan to our network banks and unlock additional liquidity with top-up features.',
     slide3_badge: 'Refinancing',
     slide4_title: 'Join as a Partner DSA',
-    slide4_description: 'Earn up to 1.5% payout with a standard 90/10 agent split model. Complete Maker-Checker transparency.',
-    slide4_badge: 'Earn Commissions'
+    slide4_description: 'Accelerate lead disbursals with our standard 90/10 agent split model. Complete Maker-Checker transparency.',
+    slide4_badge: 'Lead Network'
   },
   loading: true,
   fetchSettings: async () => {

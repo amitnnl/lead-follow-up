@@ -6,13 +6,16 @@ import {
   Clock, CheckCircle, XCircle, Building,
   Edit, Trash2, Printer, RefreshCw, ShieldAlert,
   User, ChevronRight, AlertTriangle, TrendingUp, Download, Calendar, Banknote,
-  Shield, Info, CircleDot, BadgeCheck, List, Users, Plus, X, Mail, BellOff
+  Shield, Info, CircleDot, BadgeCheck, List, Users, Plus, X, Mail, BellOff, ChevronDown, Share2
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
 import NewLeadModal from '../components/NewLeadModal';
 import AssignmentModal from '../components/AssignmentModal';
+import ShareDocumentsModal from '../components/ShareDocumentsModal';
 import PragmaticLeadDocuments from '../components/documents/PragmaticLeadDocuments';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
 import clsx from 'clsx';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -32,15 +35,12 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 function StatusBadge({ status, size = 'md' }: { status: string; size?: 'sm' | 'md' | 'lg' }) {
-  const sbClass = `sb-${status.replace('_hold', '_hold')}`;
   const sizeClasses = size === 'sm' ? 'text-[10px] px-2 py-0.5' : size === 'lg' ? 'text-sm px-3.5 py-1.5' : 'text-xs px-2.5 py-1';
-  const dot = STATUS_DOT[status] || 'bg-slate-400';
   const label = STATUS_LABEL[status] || status.replace('_', ' ');
   return (
-    <span className={clsx('inline-flex items-center gap-1.5 font-semibold rounded-full border', sbClass || 'sb-default', sizeClasses)}>
-      <span className={clsx('w-1.5 h-1.5 rounded-full flex-shrink-0', dot)} />
+    <Badge status={status} className={sizeClasses}>
       {label}
-    </span>
+    </Badge>
   );
 }
 
@@ -96,9 +96,14 @@ export default function LeadDetails() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isShareDocumentsModalOpen, setIsShareDocumentsModalOpen] = useState(false);
+  const [isCibilModalOpen, setIsCibilModalOpen] = useState(false);
+  const [cibilForm, setCibilForm] = useState({ pan: '', aadhaar: '', dob: '', consent: false });
   const [showWhatsAppTemplates, setShowWhatsAppTemplates] = useState(false);
+  const [fetchingCibil, setFetchingCibil] = useState(false);
+  const [cibilError, setCibilError] = useState('');
 
   // Assignment form state
   const [financers, setFinancers] = useState<any[]>([]);
@@ -111,6 +116,7 @@ export default function LeadDetails() {
   const [assignSaving, setAssignSaving] = useState(false);
   const [assignError, setAssignError] = useState('');
   const [assignSuccess, setAssignSuccess] = useState(false);
+  const [assignWhatsappUrls, setAssignWhatsappUrls] = useState<{name: string, url: string}[]>([]);
 
   const [notifyExecMethod, setNotifyExecMethod] = useState<'whatsapp' | 'email' | 'none'>('whatsapp');
   const [execMobile, setExecMobile] = useState('');
@@ -144,6 +150,49 @@ export default function LeadDetails() {
   const [quickAddName, setQuickAddName] = useState('');
   const [quickAddMobile, setQuickAddMobile] = useState('');
   const [quickAddLoading, setQuickAddLoading] = useState(false);
+
+  const handleOpenCibilModal = () => {
+    setCibilForm({ 
+      pan: data?.lead?.customer_pan || '', 
+      aadhaar: data?.lead?.customer_aadhaar || '',
+      dob: data?.lead?.customer_dob || '', 
+      consent: false 
+    });
+    setIsCibilModalOpen(true);
+  };
+
+  const handleFetchCibil = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!data?.lead?.id) return;
+    
+    if (!cibilForm.consent) {
+      alert("Explicit customer consent is legally mandated before fetching a CIBIL score.");
+      return;
+    }
+
+    setIsCibilModalOpen(false);
+    setFetchingCibil(true);
+    setCibilError('');
+    try {
+      const res = await api.post('/cibil.php?action=fetch', {
+        lead_id: data.lead.id,
+        pan_number: cibilForm.pan,
+        aadhaar_number: cibilForm.aadhaar,
+        dob: cibilForm.dob,
+        consent_acquired: cibilForm.consent
+      });
+      if (res.data?.success) {
+        // Refresh lead details
+        const refresh = await api.get(`/leads/detail?id=${id}`);
+        setData(refresh.data);
+        alert(`CIBIL Score Fetched: ${res.data.data.score}`);
+      }
+    } catch (err: any) {
+      setCibilError(err.response?.data?.error || 'Failed to fetch CIBIL score');
+    } finally {
+      setFetchingCibil(false);
+    }
+  };
 
   const handleQuickAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -295,6 +344,7 @@ export default function LeadDetails() {
     setAssignSaving(true);
     setAssignError('');
     setAssignSuccess(false);
+    setAssignWhatsappUrls([]);
     try {
       const res = await api.put('/leads?action=assign', {
         id: data?.lead?.id,
@@ -303,17 +353,21 @@ export default function LeadDetails() {
         executive_id: assignForm.executive_id ? parseInt(assignForm.executive_id) : null,
       });
 
-      const { assigned_executive, assigned_financer } = res.data || {};
+      const { assigned_executive, assigned_financer, document_bundle_url } = res.data || {};
       const leadIdStr = data?.lead?.id?.toString() || '';
+      const docLinkText = document_bundle_url ? `\n\nDownload Documents: ${document_bundle_url}` : '';
+
+      let pendingUrls: {name: string, url: string}[] = [];
+      const cleanMobile = (m: string) => { const num = m.replace(/\D/g, ''); return num.length === 10 ? '91' + num : num; };
 
       if (assignForm.executive_id && assigned_executive && notifyExecMethod !== 'none') {
         const personName = assigned_executive.name;
         if (notifyExecMethod === 'whatsapp' && execMobile) {
-          const text = `Hi ${personName}, a new lead (ID-${leadIdStr}) has been assigned to you. Please log in to your dashboard to view the details.`;
-          window.open(`https://wa.me/91${execMobile}?text=${encodeURIComponent(text)}`, '_blank');
+          const text = `Hi ${personName}, a new lead (ID-${leadIdStr}) has been assigned to you. Please log in to your dashboard to view the details.${docLinkText}`;
+          pendingUrls.push({ name: `WhatsApp ${personName} (Executive)`, url: `https://wa.me/${cleanMobile(execMobile)}?text=${encodeURIComponent(text)}` });
         } else if (notifyExecMethod === 'email' && execEmail) {
           const subject = `New Lead Assigned (ID-${leadIdStr})`;
-          const body = `Hi ${personName},\n\nA new lead (ID-${leadIdStr}) has been assigned to you. Please log in to your dashboard to view the details.\n\nThanks,\nAdministrative Team`;
+          const body = `Hi ${personName},\n\nA new lead (ID-${leadIdStr}) has been assigned to you. Please log in to your dashboard to view the details.${docLinkText}\n\nThanks,\nAdministrative Team`;
           window.open(`mailto:${execEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
         }
       }
@@ -321,18 +375,22 @@ export default function LeadDetails() {
       if (assignForm.financer_id && assigned_financer && notifyFinMethod !== 'none') {
         const personName = assigned_financer.name;
         if (notifyFinMethod === 'whatsapp' && finMobile) {
-          const text = `Hi ${personName}, a new lead (ID-${leadIdStr}) has been assigned to your bank. Please log in to your dashboard to view the details.`;
-          window.open(`https://wa.me/91${finMobile}?text=${encodeURIComponent(text)}`, '_blank');
+          const text = `Hi ${personName}, a new lead (ID-${leadIdStr}) has been assigned to your bank. Please log in to your dashboard to view the details.${docLinkText}`;
+          pendingUrls.push({ name: `WhatsApp ${personName} (Financer)`, url: `https://wa.me/${cleanMobile(finMobile)}?text=${encodeURIComponent(text)}` });
         } else if (notifyFinMethod === 'email' && finEmail) {
           const subject = `New Lead Assigned (ID-${leadIdStr})`;
-          const body = `Hi ${personName},\n\nA new lead (ID-${leadIdStr}) has been assigned to your bank. Please log in to your dashboard to view the details.\n\nThanks,\nAdministrative Team`;
+          const body = `Hi ${personName},\n\nA new lead (ID-${leadIdStr}) has been assigned to your bank. Please log in to your dashboard to view the details.${docLinkText}\n\nThanks,\nAdministrative Team`;
           window.open(`mailto:${finEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
         }
       }
 
+      setAssignWhatsappUrls(pendingUrls);
+      if (pendingUrls.length > 0) {
+        pendingUrls.forEach(item => window.open(item.url, '_blank'));
+      }
+
       setAssignSuccess(true);
       fetchLeadDetails();
-      handleTabChange('overview');
     } catch (err: any) {
       setAssignError(err.response?.data?.error || 'Failed to update assignment');
     } finally {
@@ -647,7 +705,7 @@ export default function LeadDetails() {
 
         {/* Eco-Friendly Warning */}
         <div className="mt-8 flex justify-between items-center text-[9px] text-slate-500 font-mono uppercase tracking-wide border-t border-slate-200 pt-2">
-          <span>♻️ Eco-Print Layout (Fits exactly on one A4 page to save ink & paper)</span>
+          <span>Eco-Print Layout (Fits exactly on one A4 page to save ink & paper)</span>
           <span>Sourced via: {lead.referred_by || 'Direct DSA'}</span>
         </div>
 
@@ -659,8 +717,6 @@ export default function LeadDetails() {
           <ArrowLeft className="w-4 h-4" /> Leads
         </button>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
-        {/* ════════════════════════════════════════════════════════════════════════
-      ════════════════════════════════════════════════════════════════════════ */}
         <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{lead.lead_id}</span>
         <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
         <span className="text-slate-700 dark:text-slate-200 font-medium truncate max-w-[200px]">{lead.customer_name}</span>
@@ -669,7 +725,7 @@ export default function LeadDetails() {
       {/* ════════════════════════════════════════════════════════════════════════
           HERO HEADER CARD
       ════════════════════════════════════════════════════════════════════════ */}
-      <div className="no-print bg-white dark:bg-[#111622] border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+      <Card className="no-print p-0 overflow-hidden">
         {/* Top gradient strip */}
         <div className="h-1.5 bg-gradient-to-r from-primary-600 via-primary-600 to-emerald-500" />
 
@@ -695,7 +751,7 @@ export default function LeadDetails() {
                       ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/30'
                       : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30'
                   )}>
-                    {lead.vehicle_condition === 'new' ? '✨ New Vehicle' : '🚗 Used Vehicle'}
+                    {lead.vehicle_condition === 'new' ? 'New Vehicle' : 'Used Vehicle'}
                   </span>
                   {lead.loan_type && (
                     <span className="text-[11px] font-semibold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
@@ -739,7 +795,7 @@ export default function LeadDetails() {
                         text: `Hi ${lead.customer_name}, please share or upload your Aadhaar Card, PAN Card, and Bank Statement so we can process your vehicle loan (${lead.lead_id}) for approval.`
                       },
                       {
-                        label: 'Loan Approved Alert 🥳',
+                        label: 'Loan Approved Alert',
                         text: `Hi ${lead.customer_name}, congratulations! Your vehicle loan application (${lead.lead_id}) has been approved. We are finalizing the disbursal.`
                       }
                     ].map((t, idx) => (
@@ -821,7 +877,7 @@ export default function LeadDetails() {
             </div>
           )}
         </div>
-      </div>
+      </Card>
 
       {/* ── Automated Sanction / Disbursal Certificate & WhatsApp Dispatch Card ── */}
       {(lead.status === 'approved' || lead.status === 'disbursed') && (
@@ -850,8 +906,8 @@ export default function LeadDetails() {
             <a
               href={`https://wa.me/91${lead.customer_mobile.replace(/\D/g, '')}?text=${encodeURIComponent(
                 lead.status === 'disbursed'
-                  ? `🥳 Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
-                  : `🥳 Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
+                  ? `Congratulations ${lead.customer_name}! Your vehicle loan (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been officially disbursed. Thank you for choosing us!`
+                  : `Great news ${lead.customer_name}! Your vehicle loan application (File: ${lead.lead_id}) for ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been APPROVED and sanctioned. Our team will contact you shortly for disbursal signatures.`
               )}`}
               target="_blank"
               rel="noreferrer"
@@ -1034,6 +1090,51 @@ export default function LeadDetails() {
                 </div>
               </div>
 
+              {/* Credit Profile (CIBIL) */}
+              <div className="card p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5" /> Credit Profile (CIBIL)
+                  </h3>
+                  {(user?.role === 'admin' || user?.role === 'staff' || user?.role === 'manager') && (
+                    <button 
+                      onClick={handleOpenCibilModal}
+                      disabled={fetchingCibil}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-500/30 hover:bg-primary-100 dark:hover:bg-primary-500/20 disabled:opacity-50"
+                    >
+                      {fetchingCibil ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                      {fetchingCibil ? 'Fetching...' : 'Fetch CIBIL Score'}
+                    </button>
+                  )}
+                </div>
+                
+                {cibilError && (
+                  <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded-lg flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" /> {cibilError}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4">
+                  <InfoRow label="PAN Number" value={lead.customer_pan} mono />
+                  <InfoRow label="Date of Birth" value={lead.customer_dob} />
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">CIBIL Score</span>
+                    {lead.cibil_score ? (
+                      <span className={clsx(
+                        "text-lg font-bold",
+                        lead.cibil_score >= 750 ? "text-emerald-600 dark:text-emerald-400" :
+                        lead.cibil_score >= 650 ? "text-amber-600 dark:text-amber-400" :
+                        "text-rose-600 dark:text-rose-400"
+                      )}>
+                        {lead.cibil_score}
+                      </span>
+                    ) : (
+                      <span className="text-[13px] font-semibold text-slate-400">Not Fetched</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Assignment & Sourcing */}
               <div className="card p-5">
                 <div className="flex items-center justify-between mb-4">
@@ -1186,7 +1287,18 @@ export default function LeadDetails() {
 
                   {assignSuccess && (
                     <div className="p-3.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-450 rounded-xl text-xs font-semibold">
-                      Assignment updated successfully!
+                      <span>Assignment updated successfully!</span>
+                      {assignWhatsappUrls.length > 0 && (
+                        <div className="flex flex-col gap-2 mt-1">
+                          <span className="text-[11px] opacity-80">If WhatsApp didn't open automatically, click below:</span>
+                          {assignWhatsappUrls.map((item, idx) => (
+                            <a key={idx} href={item.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#25D366] text-white rounded-lg w-max font-bold hover:bg-[#1da851] transition-colors shadow-sm">
+                              <MessageCircle className="w-3.5 h-3.5" />
+                              {item.name}
+                            </a>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1221,31 +1333,41 @@ export default function LeadDetails() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-6">
                       
-                      {/* Left Card: Financer */}
+                      {/* Row 1: Target Financer */}
                       <div className="relative p-6 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-900/50 border-2 border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:border-slate-200 dark:hover:border-slate-700 transition-all">
-                        <div className="absolute top-5 right-5">
-                          <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer" title="Quick Add Financer">
-                            <Plus className="w-4 h-4" />
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                              <Building className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                            </div>
+                            <div>
+                              <h4 className="text-base font-black text-slate-800 dark:text-white tracking-tight">1. Target Financer</h4>
+                              <p className="text-xs text-slate-500">Which bank or institution is funding this loan?</p>
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => { setQuickAddType('financer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-1 cursor-pointer bg-primary-50 px-3 py-1.5 rounded-lg">
+                            <Plus className="w-3 h-3" /> Quick Add
                           </button>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-                          <Building className="w-6 h-6 text-slate-500 dark:text-slate-400" />
-                        </div>
-                        <h4 className="text-lg font-black text-slate-800 dark:text-white tracking-tight mb-1">Target Financer</h4>
-                        <p className="text-xs text-slate-500 mb-6">Which bank or institution is funding this?</p>
                         
                         <div className="space-y-4">
-                          <select
-                            value={assignForm.financer_id}
-                            onChange={(e) => setAssignForm({ ...assignForm, financer_id: e.target.value, executive_id: '' })}
-                            className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-400/10 text-slate-800 dark:text-white shadow-sm appearance-none cursor-pointer"
-                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
-                          >
-                            <option value="">— Select Financer —</option>
-                            {financers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
-                          </select>
+                          <div className="relative">
+                            <select
+                              value={assignForm.financer_id}
+                              onChange={(e) => setAssignForm({ ...assignForm, financer_id: e.target.value, executive_id: '' })}
+                              className="w-full appearance-none h-[52px] pl-4 pr-10 bg-white dark:bg-[#111827] border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-slate-900 dark:text-white shadow-sm cursor-pointer transition-all"
+                            >
+                              <option value="" className="bg-white dark:bg-[#111827] text-slate-500">— Select Financer —</option>
+                              {financers.map(f => (
+                                <option key={f.id} value={String(f.id)} className="bg-white dark:bg-[#111827] text-slate-900 dark:text-white py-1.5">
+                                  {f.name}
+                                </option>
+                              ))}
+                            </select>
+                            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          </div>
 
                           {assignForm.financer_id && (
                             <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm animate-fade-in">
@@ -1284,34 +1406,40 @@ export default function LeadDetails() {
                         </div>
                       </div>
 
-                      {/* Right Card: Executive */}
+                      {/* Row 2: Field Executive Card */}
                       <div className="relative p-6 bg-gradient-to-br from-primary-50/50 to-primary-100/30 dark:from-primary-900/20 dark:to-primary-900/10 border-2 border-primary-100/50 dark:border-primary-800/30 rounded-2xl shadow-sm hover:border-primary-200 dark:hover:border-primary-700/50 transition-all">
-                        <div className="absolute top-5 right-5">
-                          <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="w-8 h-8 rounded-full bg-primary-100/50 dark:bg-primary-900/50 flex items-center justify-center text-primary-400 hover:bg-primary-500 hover:text-white transition-colors cursor-pointer" title="Quick Add Executive">
-                            <Plus className="w-4 h-4" />
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
+                              <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                            </div>
+                            <div>
+                              <h4 className="text-base font-black text-primary-900 dark:text-primary-100 tracking-tight">2. Field Executive</h4>
+                              <p className="text-xs text-primary-600/70 dark:text-primary-300/70">Who is the on-ground agent managing this?</p>
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => { setQuickAddType('executive'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-1 cursor-pointer bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-lg">
+                            <Plus className="w-3 h-3" /> Quick Add
                           </button>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center mb-4">
-                          <User className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                        </div>
-                        <h4 className="text-lg font-black text-primary-900 dark:text-primary-100 tracking-tight mb-1">Field Executive</h4>
-                        <p className="text-xs text-primary-600/70 dark:text-primary-300/70 mb-6">Who is the on-ground agent managing this?</p>
                         
                         <div className="space-y-4">
-                          <select
-                            value={assignForm.executive_id}
-                            onChange={(e) => setAssignForm({ ...assignForm, executive_id: e.target.value })}
-                            className="w-full p-3.5 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-primary-900 dark:text-primary-100 shadow-sm appearance-none cursor-pointer"
-                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
-                          >
-                            <option value="">— Select Executive —</option>
-                            {executives
-                              .filter(e => !assignForm.financer_id || !e.financer_id || e.financer_id.toString() === assignForm.financer_id)
-                              .map(ex => (
-                                <option key={ex.id} value={ex.id}>{ex.name}</option>
-                              ))
-                            }
-                          </select>
+                          <div className="relative">
+                            <select
+                              value={assignForm.executive_id}
+                              onChange={(e) => setAssignForm({ ...assignForm, executive_id: e.target.value })}
+                              className="w-full appearance-none h-[52px] pl-4 pr-10 bg-white dark:bg-[#111827] border-2 border-primary-200 dark:border-primary-800/60 rounded-xl text-sm font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 text-slate-900 dark:text-white shadow-sm cursor-pointer transition-all"
+                            >
+                              <option value="" className="bg-white dark:bg-[#111827] text-slate-500">— Select Executive —</option>
+                              {executives
+                                .filter(e => !assignForm.financer_id || !e.financer_id || String(e.financer_id) === String(assignForm.financer_id))
+                                .map(ex => (
+                                  <option key={ex.id} value={String(ex.id)} className="bg-white dark:bg-[#111827] text-slate-900 dark:text-white py-1.5">{ex.name}</option>
+                                ))
+                              }
+                            </select>
+                            <ChevronDown className="w-4 h-4 text-primary-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          </div>
 
                           {assignForm.executive_id && (
                             <div className="bg-white dark:bg-slate-900/30 p-3 rounded-xl border border-primary-100/50 dark:border-primary-900/30 shadow-sm animate-fade-in">
@@ -1411,11 +1539,11 @@ export default function LeadDetails() {
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Next Follow-up Date</label>
                         <input type="date" value={nextDate} onChange={e => setNextDate(e.target.value)}
-                          className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-primary-500" />
+                          className="w-full text-sm h-[46px] px-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-primary-500" />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Update Status</label>
-                        <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full text-sm p-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-primary-500">
+                        <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full text-sm h-[46px] px-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg outline-none focus:border-primary-500">
                           <option value="rejected">Rejected</option>
                           <option value="pending">Pending</option>
                           <option value="approved">Approved</option>
@@ -1563,7 +1691,7 @@ export default function LeadDetails() {
                           : 'bg-primary-600 hover:bg-primary-700 text-white shadow-primary-500/25'
                       )}
                     >
-                      {newStatus === 'disbursed' ? '🥳 Mark as Disbursed' : 'Post Follow-up'}
+                      {newStatus === 'disbursed' ? 'Mark as Disbursed' : 'Post Follow-up'}
                     </button>
                   </form>
                 </div>
@@ -1635,6 +1763,14 @@ export default function LeadDetails() {
           {/* ─────────────── DOCUMENTS TAB ─────────────── */}
           {activeTab === 'documents' && (
             <div className="animate-fade-in">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={() => setIsShareDocumentsModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 font-semibold text-xs rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors"
+                >
+                  <Share2 className="w-4 h-4" /> Share Documents
+                </button>
+              </div>
               <PragmaticLeadDocuments
                 lead={lead} documents={documents || []}
                 onUpload={handleUploadDocumentPragmatic} onVerify={handleVerifyDoc}
@@ -1869,7 +2005,7 @@ export default function LeadDetails() {
       />
       
       {quickAddType && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[70] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-[70] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
@@ -1901,6 +2037,59 @@ export default function LeadDetails() {
           </div>
         </div>
       )}
+
+      {/* CIBIL Modal */}
+      {isCibilModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-[70] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                Fetch CIBIL Score
+              </h3>
+              <button type="button" onClick={() => setIsCibilModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleFetchCibil} className="space-y-4 text-xs text-slate-800 dark:text-white">
+              <div>
+                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">PAN Card Number *</label>
+                <input required type="text" maxLength={10} value={cibilForm.pan} onChange={e => setCibilForm(prev => ({...prev, pan: e.target.value.toUpperCase()}))} placeholder="ABCDE1234F" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono uppercase text-slate-800 dark:text-white transition-all" />
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Aadhaar Card Number</label>
+                <input type="text" maxLength={12} pattern="^\d{12}$" title="Aadhaar number must be 12 digits" value={cibilForm.aadhaar} onChange={e => setCibilForm(prev => ({...prev, aadhaar: e.target.value.replace(/\D/g, '').slice(0, 12)}))} placeholder="12 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+              </div>
+              <div>
+                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Date of Birth *</label>
+                <input required type="date" value={cibilForm.dob} onChange={e => setCibilForm(prev => ({...prev, dob: e.target.value}))} className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs text-slate-800 dark:text-white transition-all" />
+              </div>
+              <div className="flex items-start gap-2 pt-2 pb-2">
+                <input required type="checkbox" id="cibilConsent" checked={cibilForm.consent} onChange={e => setCibilForm(prev => ({...prev, consent: e.target.checked}))} className="mt-0.5 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer" />
+                <label htmlFor="cibilConsent" className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
+                  I confirm that explicit customer consent has been acquired to pull this credit report, and I understand this action is recorded in the audit logs.
+                </label>
+              </div>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onClick={() => setIsCibilModalOpen(false)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
+                <button type="submit" disabled={!cibilForm.consent} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary-500/20">
+                  Verify & Fetch
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <ShareDocumentsModal
+        isOpen={isShareDocumentsModalOpen}
+        onClose={() => setIsShareDocumentsModalOpen(false)}
+        leadId={lead?.id}
+        documents={documents || []}
+        financerEmail={lead?.financer_email}
+        financerMobile={lead?.financer_mobile}
+        executiveEmail={lead?.executive_email}
+        executiveMobile={lead?.executive_mobile}
+      />
     </div>
   );
 }

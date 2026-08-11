@@ -44,16 +44,23 @@ function AgentModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in select-none">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose}></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto animate-fade-in select-none">
+      <div className="absolute inset-0 bg-slate-900/30 dark:bg-black/50 backdrop-blur-xs" onClick={onClose}></div>
       
-      <div className="relative w-full max-w-xl bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden animate-scale-in duration-200">
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <UsersRound className="w-5 h-5 text-primary-500" />
-            {editingExec ? 'Edit Channels Profile' : 'Add Channels'}
-          </h2>
-          <button onClick={onClose} type="button" className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+      <div className="relative w-full max-w-3xl max-h-[96vh] my-auto bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-scale-in duration-200">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-500">
+              <UsersRound className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-800 dark:text-white">
+                {editingExec ? 'Edit Channels Agent Profile' : 'Add Channels Partner'}
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Configure channel partner details, bank payout KYC & portal access</p>
+            </div>
+          </div>
+          <button onClick={onClose} type="button" className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -69,7 +76,7 @@ function AgentModal({
                   type="text" 
                   value={formData.name} 
                   onChange={e => setFormData({...formData, name: e.target.value})} 
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-medium" 
+                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-medium" 
                   placeholder="e.g. Rahul Sharma" 
                 />
               </div>
@@ -80,7 +87,7 @@ function AgentModal({
                   type="text" 
                   value={formData.mobile} 
                   onChange={e => setFormData({...formData, mobile: e.target.value})} 
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" 
+                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" 
                   placeholder="10 digits" 
                 />
               </div>
@@ -93,7 +100,7 @@ function AgentModal({
                   type="email" 
                   value={formData.email} 
                   onChange={e => setFormData({...formData, email: e.target.value})} 
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" 
+                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" 
                   placeholder="agent@example.com" 
                 />
               </div>
@@ -102,7 +109,7 @@ function AgentModal({
                 <select 
                   value={formData.is_active} 
                   onChange={e => setFormData({...formData, is_active: parseInt(e.target.value)})} 
-                  className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-semibold"
+                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-semibold"
                 >
                   <option value={1}>Active</option>
                   <option value={0}>Inactive</option>
@@ -153,14 +160,14 @@ function AgentModal({
                         }} 
                         className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1"
                       >
-                        <span>⚡ Auto-Generate</span>
+                        <span>Auto-Generate</span>
                       </button>
                     </div>
                     <input 
                       type="text" 
                       value={formData.portal_password} 
                       onChange={e => setFormData({...formData, portal_password: e.target.value})} 
-                      className="w-full p-2.5 bg-white dark:bg-slate-900 border border-primary-200 dark:border-primary-800/60 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono text-sm shadow-sm" 
+                      className="w-full h-[42px] px-3 bg-white dark:bg-slate-900 border border-primary-200 dark:border-primary-800/60 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono text-sm shadow-sm" 
                       placeholder={editingExec && (editingExec.user_id || editingExec.user_email) ? "Leave blank to keep current password" : "Enter secure password (e.g. Agent@1234)"} 
                     />
                   </div>
@@ -180,21 +187,21 @@ function AgentModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bank Name</label>
-                  <input type="text" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
+                  <input type="text" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">PAN Number</label>
-                  <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value.toUpperCase()})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. ABCDE1234F" />
+                  <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value.toUpperCase()})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. ABCDE1234F" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Account Number</label>
-                  <input type="text" value={formData.bank_account} onChange={e => setFormData({...formData, bank_account: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" placeholder="Account Number" />
+                  <input type="text" value={formData.bank_account} onChange={e => setFormData({...formData, bank_account: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" placeholder="Account Number" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">IFSC Code</label>
-                  <input type="text" value={formData.ifsc_code} onChange={e => setFormData({...formData, ifsc_code: e.target.value.toUpperCase()})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. HDFC0001234" />
+                  <input type="text" value={formData.ifsc_code} onChange={e => setFormData({...formData, ifsc_code: e.target.value.toUpperCase()})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. HDFC0001234" />
                 </div>
               </div>
             </div>

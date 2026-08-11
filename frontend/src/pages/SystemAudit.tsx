@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Activity, Search, ShieldCheck, ShieldAlert, Monitor, Filter, Calendar, Info } from 'lucide-react';
 import api from '../lib/axios';
 import clsx from 'clsx';
@@ -125,7 +125,7 @@ export default function SystemAudit() {
           <select 
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="w-full pl-9 p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-xs text-slate-800 dark:text-white appearance-none cursor-pointer transition-all"
+            className="w-full h-[42px] pl-9 pr-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-xs text-slate-800 dark:text-white appearance-none cursor-pointer transition-all"
           >
             <option value="All">All Audit Event Logs</option>
             <option value="Lead Action">Lead Interaction Logs</option>

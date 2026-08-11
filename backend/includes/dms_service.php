@@ -5,7 +5,11 @@
  */
 
 if (!defined('DMS_SECRET_KEY')) {
-    define('DMS_SECRET_KEY', 'Kaspr_DMS_Secret_Key_' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '_2026');
+    $env_secret = getenv('DMS_SECRET_KEY');
+    if (!$env_secret) {
+        $env_secret = 'dms_static_fallback_secret_9981273918237198273'; // Static fallback for persistent tokens across requests
+    }
+    define('DMS_SECRET_KEY', $env_secret);
 }
 
 /**
@@ -243,6 +247,36 @@ function dms_verify_signed_url($doc_id, $uuid, $action, $expires, $token) {
     $expectedToken = hash_hmac('sha256', $payload, DMS_SECRET_KEY);
     return hash_equals($expectedToken, $token);
 }
+
+/**
+ * Generate cryptographically signed URL for entire lead document bundle ZIP download
+ */
+function dms_generate_signed_bundle_url($lead_id, $expires_in_seconds = 604800) {
+    $expires = time() + $expires_in_seconds;
+    $payload = "download_bundle_{$lead_id}_{$expires}";
+    $token = hash_hmac('sha256', $payload, DMS_SECRET_KEY);
+    
+    $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    $basePath = defined('BASE_URL') ? rtrim(BASE_URL, '/') : "/lead-follow-up/backend";
+    $absoluteBase = (strpos($basePath, 'http') === 0) ? $basePath : "{$scheme}://{$host}{$basePath}";
+    
+    return "{$absoluteBase}/api/dms.php?action=download_bundle&lead_id={$lead_id}&expires={$expires}&token={$token}";
+}
+
+/**
+ * Verify signed bundle URL token
+ */
+function dms_verify_signed_bundle_url($lead_id, $expires, $token) {
+    if (time() > $expires) {
+        return false;
+    }
+    $payload = "download_bundle_{$lead_id}_{$expires}";
+    $expectedToken = hash_hmac('sha256', $payload, DMS_SECRET_KEY);
+    return hash_equals($expectedToken, $token);
+}
+
 
 /**
  * Smart Document Checklist Engine

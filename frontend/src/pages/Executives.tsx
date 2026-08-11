@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { UserCircle, Search, Plus, Edit, Trash2, X, Filter, ChevronDown, Building } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -87,45 +87,52 @@ function ExecutiveModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-scale-in border border-slate-200 dark:border-slate-800">
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <UserCircle className="w-5 h-5 text-primary-500" />
-            {editingExec ? 'Edit Executive' : 'Add Executive'}
-          </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+    <div className="fixed inset-0 bg-slate-900/30 dark:bg-black/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto animate-fade-in">
+      <div className="bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[96vh] overflow-hidden flex flex-col my-auto border border-slate-200 dark:border-slate-800 animate-scale-in duration-200">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-500">
+              <UserCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-800 dark:text-white">
+                {editingExec ? 'Edit Field Executive' : 'Add Field Executive'}
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Configure sales force executive profile and financer mapping</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <form onSubmit={onSubmit} className="p-6 space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Name</label>
-              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white" />
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-6 space-y-5 overflow-y-auto flex-1 min-h-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Name</label>
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Mobile</label>
+                <input type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10)})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 font-mono text-sm text-slate-800 dark:text-white" placeholder="9876543210" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 text-slate-800 dark:text-white" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Linked Financer</label>
+                <select value={formData.financer_id} onChange={e => setFormData({...formData, financer_id: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 text-sm text-slate-800 dark:text-white">
+                  <option value="">None / Open Market</option>
+                  {financers.map(f => (
+                    <option key={f.id} value={f.id}>{f.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Mobile</label>
-              <input type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10)})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 font-mono text-sm text-slate-800 dark:text-white" placeholder="9876543210" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
-              <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 text-slate-800 dark:text-white" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Linked Financer</label>
-              <select value={formData.financer_id} onChange={e => setFormData({...formData, financer_id: e.target.value})} className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 text-sm text-slate-800 dark:text-white">
-                <option value="">None / Open Market</option>
-                {financers.map(f => (
-                  <option key={f.id} value={f.id}>{f.name}</option>
-                ))}
-              </select>
-            </div>
-
-
           </div>
 
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="px-6 py-3.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <input type="checkbox" id="exec_is_active" checked={formData.is_active === 1} onChange={e => setFormData({...formData, is_active: e.target.checked ? 1 : 0})} className="rounded text-primary-600 focus:ring-primary-600 cursor-pointer" />
               <label htmlFor="exec_is_active" className="font-medium text-sm text-slate-600 dark:text-slate-300 cursor-pointer">Active Status</label>
@@ -133,7 +140,7 @@ function ExecutiveModal({
             <div className="flex gap-3">
               <button type="button" onClick={onClose} className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer">Cancel</button>
               <button type="submit" className="px-5 py-2.5 text-sm font-semibold bg-primary-600 text-white hover:bg-primary-700 rounded-xl shadow-sm transition-colors cursor-pointer">
-                {editingExec ? 'Save Changes' : 'Add Executive'}
+                {editingExec ? 'Save Changes' : 'Create Executive'}
               </button>
             </div>
           </div>
@@ -321,7 +328,7 @@ export default function Executives() {
             {showFilters && (
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <label className="text-xs font-semibold text-slate-500 dark:text-slate-400">Status:</label>
-                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as any)} className="px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white">
+                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as any)} className="h-[38px] px-3 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white">
                   <option value="all">All Statuses</option>
                   <option value="active">Active Only</option>
                   <option value="inactive">Inactive Only</option>

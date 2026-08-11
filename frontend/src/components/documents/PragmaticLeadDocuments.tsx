@@ -54,7 +54,7 @@ export default function PragmaticLeadDocuments({
 
   // Auto-infer category from docType so user doesn't have to think about it
   const getCategoryFromType = (type: string) => {
-    if (['aadhaar', 'pan', 'bank_statement', 'photo'].includes(type)) return 'kyc';
+    if (['aadhaar', 'aadhaar_front', 'aadhaar_back', 'pan', 'bank_statement', 'photo'].includes(type)) return 'kyc';
     if (['rc', 'insurance', 'driving_license'].includes(type)) return 'vehicle';
     if (['sanction_letter', 'loan_agreement', 'mandate_form'].includes(type)) return 'sanction';
     return 'dealer';
@@ -78,7 +78,9 @@ export default function PragmaticLeadDocuments({
 
   const getDocTitle = (type: string) => {
     const map: Record<string, string> = {
-      aadhaar: 'Aadhaar Card',
+      aadhaar_front: 'Aadhaar Card (Front Side)',
+      aadhaar_back: 'Aadhaar Card (Back Side)',
+      aadhaar: 'Aadhaar Card (Full / Single)',
       pan: 'PAN Card',
       bank_statement: '6-Month Bank Statement',
       photo: 'Applicant Photograph',
@@ -214,10 +216,12 @@ export default function PragmaticLeadDocuments({
                 <select
                   value={docType}
                   onChange={e => setDocType(e.target.value)}
-                  className="w-full p-2.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full h-[42px] px-3 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <optgroup label="Customer KYC (Personal)">
-                    <option value="aadhaar">Aadhaar Card</option>
+                    <option value="aadhaar_front">Aadhaar Card (Front Side)</option>
+                    <option value="aadhaar_back">Aadhaar Card (Back Side)</option>
+                    <option value="aadhaar">Aadhaar Card (Full / Single)</option>
                     <option value="pan">PAN Card</option>
                     <option value="bank_statement">6-Month Bank Statement</option>
                     <option value="photo">Applicant Photograph</option>
@@ -301,10 +305,10 @@ export default function PragmaticLeadDocuments({
       <div className="flex items-center gap-2 overflow-x-auto pb-2 p-1">
         {[
           { id: 'all', label: 'All Documents', count: activeDocs.length },
-          { id: 'kyc', label: '👤 KYC', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'kyc').length },
-          { id: 'vehicle', label: '🚗 Vehicle Records', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'vehicle').length },
-          { id: 'sanction', label: '🏛️ Bank Sanctions', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'sanction').length },
-          { id: 'dealer', label: '🏢 Dealer Invoices', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'dealer').length },
+          { id: 'kyc', label: 'KYC Documents', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'kyc').length },
+          { id: 'vehicle', label: 'Vehicle Records', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'vehicle').length },
+          { id: 'sanction', label: 'Bank Sanctions', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'sanction').length },
+          { id: 'dealer', label: 'Dealer Invoices', count: activeDocs.filter(d => (d.category || getCategoryFromType(d.document_type)) === 'dealer').length },
         ].map(tab => (
           <button
             key={tab.id}

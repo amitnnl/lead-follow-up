@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type AccentTheme = 'indigo' | 'emerald' | 'violet' | 'cyan' | 'amber';
+export type AccentTheme = 'indigo' | 'emerald' | 'violet' | 'cyan' | 'amber' | 'titanium' | 'platinum' | 'gold' | 'rosegold' | 'bronze';
 export type LayoutDensity = 'comfortable' | 'compact';
 export type AppFont = 'inter' | 'outfit' | 'playfair';
 export type AppRadius = 'sharp' | 'rounded' | 'pill';
@@ -21,10 +21,10 @@ interface ThemeState {
 
 export const useThemeStore = create<ThemeState>((set) => {
   const storedTheme = typeof window !== 'undefined' ? (localStorage.getItem('theme_mode') || localStorage.getItem('theme')) : null;
-  const initialDark = storedTheme === 'dark' || (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
+  const initialDark = storedTheme === 'dark';
   
   const storedAccent = (typeof window !== 'undefined' ? localStorage.getItem('accent_theme') : 'indigo') as AccentTheme || 'indigo';
-  const storedDensity = (typeof window !== 'undefined' ? localStorage.getItem('layout_density') : 'comfortable') as LayoutDensity || 'comfortable';
+  const storedDensity = (typeof window !== 'undefined' ? localStorage.getItem('layout_density') : 'compact') as LayoutDensity || 'compact';
   const storedFont = (typeof window !== 'undefined' ? localStorage.getItem('app_font') : 'inter') as AppFont || 'inter';
   const storedRadius = (typeof window !== 'undefined' ? localStorage.getItem('app_radius') : 'rounded') as AppRadius || 'rounded';
 

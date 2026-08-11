@@ -1,52 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Briefcase, 
-  FileText, 
-  Settings, 
-  LogOut,
-  Bell,
-  Landmark,
-  UserCircle,
-  PiggyBank,
-  BookOpen,
-  ShieldCheck,
-  Sun,
-  Moon,
-  User,
-  UsersRound,
-  CheckCircle,
-  Award,
-  X,
-  Calculator,
-  Search,
-  ChevronDown,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Palette,
-  Check
-} from 'lucide-react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
-import { useThemeStore, type AccentTheme } from '../../store/themeStore';
-import api from '../../lib/axios';
-import { useSettingsStore } from '../../store/settingsStore';
+import { X } from 'lucide-react';
 import CommandPalette from '../CommandPalette';
 import NewLeadModal from '../NewLeadModal';
 import IrrCalculatorComponent from '../IrrCalculatorComponent';
+import Sidebar from './Sidebar';
+import Header from './Header';
 
 export default function MainLayout() {
-  const { user, logout } = useAuthStore();
-  const { settings } = useSettingsStore();
-  const logoLetters = settings.app_name ? settings.app_name.substring(0, 2).toUpperCase() : 'LF';
-  const { isDark, toggleTheme, accent, setAccent, density, setDensity, appFont, setAppFont, appRadius, setAppRadius } = useThemeStore();
-  const [showThemePicker, setShowThemePicker] = useState(false);
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-
   const navigate = useNavigate();
   const location = useLocation();
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     const saved = localStorage.getItem('sidebar_open');
     return saved !== null ? saved === 'true' : true;
@@ -54,20 +19,10 @@ export default function MainLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
   const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
 
-  const handleToggleSidebar = () => {
-    if (window.innerWidth < 768) {
-      setIsMobileMenuOpen((prev) => !prev);
-    } else {
-      setIsSidebarOpen((prev) => {
-        const next = !prev;
-        localStorage.setItem('sidebar_open', String(next));
-        return next;
-      });
-    }
-  };
-
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
@@ -96,12 +51,6 @@ export default function MainLayout() {
     setSearchVal(q);
   }, [location.search]);
 
-  // Notifications & profile states
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [showNotifications, setShowNotifications] = useState<boolean>(false);
-  const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
-
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -112,673 +61,93 @@ export default function MainLayout() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await api.get('/notifications.php?action=fetch');
-      if (response.data?.success) {
-        setNotifications(response.data.notifications || []);
-        setUnreadCount(response.data.unread_count || 0);
-      }
-    } catch (err) {
-      console.error("Failed to fetch notifications", err);
-    }
-  };
-
-  const handleMarkRead = async (id?: number) => {
-    try {
-      const params = new URLSearchParams();
-      params.append('action', 'mark_read');
-      if (id) params.append('id', id.toString());
-      await api.post('/notifications.php', params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      });
-      fetchNotifications();
-    } catch (err) {
-      console.error("Failed to mark notifications read", err);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      const interval = setInterval(fetchNotifications, 20000); // Check every 20s
-      return () => clearInterval(interval);
-    }
-  }, [user]);
-
-  const isItemActive = (itemTo: string) => {
-    if (itemTo === '/') return location.pathname === '/';
-    if (itemTo.includes('?')) {
-      const [path, query] = itemTo.split('?');
-      if (location.pathname !== path) return false;
-      const targetParams = new URLSearchParams(query);
-      const currentParams = new URLSearchParams(location.search);
-      let match = true;
-      targetParams.forEach((val, key) => {
-        if (currentParams.get(key) !== val) {
-          match = false;
-        }
-      });
-      return match;
+  const handleToggleSidebar = () => {
+    if (window.innerWidth < 768) {
+      setIsMobileMenuOpen((prev) => !prev);
     } else {
-      if (location.pathname !== itemTo) return false;
-      const status = new URLSearchParams(location.search).get('status');
-      if (itemTo === '/leads' && (status === 'approved' || status === 'disbursed')) {
-        return false;
-      }
-      return true;
+      setIsSidebarOpen((prev) => {
+        const next = !prev;
+        localStorage.setItem('sidebar_open', String(next));
+        return next;
+      });
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+  const onSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate(`/leads?q=${encodeURIComponent(searchVal)}`);
   };
 
-  const isExecutive = user?.role === 'executive';
-  const isChannelAgent = user?.role === 'channel_agent';
-  const isAgent = user?.role === 'agent';
-  const isRestrictedRole = isExecutive || isChannelAgent || isAgent;
-  const isStaff = user?.role === 'staff';
-  const isAdmin = user?.role === 'admin';
-
-  const navGroups = [
-    {
-      heading: 'Overview',
-      items: [
-        { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' }
-      ]
-    },
-    {
-      heading: 'Leads',
-      items: [
-        { to: '/leads', icon: Users, label: 'All Leads' },
-        { to: '/leads?status=approved', icon: CheckCircle, label: 'Approved' },
-        { to: '/leads?status=disbursed', icon: Award, label: 'Disbursed' }
-      ]
-    },
-    ...(!isRestrictedRole ? [{
-      heading: 'Network',
-      items: [
-        { to: '/financers', icon: Landmark, label: 'Financers' },
-        { to: '/executives', icon: UserCircle, label: 'Executives' },
-        { to: '/dealers', icon: User, label: 'Dealer\'s' },
-        { to: '/channel-executives', icon: UsersRound, label: 'Channels' }
-      ]
-    }] : []),
-    ...(!isRestrictedRole && !isStaff ? [{
-      heading: 'Finance',
-      items: [
-        { to: '/banking', icon: PiggyBank, label: 'Banking' },
-        { to: '/ledger', icon: BookOpen, label: 'Ledger' },
-        { to: '/commissions', icon: Briefcase, label: 'Payouts' }
-      ]
-    }] : (isChannelAgent || isAgent ? [{
-      heading: 'Finance & Earnings',
-      items: [
-        { to: '/commissions', icon: Briefcase, label: 'My Payouts' }
-      ]
-    }] : [])),
-    {
-      heading: 'System',
-      items: [
-        ...(!isRestrictedRole ? [{ to: '/reports', icon: FileText, label: 'Reports' }] : []),
-        ...(isAdmin ? [{ to: '/users', icon: ShieldCheck, label: 'Users' }] : []),
-        ...(isAdmin ? [{ to: '/audit', icon: ShieldCheck, label: 'Audit Trail' }] : []),
-        { to: '/settings', icon: Settings, label: 'Settings' }
-      ]
-    }
-  ];
-
-  // Helper for top context breadcrumb title
   const getPageTitle = () => {
     const path = location.pathname;
-    const status = new URLSearchParams(location.search).get('status');
     if (path === '/dashboard') return { group: 'Overview', title: 'Dashboard' };
-
-    if (path === '/leads') {
-      if (status === 'approved') return { group: 'Leads', title: 'Approved Leads' };
-      if (status === 'disbursed') return { group: 'Leads', title: 'Disbursed Leads' };
-      return { group: 'Leads', title: 'All Leads' };
-    }
-    if (path.startsWith('/leads/')) return { group: 'Leads', title: 'Lead Dossier & Details' };
-    if (path === '/financers') return { group: 'Network', title: 'Financers & Bank Roster' };
-    if (path === '/executives') return { group: 'Network', title: 'Field Executives' };
-    if (path === '/dealers') return { group: 'Network', title: 'Dealer\'s' };
+    if (path.startsWith('/leads')) return { group: 'Leads', title: 'Lead Management' };
+    if (path === '/follow-ups') return { group: 'CRM', title: 'Follow-ups' };
+    if (path.startsWith('/finance/')) return { group: 'Finance', title: 'Finance' };
+    if (path === '/financers') return { group: 'Network', title: 'Financers' };
+    if (path === '/executives') return { group: 'Network', title: 'Executives' };
+    if (path === '/dealers') return { group: 'Network', title: 'Dealers' };
     if (path === '/channel-executives') return { group: 'Network', title: 'Channel Partners' };
-    if (path === '/banking') return { group: 'Finance', title: 'Banking & Cash Flow' };
-    if (path === '/ledger') return { group: 'Finance', title: 'Master General Ledger' };
-    if (path === '/commissions') return { group: 'Finance', title: 'Commission Payouts' };
-    if (path === '/reports') return { group: 'System', title: 'Analytics & Reports' };
-    if (path === '/users') return { group: 'System', title: 'Team & User Management' };
-    if (path === '/audit') return { group: 'System', title: 'Immutable Audit Trail' };
-    if (path === '/settings') return { group: 'System', title: 'System Settings' };
+    if (path === '/reports') return { group: 'System', title: 'Reports' };
+    if (path === '/users') return { group: 'System', title: 'Users' };
+    if (path === '/audit') return { group: 'System', title: 'Audit Trail' };
+    if (path === '/settings') return { group: 'System', title: 'Settings' };
     return { group: 'Application', title: 'Overview' };
   };
 
   const pageMeta = getPageTitle();
 
-  const sidebarContent = (
-    <>
-      {/* ── Workspace Header ── */}
-      <div className="p-3.5 border-b border-slate-200/80 dark:border-slate-800/80 shrink-0">
-        {isSidebarOpen ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-600 flex items-center justify-center text-white font-extrabold text-xs shadow-md shadow-primary-500/25 shrink-0">
-                {logoLetters}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="font-bold text-xs text-slate-900 dark:text-white truncate tracking-tight">
-                  {settings.app_name || 'Vehicle Finance Hub'}
-                </div>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 capitalize truncate">
-                    {user?.role_name || user?.role || 'Staff'}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <span className="font-mono text-[9px] bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-500/20 px-1.5 py-0.5 rounded-md font-extrabold shrink-0">
-              PRO
-            </span>
-          </div>
-        ) : (
-          <div className="flex justify-center py-0.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-600 flex items-center justify-center text-white font-extrabold text-xs shadow-md shadow-primary-500/25 cursor-pointer transform hover:scale-105 transition-all" title="Workspace: PRO">
-              {logoLetters}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ── Navigation Links ── */}
-      <div className="py-3 px-2.5 space-y-5 flex-1 overflow-y-auto">
-        {navGroups.map((group, idx) => (
-          <div key={idx} className="space-y-1">
-            {isSidebarOpen ? (
-              <div className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 pt-1 pb-1 flex items-center justify-between">
-                <span>{group.heading}</span>
-              </div>
-            ) : (
-              idx > 0 && <hr className="my-2 border-slate-200/80 dark:border-slate-800 mx-2 opacity-60" />
-            )}
-            {group.items.map((item) => {
-              const active = isItemActive(item.to);
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  title={!isSidebarOpen ? item.label : undefined}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={clsx(
-                    "transition-all duration-200 ease-in-out relative group cursor-pointer flex items-center rounded-xl font-medium text-xs",
-                    isSidebarOpen ? "px-3 py-2.5 gap-3" : "w-10 h-10 justify-center mx-auto",
-                    active 
-                      ? "bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-md shadow-primary-500/25 font-bold hover-lift" 
-                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100"
-                  )}
-                >
-                  <item.icon className={clsx(
-                    "w-[18px] h-[18px] shrink-0 transition-transform duration-150",
-                    active ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300"
-                  )} />
-                  {isSidebarOpen && <span className="truncate tracking-tight">{item.label}</span>}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      {/* ── Bottom User Profile Bar ── */}
-      <div className="p-3 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-[var(--color-surface-dark)] shrink-0">
-        {isSidebarOpen ? (
-          <div className="glass-panel flex items-center justify-between gap-2 rounded-xl p-2.5">
-            <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-600 flex items-center justify-center font-bold text-white text-xs shrink-0 shadow-2xs">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-bold text-slate-900 dark:text-white truncate leading-tight">
-                  {user?.name || 'User'}
-                </div>
-                <div className="text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate">
-                  {user?.email || user?.mobile || 'Active'}
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
-              <button
-                onClick={toggleTheme}
-                title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
-              >
-                {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-              </button>
-              <button
-                onClick={handleLogout}
-                title="Sign Out"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/20 transition-all cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
-            >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-            </button>
-            <button
-              onClick={handleLogout}
-              title="Sign Out"
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/20 transition-all cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-      </div>
-    </>
-  );
-
   return (
-    <div className="min-h-screen flex p-2 md:p-4 gap-2 md:gap-4 text-slate-800 dark:text-slate-200 font-sans">
-      
-      {/* ── Desktop & Mobile Full-Height Sidebar Dock ── */}
+    <div className="min-h-screen flex text-slate-800 dark:text-slate-200 font-sans bg-slate-50 dark:bg-[#09090b]">
+      {/* Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
       )}
 
-      <aside 
+      {/* Sidebar */}
+      <aside
         className={clsx(
-          "glass-panel flex flex-col select-none shrink-0 transition-all duration-300 ease-in-out z-50 overflow-x-hidden rounded-[2rem] print:hidden",
-          // Desktop behavior (>= 768px)
-          "md:sticky md:top-4 md:h-[calc(100vh-2rem)]",
-          isSidebarOpen ? "md:w-[280px]" : "md:w-20",
-          // Mobile behavior (< 768px)
-          "max-md:fixed max-md:inset-y-2 max-md:left-2 max-md:h-[calc(100vh-1rem)] max-md:w-[280px] max-md:shadow-2xl max-md:transition-transform max-md:duration-300",
-          isMobileMenuOpen ? "max-md:translate-x-0" : "max-md:-translate-x-[110%]"
+          "flex flex-col bg-[#fcfcfc] dark:bg-[#09090b] border-r border-slate-200 dark:border-[#27272a] select-none shrink-0 transition-all duration-300 z-50 overflow-hidden",
+          "md:sticky md:top-0 md:h-screen",
+          isSidebarOpen ? "md:w-[260px]" : "md:w-16",
+          "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:h-screen max-md:w-[270px] max-md:shadow-2xl max-md:transition-transform max-md:duration-300",
+          isMobileMenuOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full"
         )}
       >
         {isMobileMenuOpen && (
-          <div className="md:hidden flex justify-end p-2 border-b border-slate-100 dark:border-slate-800">
+          <div className="md:hidden flex justify-end p-2 border-b border-slate-200 dark:border-[#27272a]">
             <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-slate-400 hover:text-slate-600 rounded cursor-pointer">
-              <X className="w-4.5 h-4.5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         )}
-        {sidebarContent}
+        <Sidebar isSidebarOpen={isSidebarOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       </aside>
 
-      {/* ── Main App Content Column ── */}
-      <div className="flex-1 flex flex-col min-w-0 h-[calc(100vh-2rem)] md:h-[calc(100vh-2rem)] relative print:h-auto print:block">
-        
-        {/* ── Frosted Glass Top Context Bar ── */}
-        <header className="glass-header h-16 flex items-center justify-between px-4 lg:px-6 shrink-0 z-30 select-none rounded-[2rem] mb-4 print:hidden">
-          
-          <div className="flex items-center gap-3 min-w-0">
-            {/* Sidebar toggle button */}
-            <button 
-              onClick={handleToggleSidebar}
-              className="p-2.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 transition-all cursor-pointer shrink-0 shadow-2xs"
-              title={isSidebarOpen ? "Collapse sidebar (Ctrl+B)" : "Expand sidebar (Ctrl+B)"}
-            >
-              {(isMobileMenuOpen || isSidebarOpen) ? <PanelLeftClose className="w-4.5 h-4.5" /> : <PanelLeftOpen className="w-4.5 h-4.5" />}
-            </button>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen relative">
+        <Header 
+          isSidebarOpen={isSidebarOpen}
+          handleToggleSidebar={handleToggleSidebar}
+          pageMeta={pageMeta}
+          searchVal={searchVal}
+          setSearchVal={setSearchVal}
+          onSearchSubmit={onSearchSubmit}
+          onOpenCalculator={() => setIsCalculatorModalOpen(true)}
+        />
 
-            {/* Breadcrumb / Page Title */}
-            <div className="flex items-center gap-2 text-xs font-medium truncate">
-              <span className="text-slate-400 dark:text-slate-500 hidden sm:inline">{pageMeta.group}</span>
-              <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">/</span>
-              <span className="font-bold text-slate-900 dark:text-white text-sm tracking-tight truncate">{pageMeta.title}</span>
-            </div>
-          </div>
-
-          {/* Center Search Bar */}
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              navigate(`/leads?q=${encodeURIComponent(searchVal)}`);
-            }}
-            className="hidden md:flex items-center max-w-md w-full mx-6 relative group"
-          >
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-primary-500 transition-colors" />
-            <input
-              type="text"
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
-              placeholder="Search leads, customers, vehicle models..."
-              className="w-full pl-10 pr-14 py-1.5 text-xs bg-slate-100/80 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-[#0A0D14] focus:text-slate-900 dark:focus:text-slate-100 focus:outline-none rounded-xl border border-transparent focus:border-primary-500 placeholder-slate-400 text-slate-800 dark:text-slate-200 transition-all shadow-2xs"
-            />
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              {searchVal ? (
-                <button 
-                  type="button"
-                  onClick={() => {
-                    setSearchVal('');
-                    navigate('/leads');
-                  }}
-                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer p-0.5"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              ) : (
-                <span className="text-[10px] font-mono font-semibold text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded shadow-2xs">
-                  ⌘K
-                </span>
-              )}
-            </div>
-          </form>
-
-          {/* Right Utilities & Actions */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            
-
-            <button
-              onClick={() => setIsCalculatorModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
-              title="Open IRR Calculator"
-            >
-              <Calculator className="w-4 h-4" />
-              <span className="hidden sm:inline">Calc</span>
-            </button>
-
-            <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
-
-            {/* Theme & Palette Customizer Trigger */}
-            <div className="relative">
-              <button
-                onClick={() => {
-                  const nextState = !showThemePicker;
-                  setShowThemePicker(nextState);
-                  if (nextState) {
-                    setShowNotifications(false);
-                    setShowProfileMenu(false);
-                  }
-                }}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-                title="Theme & Style Customizer"
-              >
-                <Palette className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
-              </button>
-
-              {showThemePicker && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowThemePicker(false)} />
-                  <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-4 text-slate-700 dark:text-slate-200 animate-fade-in space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                        <Palette className="w-3.5 h-3.5 text-primary-500" /> Theme & Presets
-                      </span>
-                      <button onClick={() => setShowThemePicker(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    {/* Mode switcher */}
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Display Mode</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => toggleTheme()}
-                          className={clsx(
-                            "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all border cursor-pointer",
-                            !isDark ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                          )}
-                        >
-                          <Sun className="w-3.5 h-3.5 text-amber-500" /> Light
-                        </button>
-                        <button
-                          onClick={() => toggleTheme()}
-                          className={clsx(
-                            "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all border cursor-pointer",
-                            isDark ? "bg-primary-500/10 border-primary-500 text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                          )}
-                        >
-                          <Moon className="w-3.5 h-3.5 text-primary-400" /> Dark
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Primary Accent Color Presets */}
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Accent Color Preset</label>
-                      <div className="grid grid-cols-5 gap-2">
-                        {[
-                          { id: 'indigo', name: 'Sapphire', color: 'bg-primary-600' },
-                          { id: 'emerald', name: 'Emerald', color: 'bg-emerald-500' },
-                          { id: 'violet', name: 'Violet', color: 'bg-violet-600' },
-                          { id: 'cyan', name: 'Cyan', color: 'bg-cyan-500' },
-                          { id: 'amber', name: 'Amber', color: 'bg-amber-500' },
-                        ].map((p) => (
-                          <button
-                            key={p.id}
-                            onClick={() => setAccent(p.id as AccentTheme)}
-                            title={p.name}
-                            className={clsx(
-                              "h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border relative",
-                              p.color,
-                              accent === p.id ? "ring-2 ring-offset-2 ring-primary-500 scale-105 border-white" : "border-transparent opacity-80 hover:opacity-100"
-                            )}
-                          >
-                            {accent === p.id && <Check className="w-4 h-4 text-white drop-shadow" />}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Layout Density */}
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Table & Grid Density</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => setDensity('comfortable')}
-                          className={clsx(
-                            "py-1.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center",
-                            density === 'comfortable' ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                          )}
-                        >
-                          Comfortable
-                        </button>
-                        <button
-                          onClick={() => setDensity('compact')}
-                          className={clsx(
-                            "py-1.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center",
-                            density === 'compact' ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                          )}
-                        >
-                          Compact
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Typography Font */}
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Typography Font</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { id: 'inter', name: 'Inter' },
-                          { id: 'outfit', name: 'Outfit' },
-                          { id: 'playfair', name: 'Playfair' },
-                        ].map((f) => (
-                          <button
-                            key={f.id}
-                            onClick={() => setAppFont(f.id as any)}
-                            style={{ fontFamily: f.id === 'playfair' ? '"Playfair Display", serif' : f.id === 'outfit' ? '"Outfit", sans-serif' : '"Inter", sans-serif' }}
-                            className={clsx(
-                              "py-1.5 px-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer text-center",
-                              appFont === f.id ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                            )}
-                          >
-                            {f.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Corner Radius */}
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide block mb-2">Corner Radius</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { id: 'sharp', name: 'Sharp', radiusClass: 'rounded-none' },
-                          { id: 'rounded', name: 'Rounded', radiusClass: 'rounded-lg' },
-                          { id: 'pill', name: 'Pill', radiusClass: 'rounded-full' },
-                        ].map((r) => (
-                          <button
-                            key={r.id}
-                            onClick={() => setAppRadius(r.id as any)}
-                            className={clsx(
-                              "py-1.5 px-2 text-[11px] font-bold border transition-all cursor-pointer text-center",
-                              r.radiusClass,
-                              appRadius === r.id ? "bg-primary-500/10 border-primary-500 text-primary-600 dark:text-primary-400" : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
-                            )}
-                          >
-                            {r.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Notifications Popover Trigger */}
-            <div className="relative">
-              <button
-                onClick={() => {
-                  const nextState = !showNotifications;
-                  setShowNotifications(nextState);
-                  if (nextState) {
-                    setShowProfileMenu(false);
-                    handleMarkRead();
-                  }
-                }}
-                className="relative p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-                title="Notifications"
-              >
-                <Bell className="w-4.5 h-4.5" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-rose-600 text-white font-extrabold text-[9px] flex items-center justify-center ring-2 ring-white dark:ring-[#111622] animate-pulse">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {showNotifications && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
-                  <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden text-slate-700 dark:text-slate-200 animate-fade-in">
-                    <div className="p-3.5 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">Notifications</span>
-                      {unreadCount > 0 && (
-                        <button
-                          onClick={() => handleMarkRead()}
-                          className="text-[10px] text-primary-600 dark:text-primary-400 font-bold hover:underline cursor-pointer"
-                        >
-                          Mark all read
-                        </button>
-                      )}
-                    </div>
-                    <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/80">
-                      {notifications.length === 0 ? (
-                        <div className="p-6 text-center text-xs text-slate-400 italic">No new notifications</div>
-                      ) : (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className={`p-3.5 text-xs leading-relaxed hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors ${!n.is_read ? 'bg-primary-500/5 font-semibold' : ''} text-left`}
-                          >
-                            <p className="text-slate-800 dark:text-slate-200">{n.message}</p>
-                            <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block mt-1">{new Date(n.created_at).toLocaleString()}</span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* User Profile Dropdown Trigger */}
-            <div className="relative">
-              <div
-                onClick={() => {
-                  const nextState = !showProfileMenu;
-                  setShowProfileMenu(nextState);
-                  if (nextState) setShowNotifications(false);
-                }}
-                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer select-none"
-                title="Account menu"
-              >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-                  {user?.name?.charAt(0).toUpperCase() || 'A'}
-                </div>
-                <ChevronDown className={clsx("w-3.5 h-3.5 text-slate-400 transition-transform duration-200 hidden sm:block", showProfileMenu && "rotate-180")} />
-              </div>
-
-              {showProfileMenu && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowProfileMenu(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden text-slate-700 dark:text-slate-200 animate-fade-in">
-                    <div className="p-4 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-                      <div className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.name || 'Admin'}</div>
-                      <div className="text-[10px] text-primary-600 dark:text-primary-400 font-extrabold capitalize mt-0.5">{user?.role?.replace('_', ' ') || 'User'}</div>
-                      {user?.mobile && <div className="text-[10px] text-slate-400 font-mono mt-1 truncate">{user?.mobile}</div>}
-                    </div>
-
-                    <div className="py-1">
-                      <Link
-                        to="/settings"
-                        onClick={() => setShowProfileMenu(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                      >
-                        <Settings className="w-4 h-4 text-slate-400" /> Account Settings
-                      </Link>
-                    </div>
-
-                    <div className="border-t border-slate-100 dark:border-slate-800" />
-
-                    <div className="p-1.5">
-                      <button
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          handleLogout();
-                        }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors text-left cursor-pointer group"
-                      >
-                        <LogOut className="w-4 h-4 text-rose-500 group-hover:-translate-x-0.5 transition-transform" /> Sign Out
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
-
-        {/* ── Main Scrollable Outlet ── */}
+        {/* Main Content Area */}
         <main className={clsx(
-          "flex-1 overflow-y-auto overflow-x-hidden relative rounded-[2rem] glass-panel p-4 md:p-6 custom-scrollbar shadow-xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-slate-900/50",
-          "print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none print:overflow-visible",
-          isCalculatorModalOpen && "print:hidden"
+          "flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-8 custom-scrollbar",
+          "bg-[#fcfcfc] dark:bg-[#09090b]",
+          "print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none"
         )}>
-          <div key={location.pathname} className="animate-page-enter h-full">
+          <div key={location.pathname} className="animate-page-enter">
             <Outlet />
           </div>
         </main>
-        
+
+        {/* Modals */}
         {isNewLeadModalOpen && (
           <NewLeadModal
             isOpen={isNewLeadModalOpen}
@@ -790,24 +159,23 @@ export default function MainLayout() {
           />
         )}
 
-        {/* Floating IRR Calculator Modal */}
         {isCalculatorModalOpen && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in print:absolute print:inset-0 print:bg-transparent print:p-0 print:block">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800 animate-scale-in print:shadow-none print:border-none print:max-w-none print:max-h-none print:h-auto print:overflow-visible print:rounded-none print:bg-transparent">
-              <button 
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in print:hidden">
+            <div className="bg-white dark:bg-[#111622] rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800">
+              <button
                 onClick={() => setIsCalculatorModalOpen(false)}
-                className="absolute right-4 top-4 z-10 p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 rounded-xl transition-all cursor-pointer print:hidden"
+                className="absolute right-4 top-4 z-10 p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 rounded-lg transition-all cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
-              <div className="p-2 sm:p-6 print:p-0">
+              <div className="p-4 sm:p-6">
                 <IrrCalculatorComponent />
               </div>
             </div>
           </div>
         )}
 
-        <CommandPalette 
+        <CommandPalette
           isOpen={isCommandPaletteOpen}
           onClose={() => setIsCommandPaletteOpen(false)}
           onOpenNewLead={() => setIsNewLeadModalOpen(true)}

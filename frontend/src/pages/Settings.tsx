@@ -127,7 +127,7 @@ export default function Settings() {
     } catch { alert("Failed to save settings."); }
   };
 
-  const inputClass = "w-full p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-sm text-slate-800 dark:text-white transition-all";
+  const inputClass = "w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-sm text-slate-800 dark:text-white transition-all";
   const labelClass = "block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5";
 
   if (loading) return <div className="flex flex-col items-center justify-center h-96 gap-3"><div className="relative w-10 h-10"><div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" /><div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" /></div><p className="text-xs text-slate-400 font-medium">Loading settings...</p></div>;

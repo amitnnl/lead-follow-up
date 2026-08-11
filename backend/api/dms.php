@@ -22,6 +22,7 @@ define('API_CONTEXT', true);
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/dms_service.php';
+require_once __DIR__ . '/../includes/dms_schema.php';
 
 // Ensure tables exist on startup
 ensure_dms_tables_exist($conn);
@@ -597,6 +598,114 @@ switch ($action) {
         header("Cache-Control: private, max-age=3600");
         readfile($filePath);
         exit;
+
+    // ----------------------------------------------------
+    // 7b. ONE-CLICK ZIP BUNDLE DOWNLOAD FOR LEAD DOCUMENTS
+    // ----------------------------------------------------
+    case 'download_bundle':
+        $lead_id = intval($_GET['lead_id'] ?? 0);
+        $token   = trim($_GET['token'] ?? '');
+        $expires = intval($_GET['expires'] ?? 0);
+
+        if ($lead_id <= 0) {
+            http_response_code(400);
+            die("Invalid Lead ID.");
+        }
+
+        $authorized = false;
+        if (!empty($token) && $expires > 0) {
+            $authorized = dms_verify_signed_bundle_url($lead_id, $expires, $token);
+        }
+        if (!$authorized && is_logged_in()) {
+            $authorized = true;
+        }
+
+        if (!$authorized) {
+            http_response_code(403);
+            die("Access denied. Token expired or unauthorized.");
+        }
+
+        // Fetch lead information
+        $lead = db_fetch_one($conn, "SELECT id, lead_id as lead_code, customer_name FROM `leads` WHERE id = ?", 'i', [$lead_id]);
+        $leadStrId = $lead['lead_code'] ?? "ID-{$lead_id}";
+
+        // Fetch active documents from dms_documents
+        $docs = db_fetch_all($conn, "SELECT * FROM `dms_documents` WHERE lead_id = ? AND is_deleted = 0", 'i', [$lead_id]);
+        
+        // Also check legacy lead_documents if dms_documents has no entries
+        if (empty($docs)) {
+            $legacyDocs = db_fetch_all($conn, "SELECT id, document_type as doc_type_code, file_path FROM `lead_documents` WHERE lead_id = ? AND IFNULL(verification_notes, '') != 'Archived / Removed by user'", 'i', [$lead_id]);
+            foreach ($legacyDocs as $ld) {
+                $basename = basename($ld['file_path']);
+                $docs[] = [
+                    'id' => $ld['id'],
+                    'category_code' => 'KYC',
+                    'doc_type_code' => $ld['doc_type_code'],
+                    'original_name' => $basename,
+                    'file_path' => $ld['file_path']
+                ];
+            }
+        }
+
+        if (empty($docs)) {
+            http_response_code(404);
+            header("Content-Type: text/html; charset=utf-8");
+            die("<h3>No documents uploaded yet for lead {$leadStrId}.</h3>");
+        }
+
+        if (!class_exists('ZipArchive')) {
+            http_response_code(500);
+            die("Server error: ZipArchive extension is not enabled in PHP.");
+        }
+
+        $tempZipPath = sys_get_temp_dir() . '/Lead_' . $lead_id . '_' . time() . '.zip';
+        $zip = new ZipArchive();
+        if ($zip->open($tempZipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            http_response_code(500);
+            die("Failed to create ZIP archive.");
+        }
+
+        $fileCount = 0;
+        foreach ($docs as $doc) {
+            $relPath = $doc['file_path'];
+            $fullPath = dirname(__DIR__) . '/' . $relPath;
+            if (!file_exists($fullPath)) {
+                $fullPath = dirname(__DIR__) . '/' . preg_replace('/^uploads\//', 'uploads/', $relPath);
+            }
+
+            if (file_exists($fullPath) && is_file($fullPath)) {
+                $ext = pathinfo($fullPath, PATHINFO_EXTENSION);
+                $cleanName = strtoupper($doc['category_code'] ?? 'DOC') . '_' . strtoupper($doc['doc_type_code'] ?? 'FILE');
+                $originalName = !empty($doc['original_name']) ? pathinfo($doc['original_name'], PATHINFO_FILENAME) : $cleanName;
+                $safeFilename = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $originalName) . ($ext ? '.' . $ext : '');
+                
+                $zipEntryName = $cleanName . '_' . $safeFilename;
+                $zip->addFile($fullPath, $zipEntryName);
+                $fileCount++;
+            }
+        }
+
+        $zip->close();
+
+        if ($fileCount === 0 || !file_exists($tempZipPath)) {
+            http_response_code(404);
+            die("No physical document files found on disk for this lead.");
+        }
+
+        dms_log_audit($conn, 0, 'Download Bundle ZIP', '', "Lead ID: {$lead_id}", "Downloaded ZIP bundle with {$fileCount} files");
+
+        while (ob_get_level()) ob_end_clean();
+
+        header("Content-Type: application/zip");
+        header("Content-Disposition: attachment; filename=\"Lead_" . preg_replace('/[^a-zA-Z0-9_\-]/', '_', $leadStrId) . "_Documents.zip\"");
+        header("Content-Length: " . filesize($tempZipPath));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        readfile($tempZipPath);
+        @unlink($tempZipPath);
+        exit;
+
 
     // ----------------------------------------------------
     // 8. SOFT DELETE & RESTORE

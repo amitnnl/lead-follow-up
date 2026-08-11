@@ -1,0 +1,44 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main # Or master, depending on your default branch name
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy to Hostinger via FTP
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+      
+    - name: ⚙️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: 📦 Install Dependencies and Build Frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+        
+    - name: 📁 Prepare Deployment Directory
+      run: |
+        mkdir -p deploy_folder
+        # Copy backend folder
+        cp -r backend deploy_folder/
+        # Copy built frontend files (from dist)
+        cp -r frontend/dist/* deploy_folder/
+        # Copy .htaccess file
+        cp .htaccess deploy_folder/
+        
+    - name: 🚀 Sync files to Hostinger
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./deploy_folder/
+        server-dir: ./public_html/ # This will deploy directly into your public_html

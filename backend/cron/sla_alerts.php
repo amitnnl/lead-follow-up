@@ -6,7 +6,10 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/mailer.php';
 
 // Prevent direct browser access unless a secret key is provided (for manual testing)
-$secret = getenv('CRON_SECRET') ?: get_setting('cron_secret', 'dsa_cron_secret_77');
+$secret = getenv('CRON_SECRET') ?: get_setting('cron_secret');
+if (empty($secret)) {
+    $secret = bin2hex(random_bytes(32)); // Un-guessable ephemeral fallback
+}
 $isCli = (php_sapi_name() === 'cli');
 $isManual = (isset($_GET['key']) && $_GET['key'] === $secret);
 

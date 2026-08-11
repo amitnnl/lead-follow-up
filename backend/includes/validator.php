@@ -340,3 +340,105 @@ function validate_settings_schema(array $input): array {
 
     return $errors;
 }
+
+/**
+ * Validates any JSON payload against a strict schema.
+ * Rejects missing required fields, incorrect types, lengths, and formats.
+ */
+function validate_input(array $input, array $schema): array {
+    $errors = [];
+
+    foreach ($schema as $key => $rules) {
+        $desc = $rules['description'] ?? $key;
+        $is_required = !empty($rules['required']);
+        $exists = array_key_exists($key, $input);
+        
+        $value = $exists ? $input[$key] : null;
+
+        if ($is_required && (!$exists || $value === '' || $value === null)) {
+            $errors[] = "$desc is required.";
+            continue;
+        }
+
+        if (!$exists || $value === null || $value === '') {
+            continue;
+        }
+
+        $type = $rules['type'] ?? 'string';
+
+        switch ($type) {
+            case 'int':
+                if (!is_numeric($value) || intval($value) != $value) {
+                    $errors[] = "$desc must be a valid integer.";
+                } else {
+                    $valInt = intval($value);
+                    if (isset($rules['min']) && $valInt < $rules['min']) {
+                        $errors[] = "$desc must be at least {$rules['min']}.";
+                    }
+                    if (isset($rules['max']) && $valInt > $rules['max']) {
+                        $errors[] = "$desc cannot be greater than {$rules['max']}.";
+                    }
+                }
+                break;
+
+            case 'float':
+                if (!is_numeric($value)) {
+                    $errors[] = "$desc must be a valid number.";
+                } else {
+                    $valFloat = floatval($value);
+                    if (isset($rules['min']) && $valFloat < $rules['min']) {
+                        $errors[] = "$desc must be at least {$rules['min']}.";
+                    }
+                    if (isset($rules['max']) && $valFloat > $rules['max']) {
+                        $errors[] = "$desc cannot be greater than {$rules['max']}.";
+                    }
+                }
+                break;
+
+            case 'string':
+                $strVal = strval($value);
+                $len = mb_strlen($strVal);
+                if (isset($rules['min_len']) && $len < $rules['min_len']) {
+                    $errors[] = "$desc must be at least {$rules['min_len']} characters long.";
+                }
+                if (isset($rules['max_len']) && $len > $rules['max_len']) {
+                    $errors[] = "$desc cannot be longer than {$rules['max_len']} characters.";
+                }
+                if (isset($rules['regex']) && !preg_match($rules['regex'], $strVal)) {
+                    $errors[] = "$desc format is invalid.";
+                }
+                break;
+
+            case 'email':
+                $emailVal = trim(strval($value));
+                if (!filter_var($emailVal, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "$desc must be a valid email address.";
+                }
+                if (isset($rules['max_len']) && mb_strlen($emailVal) > $rules['max_len']) {
+                    $errors[] = "$desc cannot be longer than {$rules['max_len']} characters.";
+                }
+                break;
+
+            case 'enum':
+                if (empty($rules['options']) || !in_array($value, $rules['options'], true)) {
+                    $optionsStr = implode(', ', $rules['options'] ?? []);
+                    $errors[] = "$desc must be one of: $optionsStr.";
+                }
+                break;
+                
+            case 'date':
+                // strict YYYY-MM-DD
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                    $errors[] = "$desc must be in YYYY-MM-DD format.";
+                } else {
+                    $d = DateTime::createFromFormat('Y-m-d', $value);
+                    if (!$d || $d->format('Y-m-d') !== $value) {
+                        $errors[] = "$desc is not a valid date.";
+                    }
+                }
+                break;
+        }
+    }
+
+    return $errors;
+}

@@ -1,103 +1,22 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
 import {
-  Car, Landmark, ShieldCheck, ChevronRight, Calculator, Sparkles,
-  CheckCircle2, PhoneCall, AlertTriangle, X, MessageCircle,
-  Instagram, Facebook, Linkedin, Twitter, MessageSquare, ArrowRight,
-  Percent, FileCheck, Headphones, Gauge, Clock, Wallet, TrendingUp,
-  Shield, Star, Zap, UserCheck, Sun, Moon, Building2, Award, BarChart3
+  ShieldCheck, ChevronRight, Calculator, Sparkles,
+  CheckCircle2, PhoneCall, AlertTriangle, X,
+  Instagram, Facebook, Linkedin, ArrowRight,
+  Clock, Sun, Moon, Award,
+  Search, Check, Phone, Mail, MapPin, Sparkle, Car, Gauge, TrendingUp, Building2,
+  Lock, Zap, User, Smartphone, SlidersHorizontal, Home, Briefcase, Landmark
 } from 'lucide-react';
 import api from '../lib/axios';
 import { useThemeStore } from '../store/themeStore';
 
+type Lang = 'en' | 'hi';
 type LoanType = 'new_loan' | 'refinance' | 'repurchase' | 'bt';
 
-interface LoanProduct { title: string; description: string; badge?: string; icon: React.ElementType; features: string[]; cta: string; color: string; }
-interface Feature { icon: React.ElementType; title: string; description: string; }
-interface TrustStat { value: string; label: string; icon: React.ElementType; color: string; }
-
-const LOAN_PRODUCTS: LoanProduct[] = [
-  { title: 'New Car Loan', description: 'Finance up to 90% on-road price of passenger cars with minimal documentation and quick approval.', badge: 'Most Popular', icon: Car, features: ['Up to 90% LTV', 'Flexible tenure 1–7 yrs', 'Lowest interest rates'], cta: 'Apply Now', color: 'indigo' },
-  { title: 'Commercial Vehicle', description: 'Secure capital for trucks, tippers, buses, and pick-up loaders at high loan-to-value ratios.', icon: Gauge, features: ['High LTV on CV assets', 'Lease & hire-purchase', 'DSA partner benefits'], cta: 'Explore CV Loan', color: 'emerald' },
-  { title: 'Refinance & BT', description: 'Unlock cash from your existing vehicle or transfer balance to cut EMIs and access better rates.', icon: TrendingUp, features: ['Top-up on existing vehicle', 'Balance transfer deals', 'Reduced EMIs'], cta: 'Check Eligibility', color: 'violet' },
-  { title: 'Used Car Loan', description: 'Purchase certified pre-owned vehicles with flexible valuation rates and simple documentation.', icon: ShieldCheck, features: ['Cars up to 10 years old', 'Competitive used-car rates', 'Fast disbursal'], cta: 'Get Quote', color: 'amber' }
-];
-
-const WHY_US: Feature[] = [
-  { icon: Clock, title: 'Approval in 24 Hours', description: 'Our digital-first process ensures you get fast approvals without traditional bank queues.' },
-  { icon: FileCheck, title: 'Minimal Documentation', description: 'Upload Aadhaar, PAN, and vehicle documents securely. We handle the rest with your financer.' },
-  { icon: Percent, title: 'Best Interest Rates', description: 'We compare offers across partner banks & NBFCs to get you the most competitive rate.' },
-  { icon: Headphones, title: 'Dedicated RM', description: 'A single point of contact guides you from application to disbursement, always available.' },
-  { icon: Wallet, title: 'Transparent Payouts', description: 'For DSA partners, track every commission, retention, and bonus payout in real-time.' },
-  { icon: Shield, title: 'Bank-Grade Security', description: 'Your data and documents are encrypted and stored with enterprise-level security.' }
-];
-
-const TRUST_STATS: TrustStat[] = [
-  { value: '₹500Cr+', label: 'Loans Facilitated', icon: BarChart3, color: 'text-primary-600 bg-primary-50' },
-  { value: '15,000+', label: 'Happy Customers', icon: UserCheck, color: 'text-emerald-600 bg-emerald-50' },
-  { value: '50+', label: 'Partner Financers', icon: Building2, color: 'text-violet-600 bg-violet-50' },
-  { value: '4.9/5', label: 'Customer Rating', icon: Award, color: 'text-amber-600 bg-amber-50' }
-];
-
-const TESTIMONIALS = [
-  { name: 'Ramesh Patel', role: 'Transport Business Owner', quote: 'Got my commercial vehicle loan approved in 2 days. The DSA partner portal made tracking everything transparent.', rating: 5 },
-  { name: 'Priya Sharma', role: 'Car Buyer, Mumbai', quote: 'The EMI calculator helped me plan my budget. The entire process was smooth and paperless.', rating: 5 },
-  { name: 'Amit Verma', role: 'DSA Channel Partner', quote: 'Commission tracking and tier bonuses are crystal clear. Best vehicle finance CRM I have used for my agency.', rating: 5 }
-];
-
 const formatCurrency = (n: number) => `₹${n.toLocaleString('en-IN')}`;
-
-function useCountUp(target: number, duration = 1200) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    const startTime = performance.now();
-    const animate = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.floor(target * eased));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [target, duration]);
-  return value;
-}
-
-function AnimatedStat({ value, label, icon: Icon, color }: TrustStat) {
-  const numeric = parseInt(value.replace(/[^0-9]/g, ''), 10) || 0;
-  const suffix = value.replace(/[0-9.]/g, '');
-  const count = useCountUp(numeric);
-  return (
-    <div className="flex flex-col items-center text-center p-6">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${color} dark:bg-opacity-15`}>
-        <Icon className="w-5 h-5" />
-      </div>
-      <div className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white tracking-tight">
-        {value.includes('₹') ? '₹' : ''}{count.toLocaleString('en-IN')}{suffix}
-      </div>
-      <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">{label}</div>
-    </div>
-  );
-}
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={`w-3.5 h-3.5 ${i < rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200 dark:text-slate-700'}`} />
-      ))}
-    </div>
-  );
-}
-
-const PRODUCT_COLORS: Record<string, { bg: string; icon: string; badge: string; hover: string }> = {
-  indigo: { bg: 'bg-primary-50', icon: 'text-primary-600 dark:text-primary-400', badge: 'bg-primary-600 text-white', hover: 'hover:border-primary-300 dark:hover:border-primary-500 hover:shadow-primary-100 dark:hover:shadow-primary-500/10' },
-  emerald: { bg: 'bg-emerald-50', icon: 'text-emerald-600 dark:text-emerald-400', badge: 'bg-emerald-600 text-white', hover: 'hover:border-emerald-300 dark:hover:border-emerald-500 hover:shadow-emerald-100 dark:hover:shadow-emerald-500/10' },
-  violet: { bg: 'bg-violet-50', icon: 'text-violet-600 dark:text-violet-400', badge: 'bg-violet-600 text-white', hover: 'hover:border-violet-300 dark:hover:border-violet-500 hover:shadow-violet-100 dark:hover:shadow-violet-500/10' },
-  amber: { bg: 'bg-amber-50', icon: 'text-amber-600 dark:text-amber-400', badge: 'bg-amber-600 text-white', hover: 'hover:border-amber-300 dark:hover:border-amber-500 hover:shadow-amber-100 dark:hover:shadow-amber-500/10' }
-};
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuthStore();
@@ -105,646 +24,1125 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { settings } = useSettingsStore();
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentSlide((p) => (p + 1) % 4), 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const dynamicSlides = useMemo(() => [
-    { title: settings.slide1_title, description: settings.slide1_description, badge: settings.slide1_badge, icon: Car, color: 'text-primary-600', bg: 'bg-primary-100' },
-    { title: settings.slide2_title, description: settings.slide2_description, badge: settings.slide2_badge, icon: Landmark, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-    { title: settings.slide3_title, description: settings.slide3_description, badge: settings.slide3_badge, icon: ShieldCheck, color: 'text-violet-600', bg: 'bg-violet-100' },
-    { title: settings.slide4_title, description: settings.slide4_description, badge: settings.slide4_badge, icon: UserCheck, color: 'text-amber-600', bg: 'bg-amber-100' }
-  ], [settings]);
+  // Set default language to English ('en')
+  const [lang, setLang] = useState<Lang>('en');
+  const t = (en: string, hi: string) => (lang === 'en' ? en : hi);
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard', { replace: true });
   }, [isAuthenticated, navigate]);
 
+  // EMI Calculator State
   const [loanAmount, setLoanAmount] = useState<number>(500000);
   const [tenureYears, setTenureYears] = useState<number>(5);
-  const [interestRate, setInterestRate] = useState<number>(10.5);
+  const [interestRate, setInterestRate] = useState<number>(9.5);
+
   const emi = useMemo(() => {
-    const P = loanAmount; const r = (interestRate / 12) / 100; const n = tenureYears * 12;
+    const P = loanAmount;
+    const r = interestRate / 12 / 100;
+    const n = tenureYears * 12;
     if (r === 0) return Math.round(P / n);
     return Math.round((P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1));
   }, [loanAmount, tenureYears, interestRate]);
-  const totalPayment = emi * tenureYears * 12;
-  const totalInterest = totalPayment - loanAmount;
 
-  const [formData, setFormData] = useState({ customer_name: '', customer_mobile: '', loan_amount: '500000', vehicle_make_model: '', loan_type: 'new_loan' as LoanType });
+  const totalPayment = emi * tenureYears * 12;
+  const totalInterest = Math.max(0, totalPayment - loanAmount);
+
+  // Application Form State
+  const [formData, setFormData] = useState({
+    customer_name: '',
+    customer_mobile: '',
+    loan_amount: '500000',
+    vehicle_make_model: '',
+    loan_type: 'new_loan' as LoanType
+  });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successLead, setSuccessLead] = useState<{ lead_id: string; id: number } | null>(null);
-  const [isSocialOpen, setIsSocialOpen] = useState(false);
+
+  // Status Search Modal State
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [statusQuery, setStatusQuery] = useState('');
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState('');
+  const [searchedLead, setSearchedLead] = useState<any>(null);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const loanAmountFloat = parseFloat(formData.loan_amount || '0');
-  const isFormValid = formData.customer_name.trim().length >= 2 && /^[0-9]{10}$/.test(formData.customer_mobile) && loanAmountFloat >= 50000 && formData.vehicle_make_model.trim().length >= 2;
+  const isFormValid =
+    formData.customer_name.trim().length >= 2 &&
+    /^[0-9]{10}$/.test(formData.customer_mobile) &&
+    loanAmountFloat >= 10000;
 
   const handleApplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
-    setSubmitting(true); setError(''); setSuccessLead(null);
+    setSubmitting(true);
+    setError('');
+    setSuccessLead(null);
     try {
-      const response = await api.post('/leads/public-create', { customer_name: formData.customer_name, customer_mobile: formData.customer_mobile, loan_amount: loanAmountFloat, vehicle_make_model: formData.vehicle_make_model, loan_type: formData.loan_type });
+      const response = await api.post('/leads/public-create', {
+        customer_name: formData.customer_name,
+        customer_mobile: formData.customer_mobile,
+        loan_amount: loanAmountFloat,
+        vehicle_make_model: formData.vehicle_make_model || 'Vehicle/Personal Finance',
+        loan_type: formData.loan_type
+      });
       if (response.data?.lead_id) {
         setSuccessLead({ lead_id: response.data.lead_id, id: response.data.id });
-        setFormData({ customer_name: '', customer_mobile: '', loan_amount: '500000', vehicle_make_model: '', loan_type: 'new_loan' });
+        setFormData({
+          customer_name: '',
+          customer_mobile: '',
+          loan_amount: '500000',
+          vehicle_make_model: '',
+          loan_type: 'new_loan'
+        });
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to submit application. Please check your inputs.');
-    } finally { setSubmitting(false); }
+      setError(err.response?.data?.error || t('Failed to submit application. Please check your inputs.', 'आवेदन भेजने में विफलता। कृपया पुनः प्रयास करें।'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleStatusSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!statusQuery.trim()) return;
+    setStatusLoading(true);
+    setStatusError('');
+    setSearchedLead(null);
+    try {
+      const res = await api.get(`/leads/public-status?query=${encodeURIComponent(statusQuery.trim())}`);
+      if (res.data?.lead) {
+        setSearchedLead(res.data.lead);
+      }
+    } catch (err: any) {
+      setStatusError(
+        err.response?.data?.error || t('No application found for the provided Lead ID or Mobile number.', 'आपके दर्ज किए गए विवरण से कोई आवेदन नहीं मिला।')
+      );
+    } finally {
+      setStatusLoading(false);
+    }
+  };
+
+  const getStatusBadgeClass = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'disbursed':
+      case 'approved':
+        return 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border-sky-300';
+      case 'pending':
+      case 'on_hold':
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-300';
+      case 'rejected':
+        return 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border-rose-300';
+      default:
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border-indigo-300';
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 font-sans selection:bg-primary-500 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 font-sans selection:bg-indigo-600 selection:text-white overflow-x-hidden">
+      
+      {/* ── Top Header Bar (App Contact Info & Lang Switcher) ───────── */}
+      <div className="bg-[#0f172a] text-slate-200 text-xs py-2 px-4 border-b border-slate-800">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-6 flex-wrap justify-center sm:justify-start">
+            <span className="flex items-center gap-1.5 text-slate-300">
+              <Mail className="w-3.5 h-3.5 text-indigo-400" />
+              <a href={`mailto:${settings.support_email}`} className="hover:text-white transition-colors">
+                {settings.support_email}
+              </a>
+            </span>
+            <span className="flex items-center gap-1.5 text-slate-300">
+              <Phone className="w-3.5 h-3.5 text-indigo-400" />
+              <a href={`tel:${settings.contact_number}`} className="hover:text-white transition-colors">
+                {settings.contact_number}
+              </a>
+            </span>
+            <span className="flex items-center gap-1.5 text-slate-400 hidden md:flex">
+              <MapPin className="w-3.5 h-3.5 text-amber-400" />
+              <span>{settings.office_address}</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {settings.facebook_url && (
+                <a href={settings.facebook_url} target="_blank" rel="noreferrer" className="w-6 h-6 rounded-full bg-slate-800 hover:bg-indigo-600 hover:text-white flex items-center justify-center transition-all">
+                  <Facebook className="w-3 h-3" />
+                </a>
+              )}
+              {settings.instagram_url && (
+                <a href={settings.instagram_url} target="_blank" rel="noreferrer" className="w-6 h-6 rounded-full bg-slate-800 hover:bg-pink-600 hover:text-white flex items-center justify-center transition-all">
+                  <Instagram className="w-3 h-3" />
+                </a>
+              )}
+              {settings.linkedin_url && (
+                <a href={settings.linkedin_url} target="_blank" rel="noreferrer" className="w-6 h-6 rounded-full bg-slate-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all">
+                  <Linkedin className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+
+            {/* Language Toggle (English Default, Hindi Second) */}
+            <div className="flex items-center bg-slate-900 p-0.5 rounded-full border border-slate-700">
+              <button
+                onClick={() => setLang('en')}
+                className={`px-2.5 py-0.5 text-[11px] font-bold rounded-full transition-all ${
+                  lang === 'en'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => setLang('hi')}
+                className={`px-2.5 py-0.5 text-[11px] font-bold rounded-full transition-all ${
+                  lang === 'hi'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                हिंदी
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ── Sticky Header ─────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#111622]/90 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800/80 shadow-sm shadow-slate-900/[0.04] dark:shadow-black/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-md shadow-primary-500/30">
-              <Car className="w-5 h-5 text-white" />
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#0B101E]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-700 flex items-center justify-center shadow-md shadow-indigo-600/20">
+              <Car className="w-4 h-4 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-sm text-slate-900 dark:text-white tracking-tight leading-none">{settings.app_name}</span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold tracking-wide">Vehicle Finance CRM</span>
+              <span className="font-black text-sm text-slate-900 dark:text-white tracking-tight leading-tight">
+                {settings.app_name}
+              </span>
+              <span className="text-[9px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider">
+                {t('Vehicle & Business Finance Solutions', 'वाहन एवं व्यावसायिक वित्त समाधान')}
+              </span>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {[{ label: 'Solutions', href: '#solutions' }, { label: 'EMI Calculator', href: '#calculator' }, { label: 'Why Us', href: '#why-us' }, { label: 'Apply', href: '#apply' }].map((item) => (
-              <a key={item.label} href={item.href} className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-all">{item.label}</a>
+          <nav className="hidden lg:flex items-center gap-1">
+            {[
+              { label: t('Solutions', 'समाधान'), href: '#solutions' },
+              { label: t('EMI Calculator', 'ईएमआई कैलकुलेटर'), href: '#calculator' },
+              { label: t('Why Us', 'हमारे लाभ'), href: '#why-us' },
+              { label: t('Eligibility', 'पात्रता'), href: '#eligibility' },
+              { label: t('Contact Us', 'संपर्क करें'), href: '#apply' }
+            ].map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all"
+              >
+                {item.label}
+              </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button onClick={toggleTheme} className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary-300 dark:hover:border-primary-500 text-slate-400 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-all cursor-pointer" aria-label="Toggle Theme">
-              {isDark ? <Sun className="w-4 h-4 text-amber-400 animate-spin-slow" /> : <Moon className="w-4 h-4 text-slate-600" />}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-indigo-500 text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-all cursor-pointer"
+              aria-label="Toggle Theme"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>
-            <Link to="/login" className="hidden sm:inline-flex px-4 py-2 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs font-bold transition-all items-center gap-1.5">
-              Partner Login
+
+            {/* Loan Status Button */}
+            <button
+              onClick={() => setIsStatusModalOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-indigo-600/30 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white transition-all text-xs font-bold shadow-xs"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>{t('Check Status', 'स्टेटस चेक करें')}</span>
+            </button>
+
+            <Link
+              to="/login"
+              className="hidden sm:inline-flex px-3.5 py-1.5 border border-slate-300 dark:border-slate-700 hover:border-indigo-600 text-slate-700 dark:text-slate-200 rounded-full text-xs font-bold transition-all"
+            >
+              {t('Partner Login', 'पार्टनर लॉगिन')}
             </Link>
-            <a href="#apply" className="inline-flex px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold shadow-md shadow-primary-500/25 hover:shadow-primary-500/40 transition-all items-center gap-1.5">
-              Apply Now <ChevronRight className="w-3.5 h-3.5" />
+
+            <a
+              href="#apply"
+              className="inline-flex px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all items-center gap-1"
+            >
+              <span>{t('Apply Now', 'आवेदन करें')}</span>
+              <ChevronRight className="w-3.5 h-3.5 text-indigo-200" />
             </a>
           </div>
         </div>
       </header>
 
-      {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-0 right-0 h-[600px] bg-gradient-to-br from-primary-50 via-white to-violet-50 dark:from-[#0B0F19] dark:via-[#0e131d] dark:to-[#111622]" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary-100/40 dark:bg-primary-600/10 rounded-full blur-[120px]" />
-          <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-violet-100/30 dark:bg-violet-600/10 rounded-full blur-[80px]" />
-          {/* Dot grid */}
-          <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle, #4f46e5 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-        </div>
-
+      {/* ── Hero Banner Section ───────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-950/10 via-slate-50 to-slate-50 dark:from-indigo-950/30 dark:via-[#0B0F19] dark:to-[#0B0F19] py-8 lg:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-            {/* Text */}
-            <div className="space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-primary-100 dark:bg-primary-500/15 border border-primary-200/80 dark:border-primary-500/30 rounded-full">
-                <Sparkles className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
-                <span className="text-[11px] font-bold text-primary-700 dark:text-primary-400 uppercase tracking-wider">Next-Gen Vehicle Finance DSA</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs font-bold shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>★ 4.9/5 Rating • {t('Empowering Your Mobility & Business Growth', 'आपकी प्रगति एवं सपनों का सशक्त माध्यम')}</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-                Finance Your Vehicle<br className="hidden sm:block" />{' '}
-                <span className="bg-gradient-to-r from-primary-600 via-violet-600 to-fuchsia-500 dark:from-primary-400 dark:via-violet-400 dark:to-fuchsia-400 bg-clip-text text-transparent">Instantly & Smartly</span>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight font-serif">
+                {t('Fast & Flexible ', 'आसान और त्वरित ')}
+                <span className="text-indigo-700 dark:text-indigo-400 italic font-serif underline decoration-amber-400/80 underline-offset-8">
+                  {t('Vehicle & Asset Finance', 'वाहन एवं बिजनेस लोन सुविधा')}
+                </span>
               </h1>
 
-              <p className="text-slate-500 dark:text-slate-400 text-base leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Apply online in under 2 minutes. We compare rates across India's top financers, minimize your paperwork, and get you on the road faster.
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                {t(
+                  'Get low-interest loan options for commercial vehicles, passenger cars, business expansion, and refinancing with transparent 24-hour digital approvals.',
+                  'कम ब्याज दरों पर वाणिज्यिक वाहन, कार, व्यापार विस्तार और रीफाइनेंस लोन की पारदर्शी 24-घंटे में डिजिटल मंजूरी।'
+                )}
               </p>
 
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                <a href="#apply" className="group px-7 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-sm font-bold shadow-xl shadow-primary-600/25 hover:shadow-primary-600/40 transition-all flex items-center gap-2">
-                  Apply for Loan <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              {/* Action CTAs */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                <a
+                  href="#apply"
+                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-full text-sm font-bold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all flex items-center justify-center gap-2"
+                >
+                  <span>{t('Apply for Loan Now', 'लोन के लिए तुरंत आवेदन करें')}</span>
+                  <ArrowRight className="w-4 h-4 text-indigo-200" />
                 </a>
-                <a href="#calculator" className="px-7 py-3.5 bg-white dark:bg-[#111622] hover:bg-slate-50 dark:hover:bg-[#162230] text-slate-700 dark:text-slate-200 rounded-2xl text-sm font-bold border border-slate-200 dark:border-slate-800 hover:border-primary-300 dark:hover:border-primary-500 transition-all shadow-sm flex items-center gap-2">
-                  <Calculator className="w-4 h-4 text-primary-600 dark:text-primary-400" /> Calculate EMI
-                </a>
+
+                <button
+                  onClick={() => setIsStatusModalOpen(true)}
+                  className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-full text-sm font-bold shadow-md border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+                >
+                  <Search className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <span>{t('Check Application Status', 'आवेदन की स्थिति देखें')}</span>
+                </button>
               </div>
 
-              <div className="flex items-center justify-center lg:justify-start gap-5 text-xs font-semibold text-slate-400 dark:text-slate-400">
-                {['No hidden charges', 'Free eligibility check', '24/7 support'].map((t) => (
-                  <div key={t} className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> {t}</div>
+              {/* Trust Badges */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+                {[
+                  { title: t('Up to 90% LTV', '90% तक LTV'), icon: ShieldCheck },
+                  { title: t('24h Disbursal', '24h डिसबर्सल'), icon: Clock },
+                  { title: t('Lowest EMIs', 'कम EMI दर'), icon: Calculator },
+                  { title: t('Dedicated RM', 'समर्पित सपोर्ट'), icon: PhoneCall }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 justify-center lg:justify-start">
+                    <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                      <item.icon className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{item.title}</span>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Hero Visual Card */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-violet-500/8 dark:from-primary-500/20 dark:to-violet-500/15 rounded-[2.5rem] blur-2xl -z-10" />
-              <div className="relative bg-white dark:bg-[#111622] border border-slate-200/80 dark:border-slate-800 rounded-[2rem] p-6 sm:p-8 shadow-2xl shadow-slate-200/80 dark:shadow-black/50">
-                {/* Card header */}
-                <div className="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-500/15 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            {/* Right Interactive Box */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md bg-white dark:bg-[#0E1526] rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-white shadow-2xl border border-slate-200/90 dark:border-slate-800">
+                
+                {/* Floating Badge */}
+                <div className="absolute -top-5 -right-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-2xl shadow-xl font-black text-xs uppercase tracking-wider flex items-center gap-1.5 animate-bounce">
+                  <Sparkle className="w-4 h-4 text-amber-300" />
+                  <span>{t('Instant Pre-Approval', 'त्वरित प्री-अप्रूवल')}</span>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div>
+                      <h3 className="text-xl font-black text-slate-900 dark:text-white">{t('Finance Offerings', 'वित्तीय समाधान')}</h3>
+                      <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5">{t('Minimal paper documentation & quick approval', 'न्यूनतम दस्तावेज और त्वरित स्वीकृति')}</p>
                     </div>
-                    <span className="font-bold text-sm text-slate-900 dark:text-white">Offerings Showcase</span>
+                    <Award className="w-8 h-8 text-amber-500" />
                   </div>
-                  <span className="text-[10px] bg-primary-600 text-white px-2.5 py-1 rounded-full font-extrabold uppercase tracking-wider">
-                    {dynamicSlides[currentSlide].badge}
+
+                  <div className="space-y-3">
+                    {[
+                      { label: t('New & Used Vehicle Finance', 'नई व पुरानी गाड़ी लोन'), desc: t('Cars, SUVs, Multi-utility vehicles', 'कार, एसयूवी व उपयोगिता वाहन') },
+                      { label: t('Commercial Vehicles & Pickups', 'वाणिज्यिक वाहन व लोडर'), desc: t('Trucks, tippers, cargo delivery vans', 'ट्रक, पिकअप व मालवाहक वाहन') },
+                      { label: t('Refinance & Balance Transfer', 'रीफाइनेंस व बैलेंस ट्रांसफर'), desc: t('Reduce existing vehicle loan EMIs', 'अपनी वर्तमान लोन EMI कम करें') },
+                      { label: t('Business & Equipment Funding', 'बिजनेस व उपकरण लोन'), desc: t('Working capital for fleet & shops', 'व्यापार विस्तार हेतु पूँजी') }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-300 transition-all">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 dark:text-white">{item.label}</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400">{item.desc}</div>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-2">
+                    <a
+                      href="#apply"
+                      className="w-full py-4 bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition-all"
+                    >
+                      <span>{t('Apply Online Now', 'ऑनलाइन आवेदन करें')}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── Benefit Cards Grid Section ─────────────────────────────── */}
+      <section id="solutions" className="py-8 sm:py-10 bg-white dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-3xl mx-auto mb-6 space-y-2">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+              {t('Our Financial Products', 'वित्तीय उत्पाद')}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-serif">
+              {t('Tailored Solutions for Your Every Need', 'हर ज़रूरत के लिए अनुकूलित लोन योजनाएँ')}
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+              {t(
+                'Explore competitive interest rates, flexible loan tenures, and transparent processing across all finance categories.',
+                'प्रतिस्पर्धी ब्याज दरों, लचीली लोन अवधि और पारदर्शी प्रक्रिया का लाभ उठाएँ।'
+              )}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[
+              {
+                icon: Car,
+                title: t('New Vehicle Finance', 'न्यू व्हीकल लोन'),
+                desc: t('Finance up to 90% on-road price of cars & passenger vehicles with quick approval.', 'कार व यात्री वाहनों पर 90% तक ऑन-रोड फाइनेंस।'),
+                badge: t('Most Popular', 'सर्वाधिक लोकप्रिय')
+              },
+              {
+                icon: Gauge,
+                title: t('Commercial Vehicles', 'कमर्शियल व्हीकल लोन'),
+                desc: t('Funding for loaders, tippers, cargo trucks, and passenger buses.', 'पिकअप लोडर, ट्रक व वाणिज्यिक वाहनों के लिए पूँजी।'),
+                badge: t('High LTV', 'उच्च LTV')
+              },
+              {
+                icon: TrendingUp,
+                title: t('Refinance & Top-Up', 'रीफाइनेंस व टॉप-अप'),
+                desc: t('Unlock extra cash on existing vehicles or transfer balance to cut EMIs.', 'मौजूदा वाहन पर अतिरिक्त कैश पाएँ या EMI कम करें।'),
+                badge: t('Low Interest', 'कम ब्याज दर')
+              },
+              {
+                icon: Briefcase,
+                title: t('Personal Loans', 'पर्सनल लोन'),
+                desc: t('Instant collateral-free personal credit up to ₹15 Lakhs with flexible repayment options.', 'बिना किसी गारंटी के त्वरित पर्सनल लोन रु 15 लाख तक।'),
+                badge: t('Instant Approval', 'त्वरित स्वीकृति')
+              },
+              {
+                icon: Home,
+                title: t('Housing & Home Loans', 'होम एवं हाउसिंग लोन'),
+                desc: t('Low-interest home purchasing, construction, and plot expansion loans with long tenures.', 'घर खरीदने, निर्माण व प्लॉट विस्तार हेतु आकर्षक ब्याज दर पर होम लोन।'),
+                badge: t('Lowest Rate', 'न्यूनतम दर')
+              },
+              {
+                icon: Landmark,
+                title: t('Loan Against Property (LAP)', 'लोन अगेंस्ट प्रॉपर्टी (LAP)'),
+                desc: t('Unlock high-value liquidity up to 70% property valuation against residential or commercial real estate.', 'अपनी आवासीय या वाणिज्यिक संपत्ति पर 70% तक उच्च फंड पाएँ।'),
+                badge: t('High Funding', 'उच्च फंड')
+              },
+              {
+                icon: Building2,
+                title: t('Business & DSA Loans', 'बिजनेस व DSA सहायता'),
+                desc: t('Working capital for DSA partners, dealers, and growing micro-enterprises.', 'व्यापार विस्तार व DSA पार्टनर्स के लिए फंड।'),
+                badge: t('Fast Disbursal', 'त्वरित वितरण')
+              }
+            ].map((card, idx) => (
+              <div
+                key={idx}
+                className="group relative bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-600 dark:hover:border-indigo-400 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
+                    <card.icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+                    {card.badge}
                   </span>
                 </div>
 
-                {/* Slide content */}
-                <div className="pt-6 pb-4 min-h-[180px] flex flex-col justify-center">
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3.5 rounded-2xl ${dynamicSlides[currentSlide].bg.replace('bg-', 'bg-').replace('100', '100 dark:bg-opacity-15')}`}>
-                      {React.createElement(dynamicSlides[currentSlide].icon, { className: `w-7 h-7 ${dynamicSlides[currentSlide].color}` })}
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{dynamicSlides[currentSlide].title}</h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{dynamicSlides[currentSlide].description}</p>
-                    </div>
-                  </div>
-                </div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {card.title}
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                  {card.desc}
+                </p>
 
-                {/* Progress dots */}
-                <div className="flex justify-center gap-2 pt-2">
-                  {dynamicSlides.map((_, idx) => (
-                    <button key={idx} onClick={() => setCurrentSlide(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${currentSlide === idx ? 'w-8 bg-primary-600 dark:bg-primary-500' : 'w-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700'}`}
-                      aria-label={`Slide ${idx + 1}`} />
-                  ))}
-                </div>
-
+                <a
+                  href="#apply"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                >
+                  <span>{t('Apply Now', 'आवेदन करें')}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </a>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Trust Stats ───────────────────────────────────────────── */}
-      <section className="border-y border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-[#0e131d]/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100 dark:divide-slate-800">
-            {TRUST_STATS.map((stat, idx) => (
-              <AnimatedStat key={idx} {...stat} />
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* ── Loan Solutions ────────────────────────────────────────── */}
-      <section id="solutions" className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-3">
-              <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" /> Loan Solutions <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" />
-            </span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Finance for Every Vehicle Need</h2>
-            <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm leading-relaxed">From personal cars to heavy commercial fleets — flexible schemes tailored for every use case.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {LOAN_PRODUCTS.map((product, idx) => {
-              const c = PRODUCT_COLORS[product.color];
-              return (
-                <div key={idx} className={`group bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col ${c.hover}`}>
-                  <div className="flex justify-between items-start mb-5">
-                    <div className={`p-3 rounded-2xl ${c.bg.replace('bg-', 'bg-').replace('50', '50 dark:bg-opacity-15')} group-hover:scale-110 transition-transform`}>
-                      <product.icon className={`w-6 h-6 ${c.icon}`} />
-                    </div>
-                    {product.badge && (
-                      <span className={`px-2.5 py-1 text-[10px] font-extrabold uppercase rounded-lg tracking-wider ${c.badge}`}>{product.badge}</span>
-                    )}
-                  </div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">{product.title}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-5 flex-1">{product.description}</p>
-                  <ul className="space-y-2 mb-5">
-                    {product.features.map((feature, fIdx) => (
-                      <li key={fIdx} className="flex items-center gap-2 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0" /> {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <a href="#apply" className={`w-full py-2.5 border border-slate-200 dark:border-slate-700 hover:border-transparent ${c.bg.replace('50', '600')} hover:bg-gradient-to-r text-slate-700 dark:text-slate-200 hover:text-white rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 group/link`}>
-                    {product.cta} <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
-                  </a>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Why Choose Us ─────────────────────────────────────────── */}
-      <section id="why-us" className="py-20 lg:py-28 bg-slate-50/60 dark:bg-[#0e131d]/60 border-y border-slate-100 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-            <div className="space-y-6">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-primary-600 dark:text-primary-400 uppercase tracking-widest">
-                <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" /> Why LeadFlow Pro
+      {/* ── Feature Highlights & Trust Stats Section ────────────── */}
+      <section id="why-us" className="py-8 sm:py-10 bg-gradient-to-b from-slate-900 to-indigo-950 text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <div className="lg:col-span-7 space-y-4">
+              <span className="inline-block px-3.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-black uppercase tracking-wider">
+                {t('Why Choose LeadFlow Pro', 'हमें क्यों चुनें')}
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-                Built for Speed,<br />Transparency & Scale
+
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+                {t('Transparent, Digital-First ', 'पारदर्शी और ')}
+                <span className="text-indigo-400">{t('Digital Finance Portal', 'डिजिटल लोन अनुभव')}</span>
               </h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                Whether you're a vehicle buyer, dealer, DSA partner, or bank executive — our CRM connects every stakeholder on a single, easy-to-use platform.
+
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                {t(
+                  'We partner with leading banks, financers, and DSA agents to provide seamless loan originations, real-time lead tracking, and doorstep customer assistance.',
+                  'प्रमुख बैंकों, फाइनेंसर्स और DSA एजेंट्स के साथ त्वरित स्वीकृति, पारदर्शी कमीशन ट्रैकिंग और त्वरित ग्राहक सहायता।'
+                )}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                {WHY_US.map((feature, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 hover:border-primary-200 dark:hover:border-primary-500 hover:shadow-md hover:shadow-primary-50 dark:hover:shadow-primary-500/10 transition-all group cursor-default">
-                    <div className="w-8 h-8 rounded-xl bg-primary-50 dark:bg-primary-500/15 flex items-center justify-center mb-3 group-hover:bg-primary-600 group-hover:scale-110 transition-all">
-                      <feature.icon className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:text-white transition-colors" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                {[
+                  { title: t('Paperless Uploads', 'डिजिटल दस्तावेज'), sub: t('Upload Aadhaar & PAN securely', 'सुरक्षित ऑनलाइन दस्तावेज सबमिशन') },
+                  { title: t('Bank Partner Network', 'विस्तृत बैंक नेटवर्क'), sub: t('Compare top interest rates', 'सर्वोत्तम ब्याज दरों की तुलना') },
+                  { title: t('Transparent Operations', 'पारदर्शी संचालन प्रणाली'), sub: t('90/10 Agent split model with complete tracking', '90/10 एजेंट मॉडल एवं लाइव ट्रैकिंग') },
+                  { title: t('24/7 Application Tracker', 'लाइव लोन स्टेटस'), sub: t('Track status via Lead ID', 'लीड आईडी द्वारा रियल-टाइम स्थिति') }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs font-bold text-white">{item.title}</div>
+                      <div className="text-[10px] text-slate-300">{item.sub}</div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">{feature.title}</h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{feature.description}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Dashboard Preview */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-violet-500/8 dark:from-primary-500/20 dark:to-violet-500/15 rounded-[2.5rem] blur-3xl" />
-              <div className="relative bg-slate-900 dark:bg-[#111622] border border-slate-800/80 rounded-[2rem] p-6 sm:p-8 shadow-2xl overflow-hidden text-white">
-                <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center"><Gauge className="w-5 h-5 text-white" /></div>
-                      <div>
-                        <div className="text-sm font-bold">Dashboard Preview</div>
-                        <div className="text-[10px] text-slate-400">Real-time CRM insights</div>
-                      </div>
-                    </div>
-                    <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Live
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 mb-5">
-                    {[{ label: 'Total Leads', value: '1,248', color: 'text-primary-400' }, { label: 'Disbursed', value: '₹42.6Cr', color: 'text-emerald-400' }, { label: 'Pending', value: '86', color: 'text-amber-400' }, { label: 'Conversion', value: '68%', color: 'text-violet-400' }].map((kpi, i) => (
-                      <div key={i} className="bg-white/5 dark:bg-white/10 border border-white/8 rounded-xl p-3">
-                        <div className="text-[10px] text-slate-400 font-semibold uppercase mb-1">{kpi.label}</div>
-                        <div className={`text-lg font-black font-mono tabular-nums ${kpi.color}`}>{kpi.value}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="space-y-2.5">
-                    {[{ name: 'Rajesh Transport', status: 'Disbursed', amount: '₹18,50,000', color: 'bg-emerald-500/20 text-emerald-400' }, { name: 'Mehta Motors', status: 'Approved', amount: '₹9,20,000', color: 'bg-primary-500/20 text-primary-400' }, { name: 'Sinha Logistics', status: 'Pending', amount: '₹14,00,000', color: 'bg-amber-500/20 text-amber-400' }].map((lead, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 bg-white/5 dark:bg-white/10 border border-white/5 rounded-xl">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-primary-500/30 flex items-center justify-center text-[10px] font-bold">{lead.name.charAt(0)}</div>
-                          <div className="text-xs font-semibold">{lead.name}</div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${lead.color}`}>{lead.status}</span>
-                          <span className="text-[11px] font-mono tabular-nums font-semibold hidden sm:block text-slate-300">{lead.amount}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── EMI Calculator ────────────────────────────────────────── */}
-      <section id="calculator" className="py-20 lg:py-28 border-y border-slate-100 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-3">
-              <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" /> Plan Your EMI
-            </span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center justify-center gap-2">
-              <Calculator className="w-7 h-7 text-primary-600 dark:text-primary-400" /> EMI Calculator
-            </h2>
-            <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm">Estimate your monthly outgo with our reducing-rate simulator.</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Controls */}
-            <div className="lg:col-span-7 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm space-y-8">
+            {/* Stats Grid */}
+            <div className="lg:col-span-5 grid grid-cols-2 gap-3">
               {[
-                { label: 'Loan Amount', value: loanAmount, min: 100000, max: 2000000, step: 50000, display: formatCurrency(loanAmount), prefix: '₹1 Lakh', suffix: '₹20 Lakhs' },
-                { label: 'Tenure', value: tenureYears, min: 1, max: 7, step: 1, display: `${tenureYears} Years`, prefix: '1 Year', suffix: '7 Years' },
-                { label: 'Interest Rate', value: interestRate, min: 8.5, max: 18, step: 0.25, display: `${interestRate}% p.a.`, prefix: '8.5% p.a.', suffix: '18% p.a.' }
-              ].map((field) => (
-                <div key={field.label} className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{field.label}</span>
-                    <span className="font-mono tabular-nums font-bold text-primary-600 dark:text-primary-400 text-base bg-primary-50 dark:bg-primary-500/15 px-3 py-1 rounded-lg">{field.display}</span>
-                  </div>
-                  <input type="range" min={field.min} max={field.max} step={field.step} value={field.value}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      if (field.label === 'Loan Amount') setLoanAmount(val);
-                      else if (field.label === 'Tenure') setTenureYears(val);
-                      else setInterestRate(val);
-                    }}
-                    className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary-600" />
-                  <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-mono tabular-nums font-bold">
-                    <span>{field.prefix}</span><span>{field.suffix}</span>
-                  </div>
+                { val: '₹500Cr+', label: t('Loans Facilitated', 'वितरित लोन राशि') },
+                { val: '15,000+', label: t('Happy Customers', 'संतुष्ट ग्राहक') },
+                { val: '50+', label: t('Financer Partners', 'फाइनेंसर पार्टनर्स') },
+                { val: '4.9 / 5', label: t('User Rating', 'यूजर रेटिंग') }
+              ].map((stat, idx) => (
+                <div key={idx} className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 text-center space-y-0.5">
+                  <div className="text-xl sm:text-2xl font-black text-indigo-400">{stat.val}</div>
+                  <div className="text-[11px] text-slate-300 font-semibold">{stat.label}</div>
                 </div>
               ))}
             </div>
 
-            {/* Results */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-primary-600 to-violet-700 rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-primary-600/25 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-              <div className="relative z-10">
-                <div className="text-center mb-8">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-primary-100">Estimated EMI</span>
-                  <p className="text-4xl sm:text-5xl font-black font-mono tabular-nums mt-2">{formatCurrency(emi)}<span className="text-base font-normal text-primary-200">/mo</span></p>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
-                    <span className="text-[10px] text-primary-100 uppercase font-bold block">Principal</span>
-                    <span className="text-sm font-mono tabular-nums font-bold block mt-1">{formatCurrency(loanAmount)}</span>
-                  </div>
-                  <div className="bg-white/10 border border-white/10 rounded-2xl p-4">
-                    <span className="text-[10px] text-primary-100 uppercase font-bold block">Total Interest</span>
-                    <span className="text-sm font-mono tabular-nums font-bold block mt-1">{formatCurrency(Math.max(0, Math.round(totalInterest)))}</span>
-                  </div>
-                </div>
-                <div className="bg-white/10 border border-white/10 rounded-2xl p-4 mb-4 text-xs leading-relaxed">
-                  <span className="font-bold text-primary-100 block mb-0.5">Eligibility Tip:</span>
-                  Required monthly salary ≈ <strong className="text-white font-mono tabular-nums">{formatCurrency(emi * 2)}</strong> for smooth approval.
-                </div>
-                <a href="#apply" onClick={() => setFormData((p) => ({ ...p, loan_amount: loanAmount.toString() }))}
-                  className="block w-full py-3.5 bg-white hover:bg-primary-50 text-primary-700 rounded-2xl text-sm font-bold transition-all shadow-lg text-center">
-                  Apply for This Amount
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Testimonials ──────────────────────────────────────────── */}
-      <section className="py-20 lg:py-28">
+      {/* ── Interactive EMI Calculator Section ──────────────────── */}
+      <section id="calculator" className="py-8 sm:py-10 bg-slate-50 dark:bg-[#0B0F19]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-3">
-              <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" /> Testimonials
+          
+          <div className="text-center max-w-3xl mx-auto mb-6 space-y-2">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+              {t('Smart Financial Calculator', 'स्मार्ट ईएमआई कैलकुलेटर')}
             </span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Trusted by Buyers & Partners</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+              {t('Calculate Your Estimated Monthly EMI', 'अपनी मासिक लोन किस्त (EMI) गणना करें')}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+              {t('Adjust the loan amount, tenure, and interest rate sliders to plan your repayments with complete clarity.', 'लोन राशि, अवधि और ब्याज दर चुनकर अपनी मासिक किस्त का अनुमान लगाएं।')}
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t, idx) => (
-              <div key={idx} className="bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
-                <StarRating rating={t.rating} />
-                <p className="mt-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic flex-1">"{t.quote}"</p>
-                <div className="mt-5 flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-100 to-violet-100 dark:from-primary-900/50 dark:to-violet-900/50 flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold text-sm">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900 dark:text-white">{t.name}</div>
-                    <div className="text-[11px] text-slate-400 dark:text-slate-400">{t.role}</div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-white dark:bg-slate-900/80 rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-xl">
+            
+            {/* Controls */}
+            <div className="lg:col-span-7 space-y-4">
+              
+              {/* Input 1: Loan Amount */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-bold gap-2">
+                  <span className="text-slate-700 dark:text-slate-300">{t('Loan Amount (₹)', 'लोन राशि (₹)')}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-slate-400 font-semibold">₹</span>
+                    <input
+                      type="number"
+                      min={10000}
+                      max={10000000}
+                      step={10000}
+                      value={loanAmount}
+                      onChange={(e) => setLoanAmount(Math.max(0, Number(e.target.value)))}
+                      className="w-32 px-2.5 py-1 text-xs font-black text-right text-indigo-600 dark:text-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
                   </div>
                 </div>
+                <input
+                  type="range"
+                  min={50000}
+                  max={5000000}
+                  step={50000}
+                  value={loanAmount > 5000000 ? 5000000 : loanAmount}
+                  onChange={(e) => setLoanAmount(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
+                  <span>₹50,000</span>
+                  <span>₹50,00,000+</span>
+                </div>
+              </div>
+
+              {/* Input 2: Tenure */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-bold gap-2">
+                  <span className="text-slate-700 dark:text-slate-300">{t('Tenure (Years)', 'लोन अवधि (वर्ष)')}</span>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min={1}
+                      max={30}
+                      step={1}
+                      value={tenureYears}
+                      onChange={(e) => setTenureYears(Math.max(1, Math.min(30, Number(e.target.value))))}
+                      className="w-20 px-2.5 py-1 text-xs font-black text-right text-indigo-600 dark:text-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <span className="text-xs text-slate-400 font-semibold">{t('Yrs', 'वर्ष')}</span>
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={10}
+                  step={1}
+                  value={tenureYears > 10 ? 10 : tenureYears}
+                  onChange={(e) => setTenureYears(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
+                  <span>1 {t('Year', 'वर्ष')}</span>
+                  <span>10 {t('Years', 'वर्ष')}</span>
+                </div>
+              </div>
+
+              {/* Input 3: Interest Rate */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-bold gap-2">
+                  <span className="text-slate-700 dark:text-slate-300">{t('Interest Rate (%)', 'ब्याज दर (%)')}</span>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min={1}
+                      max={50}
+                      step={0.1}
+                      value={interestRate}
+                      onChange={(e) => setInterestRate(Math.max(0.1, Math.min(50, Number(e.target.value))))}
+                      className="w-20 px-2.5 py-1 text-xs font-black text-right text-indigo-600 dark:text-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <span className="text-xs text-slate-400 font-semibold">%</span>
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min={5}
+                  max={36}
+                  step={0.25}
+                  value={interestRate > 36 ? 36 : interestRate}
+                  onChange={(e) => setInterestRate(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
+                  <span>5%</span>
+                  <span>36%</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Results Summary Box */}
+            <div className="lg:col-span-5 bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-5 space-y-4 shadow-xl border border-indigo-500/30">
+              <div className="text-center pb-3 border-b border-indigo-800">
+                <div className="text-[10px] text-indigo-300 uppercase font-bold tracking-wider mb-0.5">
+                  {t('Estimated Monthly EMI', 'अनुमानित मासिक किस्त (EMI)')}
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-indigo-300">
+                  {formatCurrency(emi)} <span className="text-xs text-white font-semibold">/ {t('month', 'माह')}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-300">{t('Principal Loan Amount', 'मूल लोन राशि')}</span>
+                  <span className="font-bold text-white">{formatCurrency(loanAmount)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-300">{t('Total Interest Payable', 'कुल ब्याज राशि')}</span>
+                  <span className="font-bold text-amber-400">{formatCurrency(totalInterest)}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-indigo-800 text-xs">
+                  <span className="font-bold text-white">{t('Total Amount Payable', 'कुल देय राशि')}</span>
+                  <span className="font-black text-white">{formatCurrency(totalPayment)}</span>
+                </div>
+              </div>
+
+              <a
+                href="#apply"
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all"
+              >
+                <span>{t('Apply With This EMI', 'इस किस्त के साथ आवेदन करें')}</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── Eligibility Checklist Section ────────────────────────── */}
+      <section id="eligibility" className="py-8 sm:py-10 bg-white dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-3xl mx-auto mb-6 space-y-2">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+              {t('Eligibility Criteria', 'पात्रता मानक')}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+              {t('Simple Requirements for Approval', 'स्वीकृति के लिए सरल शर्तें')}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+              {t('Get pre-approved in minutes with minimal paperwork.', 'न्यूनतम कागजी कार्रवाई के साथ मिनटों में प्री-अप्रूवल प्राप्त करें।')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                step: '01',
+                title: t('Age & Nationality', 'आयु एवं नागरिकता'),
+                desc: t('Indian citizens between 18 and 65 years of age with valid ID proof.', '18 से 65 वर्ष की आयु के भारतीय नागरिक जिनके पास मान्य पहचान पत्र हो।')
+              },
+              {
+                step: '02',
+                title: t('Income Proof or Asset', 'आय अथवा वाहन विवरण'),
+                desc: t('Valid income source, bank statement, or vehicle registration papers.', 'आय प्रमाण, बैंक स्टेटमेंट या वाहन पंजीकरण दस्तावेज।')
+              },
+              {
+                step: '03',
+                title: t('Active Bank Account', 'सक्रिय बैंक खाता'),
+                desc: t('Active savings/current bank account for direct electronic loan disbursal.', 'डायरेक्ट ऑनलाइन लोन हस्तांतरण के लिए चालू/बचत बैंक खाता।')
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-slate-50 dark:bg-slate-900/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{item.step}</div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">{item.title}</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* ── Application Form ──────────────────────────────────────── */}
-      <section id="apply" className="py-20 lg:py-28 bg-slate-50/60 dark:bg-[#0e131d]/60 border-t border-slate-100 dark:border-slate-800">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <div className="bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 sm:p-10 shadow-xl shadow-slate-200/50 dark:shadow-black/50">
-            <div className="text-center space-y-3 mb-8">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-primary-600 dark:text-primary-400 uppercase tracking-widest">
-                <span className="w-4 h-px bg-primary-300 dark:bg-primary-600" /> Get Started
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white flex items-center justify-center gap-2">
-                <PhoneCall className="w-6 h-6 text-primary-600 dark:text-primary-400" /> Apply for Vehicle Finance
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Fill out the details below. Our executive will call you back shortly.</p>
+      {/* ── Public Lead Application Form Section (Full-Width Simple Form) ────────── */}
+      <section id="apply" className="py-8 sm:py-12 bg-slate-100/70 dark:bg-slate-900/50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
+          {/* Section Header */}
+          <div className="text-center mb-10 space-y-2.5 form-slide-up">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-primary-700 dark:text-primary-300 bg-white/80 dark:bg-primary-950/60 px-3.5 py-1.5 rounded-full border border-primary-200/80 dark:border-primary-800 shadow-sm backdrop-blur-sm">
+              <Zap className="w-3.5 h-3.5" />
+              {t('Express Online Application', 'एक्सप्रेस ऑनलाइन आवेदन')}
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+              {t('Apply for Finance Instantly', 'ऑनलाइन लोन आवेदन प्रस्तुत करें')}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-lg mx-auto">
+              {t('Fill in your details below to get instant pre-approval within 2 hours.', 'नीचे अपना विवरण भरें और 2 घंटे के भीतर प्री-अप्रूवल प्राप्त करें।')}
+            </p>
+          </div>
+
+          {/* Main Full-Width Form Card */}
+          <div className="bg-white/80 dark:bg-[#0E1526]/90 backdrop-blur-xl rounded-3xl border border-white/80 dark:border-slate-700/50 shadow-2xl shadow-primary-500/5 dark:shadow-primary-500/[0.02] p-6 sm:p-10 form-slide-up" style={{ animationDelay: '0.1s' }}>
+
+            {successLead ? (
+              /* ── Success State ── */
+              <div className="text-center space-y-6 py-6 form-slide-up">
+                <div className="relative inline-flex">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center shadow-xl shadow-emerald-500/30 form-pulse-ring">
+                    <Check className="w-8 h-8 stroke-[3]" />
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <h3 className="text-2xl font-black text-emerald-800 dark:text-emerald-300">
+                    {t('Application Submitted!', 'आवेदन सफलतापूर्वक प्राप्त!')}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    {t('Our relationship team will contact you within 2 hours.', 'हमारी टीम 2 घंटे के भीतर आपसे संपर्क करेगी।')}
+                  </p>
+                </div>
+
+                <div className="inline-block px-6 py-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-0.5">
+                    {t('Your Reference ID', 'आपकी संदर्भ आईडी')}
+                  </div>
+                  <div className="text-2xl font-mono font-black text-emerald-600 dark:text-emerald-400 tracking-widest">
+                    {successLead.lead_id}
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => setSuccessLead(null)}
+                    className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md shadow-emerald-500/20"
+                  >
+                    {t('Submit Another Application', 'दूसरा आवेदन भरें')}
+                  </button>
+                  <button
+                    onClick={() => setIsStatusModalOpen(true)}
+                    className="w-full sm:w-auto px-6 py-2.5 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all cursor-pointer"
+                  >
+                    <span className="flex items-center justify-center gap-1.5">
+                      <Search className="w-3.5 h-3.5" />
+                      {t('Track Status', 'स्थिति देखें')}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ── Full-Width 4-Field Form ── */
+              <form onSubmit={handleApplySubmit} className="space-y-6">
+                
+                {error && (
+                  <div className="p-3.5 bg-rose-50/80 dark:bg-rose-950/40 rounded-xl text-xs font-semibold flex items-center gap-2 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                {/* 4 Fields Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+
+                  {/* 1. Full Name */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      {t('Full Name *', 'पूरा नाम *')}
+                    </label>
+                    <div className="relative group">
+                      <User className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <input
+                        type="text"
+                        name="customer_name"
+                        required
+                        placeholder={t('e.g. Rahul Sharma', 'उदा. राहुल शर्मा')}
+                        value={formData.customer_name}
+                        onChange={handleFormChange}
+                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 2. Contact Number */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      {t('Contact Number *', 'संपर्क नंबर (मोबाइल) *')}
+                    </label>
+                    <div className="relative group">
+                      <Smartphone className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <input
+                        type="tel"
+                        name="customer_mobile"
+                        required
+                        maxLength={10}
+                        placeholder={t('10-digit mobile number', '10 अंकों का मोबाइल नंबर')}
+                        value={formData.customer_mobile}
+                        onChange={handleFormChange}
+                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 3. City / Location */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      {t('City / Location', 'शहर / स्थान')}
+                    </label>
+                    <div className="relative group">
+                      <MapPin className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <input
+                        type="text"
+                        name="vehicle_make_model"
+                        placeholder={t('e.g. Jaipur, Delhi or Vehicle Name', 'उदा. जयपुर, दिल्ली या वाहन नाम')}
+                        value={formData.vehicle_make_model}
+                        onChange={handleFormChange}
+                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 4. Required Finance Amount */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                        {t('Required Finance Amount *', 'अपेक्षित लोन राशि *')}
+                      </label>
+                      <span className="text-xs font-black text-primary-600 dark:text-primary-400 font-mono">
+                        {formatCurrency(Number(formData.loan_amount || 0))}
+                      </span>
+                    </div>
+                    <div className="relative group">
+                      <SlidersHorizontal className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <input
+                        type="number"
+                        name="loan_amount"
+                        required
+                        min={10000}
+                        step={10000}
+                        placeholder={t('Enter amount in ₹', 'अपेक्षित राशि ₹ में दर्ज करें')}
+                        value={formData.loan_amount}
+                        onChange={handleFormChange}
+                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-bold font-mono focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all"
+                      />
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Quick Amount Selector Pills Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mr-1">
+                      {t('Quick Amount:', 'त्वरित राशि:')}
+                    </span>
+                    {[300000, 500000, 1000000, 1500000, 2500000].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, loan_amount: preset.toString() }))}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 cursor-pointer border ${
+                          Number(formData.loan_amount) === preset
+                            ? 'bg-primary-600 text-white border-primary-600 shadow-xs'
+                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary-300'
+                        }`}
+                      >
+                        ₹{(preset / 100000).toFixed(preset % 100000 === 0 ? 0 : 1)} Lakh
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Trust Highlights */}
+                  <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 font-semibold shrink-0">
+                    <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> {t('100% Secure', '100% सुरक्षित')}</span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-amber-500" /> {t('2hr Response', '2 घंटे में कॉल')}</span>
+                  </div>
+                </div>
+
+                {/* Submit Action Row */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={submitting || !isFormValid}
+                    className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white rounded-xl font-bold text-sm uppercase tracking-wider shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {submitting ? (
+                      <>
+                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <span>{t('Submitting Application...', 'आवेदन जमा हो रहा है...')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-4 h-4" />
+                        <span>{t('Submit Finance Request', 'लोन आवेदन जमा करें')}</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+
+              </form>
+            )}
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── Loan Status Search Modal ───────────────────────────── */}
+      {isStatusModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+            <button
+              onClick={() => {
+                setIsStatusModalOpen(false);
+                setSearchedLead(null);
+                setStatusError('');
+              }}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <Search className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                <span>{t('Track Application Status', 'आवेदन की स्थिति जाँचें')}</span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {t('Enter your Lead ID or registered 10-digit mobile number', 'अपनी लीड आईडी या 10-अंकों का मोबाइल नंबर दर्ज करें')}
+              </p>
             </div>
 
-            {error && (
-              <div className="mb-6 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0" /> <span>{error}</span>
+            <form onSubmit={handleStatusSearch} className="space-y-3">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  required
+                  placeholder={t('e.g. LD-2026-0001 or Mobile', 'उदा. LD-2026-0001 या मोबाइल')}
+                  value={statusQuery}
+                  onChange={(e) => setStatusQuery(e.target.value)}
+                  className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-medium focus:ring-2 focus:ring-indigo-600 outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={statusLoading}
+                  className="px-5 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700"
+                >
+                  {statusLoading ? '...' : t('Search', 'खोजें')}
+                </button>
+              </div>
+            </form>
+
+            {statusError && (
+              <div className="p-3 bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 rounded-xl text-xs font-medium">
+                {statusError}
               </div>
             )}
 
-            <form onSubmit={handleApplySubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {[{ label: 'Full Name *', name: 'customer_name', type: 'text', placeholder: 'e.g. John Doe' }, { label: 'Mobile Number *', name: 'customer_mobile', type: 'tel', placeholder: '10-digit number' }].map((f) => (
-                  <div key={f.name} className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">{f.label}</label>
-                    <input type={f.type} name={f.name} required value={(formData as any)[f.name]} onChange={handleFormChange} placeholder={f.placeholder}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-[#0e131d] border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-primary-400 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-50 dark:focus:ring-primary-500/10 focus:bg-white dark:focus:bg-[#162230] transition-all font-medium" />
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                {[{ label: 'Loan Amount (₹) *', name: 'loan_amount', type: 'number', placeholder: 'e.g. 500000' }, { label: 'Vehicle Make & Model *', name: 'vehicle_make_model', type: 'text', placeholder: 'e.g. Tata Ace Gold' }].map((f) => (
-                  <div key={f.name} className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">{f.label}</label>
-                    <input type={f.type} name={f.name} required min={f.type === 'number' ? 50000 : undefined} value={(formData as any)[f.name]} onChange={handleFormChange} placeholder={f.placeholder}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-[#0e131d] border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-primary-400 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-50 dark:focus:ring-primary-500/10 focus:bg-white dark:focus:bg-[#162230] transition-all font-medium" />
-                  </div>
-                ))}
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Loan Type *</label>
-                  <select name="loan_type" value={formData.loan_type} onChange={handleFormChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#0e131d] border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white outline-none focus:border-primary-400 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-50 dark:focus:ring-primary-500/10 focus:bg-white dark:focus:bg-[#162230] transition-all font-medium">
-                    <option value="new_loan">New Vehicle Loan</option>
-                    <option value="refinance">Refinance Loan</option>
-                    <option value="repurchase">Repurchase Loan</option>
-                    <option value="bt">Balance Transfer (BT)</option>
-                  </select>
+            {searchedLead && (
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold text-slate-500">{searchedLead.lead_id}</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${getStatusBadgeClass(searchedLead.status)}`}>
+                    {searchedLead.status?.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="space-y-1 text-xs">
+                  <div className="font-bold text-slate-900 dark:text-white">{searchedLead.customer_name}</div>
+                  <div className="text-slate-500">{t('Loan Amount:', 'लोन राशि:')} {formatCurrency(Number(searchedLead.loan_amount || 0))}</div>
+                  <div className="text-slate-500">{t('Date:', 'तारीख:')} {searchedLead.lead_date}</div>
                 </div>
               </div>
-              <button type="submit" disabled={!isFormValid || submitting}
-                className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-violet-600 hover:from-primary-500 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl text-sm font-bold shadow-lg shadow-primary-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer mt-1">
-                {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><span>Submit Application</span><ArrowRight className="w-4 h-4" /></>}
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
+            )}
 
-      {/* ── CTA Banner ────────────────────────────────────────────── */}
-      <section className="py-16 bg-gradient-to-r from-primary-600 to-violet-700 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">Ready to Drive Your Business Forward?</h2>
-          <p className="text-sm text-primary-100 mb-8 max-w-2xl mx-auto">Join hundreds of DSA partners and dealers using LeadFlow Pro to manage vehicle finance leads effortlessly.</p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a href="#apply" className="px-7 py-3.5 bg-white text-primary-700 rounded-2xl text-sm font-bold shadow-lg hover:bg-primary-50 transition-all">Apply for Loan</a>
-            <Link to="/login" className="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-2xl text-sm font-bold transition-all">Partner Login</Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Footer ────────────────────────────────────────────────── */}
-      <footer className="bg-white dark:bg-[#0e131d] border-t border-slate-100 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-md shadow-primary-500/25">
-                  <Car className="w-5 h-5 text-white" />
-                </div>
-                <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">{settings.app_name}</span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">India's modern vehicle finance CRM. Built for DSAs, dealers, bank executives, and borrowers.</p>
-              <div className="flex gap-2">
-                {[settings.instagram_url || 'https://instagram.com', settings.facebook_url || 'https://facebook.com', settings.linkedin_url || 'https://linkedin.com', settings.twitter_url || 'https://twitter.com'].map((url, i) => {
-                  const icons = [Instagram, Facebook, Linkedin, Twitter];
-                  const Icon = icons[i];
-                  return (
-                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white dark:hover:text-white rounded-xl transition-all">
-                      <Icon className="w-4 h-4" />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Quick Links</h4>
-              <ul className="space-y-2.5 text-xs text-slate-500 dark:text-slate-400">
-                {[{ label: 'Loan Solutions', href: '#solutions' }, { label: 'EMI Calculator', href: '#calculator' }, { label: 'Why LeadFlow Pro', href: '#why-us' }].map((l) => (
-                  <li key={l.label}><a href={l.href} className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">{l.label}</a></li>
-                ))}
-                <li><Link to="/login" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Partner Login</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Contact</h4>
-              <ul className="space-y-2.5 text-xs text-slate-500 dark:text-slate-400">
-                <li>Email: <span className="font-semibold text-slate-700 dark:text-slate-200">{settings.support_email}</span></li>
-                <li>Call: <span className="font-semibold text-slate-700 dark:text-slate-200 font-mono tabular-nums">{settings.contact_number}</span></li>
-                <li>WhatsApp: <span className="font-semibold text-primary-600 dark:text-primary-400 font-mono tabular-nums">{settings.whatsapp_number}</span></li>
-                <li>Hours: Mon - Sat (9:00 AM - 6:00 PM)</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Office Address</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{settings.office_address || 'Please configure office address in settings.'}</p>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100 dark:border-slate-800 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400 dark:text-slate-500">
-            <p>© {new Date().getFullYear()} {settings.company_name}. All rights reserved.</p>
-            <div className="flex gap-6">
-              <a href="#calculator" className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">EMI Calculator</a>
-              <a href="#apply" className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">Apply Now</a>
-              <Link to="/login" className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors font-semibold">Partner Login</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      {/* ── Success Modal ─────────────────────────────────────────── */}
-      {successLead && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-          <div className="bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-[2rem] max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl relative overflow-hidden">
-            <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-100 dark:bg-emerald-950/40 rounded-full blur-3xl pointer-events-none" />
-            <button onClick={() => setSuccessLead(null)} className="absolute top-4 right-4 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-              <X className="w-5 h-5" />
-            </button>
-            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-8 h-8" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Application Received!</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Your vehicle loan application has been registered successfully.</p>
-            </div>
-            <div className="bg-slate-50 dark:bg-[#0e131d] border border-slate-200 dark:border-slate-800 p-4 rounded-2xl">
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase block tracking-wider">Your Unique Lead ID</span>
-              <span className="font-mono tabular-nums text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-wider block mt-1">{successLead.lead_id}</span>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Save this Lead ID for tracking. Our validation executive will contact you shortly.</p>
-            <button onClick={() => setSuccessLead(null)} className="w-full py-3 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white rounded-xl text-sm font-bold transition-all">
-              Close Window
-            </button>
           </div>
         </div>
       )}
 
-      {/* ── Floating Support Widget ───────────────────────────────── */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-        {isSocialOpen && (
-          <div className="bg-white/95 dark:bg-[#111622]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-2xl rounded-3xl p-5 w-80 space-y-4 text-slate-800 dark:text-slate-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+      {/* ── Modern App Dynamic Footer ────────────────────────────── */}
+      <footer className="bg-slate-950 text-slate-300 pt-14 pb-8 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            
+            {/* Col 1: Brand & Settings */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black">
+                  <Car className="w-5 h-5" />
+                </div>
+                <span className="font-black text-lg text-white">
+                  {settings.app_name}
                 </span>
-                <span className="font-extrabold text-sm text-slate-900 dark:text-white">Connect & Support</span>
               </div>
-              <button onClick={() => setIsSocialOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                <X className="w-4 h-4" />
-              </button>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                {t(
+                  'Empowering auto dealerships, DSA channel partners, and customers with transparent loan processing and lead management.',
+                  'वाहन डीलरों, DSA पार्टनर्स और ग्राहकों के लिए पारदर्शी लोन प्रोसेसिंग एवं कमीशन प्रबंधन प्रणाली।'
+                )}
+              </p>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Have questions about vehicle finance or DSA onboarding? Chat with our team instantly!</p>
-            <div className="space-y-2">
-              <a href={`https://wa.me/${(settings.whatsapp_number || '').replace(/\D/g, '')}?text=Hi%2C%20I%20am%20interested%20in%20applying%20for%20a%20vehicle%20loan.`} target="_blank" rel="noopener noreferrer"
-                className="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-500/25 transition-all flex items-center justify-between group">
-                <div className="flex items-center gap-2.5"><MessageCircle className="w-4 h-4" /><span>Chat on WhatsApp</span></div>
-                <span className="text-[10px] bg-emerald-700/80 px-2 py-0.5 rounded-full uppercase">Instant</span>
-              </a>
-              <a href={`tel:${settings.contact_number}`}
-                className="w-full px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl text-xs font-bold shadow-md shadow-primary-500/25 transition-all flex items-center justify-between group">
-                <div className="flex items-center gap-2.5"><PhoneCall className="w-4 h-4" /><span>Call 24/7 Helpline</span></div>
-                <span className="text-[10px] bg-primary-700/80 px-2 py-0.5 rounded-full uppercase">Free</span>
-              </a>
+
+            {/* Col 2: Quick Links */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-black text-white uppercase tracking-wider">{t('Quick Links', 'त्वरित लिंक')}</h4>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#solutions" className="hover:text-indigo-400 transition-colors">{t('Finance Products', 'फाइनेंस समाधान')}</a></li>
+                <li><a href="#calculator" className="hover:text-indigo-400 transition-colors">{t('EMI Calculator', 'ईएमआई कैलकुलेटर')}</a></li>
+                <li><a href="#why-us" className="hover:text-indigo-400 transition-colors">{t('Why Us', 'हमारे लाभ')}</a></li>
+                <li><button onClick={() => setIsStatusModalOpen(true)} className="hover:text-indigo-400 transition-colors">{t('Track Status', 'स्टेटस चेक करें')}</button></li>
+              </ul>
             </div>
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-extrabold block text-center">Follow Official Channels</span>
-              <div className="grid grid-cols-4 gap-2">
-                {[settings.instagram_url || 'https://instagram.com', settings.facebook_url || 'https://facebook.com', settings.linkedin_url || 'https://linkedin.com', settings.twitter_url || 'https://twitter.com'].map((url, i) => {
-                  const icons = [Instagram, Facebook, Linkedin, Twitter];
-                  const Icon = icons[i];
-                  return (
-                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="p-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white dark:hover:text-white text-slate-600 dark:text-slate-400 rounded-xl flex items-center justify-center transition-all">
-                      <Icon className="w-4 h-4" />
-                    </a>
-                  );
-                })}
-              </div>
+
+            {/* Col 3: Loan Offerings */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-black text-white uppercase tracking-wider">{t('Loan Offerings', 'लोन श्रेणियां')}</h4>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#apply" className="hover:text-indigo-400 transition-colors">{t('New Vehicle Loans', 'नई कार व वाहन लोन')}</a></li>
+                <li><a href="#apply" className="hover:text-indigo-400 transition-colors">{t('Commercial Vehicle Loan', 'वाणिज्यिक वाहन लोन')}</a></li>
+                <li><a href="#apply" className="hover:text-indigo-400 transition-colors">{t('Used Car & Refinance', 'पुराना वाहन व रीफाइनेंस')}</a></li>
+                <li><a href="#apply" className="hover:text-indigo-400 transition-colors">{t('Balance Transfer', 'बैलेंस ट्रांसफर')}</a></li>
+              </ul>
+            </div>
+
+            {/* Col 4: Contact Info (Dynamic Settings) */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-black text-white uppercase tracking-wider">{t('Contact Information', 'संपर्क सूत्र')}</h4>
+              <ul className="space-y-2 text-xs text-slate-400">
+                <li className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{settings.office_address}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <a href={`mailto:${settings.support_email}`} className="hover:text-white">{settings.support_email}</a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <a href={`tel:${settings.contact_number}`} className="hover:text-white">{settings.contact_number}</a>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+          <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <div>
+              © {new Date().getFullYear()} {settings.company_name || settings.app_name}. {t('All Rights Reserved.', 'सर्वाधिकार सुरक्षित।')}
+            </div>
+            <div className="flex gap-4">
+              <Link to="/login" className="hover:text-indigo-400 font-bold">{t('Partner & Staff Login', 'पार्टनर एवं स्टाफ लॉगिन')}</Link>
             </div>
           </div>
-        )}
 
-        <button onClick={() => setIsSocialOpen(!isSocialOpen)}
-          className="group px-5 py-3.5 bg-gradient-to-r from-primary-600 via-violet-600 to-fuchsia-600 hover:from-primary-500 hover:to-fuchsia-500 text-white rounded-full shadow-2xl shadow-primary-600/40 hover:shadow-primary-600/60 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-3 relative cursor-pointer">
-          <span className="absolute -top-1 -left-1 flex h-3.5 w-3.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white dark:border-slate-900" />
-          </span>
-          <div className="flex items-center gap-2">
-            {isSocialOpen ? <X className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
-            <span className="font-extrabold text-xs tracking-wide">{isSocialOpen ? 'Close Hub' : 'Live Support'}</span>
-          </div>
-        </button>
-      </div>
+        </div>
+      </footer>
 
-      {/* Keyframes */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
     </div>
   );
 }

@@ -23,7 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($wait_time > 0) {
         $error = "Too many failed attempts. Please wait {$wait_time} seconds before trying again.";
     } else {
-        if ($email && $password) {
+        $val_errs = [];
+        if (!empty($_POST)) {
+            require_once __DIR__ . '/includes/validator.php';
+            $val_errs = validate_input($_POST, [
+                'email' => ['type' => 'email', 'required' => true, 'description' => 'Email address'],
+                'password' => ['type' => 'string', 'required' => true, 'description' => 'Password']
+            ]);
+        }
+        
+        if (!empty($val_errs)) {
+            $error = implode('<br>', $val_errs);
+        } else if ($email && $password) {
             $user = db_fetch_one($conn,
                 "SELECT * FROM users WHERE email = ? AND is_active = 1 LIMIT 1",
                 's', [$email]

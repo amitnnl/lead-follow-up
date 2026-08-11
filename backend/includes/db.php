@@ -52,12 +52,31 @@ define('DB_PASS', $db_pass);
 define('DB_NAME', $db_name);
 
 try {
-    // PHP 8.1+ throws exceptions on connection errors by default
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    if ($conn->connect_error) {
-        throw new Exception($conn->connect_error);
+    // Implement connection retry logic for unstable shared hosting environments
+    $max_retries = 3;
+    $conn = null;
+    $last_exception = null;
+    
+    for ($i = 0; $i < $max_retries; $i++) {
+        try {
+            // Suppress warnings on new mysqli to handle it gracefully in the catch block
+            $conn = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+            if ($conn->connect_error) {
+                throw new Exception($conn->connect_error);
+            }
+            $conn->set_charset('utf8mb4');
+            break; // Connection successful
+        } catch (Throwable $e) {
+            $last_exception = $e;
+            if ($i < $max_retries - 1) {
+                usleep(200000); // 200ms delay between retries
+            }
+        }
     }
-    $conn->set_charset('utf8mb4');
+    
+    if (!$conn || $conn->connect_error) {
+        throw new Exception("Connection failed after {$max_retries} attempts: " . ($last_exception ? $last_exception->getMessage() : 'Unknown error'));
+    }
 
     // Auto-migrate schema safely WITHOUT blocking regular requests (runs only once via lock file or explicit ?force_migrate_schema=1)
     try {
@@ -176,24 +195,6 @@ try {
 
             // Auto-migration for Banking & Payouts expansion
             $schema_tx_cols = [
-                'lead_transactions' => [
-                    'payout_type' => "ENUM('customer','dealer','org_retained','commission') NOT NULL DEFAULT 'customer'",
-                    'beneficiary_name' => "VARCHAR(200) NULL",
-                    'status' => "VARCHAR(50) DEFAULT 'completed'",
-                    'approval_status' => "ENUM('approved','pending_approval','rejected') NOT NULL DEFAULT 'approved'",
-                    'approved_by' => "INT UNSIGNED NULL",
-                    'approval_date' => "DATETIME NULL",
-                    'rejection_reason' => "TEXT NULL"
-                ],
-                'commissions' => [
-                    'tds_rate' => "DECIMAL(5,2) NOT NULL DEFAULT 5.00",
-                    'tds_amount' => "DECIMAL(10,2) NOT NULL DEFAULT 0.00",
-                    'net_payable' => "DECIMAL(10,2) NOT NULL DEFAULT 0.00",
-                    'approval_status' => "ENUM('approved','pending_approval','rejected') NOT NULL DEFAULT 'approved'",
-                    'approved_by' => "INT UNSIGNED NULL",
-                    'approval_date' => "DATETIME NULL",
-                    'batch_id' => "VARCHAR(50) NULL"
-                ]
             ];
             foreach ($schema_tx_cols as $tName => $tCols) {
                 foreach ($tCols as $cName => $cDef) {
@@ -231,6 +232,36 @@ try {
                     `action` VARCHAR(255) NOT NULL,
                     `details` TEXT NULL,
                     `ip_address` VARCHAR(45) NULL,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB;
+            ");
+
+            try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN lead_id INT UNSIGNED NULL AFTER id"); } catch(Throwable $e) {}
+            try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN transaction_type VARCHAR(50) NULL AFTER account_description"); } catch(Throwable $e) {}
+
+            $conn->query("
+                CREATE TABLE IF NOT EXISTS `payouts` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `lead_id` INT UNSIGNED NOT NULL,
+                    `payout_received_amt` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+                    `payout_received_date` DATE NULL,
+                    `tds_amt` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+                    `net_payout` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+                    `agent_commission` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+                    `company_balance` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+                    `commission_paid_date` DATE NULL,
+                    `status` VARCHAR(50) DEFAULT 'PENDING_FROM_FINANCER',
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB;
+            ");
+
+            $conn->query("
+                CREATE TABLE IF NOT EXISTS `charge_masters` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `charge_name` VARCHAR(100) NOT NULL,
+                    `charge_type` ENUM('FIXED', 'PERCENTAGE') NOT NULL DEFAULT 'FIXED',
+                    `value` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+                    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB;
             ");
@@ -290,63 +321,79 @@ if (!defined('BASE_URL')) {
 function db_query(mysqli $conn, string $sql, ?string $types = '', ?array $params = []) {
     $types = $types ?? '';
     $params = $params ?? [];
-    try {
-        if ($types && $params) {
-            $stmt = $conn->prepare($sql);
-            if (!$stmt) {
-                throw new Exception($conn->error);
-            }
-            
-            // Sanitize params: Convert empty strings to null ONLY for integer ('i') and decimal ('d') fields to prevent foreign key / type errors on optional IDs.
-            // Do NOT convert empty strings to null for string ('s') fields, as NOT NULL string columns (like mobile, address, notes) will fail with "Column cannot be null".
-            foreach ($params as $k => $v) {
-                $type_char = isset($types[$k]) ? $types[$k] : 's';
-                if ($v === '' && ($type_char === 'i' || $type_char === 'd')) {
-                    $params[$k] = null;
-                }
+    $max_query_retries = 2;
+    for ($attempt = 1; $attempt <= $max_query_retries; $attempt++) {
+        try {
+            // Auto-reconnect if connection was lost mid-session
+            if ($attempt > 1 && !@$conn->ping()) {
+                @$conn->connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+                $conn->set_charset('utf8mb4');
             }
 
-            if (strnatcmp(phpversion(), '8.1') >= 0) {
-                // PHP 8.1+ safely inserts null without strict 'i' conversion issues
-                if (!$stmt->execute($params)) {
-                    throw new Exception($stmt->error);
+            if ($types && $params) {
+                $stmt = $conn->prepare($sql);
+                if (!$stmt) {
+                    throw new Exception($conn->error, (int)$conn->errno);
                 }
-            } else {
-                $bind_args = [$types];
-                foreach ($params as $key => $value) {
-                    $bind_args[] = &$params[$key];
+                
+                // Sanitize params: Convert empty strings to null ONLY for integer ('i') and decimal ('d') fields to prevent foreign key / type errors on optional IDs.
+                // Do NOT convert empty strings to null for string ('s') fields, as NOT NULL string columns (like mobile, address, notes) will fail with "Column cannot be null".
+                foreach ($params as $k => $v) {
+                    $type_char = isset($types[$k]) ? $types[$k] : 's';
+                    if ($v === '' && ($type_char === 'i' || $type_char === 'd')) {
+                        $params[$k] = null;
+                    }
                 }
-                call_user_func_array([$stmt, 'bind_param'], $bind_args);
-                if (!$stmt->execute()) {
-                    throw new Exception($stmt->error);
+
+                if (strnatcmp(phpversion(), '8.1') >= 0) {
+                    // PHP 8.1+ safely inserts null without strict 'i' conversion issues
+                    if (!$stmt->execute($params)) {
+                        throw new Exception($stmt->error, (int)$stmt->errno);
+                    }
+                } else {
+                    $bind_args = [$types];
+                    foreach ($params as $key => $value) {
+                        $bind_args[] = &$params[$key];
+                    }
+                    call_user_func_array([$stmt, 'bind_param'], $bind_args);
+                    if (!$stmt->execute()) {
+                        throw new Exception($stmt->error, (int)$stmt->errno);
+                    }
+                }
+                
+                if (method_exists($stmt, 'get_result')) {
+                    return $stmt->get_result() ?: $stmt->affected_rows;
+                } else {
+                    $stmt->store_result();
+                    if ($stmt->field_count > 0) {
+                        throw new Exception("CRITICAL: 'mysqlnd' PHP extension is missing on this server!");
+                    }
+                    return $stmt->affected_rows;
                 }
             }
-            
-            if (method_exists($stmt, 'get_result')) {
-                return $stmt->get_result() ?: $stmt->affected_rows;
-            } else {
-                $stmt->store_result();
-                if ($stmt->field_count > 0) {
-                    throw new Exception("CRITICAL: 'mysqlnd' PHP extension is missing on this server!");
-                }
-                return $stmt->affected_rows;
+            $result = $conn->query($sql);
+            if ($result === false) {
+                throw new Exception($conn->error, (int)$conn->errno);
             }
+            return $result;
+        } catch (Throwable $e) {
+            $errCode = $e->getCode();
+            // MySQL server gone away (2006) or lost connection (2013)
+            if ($attempt < $max_query_retries && ($errCode == 2006 || $errCode == 2013 || strpos($e->getMessage(), 'gone away') !== false || strpos($e->getMessage(), 'Lost connection') !== false)) {
+                usleep(150000); // 150ms delay before reconnecting
+                continue;
+            }
+
+            $err = $e->getMessage();
+            error_log("SQL Error: " . $err . " | Query: " . $sql);
+            if (defined('API_CONTEXT') || strpos($_SERVER['REQUEST_URI'] ?? '', '/api') !== false) {
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'A database error occurred. Please try again or contact support.']);
+                exit;
+            }
+            die("<html><body style='padding:2rem;font-family:sans-serif;'><h2>Database Error</h2><p>A system error occurred. Please contact the administrator.</p></body></html>");
         }
-        $result = $conn->query($sql);
-        if ($result === false) {
-            throw new Exception($conn->error);
-        }
-        return $result;
-    } catch (Throwable $e) {
-        $err = $e->getMessage();
-        error_log("SQL Error: " . $err . " | Query: " . $sql);
-        if (defined('API_CONTEXT') || strpos($_SERVER['REQUEST_URI'] ?? '', '/api') !== false) {
-            http_response_code(500);
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'A database error occurred. Please try again or contact support.']);
-            exit;
-        }
-        die("<html><body style='padding:2rem;font-family:sans-serif;'><h2>Database Error</h2><p>A system error occurred. Please contact the administrator.</p></body></html>");
     }
 }
 

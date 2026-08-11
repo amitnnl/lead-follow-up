@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
@@ -7,7 +7,7 @@ import {
   Phone, ChevronDown,
   CircleDot, Filter, TrendingUp,
   Clock, CheckCircle2, PauseCircle,
-  XCircle, Sparkles, Loader2
+  XCircle, Sparkles, Loader2, Upload
 } from 'lucide-react';
 import NewLeadModal from '../components/NewLeadModal';
 import AssignmentModal from '../components/AssignmentModal';
@@ -90,27 +90,27 @@ function LeadTableRow({
         />
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap">
+      <td className="px-3 py-2 whitespace-nowrap">
         <button onClick={() => onOpenPreview(lead.id)} className="font-mono text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer">
           {lead.lead_id}
         </button>
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-medium">
+      <td className="px-3 py-2 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-medium">
         {lead.lead_date}
       </td>
 
-      <td className="px-4 py-4">
+      <td className="px-3 py-2">
         <span className="font-bold text-slate-800 dark:text-white text-xs truncate max-w-[150px] block" title={lead.customer_name}>
           {lead.customer_name}
         </span>
       </td>
 
-      <td className="px-4 py-4 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]" title={lead.customer_address}>
+      <td className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]" title={lead.customer_address}>
         {lead.customer_address || '—'}
       </td>
 
-      <td className="px-4 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+      <td className="px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300">
         <div className="flex items-center gap-1.5">
           <span>{lead.customer_mobile}</span>
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -120,43 +120,43 @@ function LeadTableRow({
         </div>
       </td>
 
-      <td className="px-4 py-4 text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]" title={lead.vehicle_make_model}>
+      <td className="px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]" title={lead.vehicle_make_model}>
         {lead.vehicle_make_model || '—'}
       </td>
 
-      <td className="px-4 py-4 text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+      <td className="px-3 py-2 text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
         {lead.registration_number || '—'}
       </td>
 
-      <td className="px-4 py-4 font-mono text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums text-right">
+      <td className="px-3 py-2 font-mono text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums text-right">
         ₹{(lead.loan_amount || 0).toLocaleString('en-IN')}
       </td>
 
-      <td className="px-4 py-4 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+      <td className="px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
         {lead.financer_name || '—'}
       </td>
 
-      <td className="px-4 py-4 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+      <td className="px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
         {lead.executive_name || '—'}
       </td>
 
-      <td className="px-4 py-4 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+      <td className="px-3 py-2 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
         {lead.loan_type ? (lead.loan_type === 'new_loan' ? 'New Loan' : (lead.loan_type === 'used_loan' ? 'Used Loan' : lead.loan_type)) : '—'}
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap text-xs">
+      <td className="px-3 py-2 whitespace-nowrap text-xs">
         {lead.channel_name || lead.channel_executive_name ? (
           <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.channel_name || lead.channel_executive_name || undefined}>{lead.channel_name || lead.channel_executive_name}</div>
         ) : <span className="text-slate-400">—</span>}
       </td>
 
-      <td className="px-4 py-4 whitespace-nowrap text-xs">
+      <td className="px-3 py-2 whitespace-nowrap text-xs">
         {lead.dealer_name || lead.agent_name ? (
           <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.dealer_name || lead.agent_name || undefined}>{lead.dealer_name || lead.agent_name}</div>
         ) : <span className="text-slate-400">—</span>}
       </td>
 
-      <td className="px-4 py-4">
+      <td className="px-3 py-2">
         <span className={clsx(
           "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide",
           STATUS_CONFIG[lead.status]?.bg, STATUS_CONFIG[lead.status]?.text
@@ -166,7 +166,7 @@ function LeadTableRow({
         </span>
       </td>
 
-      <td className="px-4 py-4 text-right whitespace-nowrap">
+      <td className="px-3 py-2 text-right whitespace-nowrap">
         <div className="flex items-center justify-end gap-1.5">
           {isAdminOrManager && (
             <button onClick={() => onAssign(lead)}
@@ -176,7 +176,7 @@ function LeadTableRow({
           )}
           <button
             onClick={() => onOpenPreview(lead.id)}
-            className="px-2 py-1 bg-white border border-slate-300 dark:border-slate-600 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded text-xs font-medium transition-colors text-slate-700 dark:text-slate-200 cursor-pointer"
+            className="px-2 py-0.5 bg-white border border-slate-300 dark:border-slate-600 dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded text-xs font-medium transition-colors text-slate-700 dark:text-slate-200 cursor-pointer"
           >
             View
           </button>
@@ -230,6 +230,51 @@ function Tab({ label, active, onClick }: { label: string; active: boolean; onCli
 export default function Leads() {
   const { user } = useAuthStore();
   const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager' || user?.role === 'finance_manager';
+
+  // Import CSV State & Ref
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isImporting, setIsImporting] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Quick validation
+    if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+      alert("Please select a valid CSV file.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('csv_file', file);
+
+    setIsImporting(true);
+    try {
+      const res = await api.post('/leads/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const { success_count, failed_count, errors } = res.data;
+      let msg = `Import Complete!\n\nSuccessfully imported: ${success_count}\nFailed: ${failed_count}`;
+      if (failed_count > 0 && errors && errors.length > 0) {
+        msg += `\n\nErrors:\n${errors.slice(0, 5).join('\n')}`;
+        if (errors.length > 5) msg += `\n...and ${errors.length - 5} more.`;
+      }
+      alert(msg);
+      
+      // Refresh leads
+      await fetchLeads();
+    } catch (err: any) {
+      alert(err.response?.data?.error || "An error occurred during import.");
+    } finally {
+      setIsImporting(false);
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -545,10 +590,27 @@ export default function Leads() {
 
         <div className="flex items-center gap-2 flex-wrap">
           {isAdminOrManager && (
-            <button onClick={exportToCSV} disabled={!leads.length}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-primary-400 hover:text-primary-600 transition-all disabled:opacity-40 cursor-pointer shadow-2xs">
-              <Download className="w-3.5 h-3.5" /> Export CSV
-            </button>
+            <>
+              <button onClick={exportToCSV} disabled={!leads.length}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-primary-400 hover:text-primary-600 transition-all disabled:opacity-40 cursor-pointer shadow-2xs">
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </button>
+              
+              <div className="flex items-center gap-2">
+                <button onClick={() => fileInputRef.current?.click()} disabled={isImporting}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-primary-400 hover:text-primary-600 transition-all disabled:opacity-40 cursor-pointer shadow-2xs">
+                  {isImporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />} 
+                  {isImporting ? 'Importing...' : 'Import CSV'}
+                </button>
+                <input 
+                  type="file" 
+                  accept=".csv" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  onChange={handleFileChange} 
+                />
+              </div>
+            </>
           )}
 
           <button onClick={() => setIsModalOpen(true)}

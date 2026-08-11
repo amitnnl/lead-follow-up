@@ -26,18 +26,21 @@ $lead = db_fetch_one($conn, "SELECT lead_id FROM leads WHERE id=?", 'i', [$leadI
 if (!$lead) die('Lead not found.');
 $leadStrId = $lead['lead_id'];
 
+require_once __DIR__ . '/../includes/dms_service.php';
+
 $file = $_FILES['doc_file'];
+
+$val = dms_validate_file($file, ['jpg', 'jpeg', 'png', 'pdf'], 20);
+if (!$val['success']) {
+    flash('error', $val['message']);
+    header("Location: " . BASE_URL . "/leads/view.php?id=" . $leadStrId . "&tab=documents");
+    exit;
+}
+$ext = $val['ext'];
+
 $uploadDir = __DIR__ . '/../uploads/leads/' . $leadStrId . '/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
-}
-
-$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-$allowed = ['jpg', 'jpeg', 'png', 'pdf'];
-if (!in_array($ext, $allowed)) {
-    flash('error', 'Only JPG, PNG, and PDF files are allowed.');
-    header("Location: " . BASE_URL . "/leads/view.php?id=" . $leadStrId . "&tab=documents");
-    exit;
 }
 
 $fileName = time() . '_' . rand(1000, 9999) . '.' . $ext;

@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import { X, User, Car, IndianRupee, MapPin, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, User, Car, IndianRupee, MapPin, Plus, Sparkles } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 
@@ -16,6 +16,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
   const [agents, setAgents] = useState<any[]>([]);
   const [channelExecutives, setChannelExecutives] = useState<any[]>([]);
@@ -30,6 +31,9 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
     customer_mobile: '',
     customer_mobile2: '',
     customer_address: '',
+    customer_pan: '',
+    customer_aadhaar: '',
+    customer_dob: '',
     vehicle_condition: 'new',
     vehicle_make_model: '',
     year_of_manufacture: '',
@@ -50,6 +54,8 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
 
   useEffect(() => {
     if (isOpen) {
+      setCurrentStep(1);
+      setError('');
       if (!isSelfScopedAgent) {
         Promise.all([
           api.get('/setup/agents'),
@@ -66,6 +72,9 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
           customer_mobile: initialData.customer_mobile || '',
           customer_mobile2: initialData.customer_mobile2 || '',
           customer_address: initialData.customer_address || '',
+          customer_pan: initialData.customer_pan || '',
+          customer_aadhaar: initialData.customer_aadhaar || '',
+          customer_dob: initialData.customer_dob || '',
           vehicle_condition: initialData.vehicle_condition || 'new',
           vehicle_make_model: initialData.vehicle_make_model || '',
           year_of_manufacture: initialData.year_of_manufacture?.toString() || '',
@@ -89,6 +98,9 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
           customer_mobile: '',
           customer_mobile2: '',
           customer_address: '',
+          customer_pan: '',
+          customer_aadhaar: '',
+          customer_dob: '',
           vehicle_condition: 'new',
           vehicle_make_model: '',
           year_of_manufacture: '',
@@ -129,6 +141,81 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
       }
     }
     setFormData(prev => ({ ...prev, ...updates }));
+    if (error) setError('');
+  };
+
+  const validateStep = (step: number) => {
+    setError('');
+    if (step === 1) {
+      if (!formData.customer_name.trim()) {
+        setError('Please enter the customer full name.');
+        return false;
+      }
+      if (!formData.customer_mobile || formData.customer_mobile.length !== 10) {
+        setError('Primary mobile number must be exactly 10 digits.');
+        return false;
+      }
+      if (formData.customer_mobile2 && formData.customer_mobile2.length !== 10) {
+        setError('Alternate mobile number must be exactly 10 digits.');
+        return false;
+      }
+      if (!formData.customer_address.trim()) {
+        setError('Please enter the residential address.');
+        return false;
+      }
+    } else if (step === 2) {
+      if (!formData.vehicle_make_model.trim()) {
+        setError('Please select or enter the vehicle make & model.');
+        return false;
+      }
+      if (formData.vehicle_condition === 'old') {
+        if (!formData.registration_number.trim()) {
+          setError('Registration number is required for used vehicles.');
+          return false;
+        }
+        if (!formData.year_of_manufacture) {
+          setError('Year of manufacture is required for used vehicles.');
+          return false;
+        }
+        if (!formData.insurance_company.trim()) {
+          setError('Insurance company name is required for used vehicles.');
+          return false;
+        }
+        if (!formData.policy_number.trim()) {
+          setError('Insurance policy number is required for used vehicles.');
+          return false;
+        }
+        if (!formData.insurance_expiry_date) {
+          setError('Insurance expiry date is required for used vehicles.');
+          return false;
+        }
+      }
+    } else if (step === 3) {
+      if (!formData.loan_amount || parseFloat(formData.loan_amount) <= 0) {
+        setError('Please enter a valid requested loan amount.');
+        return false;
+      }
+      if (!formData.lead_date) {
+        setError('Please select the lead creation date.');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      if (currentStep < 3) {
+        setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3);
+      }
+    }
+  };
+
+  const handleBack = () => {
+    setError('');
+    if (currentStep > 1) {
+      setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3);
+    }
   };
 
   const handleQuickAddSubmit = async (e: React.FormEvent) => {
@@ -165,14 +252,8 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.customer_mobile && formData.customer_mobile.length !== 10) {
-      setError('Primary mobile number must be exactly 10 digits.');
-      return;
-    }
-    if (formData.customer_mobile2 && formData.customer_mobile2.length !== 10) {
-      setError('Alternate mobile number must be exactly 10 digits.');
-      return;
-    }
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) return;
+
     setLoading(true);
     setError('');
 
@@ -202,231 +283,408 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
 
   if (!isOpen) return null;
 
-  const inputClass = "w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white text-xs transition-all shadow-2xs";
+  const inputClass = "w-full h-[44px] px-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white text-xs transition-all shadow-2xs";
   const labelClass = "block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in select-none">
-      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={onClose}></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto animate-fade-in select-none">
+      <div className="absolute inset-0 bg-slate-900/30 dark:bg-black/50 backdrop-blur-xs" onClick={onClose}></div>
       
-      <div className="relative w-full max-w-2xl bg-white dark:bg-[#111622] rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col max-h-full overflow-hidden animate-scale-in duration-200">
+      <div className="relative w-full max-w-3xl max-h-[96vh] bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col my-auto overflow-hidden animate-scale-in duration-200">
         
-        <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-            {initialData ? 'Edit Lead Dossier Details' : 'Create New Lead Dossier'}
-          </h2>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-250 rounded-xl transition-colors cursor-pointer">
+        {/* Header Bar */}
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/80 shrink-0 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-600 dark:text-primary-400">
+              {currentStep === 1 ? <User className="w-5 h-5" /> : currentStep === 2 ? <Car className="w-5 h-5" /> : <IndianRupee className="w-5 h-5" />}
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                {initialData ? 'Edit Lead Dossier Details' : 'Create New Lead Dossier'}
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Step {currentStep} of 3 — {currentStep === 1 ? 'Customer Profile' : currentStep === 2 ? 'Vehicle Details' : 'Finance & Sourcing'}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl transition-colors cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto">
+        {/* 3-Step Progress Indicator Bar */}
+        <div className="px-6 py-3 bg-slate-100/70 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 shrink-0">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            
+            <button
+              type="button"
+              onClick={() => { if (currentStep > 1) setCurrentStep(1); }}
+              className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all ${
+                currentStep === 1
+                  ? 'bg-white dark:bg-slate-800 border-emerald-500 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold'
+                  : currentStep > 1
+                  ? 'bg-emerald-50/50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-semibold cursor-pointer'
+                  : 'bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 text-slate-400 opacity-60'
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-lg text-xs flex items-center justify-center font-extrabold ${
+                currentStep === 1 ? 'bg-emerald-600 text-white' : currentStep > 1 ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
+              }`}>
+                {currentStep > 1 ? '✓' : '1'}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[10px] uppercase tracking-wider font-extrabold">Step 1</p>
+                <p className="text-xs truncate">Customer Profile</p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { if (currentStep > 2 || (currentStep === 1 && validateStep(1))) setCurrentStep(2); }}
+              className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all ${
+                currentStep === 2
+                  ? 'bg-white dark:bg-slate-800 border-primary-500 text-primary-600 dark:text-primary-400 shadow-xs font-bold'
+                  : currentStep > 2
+                  ? 'bg-primary-50/50 dark:bg-primary-950/30 border-primary-200 dark:border-primary-900/40 text-primary-700 dark:text-primary-300 font-semibold cursor-pointer'
+                  : 'bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 text-slate-400 opacity-60'
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-lg text-xs flex items-center justify-center font-extrabold ${
+                currentStep === 2 ? 'bg-primary-600 text-white' : currentStep > 2 ? 'bg-primary-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
+              }`}>
+                {currentStep > 2 ? '✓' : '2'}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[10px] uppercase tracking-wider font-extrabold">Step 2</p>
+                <p className="text-xs truncate">Vehicle Details</p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { if (currentStep === 3 || (validateStep(1) && validateStep(2))) setCurrentStep(3); }}
+              className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all ${
+                currentStep === 3
+                  ? 'bg-white dark:bg-slate-800 border-purple-500 text-purple-600 dark:text-purple-400 shadow-xs font-bold'
+                  : 'bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 text-slate-400 opacity-60'
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-lg text-xs flex items-center justify-center font-extrabold ${
+                currentStep === 3 ? 'bg-purple-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
+              }`}>
+                3
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[10px] uppercase tracking-wider font-extrabold">Step 3</p>
+                <p className="text-xs truncate">Finance & Sourcing</p>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+        {/* Step Body View */}
+        <div className="p-6 overflow-y-auto flex-1 min-h-0 space-y-5">
           {error && (
-            <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/30 rounded-lg text-xs font-semibold">
+            <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/30 rounded-xl text-xs font-semibold animate-fade-in">
               {error}
             </div>
           )}
 
-          <form id="new-lead-form" onSubmit={handleSubmit} className="space-y-6">
+          <form id="new-lead-form" onSubmit={handleSubmit}>
             
-            {/* Smart Vehicle Condition Dropdown */}
-            <div className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800/80 mb-6">
-              <label className={labelClass}>Lead Type *</label>
-              <select 
-                required 
-                name="vehicle_condition" 
-                value={formData.vehicle_condition} 
-                onChange={handleChange} 
-                className={`${inputClass} font-semibold`}
-              >
-                <option value="new">✨ New Vehicle</option>
-                <option value="old">🚗 Used / Pre-Owned</option>
-              </select>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 italic">
-                {formData.vehicle_condition === 'new' 
-                  ? "Configuring new vehicle fields (Dealer network selection, New Loan types)." 
-                  : "Configuring used vehicle fields (Registration details, Manufacture Year, Insurance policy tracking, Refinance types)."}
-              </p>
-            </div>
+            {/* STEP 1: Customer Profile */}
+            {currentStep === 1 && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                    <User className="w-4 h-4" /> 1. Customer Personal & Contact Profile
+                  </h3>
+                  <span className="text-xs text-slate-400">Step 1 of 3</span>
+                </div>
 
-            {/* Customer Details */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
-                <User className="w-4 h-4" /> Customer Profile
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className={labelClass}>Full Name *</label>
-                  <input required type="text" name="customer_name" value={formData.customer_name} onChange={handleChange} className={inputClass} placeholder="John Doe" />
-                </div>
-                <div>
-                  <label className={labelClass}>Primary Mobile *</label>
-                  <input required type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" name="customer_mobile" value={formData.customer_mobile} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="9876543210" />
-                </div>
-                <div>
-                  <label className={labelClass}>Alternate Mobile</label>
-                  <input type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" name="customer_mobile2" value={formData.customer_mobile2} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Optional" />
-                </div>
-                <div className="md:col-span-2 relative">
-                  <label className={labelClass}>Address *</label>
-                  <textarea required name="customer_address" value={formData.customer_address} onChange={handleChange} className="w-full p-2.5 pl-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none h-16 text-slate-800 dark:text-white text-sm" placeholder="Full residential address"></textarea>
-                  <MapPin className="w-4 h-4 text-slate-400 absolute left-2.5 top-[35px]" />
-                </div>
-              </div>
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className={labelClass}>Customer Full Name *</label>
+                    <input required type="text" name="customer_name" value={formData.customer_name} onChange={handleChange} className={inputClass} placeholder="e.g. Rajesh Kumar" />
+                  </div>
 
-            {/* Vehicle Details */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
-                <Car className="w-4 h-4" /> Vehicle Information
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className={labelClass}>Make & Model *</label>
-                  <input required type="text" name="vehicle_make_model" list="vehicle-suggestions" value={formData.vehicle_make_model} onChange={handleChange} className={inputClass} placeholder="e.g. Tata LPT 1512" />
-                  <datalist id="vehicle-suggestions">
-                    <option value="Tata Ace Gold" />
-                    <option value="Mahindra Bolero Pickup" />
-                    <option value="Tata LPT 1512" />
-                    <option value="Eicher Pro 2049" />
-                    <option value="Ashok Leyland Dost" />
-                    <option value="BharatBenz 1917R" />
-                    <option value="Maruti Suzuki Swift" />
-                    <option value="Hyundai Creta" />
-                    <option value="Maruti Suzuki Ertiga" />
-                    <option value="Tata Nexon" />
-                    <option value="Mahindra XUV700" />
-                    <option value="Toyota Innova Crysta" />
-                    <option value="Tata Punch" />
-                  </datalist>
-                </div>
-                {formData.vehicle_condition === 'old' && (
-                  <>
-                    <div>
-                      <label className={labelClass}>Registration Number *</label>
-                      <input required type="text" name="registration_number" value={formData.registration_number} onChange={handleChange} className={inputClass} placeholder="e.g. MH 04 AB 1234" />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Year of Manufacture *</label>
-                      <input required type="number" min="1990" max="2030" name="year_of_manufacture" value={formData.year_of_manufacture} onChange={handleChange} className={inputClass} placeholder="YYYY" />
-                    </div>
-                    <div className="sm:col-span-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Old Vehicle Insurance Details</span>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Insurance Company Name *</label>
-                      <input required type="text" name="insurance_company" value={formData.insurance_company} onChange={handleChange} className={inputClass} placeholder="e.g. ICICI Lombard" />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Policy Number *</label>
-                      <input required type="text" name="policy_number" value={formData.policy_number} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Policy No." />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className={labelClass}>Insurance Expiry Date *</label>
-                      <input required type="date" name="insurance_expiry_date" value={formData.insurance_expiry_date} onChange={handleChange} className={inputClass} />
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
+                  <div>
+                    <label className={labelClass}>Primary Mobile Number *</label>
+                    <input required type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" name="customer_mobile" value={formData.customer_mobile} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="10 Digits (e.g. 9829012345)" />
+                  </div>
 
-            {/* Financial Details & Network Sourcing */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
-                <IndianRupee className="w-4 h-4" /> Financials & Sourcing Network
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className={labelClass}>Requested Loan Amount *</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">₹</span>
-                    <input required type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} className={`${inputClass} pl-7`} placeholder="0.00" />
+                  <div>
+                    <label className={labelClass}>Alternate Mobile Number</label>
+                    <input type="tel" maxLength={10} pattern="^\d{10}$" title="Mobile number must be exactly 10 digits" name="customer_mobile2" value={formData.customer_mobile2} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Optional 10 Digits" />
+                  </div>
+
+                  <div className="sm:col-span-2 relative">
+                    <label className={labelClass}>Residential Address *</label>
+                    <textarea required name="customer_address" value={formData.customer_address} onChange={handleChange} className="w-full px-3.5 pl-9 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none h-20 text-slate-800 dark:text-white text-xs" placeholder="Complete residential address with locality & city"></textarea>
+                    <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-[34px]" />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>PAN Card Number</label>
+                    <input type="text" maxLength={10} name="customer_pan" value={formData.customer_pan} onChange={handleChange} className={`${inputClass} font-mono uppercase`} placeholder="e.g. ABCDE1234F" />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Aadhaar Card Number</label>
+                    <input type="text" maxLength={12} pattern="^\d{12}$" title="Aadhaar number must be 12 digits" name="customer_aadhaar" value={formData.customer_aadhaar} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="12 Digits" />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Date of Birth</label>
+                    <input type="date" name="customer_dob" value={formData.customer_dob} onChange={handleChange} className={inputClass} />
                   </div>
                 </div>
-                 <div>
-                   <label className={labelClass}>Loan Type</label>
-                   {formData.vehicle_condition === 'new' ? (
-                     <select disabled name="loan_type" value="new_loan" className={`${inputClass} opacity-75 cursor-not-allowed`}>
-                       <option value="new_loan">New Loan</option>
-                     </select>
-                   ) : (
-                     <select required name="loan_type" value={formData.loan_type} onChange={handleChange} className={inputClass}>
-                       <option value="refinance">Refinance</option>
-                       <option value="repurchase">Repurchase</option>
-                       <option value="bt">BT (Balance Transfer)</option>
-                     </select>
-                   )}
-                 </div>
-                <div>
-                  <label className={labelClass}>Lead Date *</label>
-                  <input required type="date" name="lead_date" value={formData.lead_date} onChange={handleChange} className={inputClass} />
+              </div>
+            )}
+
+            {/* STEP 2: Vehicle Details */}
+            {currentStep === 2 && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-sm font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest flex items-center gap-2">
+                    <Car className="w-4 h-4" /> 2. Vehicle Condition & Specifications
+                  </h3>
+                  <span className="text-xs text-slate-400">Step 2 of 3</span>
                 </div>
-                <div>
-                  <label className={labelClass}>Financer Lead No.</label>
-                  <input type="text" name="financer_lead_number" value={formData.financer_lead_number} onChange={handleChange} className={inputClass} placeholder="Enter Financer Lead No." />
-                </div>
-                {!isSelfScopedAgent && (
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dealer *</label>
-                      <button type="button" onClick={() => { setQuickAddType('dealer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
-                        <Plus className="w-3 h-3" /> Quick Add
+
+                {/* Condition Selector */}
+                <div className="bg-slate-50/80 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Vehicle Condition:</span>
+                    <div className="inline-flex p-1 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+                      <button
+                        type="button"
+                        onClick={() => handleChange({ target: { name: 'vehicle_condition', value: 'new' } } as any)}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          formData.vehicle_condition === 'new'
+                            ? 'bg-primary-600 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" /> New Vehicle
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleChange({ target: { name: 'vehicle_condition', value: 'old' } } as any)}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          formData.vehicle_condition === 'old'
+                            ? 'bg-primary-600 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        <Car className="w-3.5 h-3.5" /> Used / Pre-Owned
                       </button>
                     </div>
-                    <select required name="agent_id" value={formData.agent_id} onChange={handleChange} className={`${inputClass} text-xs`}>
-                      <option value="">— Direct / None —</option>
-                      {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
-                    </select>
                   </div>
-                )}
-                {!isSelfScopedAgent && (
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Channels *</label>
-                      <button type="button" onClick={() => { setQuickAddType('channel_agent'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
-                        <Plus className="w-3 h-3" /> Quick Add
-                      </button>
-                    </div>
-                    <select required name="channel_executive_id" value={formData.channel_executive_id} onChange={handleChange} className={`${inputClass} text-xs`}>
-                      <option value="">— Select Agent —</option>
-                      {channelExecutives.map(ce => <option key={ce.id} value={ce.id}>{ce.name}</option>)}
-                    </select>
-                  </div>
-                )}
+                  <p className="text-xs text-slate-500 italic">
+                    {formData.vehicle_condition === 'new' 
+                      ? "New Vehicle mode: Dealer network & New Loan parameters." 
+                      : "Used Vehicle mode: Registration number, Mfg Year & Insurance tracking."}
+                  </p>
+                </div>
 
-                <div className="md:col-span-2">
-                  <label className={labelClass}>Query / Notes</label>
-                  <textarea name="query_notes" value={formData.query_notes} onChange={handleChange} className="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none h-14 text-slate-800 dark:text-white text-sm" placeholder="Any queries or remarks..."></textarea>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className={labelClass}>Make & Model *</label>
+                    <input required type="text" name="vehicle_make_model" list="vehicle-suggestions" value={formData.vehicle_make_model} onChange={handleChange} className={inputClass} placeholder="e.g. Tata LPT 1512 / Mahindra Bolero Pickup" />
+                    <datalist id="vehicle-suggestions">
+                      <option value="Tata Ace Gold" />
+                      <option value="Mahindra Bolero Pickup" />
+                      <option value="Tata LPT 1512" />
+                      <option value="Eicher Pro 2049" />
+                      <option value="Ashok Leyland Dost" />
+                      <option value="BharatBenz 1917R" />
+                      <option value="Maruti Suzuki Swift" />
+                      <option value="Hyundai Creta" />
+                      <option value="Maruti Suzuki Ertiga" />
+                      <option value="Tata Nexon" />
+                      <option value="Mahindra XUV700" />
+                      <option value="Toyota Innova Crysta" />
+                      <option value="Tata Punch" />
+                    </datalist>
+                  </div>
+
+                  {formData.vehicle_condition === 'old' ? (
+                    <>
+                      <div>
+                        <label className={labelClass}>Registration Number *</label>
+                        <input required type="text" name="registration_number" value={formData.registration_number} onChange={handleChange} className={`${inputClass} font-mono uppercase`} placeholder="e.g. MH 04 AB 1234" />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Year of Manufacture *</label>
+                        <input required type="number" min="1990" max="2030" name="year_of_manufacture" value={formData.year_of_manufacture} onChange={handleChange} className={inputClass} placeholder="YYYY (e.g. 2021)" />
+                      </div>
+                      
+                      <div className="sm:col-span-2 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block">Pre-Existing Insurance Policy Info</span>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className={labelClass}>Insurance Co. Name *</label>
+                            <input required type="text" name="insurance_company" value={formData.insurance_company} onChange={handleChange} className={inputClass} placeholder="e.g. ICICI Lombard" />
+                          </div>
+                          <div>
+                            <label className={labelClass}>Policy Number *</label>
+                            <input required type="text" name="policy_number" value={formData.policy_number} onChange={handleChange} className={`${inputClass} font-mono`} placeholder="Policy Number" />
+                          </div>
+                          <div>
+                            <label className={labelClass}>Insurance Expiry Date *</label>
+                            <input required type="date" name="insurance_expiry_date" value={formData.insurance_expiry_date} onChange={handleChange} className={inputClass} />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="sm:col-span-2 p-4 bg-emerald-50/80 dark:bg-emerald-500/10 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/30 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0 text-emerald-600 dark:text-emerald-400 font-bold">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <strong className="block font-bold mb-0.5">New Vehicle Selected</strong>
+                        Registration number, year of manufacture, and new insurance policy details will be updated automatically during invoicing and bank disbursal.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* STEP 3: Finance & Sourcing */}
+            {currentStep === 3 && (
+              <div className="space-y-5 animate-fade-in">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-sm font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                    <IndianRupee className="w-4 h-4" /> 3. Financial Requirements & Sourcing Network
+                  </h3>
+                  <span className="text-xs text-slate-400">Step 3 of 3</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Requested Loan Amount *</label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs font-bold">₹</span>
+                      <input required type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} className={`${inputClass} pl-8 font-mono font-semibold text-sm`} placeholder="0.00" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Loan Product Category *</label>
+                    {formData.vehicle_condition === 'new' ? (
+                      <select disabled name="loan_type" value="new_loan" className={`${inputClass} opacity-75 cursor-not-allowed`}>
+                        <option value="new_loan">New Loan</option>
+                      </select>
+                    ) : (
+                      <select required name="loan_type" value={formData.loan_type} onChange={handleChange} className={inputClass}>
+                        <option value="refinance">Refinance</option>
+                        <option value="repurchase">Repurchase</option>
+                        <option value="bt">BT (Balance Transfer)</option>
+                      </select>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Lead Date *</label>
+                    <input required type="date" name="lead_date" value={formData.lead_date} onChange={handleChange} className={inputClass} />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Financer Ref / Lead No.</label>
+                    <input type="text" name="financer_lead_number" value={formData.financer_lead_number} onChange={handleChange} className={inputClass} placeholder="Optional Bank Lead No." />
+                  </div>
+
+                  {!isSelfScopedAgent && (
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Dealer Network Partner *</label>
+                        <button type="button" onClick={() => { setQuickAddType('dealer'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
+                          <Plus className="w-3 h-3" /> Quick Add
+                        </button>
+                      </div>
+                      <select required name="agent_id" value={formData.agent_id} onChange={handleChange} className={`${inputClass} text-xs`}>
+                        <option value="">— Direct / None —</option>
+                        {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {!isSelfScopedAgent && (
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Channels Partner *</label>
+                        <button type="button" onClick={() => { setQuickAddType('channel_agent'); setQuickAddName(''); setQuickAddMobile(''); }} className="text-[10px] font-bold text-primary-600 hover:underline flex items-center gap-0.5 cursor-pointer">
+                          <Plus className="w-3 h-3" /> Quick Add
+                        </button>
+                      </div>
+                      <select required name="channel_executive_id" value={formData.channel_executive_id} onChange={handleChange} className={`${inputClass} text-xs`}>
+                        <option value="">— Select Agent —</option>
+                        {channelExecutives.map(ce => <option key={ce.id} value={ce.id}>{ce.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  <div className="sm:col-span-2">
+                    <label className={labelClass}>Query / Remarks / Special Instructions</label>
+                    <textarea name="query_notes" value={formData.query_notes} onChange={handleChange} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none h-16 text-slate-800 dark:text-white text-xs" placeholder="Any queries orRemarks..."></textarea>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </form>
         </div>
 
-        <div className="p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer">
-            Cancel
-          </button>
-          <button 
-            type="submit" 
-            form="new-lead-form"
-            disabled={loading}
-            className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm shadow-primary-500/20 disabled:opacity-75 cursor-pointer"
-          >
-            {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : null}
-            {initialData ? 'Update Lead' : 'Create Lead'}
-          </button>
+        {/* Footer Navigation Action Bar */}
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/80 flex items-center justify-between shrink-0">
+          <div>
+            <button type="button" onClick={onClose} className="px-5 py-2.5 text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer">
+              Cancel
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {currentStep > 1 && (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                ← Previous Step
+              </button>
+            )}
+
+            {currentStep < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-primary-500/20 cursor-pointer"
+              >
+                Next Step {currentStep === 1 ? '(Vehicle Details)' : '(Finance)'} →
+              </button>
+            ) : (
+              <button
+                type="submit"
+                form="new-lead-form"
+                disabled={loading}
+                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-500/20 disabled:opacity-75 cursor-pointer"
+              >
+                {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : null}
+                {initialData ? 'Update Lead Dossier' : 'Submit & Create Lead Dossier'}
+              </button>
+            )}
+          </div>
         </div>
 
       </div>
 
       {quickAddType && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-[60] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
@@ -440,11 +698,11 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess, initialData }
             <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
               <div>
                 <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
-                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all" />
+                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full h-[42px] px-3 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all" />
               </div>
               <div>
                 <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
-                <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+                <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full h-[42px] px-3 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs font-mono text-slate-800 dark:text-white transition-all" />
               </div>
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>

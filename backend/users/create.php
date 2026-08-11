@@ -47,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         } catch (Exception $e) {
             $conn->rollback();
-            $errors[] = 'Failed to create user: ' . $e->getMessage();
+            error_log('Failed to create user: ' . $e->getMessage());
+            $errors[] = 'A system error occurred while creating the user.';
         }
     }
 }

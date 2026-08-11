@@ -98,7 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 payout_amount=?, payout_status=?
             WHERE id=?
         ");
-        if (!$stmt) die("Prepare failed: " . $conn->error);
+        if (!$stmt) {
+            error_log("Prepare failed: " . $conn->error);
+            die("A system error occurred. Please contact the administrator.");
+        }
         $year = $data['year_of_manufacture'] !== '' ? (int)$data['year_of_manufacture'] : null;
         $loanAmt = $data['loan_amount'] !== '' ? (float)$data['loan_amount'] : null;
         $payAmt  = $data['payout_amount'] !== '' ? (float)$data['payout_amount'] : null;

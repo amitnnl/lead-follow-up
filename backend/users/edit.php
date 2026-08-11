@@ -76,7 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         } catch (Exception $e) {
             $conn->rollback();
-            $errors[] = 'Failed to update user: ' . $e->getMessage();
+            error_log('Failed to update user: ' . $e->getMessage());
+            $errors[] = 'A system error occurred while updating the user.';
         }
     }
 }

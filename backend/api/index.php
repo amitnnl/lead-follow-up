@@ -190,12 +190,17 @@ switch ($path) {
     // ----------------------------------------------------
     case 'auth/login':
         if ($method !== 'POST') json_error("Method not allowed", 405);
-        $email = trim($input['email'] ?? '');
-        $password = $input['password'] ?? '';
-        
-        if (empty($email) || empty($password)) {
-            json_error("Email and password are required.");
+
+        $val_errs = validate_input($input, [
+            'email' => ['type' => 'email', 'required' => true, 'max_len' => 100, 'description' => 'Email address'],
+            'password' => ['type' => 'string', 'required' => true, 'min_len' => 1, 'max_len' => 100, 'description' => 'Password']
+        ]);
+        if (!empty($val_errs)) {
+            json_response(['errors' => $val_errs], 400);
         }
+
+        $email = trim($input['email']);
+        $password = $input['password'];
 
         $ip = get_client_ip();
         
@@ -290,27 +295,7 @@ switch ($path) {
         $conversionRate = $totalLeads > 0 ? round(($disbursed / $totalLeads) * 100, 1) : 0;
 
         $eligibleRetentions = 0;
-        if (!$isExecutive && !$isChannelAgent && !$isAgent) {
-            $eligibleRetentions = db_fetch_one($conn, "
-                SELECT COUNT(*) as cnt 
-                FROM commissions c
-                JOIN leads l ON c.lead_id = l.id
-                WHERE c.payout_10_status = 'pending'
-                  AND l.rc_status IN ('received', 'not_applicable')
-                  AND l.insurance_status IN ('received', 'not_applicable')
-                  AND l.rto_status IN ('done', 'not_applicable')
-            ")['cnt'] ?? 0;
-        }
-
-        if ($isExecutive) {
-            $totalCommPaid = db_fetch_one($conn, "SELECT SUM(c.paid_amount) as s FROM commissions c JOIN leads l ON c.lead_id = l.id WHERE l.executive_id = ?", 'i', [$execId])['s'] ?? 0;
-        } elseif ($isChannelAgent) {
-            $totalCommPaid = db_fetch_one($conn, "SELECT SUM(c.paid_amount) as s FROM commissions c JOIN leads l ON c.lead_id = l.id WHERE (l.created_by = ? OR l.channel_executive_id = ?)", 'ii', [current_user_id(), $cheId])['s'] ?? 0;
-        } elseif ($isAgent) {
-            $totalCommPaid = db_fetch_one($conn, "SELECT SUM(c.paid_amount) as s FROM commissions c JOIN leads l ON c.lead_id = l.id WHERE (l.created_by = ? OR l.agent_id = ?)", 'ii', [current_user_id(), $agId])['s'] ?? 0;
-        } else {
-            $totalCommPaid = db_fetch_one($conn, "SELECT SUM(paid_amount) as s FROM commissions")['s'] ?? 0;
-        }
+        $totalCommPaid = 0;
 
         $execRows = db_fetch_all($conn, "
             SELECT ex.name, COUNT(l.id) as total,
@@ -489,6 +474,157 @@ switch ($path) {
         json_response(['message' => 'Application submitted successfully', 'id' => $newId, 'lead_id' => $lead_id]);
         break;
 
+    case 'leads/public-status':
+        $query = trim($_GET['query'] ?? ($input['query'] ?? ''));
+        if (empty($query)) {
+            json_error("Please provide a Lead ID or Mobile number to check status.");
+        }
+        $lead = db_fetch_one($conn, "
+            SELECT lead_id, customer_name, vehicle_make_model, loan_amount, status, lead_date, created_at
+            FROM leads 
+            WHERE lead_id = ? OR customer_mobile = ?
+            ORDER BY id DESC LIMIT 1
+        ", 'ss', [$query, $query]);
+
+        if (!$lead) {
+            json_error("No application found matching the provided Lead ID or Mobile number.", 404);
+        }
+
+        json_response(['lead' => $lead]);
+        break;
+
+
+    case 'leads/import':
+        api_require_role('admin', 'manager', 'staff');
+        if ($method !== 'POST') json_error("Method not allowed", 405);
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            json_error("Please upload a valid CSV file.");
+        }
+        $file_tmp = $_FILES['csv_file']['tmp_name'];
+        $handle = fopen($file_tmp, "r");
+        if ($handle === FALSE) {
+            json_error("Failed to read the uploaded file.");
+        }
+
+        // Expected headers mapping (normalize case/spaces for robustness)
+        $expected = [
+            'Customer Name' => 'customer_name',
+            'Address' => 'customer_address',
+            'Mobile' => 'customer_mobile',
+            'Make & Model' => 'vehicle_make_model',
+            'Reg No' => 'registration_number',
+            'Req. Loan Amount' => 'loan_amount',
+            'Lead Type' => 'loan_type',
+            'Insurance Company' => 'insurance_company',
+            'Insurance Policy No' => 'policy_number',
+            'Insurance Expiry Date' => 'insurance_expiry_date',
+        ];
+
+        $headers = fgetcsv($handle, 1000, ",");
+        if (!$headers) {
+            json_error("CSV file is empty or invalid.");
+        }
+
+        // Clean headers and find indexes
+        $headerMap = []; // target_field => column_index
+        foreach ($headers as $index => $h) {
+            $h_clean = trim($h);
+            if (isset($expected[$h_clean])) {
+                $headerMap[$expected[$h_clean]] = $index;
+            }
+        }
+
+        if (!isset($headerMap['customer_name']) || !isset($headerMap['customer_mobile'])) {
+            json_error("CSV must contain 'Customer Name' and 'Mobile' columns.");
+        }
+
+        $successCount = 0;
+        $failedCount = 0;
+        $errors = [];
+        $rowNum = 1; // 1 for header
+
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            $rowNum++;
+            // Skip empty rows
+            if (empty(array_filter($data))) continue;
+
+            $c_name = isset($headerMap['customer_name']) ? trim($data[$headerMap['customer_name']]) : '';
+            $c_mobile = isset($headerMap['customer_mobile']) ? trim($data[$headerMap['customer_mobile']]) : '';
+            $c_address = isset($headerMap['customer_address']) ? trim($data[$headerMap['customer_address']]) : '';
+            $v_make = isset($headerMap['vehicle_make_model']) ? trim($data[$headerMap['vehicle_make_model']]) : '';
+            $v_reg = isset($headerMap['registration_number']) ? trim($data[$headerMap['registration_number']]) : '';
+            $l_amount = isset($headerMap['loan_amount']) ? trim($data[$headerMap['loan_amount']]) : 0;
+            $l_type = isset($headerMap['loan_type']) ? trim($data[$headerMap['loan_type']]) : '';
+            $ins_comp = isset($headerMap['insurance_company']) ? trim($data[$headerMap['insurance_company']]) : '';
+            $ins_pol = isset($headerMap['policy_number']) ? trim($data[$headerMap['policy_number']]) : '';
+            $ins_exp = isset($headerMap['insurance_expiry_date']) ? trim($data[$headerMap['insurance_expiry_date']]) : '';
+
+            // Clean mobile
+            $c_mobile = preg_replace('/\D/', '', $c_mobile);
+            if (strlen($c_mobile) > 10) $c_mobile = substr($c_mobile, -10);
+
+            if (empty($c_name) || empty($c_mobile)) {
+                $failedCount++;
+                $errors[] = "Row $rowNum: Name and Mobile are required.";
+                continue;
+            }
+            if (strlen($c_mobile) !== 10) {
+                $failedCount++;
+                $errors[] = "Row $rowNum: Mobile must be 10 digits.";
+                continue;
+            }
+
+            // Normalization
+            $l_amount = (float)str_replace(',', '', (string)$l_amount);
+            if (stripos($l_type, 'new') !== false) $l_type = 'new_loan';
+            elseif (stripos($l_type, 'used') !== false) $l_type = 'used_loan';
+            elseif (stripos($l_type, 'refinance') !== false) $l_type = 'refinance';
+            else $l_type = '';
+
+            if ($ins_exp) {
+                $date_parsed = strtotime(str_replace('/', '-', $ins_exp));
+                $ins_exp = $date_parsed ? date('Y-m-d', $date_parsed) : null;
+            } else {
+                $ins_exp = null;
+            }
+
+            $lead_id = generate_lead_id($conn);
+            $lead_date = date('Y-m-d');
+            $created_by = current_user_id();
+
+            db_query($conn, "
+                INSERT INTO leads (
+                    lead_id, lead_date, customer_name, customer_mobile, customer_address,
+                    vehicle_condition, vehicle_make_model, registration_number, loan_amount, loan_type,
+                    insurance_company, policy_number, insurance_expiry_date,
+                    status, query_notes, created_by
+                ) VALUES (?, ?, ?, ?, ?, 'new', ?, ?, ?, ?, ?, ?, ?, 'new', 'Imported via CSV', ?)
+            ", 'ssssssssdssssi', [
+                $lead_id, $lead_date, $c_name, $c_mobile, $c_address,
+                $v_make, $v_reg, $l_amount, $l_type,
+                $ins_comp, $ins_pol, $ins_exp,
+                $created_by
+            ]);
+
+            $newId = $conn->insert_id;
+            if ($newId) {
+                log_lead_action($conn, $newId, 'Lead Created', 'Lead imported via CSV.', $created_by);
+                $successCount++;
+            } else {
+                $failedCount++;
+                $errors[] = "Row $rowNum: Database error.";
+            }
+        }
+        fclose($handle);
+
+        json_response([
+            'message' => 'Import completed',
+            'success_count' => $successCount,
+            'failed_count' => $failedCount,
+            'errors' => $errors
+        ]);
+        break;
+
 
     case 'leads':
         api_require_login();
@@ -600,19 +736,22 @@ switch ($path) {
 
         } elseif ($method === 'POST') {
             // Create lead (Step 1)
-            $customer_name = trim($input['customer_name'] ?? '');
-            $customer_mobile = trim($input['customer_mobile'] ?? '');
+            $val_errs = validate_input($input, [
+                'customer_name' => ['type' => 'string', 'required' => true, 'min_len' => 2, 'max_len' => 100, 'description' => 'Customer Name'],
+                'customer_mobile' => ['type' => 'string', 'required' => true, 'regex' => '/^\d{10}$/', 'description' => 'Customer Mobile'],
+                'customer_mobile2' => ['type' => 'string', 'regex' => '/^\d{10}$/', 'description' => 'Alternate Mobile'],
+                'loan_amount' => ['type' => 'float', 'min' => 0, 'description' => 'Loan Amount'],
+                'vehicle_condition' => ['type' => 'enum', 'options' => ['new', 'old'], 'description' => 'Vehicle Condition'],
+                'loan_type' => ['type' => 'enum', 'options' => ['new_loan', 'refinance', 'repurchase', 'bt'], 'description' => 'Loan Type'],
+                'lead_date' => ['type' => 'date', 'description' => 'Lead Date']
+            ]);
+            if (!empty($val_errs)) {
+                json_response(['errors' => $val_errs], 400);
+            }
+
+            $customer_name = trim($input['customer_name']);
+            $customer_mobile = trim($input['customer_mobile']);
             $loan_amount = (float)($input['loan_amount'] ?? 0);
-            if ($loan_amount < 0) {
-                json_error("Loan amount cannot be negative.");
-            }
-            
-            if (empty($customer_name) || empty($customer_mobile)) {
-                json_error("Customer Name and Mobile are required.");
-            }
-            if (!preg_match('/^\d{10}$/', $customer_mobile)) {
-                json_error("Primary mobile number must be exactly 10 numeric digits.");
-            }
 
             $lead_id = generate_lead_id($conn);
             $lead_date = !empty($input['lead_date']) ? trim($input['lead_date']) : date('Y-m-d');
@@ -621,6 +760,8 @@ switch ($path) {
                 json_error("Alternate mobile number must be exactly 10 numeric digits.");
             }
             $customer_address = trim($input['customer_address'] ?? '');
+            $customer_pan = strtoupper(trim($input['customer_pan'] ?? ''));
+            $customer_dob = !empty($input['customer_dob']) ? trim($input['customer_dob']) : null;
             $vehicle_condition = in_array($input['vehicle_condition'] ?? '', ['new', 'old']) ? $input['vehicle_condition'] : 'new';
             $vehicle_make_model = trim($input['vehicle_make_model'] ?? '');
             $year_of_manufacture = !empty($input['year_of_manufacture']) ? (int)$input['year_of_manufacture'] : null;
@@ -656,12 +797,12 @@ switch ($path) {
 
             db_query($conn, "
                 INSERT INTO leads (
-                    lead_id, lead_date, customer_name, customer_mobile, customer_mobile2, customer_address,
+                    lead_id, lead_date, customer_name, customer_mobile, customer_mobile2, customer_address, customer_pan, customer_dob,
                     vehicle_condition, vehicle_make_model, year_of_manufacture, registration_number, insurance_company, policy_number, insurance_expiry_date, loan_amount, loan_type,
                     referred_by, agent_id, channel_id, channel_executive_id, financer_lead_number, query_notes, status, created_by
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)
-            ", 'ssssssssissssdssiiissi', [
-                $lead_id, $lead_date, $customer_name, $customer_mobile, $customer_mobile2, $customer_address,
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)
+            ", 'ssssssssssssissssdssiiissi', [
+                $lead_id, $lead_date, $customer_name, $customer_mobile, $customer_mobile2, $customer_address, $customer_pan, $customer_dob,
                 $vehicle_condition, $vehicle_make_model, $year_of_manufacture, $registration_number, $insurance_company, $policy_number, $insurance_expiry_date, $loan_amount, $loan_type,
                 $referred_by, $agent_id, $channel_id, $channel_executive_id, $financer_lead_number, $query_notes, $created_by
             ]);
@@ -673,9 +814,17 @@ switch ($path) {
         } elseif ($method === 'PUT') {
             // Check if this is an assignment update
             if (isset($_GET['action']) && $_GET['action'] === 'assign') {
-                $id = (int)($input['id'] ?? 0);
-                if (!$id) json_error("Lead ID required");
+                $val_errs = validate_input($input, [
+                    'id' => ['type' => 'int', 'required' => true, 'min' => 1, 'description' => 'Lead ID'],
+                    'financer_id' => ['type' => 'int', 'min' => 1, 'description' => 'Financer ID'],
+                    'executive_id' => ['type' => 'int', 'min' => 1, 'description' => 'Executive ID'],
+                    'assigned_date' => ['type' => 'date', 'description' => 'Assigned Date']
+                ]);
+                if (!empty($val_errs)) {
+                    json_response(['errors' => $val_errs], 400);
+                }
 
+                $id = (int)$input['id'];
                 $financer_id = !empty($input['financer_id']) ? (int)$input['financer_id'] : null;
                 $executive_id = !empty($input['executive_id']) ? (int)$input['executive_id'] : null;
                 $assigned_date = !empty($input['assigned_date']) ? trim($input['assigned_date']) : null;
@@ -711,6 +860,9 @@ switch ($path) {
                     $financer_id, $executive_id, $id
                 ]);
 
+                require_once __DIR__ . '/../includes/dms_service.php';
+                $bundleUrl = dms_generate_signed_bundle_url($id);
+
                 // Trigger notifications and fetch details for frontend WhatsApp modal
                 $assigned_exec_details = null;
                 $assigned_fin_details = null;
@@ -723,7 +875,8 @@ switch ($path) {
                             'name' => $execRow['name'],
                             'mobile' => $execRow['mobile'],
                             'email' => $execRow['email'],
-                            'lead_id' => 'ID-' . $id
+                            'lead_id' => 'ID-' . $id,
+                            'bundle_url' => $bundleUrl
                         ];
                         
                         // Only send auto-email/in-app notification if it's a NEW assignment
@@ -733,13 +886,16 @@ switch ($path) {
                             }
                             if (!empty($execRow['email'])) {
                                 require_once __DIR__ . '/../includes/mailer.php';
-                                $subject = "New Lead Assigned";
+                                $subject = "New Lead Assigned (ID-{$id})";
                                 $body = "
-                                    <div style='font-family:sans-serif; color:#333;'>
+                                    <div style='font-family:sans-serif; color:#333; line-height:1.6;'>
                                         <h2>New Lead Assignment</h2>
                                         <p>Hi <strong>{$execRow['name']}</strong>,</p>
-                                        <p>A new lead has just been assigned to you by the administrative team.</p>
-                                        <p>Please log in to your portal to view the complete details and take necessary actions.</p>
+                                        <p>A new lead (ID-{$id}) has just been assigned to you by the administrative team.</p>
+                                        <p>📦 <strong>Download All Lead Documents (ZIP):</strong><br>
+                                        <a href='{$bundleUrl}' style='display:inline-block; margin:10px 0; padding:10px 16px; background-color:#2563eb; color:#fff; text-decoration:none; border-radius:6px; font-weight:bold;'>Download Documents ZIP</a></p>
+                                        <p>Or copy this link to browser: <br><a href='{$bundleUrl}'>{$bundleUrl}</a></p>
+                                        <p>Please log in to your portal to view complete details.</p>
                                         <br>
                                         <p>Thanks,<br>LeadFlow Pro Team</p>
                                     </div>
@@ -758,7 +914,8 @@ switch ($path) {
                             'name' => $finRow['name'],
                             'mobile' => $finRow['mobile'],
                             'email' => $finRow['email'],
-                            'lead_id' => 'ID-' . $id
+                            'lead_id' => 'ID-' . $id,
+                            'bundle_url' => $bundleUrl
                         ];
                     }
                 }
@@ -772,8 +929,10 @@ switch ($path) {
                 json_response([
                     'message' => 'Lead assignments updated successfully',
                     'assigned_executive' => $assigned_exec_details,
-                    'assigned_financer' => $assigned_fin_details
+                    'assigned_financer' => $assigned_fin_details,
+                    'document_bundle_url' => $bundleUrl
                 ]);
+
             }
 
             // Otherwise, Update core lead data
@@ -812,6 +971,8 @@ switch ($path) {
                 json_error("Alternate mobile number must be exactly 10 numeric digits.");
             }
             $customer_address = trim($input['customer_address'] ?? '');
+            $customer_pan = strtoupper(trim($input['customer_pan'] ?? ''));
+            $customer_dob = !empty($input['customer_dob']) ? trim($input['customer_dob']) : null;
             $vehicle_condition = trim($input['vehicle_condition'] ?? '');
             $vehicle_make_model = trim($input['vehicle_make_model'] ?? '');
             $year_of_manufacture = !empty($input['year_of_manufacture']) ? (int)$input['year_of_manufacture'] : null;
@@ -846,12 +1007,12 @@ switch ($path) {
 
             db_query($conn, "
                 UPDATE leads SET
-                    lead_date = ?, customer_name = ?, customer_mobile = ?, customer_mobile2 = ?, customer_address = ?,
+                    lead_date = ?, customer_name = ?, customer_mobile = ?, customer_mobile2 = ?, customer_address = ?, customer_pan = ?, customer_dob = ?,
                     vehicle_condition = ?, vehicle_make_model = ?, year_of_manufacture = ?, registration_number = ?, insurance_company = ?, policy_number = ?, insurance_expiry_date = ?, loan_amount = ?, loan_type = ?,
                     referred_by = ?, agent_id = ?, channel_id = ?, channel_executive_id = ?, financer_lead_number = ?, query_notes = ?
                 WHERE id = ?
-            ", 'sssssssissssdssiiissi', [
-                $lead_date, $customer_name, $customer_mobile, $customer_mobile2, $customer_address,
+            ", 'sssssssssssissssdssiiissi', [
+                $lead_date, $customer_name, $customer_mobile, $customer_mobile2, $customer_address, $customer_pan, $customer_dob,
                 $vehicle_condition, $vehicle_make_model, $year_of_manufacture, $registration_number, $insurance_company, $policy_number, $insurance_expiry_date, $loan_amount, $loan_type,
                 $referred_by, $agent_id, $channel_id, $channel_executive_id, $financer_lead_number, $query_notes, $id
             ]);
@@ -886,13 +1047,13 @@ switch ($path) {
                 }
             }
 
-            // Clean up dependent child tables to prevent orphaned records
-            db_query($conn, "DELETE FROM lead_followups WHERE lead_id = ?", 'i', [$id]);
-            db_query($conn, "DELETE FROM lead_documents WHERE lead_id = ?", 'i', [$id]);
-            // removed non-existent lead_actions_history table deletion
-            db_query($conn, "DELETE FROM commissions WHERE lead_id = ?", 'i', [$id]);
-            db_query($conn, "DELETE FROM lead_transactions WHERE lead_id = ?", 'i', [$id]);
-            db_query($conn, "DELETE FROM lead_deductions WHERE lead_id = ?", 'i', [$id]);
+            // Clean up dependent child tables to prevent orphaned records (using raw queries to bypass db_query error interception)
+            try { $conn->query("DELETE FROM lead_followups WHERE lead_id = $id"); } catch (Throwable $e) {}
+            try { $conn->query("DELETE FROM lead_documents WHERE lead_id = $id"); } catch (Throwable $e) {}
+            try { $conn->query("DELETE FROM lead_logs WHERE lead_id = $id"); } catch (Throwable $e) {}
+            try { $conn->query("DELETE FROM commissions WHERE lead_id = $id"); } catch (Throwable $e) {}
+            try { $conn->query("DELETE FROM lead_transactions WHERE lead_id = $id"); } catch (Throwable $e) {}
+            try { $conn->query("DELETE FROM lead_deductions WHERE lead_id = $id"); } catch (Throwable $e) {}
             
             db_query($conn, "DELETE FROM leads WHERE id = ?", 'i', [$id]);
             json_response(['message' => 'Lead and all associated history deleted successfully']);
@@ -979,17 +1140,11 @@ switch ($path) {
             SELECT * FROM lead_documents WHERE lead_id = ? ORDER BY IF(IFNULL(verification_notes, '') = 'Archived / Removed by user', 1, 0) ASC, id DESC
         ", 'i', [$lead['id']]);
 
-        // Commission
-        $commission = db_fetch_one($conn, "
-            SELECT * FROM commissions WHERE lead_id = ?
-        ", 'i', [$lead['id']]);
-
         json_response([
             'lead' => $lead,
             'followups' => $followups,
             'logs' => $logs,
-            'documents' => $documents,
-            'commission' => $commission
+            'documents' => $documents
         ]);
         break;
 
@@ -1052,8 +1207,23 @@ switch ($path) {
             $customer_bank_name, $customer_account_number, $customer_ifsc_code, $id
         ]);
 
-        // Trigger notifications if a NEW executive was assigned
+        // Trigger notifications if a NEW executive or financer was assigned
+        require_once __DIR__ . '/../includes/pdf_generator.php';
+        
         $assigned_exec_details = null;
+        $assigned_financer_details = null;
+        $generated_pdf_path = null;
+        $generated_pdf_url = null;
+
+        // Generate PDF if any assignment occurred
+        if (($executive_id && $executive_id != $lead['executive_id']) || ($financer_id && $financer_id != $lead['financer_id'])) {
+            $pdfResult = generate_documents_pdf($conn, $id, null);
+            if ($pdfResult['success']) {
+                $generated_pdf_path = $pdfResult['output_path'];
+                $generated_pdf_url = get_setting('app_url', 'http://127.0.0.1/lead-follow-up') . '/backend/uploads/exports/' . $pdfResult['output_filename'];
+            }
+        }
+
         if ($executive_id && $executive_id != $lead['executive_id']) {
             $execRow = db_fetch_one($conn, "SELECT id, user_id, name, email, mobile FROM executives WHERE id = ?", 'i', [$executive_id]);
             if ($execRow) {
@@ -1080,12 +1250,54 @@ switch ($path) {
                             <p>Thanks,<br>LeadFlow Pro Team</p>
                         </div>
                     ";
-                    send_system_email($execRow['email'], $subject, $body);
+                    
+                    $attachments = [];
+                    if ($generated_pdf_path) {
+                        $attachments[] = $generated_pdf_path;
+                    }
+                    send_system_email($execRow['email'], $subject, $body, $attachments);
                 }
 
                 $assigned_exec_details = [
                     'name' => $execRow['name'],
                     'mobile' => $execRow['mobile'],
+                    'lead_id' => $lead['lead_id']
+                ];
+            }
+        }
+
+        if ($financer_id && $financer_id != $lead['financer_id']) {
+            $finRow = db_fetch_one($conn, "SELECT id, name, email, mobile FROM financers WHERE id = ?", 'i', [$financer_id]);
+            if ($finRow) {
+                // Email Notification
+                if (!empty($finRow['email'])) {
+                    require_once __DIR__ . '/../includes/mailer.php';
+                    $subject = "New Lead Assigned: " . $lead['lead_id'];
+                    $body = "
+                        <div style='font-family:sans-serif; color:#333;'>
+                            <h2>New Lead Assignment</h2>
+                            <p>Hi <strong>{$finRow['name']}</strong>,</p>
+                            <p>A new lead has just been assigned to your institution.</p>
+                            <ul>
+                                <li><strong>Lead ID:</strong> {$lead['lead_id']}</li>
+                                <li><strong>Customer:</strong> {$lead['customer_name']}</li>
+                            </ul>
+                            <p>Please review the attached documents.</p>
+                            <br>
+                            <p>Thanks,<br>LeadFlow Pro Team</p>
+                        </div>
+                    ";
+                    
+                    $attachments = [];
+                    if ($generated_pdf_path) {
+                        $attachments[] = $generated_pdf_path;
+                    }
+                    send_system_email($finRow['email'], $subject, $body, $attachments);
+                }
+
+                $assigned_financer_details = [
+                    'name' => $finRow['name'],
+                    'mobile' => $finRow['mobile'],
                     'lead_id' => $lead['lead_id']
                 ];
             }
@@ -1098,7 +1310,9 @@ switch ($path) {
         
         json_response([
             'message' => 'Lead assignments and status gates updated.',
-            'assigned_executive' => $assigned_exec_details
+            'assigned_executive' => $assigned_exec_details,
+            'assigned_financer' => $assigned_financer_details,
+            'pdf_url' => $generated_pdf_url
         ]);
         break;
 
@@ -1106,16 +1320,35 @@ switch ($path) {
         api_require_login();
         if ($method !== 'POST') json_error("Method not allowed", 405);
 
-        $id = (int)($input['id'] ?? 0);
-        $status = $input['status'] ?? '';
-        $remarks = trim($input['remarks'] ?? '');
-
-        if (!in_array($status, ['new', 'pending', 'initiated', 'approved', 'disbursed', 'rejected', 'on_hold'])) {
-            json_error("Invalid status.");
+        $val_errs = validate_input($input, [
+            'id' => ['type' => 'int', 'required' => true, 'min' => 1, 'description' => 'Lead ID'],
+            'status' => ['type' => 'enum', 'required' => true, 'options' => ['new', 'pending', 'initiated', 'approved', 'disbursed', 'rejected', 'on_hold'], 'description' => 'Lead Status'],
+            'remarks' => ['type' => 'string', 'max_len' => 500, 'description' => 'Remarks'],
+            'final_loan_amount' => ['type' => 'float', 'min' => 0, 'description' => 'Final Loan Amount'],
+            'tenure_months' => ['type' => 'int', 'min' => 0, 'description' => 'Tenure (Months)'],
+            'roi' => ['type' => 'float', 'min' => 0, 'description' => 'ROI']
+        ]);
+        if (!empty($val_errs)) {
+            json_response(['errors' => $val_errs], 400);
         }
+
+        $id = (int)$input['id'];
+        $status = $input['status'];
+        $remarks = trim($input['remarks'] ?? '');
 
         $lead = db_fetch_one($conn, "SELECT * FROM leads WHERE id = ?", 'i', [$id]);
         if (!$lead) json_error("Lead not found.");
+
+        // Validation for Approved
+        if ($status === 'approved') {
+            if (empty($lead['financer_id'])) {
+                json_error("A Financer/Bank must be assigned to this lead before it can be Approved.");
+            }
+            $docs = db_fetch_one($conn, "SELECT id FROM lead_documents WHERE lead_id = ?", 'i', [$id]);
+            if (!$docs) {
+                json_error("Mandatory KYC documents must be uploaded before the lead can be Approved.");
+            }
+        }
 
         // Validation for Disbursement
         if ($status === 'disbursed') {
@@ -1148,21 +1381,6 @@ switch ($path) {
             VALUES (?, CURDATE(), ?, ?, ?)
         ", 'issi', [$id, $remarks ?: "Status changed to " . ucfirst($status), $status, current_user_id()]);
 
-        // Create Commissions row if status is 'disbursed'
-        if ($status === 'disbursed') {
-            // Check if commission row exists
-            $commRow = db_fetch_one($conn, "SELECT id FROM commissions WHERE lead_id = ?", 'i', [$id]);
-            if (!$commRow) {
-                // Compute commission (1% of loan amount by default, or based on system setting)
-                $percent = (float)get_setting('default_commission_rate', '1.0');
-                $commission_amount = round(($final_loan_amount * $percent) / 100, 2);
-                
-                db_query($conn, "
-                    INSERT INTO commissions (lead_id, agent_id, commission_amount, paid_amount, payout_90_status, payout_10_status)
-                    VALUES (?, ?, ?, 0, 'pending', 'pending')
-                ", 'iid', [$id, $lead['agent_id'], $commission_amount]);
-            }
-        }
 
         log_lead_action($conn, $id, 'Status Updated', "Status changed to " . strtoupper($status) . ". Remarks: " . $remarks, current_user_id());
 
@@ -1362,17 +1580,32 @@ switch ($path) {
 
                 // Handle inline document uploads after eligibility check passes
                 if (isset($_FILES['disburse_docs']['tmp_name']) && is_array($_FILES['disburse_docs']['tmp_name'])) {
+                    require_once __DIR__ . '/../includes/dms_service.php';
                     $uploadDir = __DIR__ . '/../uploads/leads/';
                     if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                    
                     foreach ($_FILES['disburse_docs']['tmp_name'] as $docType => $tmpName) {
                         if ($tmpName && is_uploaded_file($tmpName)) {
-                            $ext = strtolower(pathinfo($_FILES['disburse_docs']['name'][$docType], PATHINFO_EXTENSION));
-                            $safeLeadId = preg_replace('/[^A-Za-z0-9\-]/', '_', $lead['lead_id']);
-                            $newFileName = $safeLeadId . '_' . $docType . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
-                            if (move_uploaded_file($tmpName, $uploadDir . $newFileName)) {
-                                $dbPath = 'uploads/leads/' . $newFileName;
-                                $cat = in_array($docType, ['rc', 'insurance']) ? 'vehicle' : 'kyc';
-                                db_query($conn, "INSERT INTO lead_documents (lead_id, category, document_type, file_path, verification_status) VALUES (?, ?, ?, ?, 'verified')", 'isss', [$lead_id, $cat, $docType, $dbPath]);
+                            $fileArr = [
+                                'name' => $_FILES['disburse_docs']['name'][$docType],
+                                'type' => $_FILES['disburse_docs']['type'][$docType],
+                                'tmp_name' => $tmpName,
+                                'error' => $_FILES['disburse_docs']['error'][$docType],
+                                'size' => $_FILES['disburse_docs']['size'][$docType]
+                            ];
+                            $val = dms_validate_file($fileArr, ['jpg', 'jpeg', 'png', 'pdf'], 20);
+                            
+                            if ($val['success']) {
+                                $ext = $val['ext'];
+                                $safeLeadId = preg_replace('/[^A-Za-z0-9\-]/', '_', $lead['lead_id']);
+                                $newFileName = $safeLeadId . '_' . $docType . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+                                if (move_uploaded_file($tmpName, $uploadDir . $newFileName)) {
+                                    $dbPath = 'uploads/leads/' . $newFileName;
+                                    $cat = in_array($docType, ['rc', 'insurance']) ? 'vehicle' : 'kyc';
+                                    db_query($conn, "INSERT INTO lead_documents (lead_id, category, document_type, file_path, verification_status) VALUES (?, ?, ?, ?, 'verified')", 'isss', [$lead_id, $cat, $docType, $dbPath]);
+                                }
+                            } else {
+                                json_error("Validation failed for {$docType}: " . $val['message']);
                             }
                         }
                     }
@@ -2923,7 +3156,8 @@ switch ($path) {
             ]);
         } catch (Exception $e) {
             $conn->rollback();
-            json_error("Error importing sheet: " . $e->getMessage(), 500);
+            error_log("Error importing sheet: " . $e->getMessage());
+            json_error("Error importing sheet. Please ensure the file matches the expected template.", 500);
         }
         break;
 
@@ -2964,6 +3198,10 @@ switch ($path) {
         db_query($conn, "INSERT INTO system_logs (user_id, action, details, ip_address) VALUES (?, ?, ?, ?)", "isss", [current_user_id(), 'Communication Logged', "Logged $type for Lead ID: $lead_id", $_SERVER['REMOTE_ADDR'] ?? '']);
         
         json_response(['message' => 'Interaction logged successfully.']);
+        break;
+
+    case 'share_documents':
+        require_once __DIR__ . '/share_documents.php';
         break;
 
     // ----------------------------------------------------
