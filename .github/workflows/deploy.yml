@@ -10,21 +10,21 @@ jobs:
     name: Build & Deploy to Hostinger via FTP
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
+    - name: Get latest code
       uses: actions/checkout@v4
       
-    - name: ⚙️ Setup Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         
-    - name: 📦 Install Dependencies and Build Frontend
+    - name: Install Dependencies and Build Frontend
       run: |
         cd frontend
         npm install
         npm run build
         
-    - name: 📁 Prepare Deployment Directory
+    - name: Prepare Deployment Directory
       run: |
         mkdir -p deploy_folder
         # Copy backend folder
@@ -34,7 +34,7 @@ jobs:
         # Copy .htaccess file
         cp .htaccess deploy_folder/
         
-    - name: 🚀 Sync files to Hostinger
+    - name: Sync files to Hostinger
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
