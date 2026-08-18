@@ -137,7 +137,7 @@ function KPICard({
         </div>
       </div>
       <div className="relative flex flex-col justify-between flex-1 mt-1 z-10">
-        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums animate-fade-in">
+        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
           {value}
         </div>
         {sparklineData && (
@@ -223,7 +223,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-6 pb-12 animate-fade-in">
+    <div className="space-y-6 pb-12">
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
@@ -283,7 +283,7 @@ export default function Dashboard() {
         )}
 
         {stats.dsaTiering && (
-          <Card className="p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-amber-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-sm transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-slide-up">
+          <Card className="p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-amber-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-sm transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20 shrink-0">
                 <Sparkles className="w-6 h-6 animate-pulse" />
@@ -329,7 +329,7 @@ export default function Dashboard() {
 
 
       {/* ── Main Dashboard Split ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 animate-fade-in" style={{ animationDelay: '150ms' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ animationDelay: '150ms' }}>
         
         {/* Recent Leads Table */}
         <Card className="lg:col-span-2 flex flex-col p-0">
@@ -496,7 +496,7 @@ export default function Dashboard() {
                         </div>
                         <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                           <div 
-                            className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500"
+                            className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all"
                             style={{ width: `${Math.min(100, pct)}%` }}
                           />
                         </div>
@@ -523,7 +523,7 @@ export default function Dashboard() {
                         </div>
                         <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                           <div 
-                            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500"
+                            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all"
                             style={{ width: `${Math.min(100, pct)}%` }}
                           />
                         </div>
@@ -562,7 +562,7 @@ export default function Dashboard() {
                           </div>
                           <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                             <div 
-                              className={`h-full rounded-full transition-all duration-500 ${isTop ? 'bg-gradient-to-r from-amber-400 to-amber-600' : 'bg-gradient-to-r from-emerald-500 to-teal-500'}`}
+                              className={`h-full rounded-full transition-all ${isTop ? 'bg-gradient-to-r from-amber-400 to-amber-600' : 'bg-gradient-to-r from-emerald-500 to-teal-500'}`}
                               style={{ width: `${Math.max(8, pct)}%` }}
                             />
                           </div>

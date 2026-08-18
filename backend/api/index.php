@@ -2595,6 +2595,9 @@ switch ($path) {
             if (!in_array($role, ['admin', 'manager', 'staff', 'agent', 'executive', 'channel_agent', 'rto_desk', 'insurance_desk'])) {
                 json_error("Invalid role selected.");
             }
+            if ($role === 'admin') {
+                json_error("Admin accounts are protected and new Admin accounts cannot be created.", 403);
+            }
 
             // Check duplicate email
             $dup = db_fetch_one($conn, "SELECT id FROM users WHERE email = ?", 's', [$email]);
@@ -2646,8 +2649,14 @@ switch ($path) {
             }
 
             $target = db_fetch_one($conn, "SELECT role FROM users WHERE id = ?", 'i', [$id]);
-            if ($target && $target['role'] === 'admin') {
-                json_error("Admin accounts are protected and cannot be modified.");
+            if (!$target) {
+                json_error("User not found.");
+            }
+            if ($target['role'] === 'admin') {
+                json_error("Admin accounts are protected and cannot be modified.", 403);
+            }
+            if ($role === 'admin' && $target['role'] !== 'admin') {
+                json_error("Admin accounts are protected and you cannot assign the Admin role.", 403);
             }
 
             // Check duplicate email
@@ -2667,6 +2676,11 @@ switch ($path) {
                 ", 'sssii', [$name, $email, $role, $is_active, $id]);
             }
 
+            if ($id === current_user_id()) {
+                $_SESSION['user']['name'] = $name;
+                $_SESSION['user']['email'] = $email;
+            }
+ 
             json_response(['message' => 'User updated successfully']);
         } elseif ($method === 'DELETE') {
             $id = (int)($_GET['id'] ?? 0);
@@ -2696,7 +2710,7 @@ switch ($path) {
                 'slide2_title', 'slide2_description', 'slide2_badge',
                 'slide3_title', 'slide3_description', 'slide3_badge',
                 'slide4_title', 'slide4_description', 'slide4_badge',
-                'instagram_url', 'facebook_url', 'linkedin_url', 'twitter_url'
+                'instagram_url', 'facebook_url', 'linkedin_url', 'twitter_url', 'logo_updated_at'
             )
         ");
         $settings = [];
@@ -2729,6 +2743,34 @@ switch ($path) {
             $settings[$row['setting_key']] = $row['setting_value'];
         }
         json_response(['settings' => $settings]);
+        break;
+
+    case 'settings/upload-logo':
+        api_require_role('admin');
+        if ($method !== 'POST') json_error("Method not allowed", 405);
+        if (!isset($_FILES['logo']) || $_FILES['logo']['error'] !== UPLOAD_ERR_OK) {
+            json_error("No logo file uploaded or upload error.", 400);
+        }
+        $file = $_FILES['logo'];
+        $allowed_types = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+        if (!in_array($file['type'], $allowed_types)) {
+            json_error("Invalid file type. Only PNG, JPG, WEBP and SVG are allowed.", 400);
+        }
+        $upload_dir = __DIR__ . '/../uploads/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+        $dest = $upload_dir . 'AppLogo.png';
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            json_error("Failed to save logo file.", 500);
+        }
+        $timestamp = (string)time();
+        db_query($conn, "
+            INSERT INTO system_settings (setting_key, setting_value) 
+            VALUES ('logo_updated_at', ?) 
+            ON DUPLICATE KEY UPDATE setting_value = ?
+        ", 'ss', [$timestamp, $timestamp]);
+        json_response(['message' => 'Logo uploaded successfully.', 'logo_updated_at' => $timestamp]);
         break;
 
     case 'settings':

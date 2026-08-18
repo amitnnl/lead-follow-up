@@ -19,7 +19,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   ...props 
 }, ref) => {
   
-  const baseClasses = 'inline-flex items-center justify-center font-bold transition-all duration-200 cursor-pointer rounded-lg relative overflow-hidden';
+  const baseClasses = 'inline-flex items-center justify-center font-bold transition-all cursor-pointer rounded-lg relative overflow-hidden';
   
   const variants = {
     primary: 'bg-primary-600 hover:bg-primary-700 text-white shadow-sm shadow-primary-500/25 hover:shadow-md hover:shadow-primary-500/30 border border-transparent',

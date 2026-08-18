@@ -54,6 +54,14 @@ Prefer minimal, backward-compatible changes.
 Golden Rule
 
 Every lead must remain fully traceable from creation to disbursal, with accurate financial tracking, complete audit history, and strict role-based security.
-## Git Sync / Deployment
-- **Do NOT automatically run git add, commit, or push (`git sync`) after making code changes or building bundles.**
-- Only run git sync / push when the USER explicitly requests it (e.g., "sync with github", "push to git", "deploy").
+## UI POPUP / FORM RULE — MANDATORY
+Make ALL forms, modals, dialogs, dropdowns, popovers, and popup menus fully visible and accessible at all times once opened.
+- No hover-only behavior.
+- No clipping from overflow, cards, tables, sidebars, or containers.
+- No background interference while interacting with a popup.
+- Use proper portal/root rendering + high z-index (e.g. z-[100] / z-[9999]).
+- Keep popups open until the user intentionally closes or completes them.
+- If content is large, scroll inside the popup, not the background.
+- Ensure 100% viewport visibility and responsive positioning on desktop/tablet/mobile.
+- Never hide, cut off, or move forms because of mouse movement.
+- Priority: Functionality and visibility > decorative effects.

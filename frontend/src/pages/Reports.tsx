@@ -93,7 +93,7 @@ function KPICard({ label, value, icon: Icon, color, subText, bgGradient }: {
   bgGradient?: string;
 }) {
   return (
-    <div className={clsx('relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 hover:shadow-lg', bgGradient || 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800')}>
+    <div className={clsx('relative overflow-hidden rounded-2xl border p-4 transition-all hover:shadow-lg', bgGradient || 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800')}>
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400">{label}</span>
         <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs" style={{ backgroundColor: `${color}18`, color }}>
@@ -347,7 +347,7 @@ export default function Reports() {
   }, [records]);
 
   return (
-    <div className="space-y-5 pb-10 font-sans animate-fade-in select-none">
+    <div className="space-y-5 pb-10 font-sans select-none">
 
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
@@ -432,7 +432,7 @@ export default function Reports() {
               type="button"
               onClick={() => setReportType(opt.value)}
               className={clsx(
-                'p-3.5 rounded-2xl border transition-all duration-200 text-left cursor-pointer flex flex-col justify-between relative overflow-hidden group',
+                'p-3.5 rounded-2xl border transition-all text-left cursor-pointer flex flex-col justify-between relative overflow-hidden group',
                 isSelected
                   ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
                   : 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-primary-300 dark:hover:border-primary-700'

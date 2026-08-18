@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import { Search, Loader2, Save, Plus, X, ReceiptText } from 'lucide-react';
+import Modal from '../../components/ui/Modal';
 
 interface OfficeExpense {
   id: number;
@@ -158,9 +159,7 @@ export default function OfficeExpensesTab() {
         </div>
       </div>
 
-      {isAdding && (
-        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <Modal isOpen={isAdding} onClose={() => setIsAdding(false)} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
               <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <ReceiptText className="w-4.5 h-4.5 text-rose-500" /> Log Office Expense
@@ -207,9 +206,7 @@ export default function OfficeExpensesTab() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

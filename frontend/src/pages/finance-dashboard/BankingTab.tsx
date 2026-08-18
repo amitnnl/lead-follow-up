@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Upload, FileSpreadsheet, Loader2, Plus, X, Save } from 'lucide-react';
 import Papa from 'papaparse';
 import api from '../../lib/axios';
+import Modal from '../../components/ui/Modal';
 
 export default function BankingTab() {
   const [entries, setEntries] = useState<any[]>([]);
@@ -188,9 +189,7 @@ export default function BankingTab() {
         </div>
       </div>
 
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/20 dark:bg-black/40 animate-fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-scale-in">
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wide flex items-center gap-2">
                 Add Manual Entry
@@ -250,9 +249,7 @@ export default function BankingTab() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

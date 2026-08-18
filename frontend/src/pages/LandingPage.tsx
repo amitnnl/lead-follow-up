@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Modal from '../components/ui/Modal';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
 import {
@@ -218,8 +219,14 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#0B101E]/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-white/10 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-700 flex items-center justify-center shadow-md shadow-indigo-600/20">
-              <Car className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 rounded-none bg-gradient-to-br from-indigo-600 to-blue-700 flex items-center justify-center shadow-md shadow-indigo-600/20 overflow-hidden relative border border-slate-100 dark:border-slate-800">
+              <img 
+                src={`${api.defaults.baseURL?.replace('/api', '')}/uploads/AppLogo.png?v=${settings.logo_updated_at || '1'}`} 
+                alt="Logo" 
+                className="w-full h-full object-contain absolute inset-0 z-10 bg-white dark:bg-slate-900"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+              <Car className="w-4 h-4 text-white relative z-0" />
             </div>
             <div className="flex flex-col">
               <span className="font-black text-sm text-slate-900 dark:text-white tracking-tight leading-tight">
@@ -470,7 +477,7 @@ export default function LandingPage() {
             ].map((card, idx) => (
               <div
                 key={idx}
-                className="group relative bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-600 dark:hover:border-indigo-400 hover:shadow-xl transition-all duration-300"
+                className="group relative bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-600 dark:hover:border-indigo-400 hover:shadow-xl transition-all"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
@@ -941,7 +948,7 @@ export default function LandingPage() {
                         key={preset}
                         type="button"
                         onClick={() => setFormData((prev) => ({ ...prev, loan_amount: preset.toString() }))}
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 cursor-pointer border ${
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer border ${
                           Number(formData.loan_amount) === preset
                             ? 'bg-primary-600 text-white border-primary-600 shadow-xs'
                             : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary-300'
@@ -993,9 +1000,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Loan Status Search Modal ───────────────────────────── */}
-      {isStatusModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
+      <Modal isOpen={isStatusModalOpen} onClose={() => { setIsStatusModalOpen(false); setSearchedLead(null); setStatusError(''); }} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative">
             <button
               onClick={() => {
                 setIsStatusModalOpen(false);
@@ -1060,9 +1065,7 @@ export default function LandingPage() {
               </div>
             )}
 
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* ── Modern App Dynamic Footer ────────────────────────────── */}
       <footer className="bg-slate-950 text-slate-300 pt-14 pb-8 border-t border-slate-800">
@@ -1073,8 +1076,21 @@ export default function LandingPage() {
             {/* Col 1: Brand & Settings */}
             <div className="space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black">
-                  <Car className="w-5 h-5" />
+                <div className="w-12 h-12 flex items-center justify-center rounded-none overflow-hidden relative border border-slate-800 bg-white/5">
+                  <img 
+                    src={`${api.defaults.baseURL?.replace('/api', '')}/uploads/AppLogo.png?v=${settings.logo_updated_at || '1'}`} 
+                    alt="Logo" 
+                    className="w-full h-full object-contain"
+                    onError={(e) => { 
+                      e.currentTarget.style.display = 'none'; 
+                      if (e.currentTarget.nextElementSibling) {
+                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
+                      }
+                    }}
+                  />
+                  <div className="hidden w-full h-full bg-indigo-600 items-center justify-center">
+                    <Car className="w-5 h-5 text-white" />
+                  </div>
                 </div>
                 <span className="font-black text-lg text-white">
                   {settings.app_name}

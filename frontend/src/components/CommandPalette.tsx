@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Modal from './ui/Modal';
 import { 
   Search, 
   Terminal, 
@@ -93,10 +94,13 @@ export default function CommandPalette({ isOpen, onClose, onOpenNewLead, onOpenC
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]">
-      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      
-      <div className="relative bg-white dark:bg-[#111622] w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-slide-up ring-1 ring-black/5">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      zClassName="z-[9999] flex items-start justify-center pt-[15vh] overflow-y-auto select-none"
+      backdropClassName="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+      className="bg-white dark:bg-[#111622] w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 ring-1 ring-black/5"
+    >
         <div className="flex items-center px-4 border-b border-slate-100 dark:border-slate-800">
           <Search className="w-5 h-5 text-slate-400" />
           <input
@@ -168,7 +172,6 @@ export default function CommandPalette({ isOpen, onClose, onOpenNewLead, onOpenC
             <span><kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mr-1">Enter</kbd> to select</span>
           </div>
         </div>
-      </div>
-    </div>
+      </Modal>
   );
 }

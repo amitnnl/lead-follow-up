@@ -4,6 +4,7 @@ import {
   UsersRound, Search, Plus, Edit, Trash2, X, 
   CreditCard, ShieldCheck, CheckCircle2, Lock 
 } from 'lucide-react';
+import Modal from '../components/ui/Modal';
 import { useAuthStore } from '../store/authStore';
 
 interface ChannelExecutive {
@@ -41,13 +42,8 @@ function AgentModal({
   formData: any;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto animate-fade-in select-none">
-      <div className="absolute inset-0 bg-slate-900/30 dark:bg-black/50 backdrop-blur-xs" onClick={onClose}></div>
-      
-      <div className="relative w-full max-w-3xl max-h-[96vh] my-auto bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-scale-in duration-200">
+    <Modal isOpen={isOpen} onClose={onClose} zClassName="z-[9999]" className="relative w-full max-w-3xl max-h-[96vh] my-auto bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-500">
@@ -146,7 +142,7 @@ function AgentModal({
               </div>
 
               {formData.enable_portal_access && (
-                <div className="pt-3 border-t border-primary-200/50 dark:border-primary-800/40 space-y-3 animate-fade-in">
+                <div className="pt-3 border-t border-primary-200/50 dark:border-primary-800/40 space-y-3">
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
                       <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -214,8 +210,7 @@ function AgentModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </Modal>
   );
 }
 
@@ -376,7 +371,7 @@ export default function ChannelExecutives() {
   const bankConfigured = executives.filter(ex => ex.bank_account && ex.ifsc_code).length;
 
   return (
-    <div className="space-y-6 animate-fade-in select-none">
+    <div className="space-y-6 select-none">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2.5">

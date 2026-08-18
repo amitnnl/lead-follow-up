@@ -78,11 +78,11 @@ export default function Header({
   };
 
   return (
-    <header className="h-14 flex items-center justify-between px-4 lg:px-6 shrink-0 bg-[#fcfcfc] dark:bg-[#09090b] border-b border-slate-200 dark:border-[#27272a] md:px-5 print:hidden z-30">
+    <header className="h-14 flex items-center justify-between px-4 lg:px-6 shrink-0 bg-[#f5f6f8] dark:bg-[#0c0c14] border-b border-slate-200/80 dark:border-[#1e2030] md:px-5 print:hidden z-30">
       <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={handleToggleSidebar}
-          className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors cursor-pointer shrink-0"
+          className="p-1.5 rounded-md hover:bg-slate-200/60 dark:hover:bg-[#1c1a30] text-slate-500 dark:text-slate-400 transition-colors cursor-pointer shrink-0"
           title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
           {isSidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
@@ -106,7 +106,7 @@ export default function Header({
           value={searchVal}
           onChange={(e) => setSearchVal(e.target.value)}
           placeholder="Search..."
-          className="w-full pl-8 pr-12 py-1 text-xs bg-transparent focus:outline-none rounded-md border border-slate-200 dark:border-[#27272a] focus:border-slate-400 dark:focus:border-slate-600 placeholder:text-slate-400 text-slate-700 dark:text-slate-200 transition-colors"
+          className="w-full pl-8 pr-12 py-1.5 text-xs bg-white dark:bg-[#121028]/40 focus:outline-none rounded-lg border border-slate-200 dark:border-[#1e2030] focus:border-[#673DE6] focus:ring-1 focus:ring-[#673DE6] placeholder:text-slate-400 text-slate-700 dark:text-slate-200 transition-all shadow-xs"
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2">
           {searchVal ? (
@@ -169,7 +169,7 @@ export default function Header({
           {showNotifications && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
-              <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
+              <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Notifications</span>
                   {unreadCount > 0 && (
@@ -217,7 +217,7 @@ export default function Header({
           {showProfileMenu && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowProfileMenu(false)} />
-              <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
+              <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-[#111622] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                   <div className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.name || 'Admin'}</div>
                   <div className="text-[10px] text-primary-600 dark:text-primary-400 font-bold capitalize">{user?.role?.replace('_', ' ')}</div>

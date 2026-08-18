@@ -89,7 +89,7 @@ export default function SystemAudit() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in select-none">
+    <div className="space-y-6 select-none">
       
       {/* ── Header ── */}
       <div>

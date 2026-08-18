@@ -8,18 +8,18 @@
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 
-  /* Premium Fintech Sapphire & Violet Palette */
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
-  --color-primary-950: #1e1b4b;
+  /* Hostinger HPanel Violet Accent Brand Palette */
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #673DE6; /* Hostinger Brand Violet */
+  --color-primary-600: #5832c2;
+  --color-primary-700: #46279f;
+  --color-primary-800: #351d7b;
+  --color-primary-900: #251458;
+  --color-primary-950: #170b36;
 
   --color-accent-50: #f8fafc;
   --color-accent-100: #f1f5f9;
@@ -34,9 +34,9 @@
   --color-accent-950: #020617;
 
   /* Surface and UI Tokens */
-  --color-surface-dark: #0B0F19;
-  --color-surface-card: #131826;
-  --color-surface-elevated: #1C2333;
+  --color-surface-dark: #07070b;
+  --color-surface-card: #0e0d16;
+  --color-surface-elevated: #141320;
 }
 
 /* ── Dynamic Accent Theme Overrides ── */

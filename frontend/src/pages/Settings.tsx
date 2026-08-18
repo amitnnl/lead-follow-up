@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
@@ -22,7 +22,7 @@ const tabs = [
 
 export default function Settings() {
   const { user, setUser } = useAuthStore();
-  const { fetchSettings } = useSettingsStore();
+  const { fetchSettings, settings } = useSettingsStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(true);
@@ -108,6 +108,23 @@ export default function Settings() {
     } catch (err: any) { alert(err.response?.data?.error || "Failed to update profile."); }
   };
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('logo', file);
+    try {
+      await api.post('/settings/upload-logo', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      await fetchSettings();
+      setSuccessMsg('Logo uploaded successfully.');
+      setTimeout(() => setSuccessMsg(''), 3000);
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Failed to upload logo.");
+    }
+  };
+
   const handleSettingsSave = async (e: React.FormEvent, formType: string) => {
     e.preventDefault();
     try {
@@ -133,7 +150,7 @@ export default function Settings() {
   if (loading) return <div className="flex flex-col items-center justify-center h-96 gap-3"><div className="relative w-10 h-10"><div className="absolute inset-0 rounded-full border-[3px] border-primary-100 dark:border-primary-500/20" /><div className="absolute inset-0 rounded-full border-[3px] border-t-primary-600 animate-spin" /></div><p className="text-xs text-slate-400 font-medium">Loading settings...</p></div>;
 
   return (
-    <div className="space-y-6 pb-12 animate-fade-in select-none max-w-6xl mx-auto">
+    <div className="space-y-6 pb-12 select-none max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
@@ -147,7 +164,7 @@ export default function Settings() {
       </div>
 
       {successMsg && (
-        <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-2 text-sm font-semibold animate-slide-up">
+        <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-2 text-sm font-semibold">
           <CheckCircle className="w-5 h-5 text-emerald-500" /> {successMsg}
         </div>
       )}
@@ -259,6 +276,22 @@ export default function Settings() {
                 <p className="text-xs text-slate-400 dark:text-slate-500 mb-4 border-b border-slate-100 dark:border-slate-800 pb-2.5">Configure brand identity, regional formatting, and base security.</p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2 border border-slate-100 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900/50 flex flex-col sm:flex-row items-center gap-4">
+                    <div className="w-16 h-16 shrink-0 bg-slate-100 dark:bg-slate-800 rounded-none flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+                      <img 
+                        src={`${api.defaults.baseURL?.replace('/api', '')}/uploads/AppLogo.png?v=${settings.logo_updated_at || '1'}`} 
+                        alt="App Logo" 
+                        className="w-full h-full object-contain"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-bold text-slate-800 dark:text-white mb-1">App Logo</label>
+                      <p className="text-xs text-slate-400 mb-2">Upload a PNG, JPG, or SVG. Best size is 256x256px.</p>
+                      <input type="file" accept="image/png, image/jpeg, image/svg+xml, image/webp" onChange={handleLogoUpload} className="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-primary-500/10 dark:file:text-primary-400 dark:hover:file:bg-primary-500/20 cursor-pointer" />
+                    </div>
+                  </div>
+                  
                   <div><label className={labelClass}>App Name</label><input type="text" value={systemForm.app_name} onChange={e => setSystemForm({...systemForm, app_name: e.target.value})} className={inputClass} /></div>
                   <div><label className={labelClass}>Company Name</label><input type="text" value={systemForm.company_name} onChange={e => setSystemForm({...systemForm, company_name: e.target.value})} className={inputClass} /></div>
                   <div><label className={labelClass}>Support Email</label><input type="email" value={systemForm.support_email} onChange={e => setSystemForm({...systemForm, support_email: e.target.value})} className={inputClass} /></div>

@@ -28,7 +28,7 @@ import LedgerTab from './pages/finance-dashboard/LedgerTab';
 import OfficeExpensesTab from './pages/finance-dashboard/OfficeExpensesTab';
 import CustomerSettlementTab from './pages/finance-dashboard/CustomerSettlementTab';
 const RouteLoadingFallback = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
+  <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors">
     <div className="relative flex items-center justify-center">
       <div className="animate-ping absolute inline-flex h-12 w-12 rounded-full bg-emerald-400 opacity-20"></div>
       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>

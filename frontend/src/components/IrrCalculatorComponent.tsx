@@ -257,7 +257,7 @@ Generated via Vehicle Finance Lead Portal`;
   };
 
   return (
-    <div className="space-y-6 animate-fade-in text-slate-800 dark:text-slate-100">
+    <div className="space-y-6 text-slate-800 dark:text-slate-100">
       
       {/* ── Dynamic, Ink-Saving Print-Only Voucher (Fits neatly on A4) ── */}
       <div className="hidden print:block w-full text-black font-sans bg-white p-2 text-xs leading-tight">

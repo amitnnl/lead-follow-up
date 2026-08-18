@@ -14,6 +14,11 @@ if (!$user) {
     header("Location: index.php");
     exit;
 }
+if ($user['role'] === 'admin') {
+    flash('error', 'Admin accounts are protected and cannot be modified.');
+    header("Location: index.php");
+    exit;
+}
 
 $pageTitle = 'Edit User';
 $pageBreadcrumb = 'System / Users / Edit';
@@ -37,6 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$name || !$email) {
         $errors[] = 'Name and email are required.';
     }
+    if ($role === 'admin') {
+        $errors[] = 'Admin accounts are protected and you cannot assign the Admin role.';
+    }
     if (!in_array($role, ['admin', 'staff', 'executive', 'finance_manager', 'rto_desk', 'insurance_desk'])) {
         $errors[] = 'Invalid role selected.';
     }
@@ -51,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             if ($password) {
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
-                db_query($conn, "UPDATE users SET name=?, email=?, role=?, is_active=?, password=? WHERE id=?", 'ssiisi', [$name, $email, $role, $is_active, $hashed, $id]);
+                db_query($conn, "UPDATE users SET name=?, email=?, role=?, is_active=?, password=? WHERE id=?", 'sssisi', [$name, $email, $role, $is_active, $hashed, $id]);
             } else {
-                db_query($conn, "UPDATE users SET name=?, email=?, role=?, is_active=? WHERE id=?", 'ssiii', [$name, $email, $role, $is_active, $id]);
+                db_query($conn, "UPDATE users SET name=?, email=?, role=?, is_active=? WHERE id=?", 'sssii', [$name, $email, $role, $is_active, $id]);
             }
 
             // Sync with executive table if role is executive or was executive

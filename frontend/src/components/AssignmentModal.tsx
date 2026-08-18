@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Users, Calendar, Building2, UserCircle2, AlertCircle, Plus, MessageCircle, Mail, BellOff, ChevronDown, FileText, CheckCircle2 } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuthStore } from '../store/authStore';
+import Modal from './ui/Modal';
 
 interface AssignmentModalProps {
   isOpen: boolean;
@@ -207,9 +208,8 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto animate-fade-in select-none">
-      <div className="absolute inset-0 bg-slate-900/30 dark:bg-black/50 backdrop-blur-xs" onClick={onClose}></div>
-      <div className="relative w-full max-w-5xl max-h-[96vh] bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col my-auto overflow-hidden animate-scale-in duration-200">
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} zClassName="z-[9999]" className="w-full max-w-5xl max-h-[96vh] bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col my-auto overflow-hidden">
         
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
           <div className="flex items-center gap-3">
@@ -229,7 +229,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
         </div>
 
         {whatsappFlow ? (
-          <div className="p-10 flex flex-col items-center justify-center text-center animate-fade-in flex-1">
+          <div className="p-10 flex flex-col items-center justify-center text-center flex-1">
             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-5 shadow-sm">
               <CheckCircle2 className="w-10 h-10" />
             </div>
@@ -342,7 +342,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                     </div>
 
                     {formData.financer_id && (
-                      <div className="bg-white dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-xs animate-fade-in space-y-3">
+                      <div className="bg-white dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-xs space-y-3">
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Financer</label>
                         <div className="grid grid-cols-3 gap-2">
                           <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border transition-all ${notifyFinMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/10 text-[#25D366] font-bold' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 text-slate-500'}`}>
@@ -362,13 +362,13 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                           </label>
                         </div>
                         {notifyFinMethod === 'whatsapp' && (
-                          <div className="animate-fade-in relative">
+                          <div className="relative">
                             <MessageCircle className="w-4 h-4 text-[#25D366] absolute left-2.5 top-2.5" />
                             <input type="text" value={finMobile} onChange={e => setFinMobile(e.target.value.replace(/\D/g, ''))} placeholder="10 Digit Number" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border border-[#25D366]/40 rounded-lg outline-none text-xs font-mono text-slate-800 dark:text-white" />
                           </div>
                         )}
                         {notifyFinMethod === 'email' && (
-                          <div className="animate-fade-in relative">
+                          <div className="relative">
                             <Mail className="w-4 h-4 text-primary-500 absolute left-2.5 top-2.5" />
                             <input type="email" value={finEmail} onChange={e => setFinEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border border-primary-500/40 rounded-lg outline-none text-xs text-slate-800 dark:text-white" />
                           </div>
@@ -414,7 +414,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                     </div>
 
                     {formData.executive_id && (
-                      <div className="bg-white dark:bg-slate-900/60 p-3.5 rounded-xl border border-primary-100/50 dark:border-primary-900/30 shadow-xs animate-fade-in space-y-3">
+                      <div className="bg-white dark:bg-slate-900/60 p-3.5 rounded-xl border border-primary-100/50 dark:border-primary-900/30 shadow-xs space-y-3">
                         <label className="block text-[10px] font-bold text-primary-400 uppercase tracking-widest flex items-center gap-1.5"><BellOff className="w-3.5 h-3.5"/> Notify Executive</label>
                         <div className="grid grid-cols-3 gap-2">
                           <label className={`relative flex flex-col items-center justify-center py-2 rounded-xl cursor-pointer border transition-all ${notifyExecMethod === 'whatsapp' ? 'border-[#25D366] bg-[#25D366]/10 text-[#25D366] font-bold' : 'border-primary-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 text-slate-500'}`}>
@@ -434,13 +434,13 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
                           </label>
                         </div>
                         {notifyExecMethod === 'whatsapp' && (
-                          <div className="animate-fade-in relative">
+                          <div className="relative">
                             <MessageCircle className="w-4 h-4 text-[#25D366] absolute left-2.5 top-2.5" />
                             <input type="text" value={execMobile} onChange={e => setExecMobile(e.target.value.replace(/\D/g, ''))} placeholder="10 Digit Number" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border border-[#25D366]/40 rounded-lg outline-none text-xs font-mono text-slate-800 dark:text-white" />
                           </div>
                         )}
                         {notifyExecMethod === 'email' && (
-                          <div className="animate-fade-in relative">
+                          <div className="relative">
                             <Mail className="w-4 h-4 text-primary-500 absolute left-2.5 top-2.5" />
                             <input type="email" value={execEmail} onChange={e => setExecEmail(e.target.value)} placeholder="Email Address" className="w-full pl-9 pr-3 py-2 bg-white dark:bg-[#111827] border border-primary-500/40 rounded-lg outline-none text-xs text-slate-800 dark:text-white" />
                           </div>
@@ -465,41 +465,37 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess, leadId, in
         </form>
         )}
 
-      </div>
+        </Modal>
 
-      {quickAddType && (
-        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-[60] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Plus className="w-4 h-4 text-primary-600" />
-                Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
-              </h3>
-              <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
-              <div>
-                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
-                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all" />
-              </div>
-              {quickAddType === 'executive' && (
-                <div>
-                  <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
-                  <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs font-mono text-slate-800 dark:text-white transition-all" />
-                </div>
-              )}
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
-                <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-primary-500/20">
-                  {quickAddLoading ? 'Saving...' : 'Save & Select'}
-                </button>
-              </div>
-            </form>
-          </div>
+      <Modal isOpen={!!quickAddType} onClose={() => setQuickAddType(null)} zClassName="z-[10050]" className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5">
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <Plus className="w-4 h-4 text-primary-600" />
+            Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
+          </h3>
+          <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      )}
-    </div>
+        <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
+          <div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
+            <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs text-slate-800 dark:text-white transition-all" />
+          </div>
+          {quickAddType === 'executive' && (
+            <div>
+              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
+              <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
+            <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-primary-500/20">
+              {quickAddLoading ? 'Saving...' : 'Save & Select'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

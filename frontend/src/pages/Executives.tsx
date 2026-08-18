@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import api from '../lib/axios';
 import { UserCircle, Search, Plus, Edit, Trash2, X, Filter, ChevronDown, Building } from 'lucide-react';
+import Modal from '../components/ui/Modal';
 import { useAuthStore } from '../store/authStore';
 import clsx from 'clsx';
 
@@ -84,11 +85,8 @@ function ExecutiveModal({
   setFormData: React.Dispatch<React.SetStateAction<any>>;
   financers: any[];
 }) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-slate-900/30 dark:bg-black/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto animate-fade-in">
-      <div className="bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[96vh] overflow-hidden flex flex-col my-auto border border-slate-200 dark:border-slate-800 animate-scale-in duration-200">
+    <Modal isOpen={isOpen} onClose={onClose} zClassName="z-[9999]" className="bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[96vh] overflow-hidden flex flex-col my-auto border border-slate-200 dark:border-slate-800">
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-500">
@@ -145,8 +143,7 @@ function ExecutiveModal({
             </div>
           </div>
         </form>
-      </div>
-    </div>
+      </Modal>
   );
 }
 
@@ -253,7 +250,7 @@ export default function Executives() {
 
   // ── Main Render ───────────────────────────────────────────────────────
   return (
-    <div className="space-y-5 animate-fade-in select-none">
+    <div className="space-y-5 select-none">
 
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -290,7 +287,7 @@ export default function Executives() {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-3 gap-3 animate-fade-in" style={{ animationDelay: '50ms' }}>
+      <div className="grid grid-cols-3 gap-3" style={{ animationDelay: '50ms' }}>
         <div className="bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-4 text-center">
           <div className="text-2xl font-black text-slate-800 dark:text-white">{stats.total}</div>
           <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Total Executives</div>

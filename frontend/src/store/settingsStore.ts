@@ -13,6 +13,7 @@ interface SettingsState {
     facebook_url?: string;
     linkedin_url?: string;
     twitter_url?: string;
+    logo_updated_at?: string;
     // Slideshow
     slide1_title: string;
     slide1_description: string;

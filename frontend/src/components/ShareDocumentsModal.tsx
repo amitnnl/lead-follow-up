@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Send, Mail, MessageCircle, FileText, CheckCircle2 } from 'lucide-react';
 import api from '../lib/axios';
+import Modal from './ui/Modal';
 
 interface ShareDocumentsModalProps {
   isOpen: boolean;
@@ -90,8 +91,7 @@ export default function ShareDocumentsModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+    <Modal isOpen={isOpen} onClose={onClose} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
         <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center">
@@ -109,7 +109,7 @@ export default function ShareDocumentsModal({
 
         <div className="p-5 overflow-y-auto custom-scrollbar">
           {whatsappFlow ? (
-            <div className="flex flex-col items-center justify-center text-center py-6 animate-fade-in">
+            <div className="flex flex-col items-center justify-center text-center py-6">
               <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
@@ -246,7 +246,6 @@ export default function ShareDocumentsModal({
             </>
           )}
         </div>
-      </div>
-    </div>
+      </Modal>
   );
 }

@@ -45,7 +45,7 @@ export default function Followups() {
   }, []);
 
   return (
-    <div className="space-y-4 select-none animate-fade-in">
+    <div className="space-y-4 select-none">
       
       {/* ── Header ── */}
       <div>

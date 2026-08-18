@@ -55,7 +55,7 @@ export default function Login() {
   const canSubmit = emailValid && passwordValid && !isLoading;
 
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 sm:p-6 font-sans relative transition-colors duration-300 select-none ${isDark ? 'bg-[#0B0F19] text-white' : 'bg-slate-100 text-slate-900'}`}>
+    <div className={`min-h-screen flex items-center justify-center p-4 sm:p-6 font-sans relative transition-colors select-none ${isDark ? 'bg-[#0B0F19] text-white' : 'bg-slate-100 text-slate-900'}`}>
 
       {/* ── Background Pattern ────────────────────────────────────── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -77,7 +77,7 @@ export default function Login() {
       </button>
 
       {/* ── Centered Login Card ──────────────────────────────────── */}
-      <div className="w-full max-w-md bg-white dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative z-10 space-y-5 animate-fade-in">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative z-10 space-y-5">
 
         {/* Back to Home Link */}
         <Link
@@ -90,8 +90,14 @@ export default function Login() {
 
         {/* App Brand Header */}
         <div className="flex items-center gap-3 pt-1 pb-1">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center font-black text-white text-base shadow-sm shrink-0">
-            <Car className="w-5 h-5 text-white" />
+          <div className="w-14 h-14 rounded-none bg-indigo-600 flex items-center justify-center font-black text-white text-base shadow-sm shrink-0 overflow-hidden relative border border-slate-100 dark:border-slate-800">
+            <img 
+              src={`${api.defaults.baseURL?.replace('/api', '')}/uploads/AppLogo.png?v=${settings.logo_updated_at || '1'}`} 
+              alt="Logo" 
+              className="w-full h-full object-contain absolute inset-0 z-10 bg-white dark:bg-slate-900"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+            <Car className="w-5 h-5 text-white relative z-0" />
           </div>
           <div className="text-left">
             <h1 className="text-base font-black tracking-tight text-slate-900 dark:text-white">{appTitle}</h1>
@@ -200,7 +206,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={!canSubmit}
-            className={`w-full h-11 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 mt-3 ${
+            className={`w-full h-11 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 mt-3 ${
               canSubmit
                 ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 cursor-pointer'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'

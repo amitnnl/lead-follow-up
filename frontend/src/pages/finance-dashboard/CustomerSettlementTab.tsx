@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../lib/axios';
 import { Search, Loader2, Edit, Save, X, Calculator, Clock, CheckCircle, Settings2 } from 'lucide-react';
+import Modal from '../../components/ui/Modal';
 
 interface Settlement {
   lead_id: number;
@@ -201,8 +202,7 @@ export default function CustomerSettlementTab() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[95vh] flex flex-col">
+        <Modal isOpen={true} onClose={() => setEditing(null)} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[95vh] flex flex-col">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
               <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <Calculator className="w-4.5 h-4.5 text-primary-500" /> Client Settlement: {editing.customer_name}
@@ -346,8 +346,7 @@ export default function CustomerSettlementTab() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

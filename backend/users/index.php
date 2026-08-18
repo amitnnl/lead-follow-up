@@ -13,6 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     $uid = (int)$_POST['user_id'];
     // Prevent modifying yourself
     if ($uid !== current_user_id()) {
+        $targetUser = db_fetch_one($conn, "SELECT role FROM users WHERE id=?", 'i', [$uid]);
+        if ($targetUser && $targetUser['role'] === 'admin') {
+            flash('error', 'Admin accounts are protected and cannot be modified or deleted.');
+            header("Location: index.php");
+            exit;
+        }
         if ($_POST['action'] === 'deactivate') {
             db_query($conn, "UPDATE users SET is_active=0 WHERE id=?", 'i', [$uid]);
             flash('success', 'User deactivated successfully.');

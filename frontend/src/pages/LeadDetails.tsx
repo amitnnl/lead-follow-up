@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../lib/axios';
+import Modal from '../components/ui/Modal';
 import {
   ArrowLeft, PhoneCall, MessageCircle, FileText,
   Clock, CheckCircle, XCircle, Building,
@@ -2004,81 +2005,73 @@ export default function LeadDetails() {
         onSuccess={() => { setIsAssignmentModalOpen(false); fetchLeadDetails(); }}
       />
       
-      {quickAddType && (
-        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-[70] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Plus className="w-4 h-4 text-primary-600" />
-                Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
-              </h3>
-              <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
-              <div>
-                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
-                <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs text-slate-800 dark:text-white transition-all" />
-              </div>
-              {quickAddType === 'executive' && (
-                <div>
-                  <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
-                  <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
-                </div>
-              )}
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
-                <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-primary-500/20">
-                  {quickAddLoading ? 'Saving...' : 'Save & Select'}
-                </button>
-              </div>
-            </form>
-          </div>
+      <Modal isOpen={!!quickAddType} onClose={() => setQuickAddType(null)} zClassName="z-[10050]" className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5">
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <Plus className="w-4 h-4 text-primary-600" />
+            Quick Add {quickAddType === 'financer' ? 'Financer' : 'Executive'}
+          </h3>
+          <button type="button" onClick={() => setQuickAddType(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      )}
+        <form onSubmit={handleQuickAddSubmit} className="space-y-3.5 text-xs text-slate-800 dark:text-white">
+          <div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Name *</label>
+            <input required type="text" value={quickAddName} onChange={e => setQuickAddName(e.target.value)} placeholder="Full Name" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs text-slate-800 dark:text-white transition-all" />
+          </div>
+          {quickAddType === 'executive' && (
+            <div>
+              <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Mobile Number *</label>
+              <input required type="text" value={quickAddMobile} onChange={e => setQuickAddMobile(e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="10 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onClick={() => setQuickAddType(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
+            <button type="submit" disabled={quickAddLoading} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-75 shadow-sm shadow-primary-500/20">
+              {quickAddLoading ? 'Saving...' : 'Save & Select'}
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* CIBIL Modal */}
-      {isCibilModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/20 dark:bg-black/40 z-[70] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5 animate-scale-in">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                Fetch CIBIL Score
-              </h3>
-              <button type="button" onClick={() => setIsCibilModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <form onSubmit={handleFetchCibil} className="space-y-4 text-xs text-slate-800 dark:text-white">
-              <div>
-                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">PAN Card Number *</label>
-                <input required type="text" maxLength={10} value={cibilForm.pan} onChange={e => setCibilForm(prev => ({...prev, pan: e.target.value.toUpperCase()}))} placeholder="ABCDE1234F" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono uppercase text-slate-800 dark:text-white transition-all" />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Aadhaar Card Number</label>
-                <input type="text" maxLength={12} pattern="^\d{12}$" title="Aadhaar number must be 12 digits" value={cibilForm.aadhaar} onChange={e => setCibilForm(prev => ({...prev, aadhaar: e.target.value.replace(/\D/g, '').slice(0, 12)}))} placeholder="12 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
-              </div>
-              <div>
-                <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Date of Birth *</label>
-                <input required type="date" value={cibilForm.dob} onChange={e => setCibilForm(prev => ({...prev, dob: e.target.value}))} className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs text-slate-800 dark:text-white transition-all" />
-              </div>
-              <div className="flex items-start gap-2 pt-2 pb-2">
-                <input required type="checkbox" id="cibilConsent" checked={cibilForm.consent} onChange={e => setCibilForm(prev => ({...prev, consent: e.target.checked}))} className="mt-0.5 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer" />
-                <label htmlFor="cibilConsent" className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                  I confirm that explicit customer consent has been acquired to pull this credit report, and I understand this action is recorded in the audit logs.
-                </label>
-              </div>
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onClick={() => setIsCibilModalOpen(false)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
-                <button type="submit" disabled={!cibilForm.consent} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary-500/20">
-                  Verify & Fetch
-                </button>
-              </div>
-            </form>
-          </div>
+      <Modal isOpen={isCibilModalOpen} onClose={() => setIsCibilModalOpen(false)} zClassName="z-[9999]" className="bg-white dark:bg-[#111622] rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200/80 dark:border-slate-800 p-5">
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            Fetch CIBIL Score
+          </h3>
+          <button type="button" onClick={() => setIsCibilModalOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer rounded-lg p-1">
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      )}
+        <form onSubmit={handleFetchCibil} className="space-y-4 text-xs text-slate-800 dark:text-white">
+          <div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">PAN Card Number *</label>
+            <input required type="text" maxLength={10} value={cibilForm.pan} onChange={e => setCibilForm(prev => ({...prev, pan: e.target.value.toUpperCase()}))} placeholder="ABCDE1234F" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono uppercase text-slate-800 dark:text-white transition-all" />
+          </div>
+          <div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Aadhaar Card Number</label>
+            <input type="text" maxLength={12} pattern="^\d{12}$" title="Aadhaar number must be 12 digits" value={cibilForm.aadhaar} onChange={e => setCibilForm(prev => ({...prev, aadhaar: e.target.value.replace(/\D/g, '').slice(0, 12)}))} placeholder="12 Digits" className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs font-mono text-slate-800 dark:text-white transition-all" />
+          </div>
+          <div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Date of Birth *</label>
+            <input required type="date" value={cibilForm.dob} onChange={e => setCibilForm(prev => ({...prev, dob: e.target.value}))} className="w-full p-2.5 bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-xs text-slate-800 dark:text-white transition-all" />
+          </div>
+          <div className="flex items-start gap-2 pt-2 pb-2">
+            <input required type="checkbox" id="cibilConsent" checked={cibilForm.consent} onChange={e => setCibilForm(prev => ({...prev, consent: e.target.checked}))} className="mt-0.5 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer" />
+            <label htmlFor="cibilConsent" className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
+              I confirm that explicit customer consent has been acquired to pull this credit report, and I understand this action is recorded in the audit logs.
+            </label>
+          </div>
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onClick={() => setIsCibilModalOpen(false)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer">Cancel</button>
+            <button type="submit" disabled={!cibilForm.consent} className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary-500/20">
+              Verify & Fetch
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       <ShareDocumentsModal
         isOpen={isShareDocumentsModalOpen}

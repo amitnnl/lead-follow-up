@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { X } from 'lucide-react';
+import Modal from '../ui/Modal';
 import CommandPalette from '../CommandPalette';
 import NewLeadModal from '../NewLeadModal';
 import IrrCalculatorComponent from '../IrrCalculatorComponent';
@@ -98,7 +99,7 @@ export default function MainLayout() {
   const pageMeta = getPageTitle();
 
   return (
-    <div className="min-h-screen flex text-slate-800 dark:text-slate-200 font-sans bg-slate-50 dark:bg-[#09090b]">
+    <div className="min-h-screen flex text-slate-800 dark:text-slate-200 font-sans bg-[#f5f6f8] dark:bg-[#0c0c14]">
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
@@ -107,7 +108,7 @@ export default function MainLayout() {
       {/* Sidebar */}
       <aside
         className={clsx(
-          "flex flex-col bg-[#fcfcfc] dark:bg-[#09090b] border-r border-slate-200 dark:border-[#27272a] select-none shrink-0 transition-all duration-300 z-50 overflow-hidden",
+          "flex flex-col bg-[#111026] dark:bg-[#0e0c1f] border-r border-[#1d1b38] dark:border-[#1c1a30] text-slate-300 select-none shrink-0 transition-all z-50 overflow-hidden",
           "md:sticky md:top-0 md:h-screen",
           isSidebarOpen ? "md:w-[260px]" : "md:w-16",
           "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:h-screen max-md:w-[270px] max-md:shadow-2xl max-md:transition-transform max-md:duration-300",
@@ -139,7 +140,7 @@ export default function MainLayout() {
         {/* Main Content Area */}
         <main className={clsx(
           "flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-8 custom-scrollbar",
-          "bg-[#fcfcfc] dark:bg-[#09090b]",
+          "bg-[#f5f6f8] dark:bg-[#0c0c14]",
           "print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none"
         )}>
           <div key={location.pathname} className="animate-page-enter">
@@ -159,9 +160,7 @@ export default function MainLayout() {
           />
         )}
 
-        {isCalculatorModalOpen && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in print:hidden">
-            <div className="bg-white dark:bg-[#111622] rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800">
+        <Modal isOpen={isCalculatorModalOpen} onClose={() => setIsCalculatorModalOpen(false)} zClassName="z-[9999] print:hidden" className="bg-white dark:bg-[#111622] rounded-2xl w-full max-w-4xl shadow-2xl overflow-y-auto max-h-[90vh] relative border border-slate-200 dark:border-slate-800">
               <button
                 onClick={() => setIsCalculatorModalOpen(false)}
                 className="absolute right-4 top-4 z-10 p-2 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 rounded-lg transition-all cursor-pointer"
@@ -171,9 +170,7 @@ export default function MainLayout() {
               <div className="p-4 sm:p-6">
                 <IrrCalculatorComponent />
               </div>
-            </div>
-          </div>
-        )}
+        </Modal>
 
         <CommandPalette
           isOpen={isCommandPaletteOpen}

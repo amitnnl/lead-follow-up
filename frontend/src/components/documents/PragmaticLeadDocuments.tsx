@@ -3,6 +3,7 @@ import {
   FileText, CheckCircle, XCircle, Trash2, Eye, Plus, 
   UploadCloud, AlertCircle, ShieldCheck, X
 } from 'lucide-react';
+import Modal from '../ui/Modal';
 
 interface DocumentItem {
   id: number;
@@ -156,7 +157,7 @@ export default function PragmaticLeadDocuments({
         </div>
 
         {isDisbursed && (
-          <div className="mt-5 p-3.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-450 rounded-xl text-xs font-bold flex items-center gap-2 animate-fade-in relative z-10">
+          <div className="mt-5 p-3.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-450 rounded-xl text-xs font-bold flex items-center gap-2 relative z-10">
             <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             Note: This lead is disbursed. You can still upload additional post-disbursal documents.
           </div>
@@ -431,25 +432,23 @@ export default function PragmaticLeadDocuments({
 
       {/* Preview Modal Overlay */}
       {previewDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in">
-          <div className="bg-white dark:bg-[#111827] rounded-2xl max-w-4xl w-full h-[85vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
-              <h3 className="text-sm font-bold flex items-center gap-2">
-                <FileText className="w-4 h-4 text-primary-400" /> {previewDoc.title}
-              </h3>
-              <button onClick={() => setPreviewDoc(null)} className="p-1 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition-colors cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 bg-slate-950 relative overflow-auto flex items-center justify-center p-2">
-              {previewDoc.url.toLowerCase().endsWith('.pdf') ? (
-                <iframe src={previewDoc.url} title={previewDoc.title} className="w-full h-full rounded-lg border-0" />
-              ) : (
-                <img src={previewDoc.url} alt={previewDoc.title} className="max-h-full max-w-full object-contain rounded-lg shadow-lg" />
-              )}
-            </div>
+        <Modal isOpen={true} onClose={() => setPreviewDoc(null)} zClassName="z-[9999]" className="bg-white dark:bg-[#111827] rounded-2xl max-w-4xl w-full h-[85vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-805 p-0">
+          <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+            <h3 className="text-sm font-bold flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary-400" /> {previewDoc.title}
+            </h3>
+            <button onClick={() => setPreviewDoc(null)} className="p-1 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition-colors cursor-pointer">
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        </div>
+          <div className="flex-1 bg-slate-950 relative overflow-auto flex items-center justify-center p-2">
+            {previewDoc.url.toLowerCase().endsWith('.pdf') ? (
+              <iframe src={previewDoc.url} title={previewDoc.title} className="w-full h-full rounded-lg border-0" />
+            ) : (
+              <img src={previewDoc.url} alt={previewDoc.title} className="max-h-full max-w-full object-contain rounded-lg shadow-lg" />
+            )}
+          </div>
+        </Modal>
       )}
 
     </div>

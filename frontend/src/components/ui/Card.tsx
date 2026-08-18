@@ -13,10 +13,10 @@ export default function Card({ children, className, hoverable, glass, animate = 
   return (
     <div
       className={clsx(
-        'card rounded-2xl transition-all duration-300 relative overflow-hidden',
+        'card rounded-2xl transition-all relative overflow-hidden',
         hoverable && 'card-hover',
         glass && 'glass-panel',
-        animate && 'animate-in zoom-in-95 duration-500',
+        animate && 'animate-in zoom-in-95',
         className
       )}
       {...props}

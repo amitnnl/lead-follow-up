@@ -20,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$name || !$email || !$password) {
         $errors[] = 'Name, email, and password are required.';
     }
+    if ($role === 'admin') {
+        $errors[] = 'Admin accounts are protected and new Admin accounts cannot be created.';
+    }
     if (!in_array($role, ['admin', 'staff', 'executive', 'finance_manager', 'rto_desk', 'insurance_desk'])) {
         $errors[] = 'Invalid role selected.';
     }
