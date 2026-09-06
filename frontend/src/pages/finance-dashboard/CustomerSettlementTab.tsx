@@ -103,10 +103,10 @@ export default function CustomerSettlementTab() {
     setEditing(update as Settlement);
   };
 
-  const filtered = settlements.filter(s => 
-    s.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
-    s.lead_code?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = settlements.filter(s => {
+    const searchString = Object.values(s).join(' ').toLowerCase();
+    return !search || searchString.includes(search.toLowerCase());
+  });
 
   return (
     <div className="space-y-4">

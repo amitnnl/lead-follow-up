@@ -67,10 +67,10 @@ export default function OfficeExpensesTab() {
     }
   };
 
-  const filtered = expenses.filter(s => 
-    s.category?.toLowerCase().includes(search.toLowerCase()) ||
-    s.remarks?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = expenses.filter(s => {
+    const searchString = Object.values(s).join(' ').toLowerCase();
+    return !search || searchString.includes(search.toLowerCase());
+  });
 
   return (
     <div className="space-y-4">

@@ -33,6 +33,23 @@ function recalculate_balances($conn) {
     }
 }
 
+
+
+function parse_date($d) {
+    if (empty($d)) return date('Y-m-d');
+    $d = str_replace('/', '-', $d);
+    $time = strtotime($d);
+    if ($time) return date('Y-m-d', $time);
+    $dateObj = DateTime::createFromFormat('d-m-Y', $d);
+    if ($dateObj) return $dateObj->format('Y-m-d');
+    return date('Y-m-d');
+}
+
+function parse_currency($str) {
+    if (is_numeric($str)) return floatval($str);
+    return floatval(preg_replace('/[^0-9\.-]/', '', (string)$str));
+}
+
 if ($method === 'GET' && $action === 'list') {
     $lead_id = isset($_GET['lead_id']) ? intval($_GET['lead_id']) : 0;
     
@@ -87,10 +104,31 @@ if ($method === 'POST' && $action === 'add') {
     $credit_amount = floatval($input['credit_amount'] ?? 0);
     $remarks = $input['remarks'] ?? '';
     $pending_amount = floatval($input['pending_amount'] ?? 0);
-    $status = 'Clear';
+    $status = $input['status'] ?? 'Clear';
+    $utr_number = $input['utr_number'] ?? '';
+    $bank_name = $input['bank_name'] ?? '';
+    $loan_amount = floatval($input['loan_amount'] ?? 0);
 
-    $stmt = $conn->prepare("INSERT INTO bank_ledger (lead_id, post_date, customer_name, reg_no, account_description, transaction_type, debit_amount, credit_amount, remarks, pending_amount, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("isssssddsss", $lead_id, $post_date, $customer_name, $reg_no, $account_description, $transaction_type, $debit_amount, $credit_amount, $remarks, $pending_amount, $status);
+    // Auto-match lead_id if not provided
+    if (!$lead_id && !empty($reg_no)) {
+        $lm = $conn->prepare("SELECT id FROM leads WHERE registration_number LIKE ? LIMIT 1");
+        $like = "%$reg_no%";
+        $lm->bind_param("s", $like);
+        $lm->execute();
+        $res = $lm->get_result();
+        if ($row = $res->fetch_assoc()) $lead_id = $row['id'];
+    }
+    if (!$lead_id && !empty($customer_name)) {
+        $lm = $conn->prepare("SELECT id FROM leads WHERE customer_name LIKE ? LIMIT 1");
+        $like = "%$customer_name%";
+        $lm->bind_param("s", $like);
+        $lm->execute();
+        $res = $lm->get_result();
+        if ($row = $res->fetch_assoc()) $lead_id = $row['id'];
+    }
+
+    $stmt = $conn->prepare("INSERT INTO bank_ledger (lead_id, post_date, customer_name, reg_no, account_description, transaction_type, debit_amount, credit_amount, remarks, pending_amount, status, utr_number, bank_name, loan_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("isssssddsssssd", $lead_id, $post_date, $customer_name, $reg_no, $account_description, $transaction_type, $debit_amount, $credit_amount, $remarks, $pending_amount, $status, $utr_number, $bank_name, $loan_amount);
     
     if ($stmt->execute()) {
         recalculate_balances($conn);
@@ -108,43 +146,53 @@ if ($method === 'POST' && $action === 'upload') {
     
     $inserted = 0;
     
+    // Ensure the new columns exist before inserting
+    try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN utr_number VARCHAR(150) NULL"); } catch(Throwable $e) {}
+    try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN bank_name VARCHAR(150) NULL"); } catch(Throwable $e) {}
+    
     foreach ($rows as $r) {
-        $date = $r['date'] ?? date('Y-m-d');
-        if (strpos($date, '-') !== false) {
-            $parts = explode('-', $date);
-            if (count($parts) === 3 && strlen($parts[2]) === 4) { // DD-MM-YYYY
-                $date = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
-            }
-        }
+$date = parse_date($r['date'] ?? '');
         
         $customer_name = $r['customer_name'] ?? '';
-        $lead_code = $r['lead_code'] ?? '';
-        $loan_amount_received = floatval($r['loan_amount_received'] ?? 0);
-        $bank_name = $r['bank_name'] ?? '';
-        $utr_number = $r['utr_number'] ?? '';
+        $reg_no = $r['reg_no'] ?? '';
+        $loan_amount = parse_currency($r['loan_amount'] ?? 0);
         $status = $r['status'] ?? 'Clear';
-        $transaction_type = 'LOAN_AMOUNT';
+        $account_description = $r['account_description'] ?? '';
+        $utr_number = $r['utr_number'] ?? '';
+        $debit_amount = parse_currency($r['debit_amount'] ?? 0);
+        $credit_amount = parse_currency($r['credit_amount'] ?? 0);
+        $pending_amount = parse_currency($r['pending_amount'] ?? 0);
+        $remarks = $r['remarks'] ?? '';
+        $bank_name = $r['bank_name'] ?? '';
         
-        if (empty($utr_number) || $loan_amount_received <= 0) continue;
+        $transaction_type = 'OTHER';
+        if ($credit_amount > 0 && stripos($account_description, 'loan') !== false) {
+            $transaction_type = 'LOAN_AMOUNT';
+        }
         
-        // Prevent duplicate UTR
-        $chk = $conn->prepare("SELECT id FROM bank_ledger WHERE utr_number = ?");
-        $chk->bind_param("s", $utr_number);
-        $chk->execute();
-        if ($chk->get_result()->fetch_assoc()) {
-            continue; // Skip duplicate
+        if (empty($customer_name) && empty($utr_number) && empty($reg_no) && $debit_amount == 0 && $credit_amount == 0) continue; // skip empty rows
+        
+        // Prevent duplicate UTR if UTR is provided
+        if (!empty($utr_number)) {
+            $chk = $conn->prepare("SELECT id FROM bank_ledger WHERE utr_number = ?");
+            $chk->bind_param("s", $utr_number);
+            $chk->execute();
+            if ($chk->get_result()->fetch_assoc()) {
+                continue; // Skip duplicate
+            }
         }
         
         // Auto-match logic
         $lead_id = null;
-        if ($lead_code) {
-            $lm = $conn->prepare("SELECT id FROM leads WHERE lead_id = ? LIMIT 1");
-            $lm->bind_param("s", $lead_code);
+        if (!empty($reg_no)) {
+            $lm = $conn->prepare("SELECT id FROM leads WHERE registration_number LIKE ? LIMIT 1");
+            $like = "%$reg_no%";
+            $lm->bind_param("s", $like);
             $lm->execute();
             $res = $lm->get_result();
             if ($row = $res->fetch_assoc()) $lead_id = $row['id'];
         }
-        if (!$lead_id && $customer_name) {
+        if (!$lead_id && !empty($customer_name)) {
             $lm = $conn->prepare("SELECT id FROM leads WHERE customer_name LIKE ? LIMIT 1");
             $like = "%$customer_name%";
             $lm->bind_param("s", $like);
@@ -153,17 +201,74 @@ if ($method === 'POST' && $action === 'upload') {
             if ($row = $res->fetch_assoc()) $lead_id = $row['id'];
         }
         
-        $desc = "Loan Amount Received from Financer";
-        
-        $stmt = $conn->prepare("INSERT INTO bank_ledger (lead_id, post_date, customer_name, account_description, transaction_type, credit_amount, utr_number, bank_name, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("issssdsss", $lead_id, $date, $customer_name, $desc, $transaction_type, $loan_amount_received, $utr_number, $bank_name, $status);
+        $stmt = $conn->prepare("INSERT INTO bank_ledger (lead_id, post_date, customer_name, reg_no, account_description, transaction_type, debit_amount, credit_amount, remarks, pending_amount, status, utr_number, bank_name, loan_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isssssddsssssd", $lead_id, $date, $customer_name, $reg_no, $account_description, $transaction_type, $debit_amount, $credit_amount, $remarks, $pending_amount, $status, $utr_number, $bank_name, $loan_amount);
         if ($stmt->execute()) {
             $inserted++;
+        } else {
+            error_log("Execute failed in banking upload: " . $stmt->error);
         }
     }
     
     recalculate_balances($conn);
     echo json_encode(['success' => true, 'inserted' => $inserted]);
+    exit;
+}
+
+if ($method === 'POST' && $action === 'edit') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $id = intval($input['id'] ?? 0);
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID required']);
+        exit;
+    }
+    
+    $post_date = $input['post_date'] ?? date('Y-m-d');
+    $customer_name = $input['customer_name'] ?? '';
+    $reg_no = $input['reg_no'] ?? '';
+    $account_description = $input['account_description'] ?? '';
+    $debit_amount = floatval($input['debit_amount'] ?? 0);
+    $credit_amount = floatval($input['credit_amount'] ?? 0);
+    $remarks = $input['remarks'] ?? '';
+    $pending_amount = floatval($input['pending_amount'] ?? 0);
+    $status = $input['status'] ?? 'Clear';
+    $utr_number = $input['utr_number'] ?? '';
+    $bank_name = $input['bank_name'] ?? '';
+    $loan_amount = floatval($input['loan_amount'] ?? 0);
+
+    $stmt = $conn->prepare("UPDATE bank_ledger SET post_date=?, customer_name=?, reg_no=?, account_description=?, debit_amount=?, credit_amount=?, remarks=?, pending_amount=?, status=?, utr_number=?, bank_name=?, loan_amount=? WHERE id=?");
+    $stmt->bind_param("ssssddsssssdi", $post_date, $customer_name, $reg_no, $account_description, $debit_amount, $credit_amount, $remarks, $pending_amount, $status, $utr_number, $bank_name, $loan_amount, $id);
+    
+    if ($stmt->execute()) {
+        recalculate_balances($conn);
+        echo json_encode(['success' => true]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Database error']);
+    }
+    exit;
+}
+
+if ($method === 'POST' && $action === 'delete') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $id = intval($input['id'] ?? 0);
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID required']);
+        exit;
+    }
+    
+    $stmt = $conn->prepare("DELETE FROM bank_ledger WHERE id=?");
+    $stmt->bind_param("i", $id);
+    
+    if ($stmt->execute()) {
+        recalculate_balances($conn);
+        echo json_encode(['success' => true]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Database error']);
+    }
     exit;
 }
 

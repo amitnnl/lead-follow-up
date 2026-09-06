@@ -163,10 +163,7 @@ export default function LandingPage() {
                 {settings.contact_number}
               </a>
             </span>
-            <span className="flex items-center gap-1.5 text-slate-400 hidden md:flex">
-              <MapPin className="w-3.5 h-3.5 text-amber-400" />
-              <span>{settings.office_address}</span>
-            </span>
+
           </div>
 
           <div className="flex items-center gap-4">
@@ -293,25 +290,34 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero Banner Section ───────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-950/10 via-slate-50 to-slate-50 dark:from-indigo-950/30 dark:via-[#0B0F19] dark:to-[#0B0F19] py-8 lg:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-slate-900 pt-12 pb-16 lg:pt-20 lg:pb-24">
+        {/* Animated Background Blobs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/30 blur-[100px] animate-pulse pointer-events-none mix-blend-screen" style={{ animationDuration: '8s' }}></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px] animate-pulse pointer-events-none mix-blend-screen" style={{ animationDuration: '10s' }}></div>
+        <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] rounded-full bg-cyan-400/20 blur-[90px] animate-pulse pointer-events-none mix-blend-screen" style={{ animationDuration: '12s' }}></div>
+        
+        {/* Grid Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20viewBox=%220%200%20200%20200%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter%20id=%22noiseFilter%22%3E%3CfeTurbulence%20type=%22fractalNoise%22%20baseFrequency=%220.65%22%20numOctaves=%223%22%20stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect%20width=%22100%25%22%20height=%22100%25%22%20filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] opacity-20 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs font-bold shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-cyan-300 text-xs font-bold shadow-lg shadow-cyan-500/10">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
                 <span>★ 4.9/5 Rating • {t('Empowering Your Mobility & Business Growth', 'आपकी प्रगति एवं सपनों का सशक्त माध्यम')}</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight font-serif">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] font-sans">
                 {t('Fast & Flexible ', 'आसान और त्वरित ')}
-                <span className="text-indigo-700 dark:text-indigo-400 italic font-serif underline decoration-amber-400/80 underline-offset-8">
+                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 font-sans">
                   {t('Vehicle & Asset Finance', 'वाहन एवं बिजनेस लोन सुविधा')}
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-300 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                 {t(
                   'Get low-interest loan options for commercial vehicles, passenger cars, business expansion, and refinancing with transparent 24-hour digital approvals.',
                   'कम ब्याज दरों पर वाणिज्यिक वाहन, कार, व्यापार विस्तार और रीफाइनेंस लोन की पारदर्शी 24-घंटे में डिजिटल मंजूरी।'
@@ -322,56 +328,61 @@ export default function LandingPage() {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <a
                   href="#apply"
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-full text-sm font-bold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full text-sm font-black shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 border border-white/10"
                 >
                   <span>{t('Apply for Loan Now', 'लोन के लिए तुरंत आवेदन करें')}</span>
-                  <ArrowRight className="w-4 h-4 text-indigo-200" />
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </a>
 
                 <button
                   onClick={() => setIsStatusModalOpen(true)}
-                  className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-full text-sm font-bold shadow-md border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white backdrop-blur-md rounded-full text-sm font-bold shadow-lg border border-white/20 hover:border-white/40 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
                 >
-                  <Search className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <Search className="w-4 h-4 text-cyan-400" />
                   <span>{t('Check Application Status', 'आवेदन की स्थिति देखें')}</span>
                 </button>
               </div>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-white/10">
                 {[
                   { title: t('Up to 90% LTV', '90% तक LTV'), icon: ShieldCheck },
                   { title: t('24h Disbursal', '24h डिसबर्सल'), icon: Clock },
                   { title: t('Lowest EMIs', 'कम EMI दर'), icon: Calculator },
                   { title: t('Dedicated RM', 'समर्पित सपोर्ट'), icon: PhoneCall }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 justify-center lg:justify-start">
-                    <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                      <item.icon className="w-3.5 h-3.5" />
+                  <div key={idx} className="flex items-center gap-3 justify-center lg:justify-start group">
+                    <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all duration-300">
+                      <item.icon className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{item.title}</span>
+                    <span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{item.title}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Right Interactive Box */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md bg-white dark:bg-[#0E1526] rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-white shadow-2xl border border-slate-200/90 dark:border-slate-800">
+            <div className="lg:col-span-5 relative mt-8 lg:mt-0">
+              <div className="relative mx-auto max-w-md bg-white/10 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 text-white shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/20 overflow-hidden group hover:border-white/30 transition-all duration-500">
                 
+                {/* Internal Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
                 {/* Floating Badge */}
-                <div className="absolute -top-5 -right-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-2xl shadow-xl font-black text-xs uppercase tracking-wider flex items-center gap-1.5 animate-bounce">
-                  <Sparkle className="w-4 h-4 text-amber-300" />
+                <div className="absolute -top-3 -right-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-5 py-2.5 rounded-full shadow-lg shadow-cyan-500/30 font-black text-xs uppercase tracking-widest flex items-center gap-1.5 animate-bounce z-20">
+                  <Sparkle className="w-4 h-4 text-yellow-300" />
                   <span>{t('Instant Pre-Approval', 'त्वरित प्री-अप्रूवल')}</span>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div className="space-y-6 relative z-10">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
-                      <h3 className="text-xl font-black text-slate-900 dark:text-white">{t('Finance Offerings', 'वित्तीय समाधान')}</h3>
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5">{t('Minimal paper documentation & quick approval', 'न्यूनतम दस्तावेज और त्वरित स्वीकृति')}</p>
+                      <h3 className="text-2xl font-black text-white">{t('Finance Offerings', 'वित्तीय समाधान')}</h3>
+                      <p className="text-xs text-cyan-300 font-semibold mt-1 tracking-wide">{t('Minimal paper documentation & quick approval', 'न्यूनतम दस्तावेज और त्वरित स्वीकृति')}</p>
                     </div>
-                    <Award className="w-8 h-8 text-amber-500" />
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
+                      <Award className="w-6 h-6 text-cyan-400" />
+                    </div>
                   </div>
 
                   <div className="space-y-3">
@@ -381,23 +392,25 @@ export default function LandingPage() {
                       { label: t('Refinance & Balance Transfer', 'रीफाइनेंस व बैलेंस ट्रांसफर'), desc: t('Reduce existing vehicle loan EMIs', 'अपनी वर्तमान लोन EMI कम करें') },
                       { label: t('Business & Equipment Funding', 'बिजनेस व उपकरण लोन'), desc: t('Working capital for fleet & shops', 'व्यापार विस्तार हेतु पूँजी') }
                     ].map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-300 transition-all">
+                      <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
                         <div className="flex items-center gap-3">
-                          <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                          <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+                          </div>
                           <div>
-                            <div className="text-xs font-bold text-slate-900 dark:text-white">{item.label}</div>
-                            <div className="text-[10px] text-slate-500 dark:text-slate-400">{item.desc}</div>
+                            <div className="text-sm font-bold text-white">{item.label}</div>
+                            <div className="text-[10px] text-slate-400 font-medium mt-0.5">{item.desc}</div>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 transition-colors" />
                       </div>
                     ))}
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-4">
                     <a
                       href="#apply"
-                      className="w-full py-4 bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition-all"
+                      className="w-full py-4 bg-white text-slate-900 hover:bg-slate-100 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
                     >
                       <span>{t('Apply Online Now', 'ऑनलाइन आवेदन करें')}</span>
                       <ArrowRight className="w-4 h-4" />
@@ -412,17 +425,21 @@ export default function LandingPage() {
       </section>
 
       {/* ── Benefit Cards Grid Section ─────────────────────────────── */}
-      <section id="solutions" className="py-8 sm:py-10 bg-white dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="solutions" className="py-12 sm:py-16 bg-slate-50 dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800 relative">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] bg-blue-500/5 dark:bg-blue-600/5 blur-[100px] pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
-          <div className="text-center max-w-3xl mx-auto mb-6 space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
+            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800/60 shadow-sm">
+              <Building2 className="w-3.5 h-3.5" />
               {t('Our Financial Products', 'वित्तीय उत्पाद')}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-serif">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
               {t('Tailored Solutions for Your Every Need', 'हर ज़रूरत के लिए अनुकूलित लोन योजनाएँ')}
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto">
               {t(
                 'Explore competitive interest rates, flexible loan tenures, and transparent processing across all finance categories.',
                 'प्रतिस्पर्धी ब्याज दरों, लचीली लोन अवधि और पारदर्शी प्रक्रिया का लाभ उठाएँ।'
@@ -477,31 +494,36 @@ export default function LandingPage() {
             ].map((card, idx) => (
               <div
                 key={idx}
-                className="group relative bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-600 dark:hover:border-indigo-400 hover:shadow-xl transition-all"
+                className="group relative bg-white dark:bg-slate-900/60 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 dark:hover:border-blue-500/50 hover:shadow-[0_8px_30px_rgba(37,99,235,0.08)] dark:hover:shadow-[0_8px_30px_rgba(37,99,235,0.15)] hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
-                    <card.icon className="w-5 h-5" />
+                {/* Decorative background glow on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-slate-100 dark:border-slate-700 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-500 transition-all duration-300 shadow-sm">
+                      <card.icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 uppercase tracking-widest border border-blue-100 dark:border-blue-800/60">
+                      {card.badge}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
-                    {card.badge}
-                  </span>
+
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
+                    {card.desc}
+                  </p>
+
+                  <a
+                    href="#apply"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 group/link"
+                  >
+                    <span>{t('Apply Now', 'आवेदन करें')}</span>
+                    <ChevronRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                  </a>
                 </div>
-
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                  {card.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-                  {card.desc}
-                </p>
-
-                <a
-                  href="#apply"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
-                >
-                  <span>{t('Apply Now', 'आवेदन करें')}</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </a>
               </div>
             ))}
           </div>
@@ -510,39 +532,46 @@ export default function LandingPage() {
       </section>
 
       {/* ── Feature Highlights & Trust Stats Section ────────────── */}
-      <section id="why-us" className="py-8 sm:py-10 bg-gradient-to-b from-slate-900 to-indigo-950 text-white relative overflow-hidden">
+      <section id="why-us" className="py-12 sm:py-16 bg-slate-900 relative overflow-hidden">
+        {/* Abstract Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-blue-900/40"></div>
+        <div className="absolute top-0 right-0 w-[40%] h-full bg-gradient-to-l from-cyan-900/20 to-transparent"></div>
+        <div className="absolute -left-[10%] top-[20%] w-[30%] h-[50%] bg-blue-500/20 blur-[100px] rounded-full pointer-events-none"></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             
-            <div className="lg:col-span-7 space-y-4">
-              <span className="inline-block px-3.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-black uppercase tracking-wider">
+            <div className="lg:col-span-7 space-y-6">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-cyan-300 border border-white/20 text-xs font-black uppercase tracking-widest backdrop-blur-sm">
                 {t('Why Choose LeadFlow Pro', 'हमें क्यों चुनें')}
               </span>
 
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.1]">
                 {t('Transparent, Digital-First ', 'पारदर्शी और ')}
-                <span className="text-indigo-400">{t('Digital Finance Portal', 'डिजिटल लोन अनुभव')}</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">{t('Finance Experience', 'डिजिटल लोन अनुभव')}</span>
               </h2>
 
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
                 {t(
                   'We partner with leading banks, financers, and DSA agents to provide seamless loan originations, real-time lead tracking, and doorstep customer assistance.',
                   'प्रमुख बैंकों, फाइनेंसर्स और DSA एजेंट्स के साथ त्वरित स्वीकृति, पारदर्शी कमीशन ट्रैकिंग और त्वरित ग्राहक सहायता।'
                 )}
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 {[
                   { title: t('Paperless Uploads', 'डिजिटल दस्तावेज'), sub: t('Upload Aadhaar & PAN securely', 'सुरक्षित ऑनलाइन दस्तावेज सबमिशन') },
                   { title: t('Bank Partner Network', 'विस्तृत बैंक नेटवर्क'), sub: t('Compare top interest rates', 'सर्वोत्तम ब्याज दरों की तुलना') },
                   { title: t('Transparent Operations', 'पारदर्शी संचालन प्रणाली'), sub: t('90/10 Agent split model with complete tracking', '90/10 एजेंट मॉडल एवं लाइव ट्रैकिंग') },
                   { title: t('24/7 Application Tracker', 'लाइव लोन स्टेटस'), sub: t('Track status via Lead ID', 'लीड आईडी द्वारा रियल-टाइम स्थिति') }
                 ].map((item, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                  <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-start gap-3 backdrop-blur-md hover:bg-white/10 transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                    </div>
                     <div>
-                      <div className="text-xs font-bold text-white">{item.title}</div>
-                      <div className="text-[10px] text-slate-300">{item.sub}</div>
+                      <div className="text-sm font-bold text-white">{item.title}</div>
+                      <div className="text-[11px] text-slate-400 font-medium mt-0.5">{item.sub}</div>
                     </div>
                   </div>
                 ))}
@@ -550,16 +579,16 @@ export default function LandingPage() {
             </div>
 
             {/* Stats Grid */}
-            <div className="lg:col-span-5 grid grid-cols-2 gap-3">
+            <div className="lg:col-span-5 grid grid-cols-2 gap-4">
               {[
                 { val: '₹500Cr+', label: t('Loans Facilitated', 'वितरित लोन राशि') },
                 { val: '15,000+', label: t('Happy Customers', 'संतुष्ट ग्राहक') },
                 { val: '50+', label: t('Financer Partners', 'फाइनेंसर पार्टनर्स') },
                 { val: '4.9 / 5', label: t('User Rating', 'यूजर रेटिंग') }
               ].map((stat, idx) => (
-                <div key={idx} className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 text-center space-y-0.5">
-                  <div className="text-xl sm:text-2xl font-black text-indigo-400">{stat.val}</div>
-                  <div className="text-[11px] text-slate-300 font-semibold">{stat.label}</div>
+                <div key={idx} className="p-6 rounded-3xl bg-white/5 border border-white/10 text-center space-y-1 backdrop-blur-xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-xl">
+                  <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-300">{stat.val}</div>
+                  <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -569,22 +598,23 @@ export default function LandingPage() {
       </section>
 
       {/* ── Interactive EMI Calculator Section ──────────────────── */}
-      <section id="calculator" className="py-8 sm:py-10 bg-slate-50 dark:bg-[#0B0F19]">
+      <section id="calculator" className="py-12 sm:py-16 bg-slate-50 dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-3xl mx-auto mb-6 space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3.5 py-1.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
+            <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800/60 shadow-sm">
+              <Calculator className="w-3.5 h-3.5" />
               {t('Smart Financial Calculator', 'स्मार्ट ईएमआई कैलकुलेटर')}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
               {t('Calculate Your Estimated Monthly EMI', 'अपनी मासिक लोन किस्त (EMI) गणना करें')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto">
               {t('Adjust the loan amount, tenure, and interest rate sliders to plan your repayments with complete clarity.', 'लोन राशि, अवधि और ब्याज दर चुनकर अपनी मासिक किस्त का अनुमान लगाएं।')}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-white dark:bg-slate-900/80 rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white dark:bg-slate-900/40 rounded-[2rem] p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] hover:shadow-2xl transition-shadow duration-500">
             
             {/* Controls */}
             <div className="lg:col-span-7 space-y-4">
@@ -688,39 +718,43 @@ export default function LandingPage() {
             </div>
 
             {/* Results Summary Box */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-5 space-y-4 shadow-xl border border-indigo-500/30">
-              <div className="text-center pb-3 border-b border-indigo-800">
-                <div className="text-[10px] text-indigo-300 uppercase font-bold tracking-wider mb-0.5">
+            <div className="lg:col-span-5 relative overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 text-white rounded-[2rem] p-8 shadow-2xl border border-blue-500/30">
+              {/* Background Glow */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/20 blur-[50px] rounded-full pointer-events-none"></div>
+
+              <div className="text-center pb-5 border-b border-white/10 relative z-10">
+                <div className="text-xs text-cyan-300 uppercase font-bold tracking-widest mb-1.5">
                   {t('Estimated Monthly EMI', 'अनुमानित मासिक किस्त (EMI)')}
                 </div>
-                <div className="text-2xl sm:text-3xl font-black text-indigo-300">
-                  {formatCurrency(emi)} <span className="text-xs text-white font-semibold">/ {t('month', 'माह')}</span>
+                <div className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-300">
+                  {formatCurrency(emi)} <span className="text-sm text-slate-400 font-bold">/ {t('month', 'माह')}</span>
                 </div>
               </div>
 
-              <div className="space-y-2 text-xs">
+              <div className="space-y-4 text-sm mt-5 relative z-10">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-300">{t('Principal Loan Amount', 'मूल लोन राशि')}</span>
+                  <span className="text-slate-300 font-medium">{t('Principal Loan Amount', 'मूल लोन राशि')}</span>
                   <span className="font-bold text-white">{formatCurrency(loanAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-300">{t('Total Interest Payable', 'कुल ब्याज राशि')}</span>
-                  <span className="font-bold text-amber-400">{formatCurrency(totalInterest)}</span>
+                  <span className="text-slate-300 font-medium">{t('Total Interest Payable', 'कुल ब्याज राशि')}</span>
+                  <span className="font-bold text-cyan-400">{formatCurrency(totalInterest)}</span>
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t border-indigo-800 text-xs">
+                <div className="flex justify-between items-center pt-4 border-t border-white/10 text-sm">
                   <span className="font-bold text-white">{t('Total Amount Payable', 'कुल देय राशि')}</span>
-                  <span className="font-black text-white">{formatCurrency(totalPayment)}</span>
+                  <span className="font-black text-white text-lg">{formatCurrency(totalPayment)}</span>
                 </div>
               </div>
 
               <a
                 href="#apply"
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all"
+                className="w-full mt-6 py-4 bg-white hover:bg-slate-100 text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl transition-all hover:-translate-y-1 relative z-10"
               >
                 <span>{t('Apply With This EMI', 'इस किस्त के साथ आवेदन करें')}</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
+
 
           </div>
 
@@ -773,25 +807,32 @@ export default function LandingPage() {
       </section>
 
       {/* ── Public Lead Application Form Section (Full-Width Simple Form) ────────── */}
-      <section id="apply" className="py-8 sm:py-12 bg-slate-100/70 dark:bg-slate-900/50 relative overflow-hidden">
+      <section id="apply" className="py-16 sm:py-20 bg-slate-900 relative overflow-hidden">
+        {/* Abstract Dark Background Elements */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[150px] pointer-events-none"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-500/10 blur-[120px] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20viewBox=%220%200%20200%20200%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter%20id=%22noiseFilter%22%3E%3CfeTurbulence%20type=%22fractalNoise%22%20baseFrequency=%220.65%22%20numOctaves=%223%22%20stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect%20width=%22100%25%22%20height=%22100%25%22%20filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] opacity-[0.15] pointer-events-none"></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
           {/* Section Header */}
-          <div className="text-center mb-10 space-y-2.5 form-slide-up">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-primary-700 dark:text-primary-300 bg-white/80 dark:bg-primary-950/60 px-3.5 py-1.5 rounded-full border border-primary-200/80 dark:border-primary-800 shadow-sm backdrop-blur-sm">
-              <Zap className="w-3.5 h-3.5" />
+          <div className="text-center mb-12 space-y-3 form-slide-up">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-widest text-cyan-300 bg-white/10 px-4 py-2 rounded-full border border-white/20 shadow-sm backdrop-blur-md">
+              <Zap className="w-3.5 h-3.5 text-yellow-300" />
               {t('Express Online Application', 'एक्सप्रेस ऑनलाइन आवेदन')}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
               {t('Apply for Finance Instantly', 'ऑनलाइन लोन आवेदन प्रस्तुत करें')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-lg mx-auto">
+            <p className="text-sm sm:text-base text-slate-300 font-medium max-w-lg mx-auto">
               {t('Fill in your details below to get instant pre-approval within 2 hours.', 'नीचे अपना विवरण भरें और 2 घंटे के भीतर प्री-अप्रूवल प्राप्त करें।')}
             </p>
           </div>
 
           {/* Main Full-Width Form Card */}
-          <div className="bg-white/80 dark:bg-[#0E1526]/90 backdrop-blur-xl rounded-3xl border border-white/80 dark:border-slate-700/50 shadow-2xl shadow-primary-500/5 dark:shadow-primary-500/[0.02] p-6 sm:p-10 form-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-white/10 backdrop-blur-2xl rounded-[2rem] border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-6 sm:p-10 lg:p-12 form-slide-up relative overflow-hidden" style={{ animationDelay: '0.1s' }}>
+            {/* Subtle card internal glow */}
+            <div className="absolute top-0 right-0 w-[30%] h-[50%] bg-blue-400/10 blur-[80px] rounded-full pointer-events-none"></div>
 
             {successLead ? (
               /* ── Success State ── */
@@ -853,12 +894,12 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
 
                   {/* 1. Full Name */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  <div className="space-y-2 relative z-10">
+                    <label className="block text-xs font-black text-white uppercase tracking-widest">
                       {t('Full Name *', 'पूरा नाम *')}
                     </label>
                     <div className="relative group">
-                      <User className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <User className="w-5 h-5 text-slate-300 group-focus-within:text-cyan-400 absolute left-4 top-1/2 -translate-y-1/2 transition-colors" />
                       <input
                         type="text"
                         name="customer_name"
@@ -866,18 +907,18 @@ export default function LandingPage() {
                         placeholder={t('e.g. Rahul Sharma', 'उदा. राहुल शर्मा')}
                         value={formData.customer_name}
                         onChange={handleFormChange}
-                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/20 bg-white/5 text-sm font-semibold focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 outline-none text-white placeholder:text-slate-400 transition-all shadow-inner"
                       />
                     </div>
                   </div>
 
                   {/* 2. Contact Number */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  <div className="space-y-2 relative z-10">
+                    <label className="block text-xs font-black text-white uppercase tracking-widest">
                       {t('Contact Number *', 'संपर्क नंबर (मोबाइल) *')}
                     </label>
                     <div className="relative group">
-                      <Smartphone className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <Smartphone className="w-5 h-5 text-slate-300 group-focus-within:text-cyan-400 absolute left-4 top-1/2 -translate-y-1/2 transition-colors" />
                       <input
                         type="tel"
                         name="customer_mobile"
@@ -886,41 +927,41 @@ export default function LandingPage() {
                         placeholder={t('10-digit mobile number', '10 अंकों का मोबाइल नंबर')}
                         value={formData.customer_mobile}
                         onChange={handleFormChange}
-                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/20 bg-white/5 text-sm font-semibold focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 outline-none text-white placeholder:text-slate-400 transition-all shadow-inner"
                       />
                     </div>
                   </div>
 
                   {/* 3. City / Location */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  <div className="space-y-2 relative z-10">
+                    <label className="block text-xs font-black text-white uppercase tracking-widest">
                       {t('City / Location', 'शहर / स्थान')}
                     </label>
                     <div className="relative group">
-                      <MapPin className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <MapPin className="w-5 h-5 text-slate-300 group-focus-within:text-cyan-400 absolute left-4 top-1/2 -translate-y-1/2 transition-colors" />
                       <input
                         type="text"
                         name="vehicle_make_model"
-                        placeholder={t('e.g. Jaipur, Delhi or Vehicle Name', 'उदा. जयपुर, दिल्ली या वाहन नाम')}
+                        placeholder={t('e.g. Jaipur or Vehicle Name', 'उदा. जयपुर या वाहन नाम')}
                         value={formData.vehicle_make_model}
                         onChange={handleFormChange}
-                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-medium focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/20 bg-white/5 text-sm font-semibold focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 outline-none text-white placeholder:text-slate-400 transition-all shadow-inner"
                       />
                     </div>
                   </div>
 
                   {/* 4. Required Finance Amount */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-2 relative z-10">
                     <div className="flex items-center justify-between">
-                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                        {t('Required Finance Amount *', 'अपेक्षित लोन राशि *')}
+                      <label className="block text-xs font-black text-white uppercase tracking-widest">
+                        {t('Required Amount *', 'अपेक्षित लोन राशि *')}
                       </label>
-                      <span className="text-xs font-black text-primary-600 dark:text-primary-400 font-mono">
+                      <span className="text-xs font-black text-cyan-300 font-mono">
                         {formatCurrency(Number(formData.loan_amount || 0))}
                       </span>
                     </div>
                     <div className="relative group">
-                      <SlidersHorizontal className="w-4 h-4 text-slate-400 group-focus-within:text-primary-500 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors" />
+                      <SlidersHorizontal className="w-5 h-5 text-slate-300 group-focus-within:text-cyan-400 absolute left-4 top-1/2 -translate-y-1/2 transition-colors" />
                       <input
                         type="number"
                         name="loan_amount"
@@ -930,7 +971,7 @@ export default function LandingPage() {
                         placeholder={t('Enter amount in ₹', 'अपेक्षित राशि ₹ में दर्ज करें')}
                         value={formData.loan_amount}
                         onChange={handleFormChange}
-                        className="w-full pl-10 pr-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/80 text-xs font-bold font-mono focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 outline-none text-slate-900 dark:text-white transition-all"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/20 bg-white/5 text-sm font-bold font-mono focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 outline-none text-white placeholder:text-slate-400 transition-all shadow-inner"
                       />
                     </div>
                   </div>
@@ -938,9 +979,9 @@ export default function LandingPage() {
                 </div>
 
                 {/* Quick Amount Selector Pills Bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mr-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-6 border-t border-white/10 relative z-10">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-bold text-slate-300 mr-1">
                       {t('Quick Amount:', 'त्वरित राशि:')}
                     </span>
                     {[300000, 500000, 1000000, 1500000, 2500000].map((preset) => (
@@ -948,10 +989,10 @@ export default function LandingPage() {
                         key={preset}
                         type="button"
                         onClick={() => setFormData((prev) => ({ ...prev, loan_amount: preset.toString() }))}
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer border ${
+                        className={`px-4 py-1.5 rounded-full text-[11px] font-bold transition-all cursor-pointer border ${
                           Number(formData.loan_amount) === preset
-                            ? 'bg-primary-600 text-white border-primary-600 shadow-xs'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary-300'
+                            ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.4)]'
+                            : 'bg-white/5 border-white/20 text-slate-300 hover:border-white/40 hover:bg-white/10'
                         }`}
                       >
                         ₹{(preset / 100000).toFixed(preset % 100000 === 0 ? 0 : 1)} Lakh
@@ -960,23 +1001,23 @@ export default function LandingPage() {
                   </div>
 
                   {/* Trust Highlights */}
-                  <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 font-semibold shrink-0">
-                    <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> {t('100% Secure', '100% सुरक्षित')}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-amber-500" /> {t('2hr Response', '2 घंटे में कॉल')}</span>
+                  <div className="flex items-center gap-3 text-xs text-slate-300 font-semibold shrink-0">
+                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-400" /> {t('100% Secure', '100% सुरक्षित')}</span>
+                    <span className="text-slate-500">•</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-amber-400" /> {t('2hr Response', '2 घंटे में कॉल')}</span>
                   </div>
                 </div>
 
                 {/* Submit Action Row */}
-                <div className="pt-2">
+                <div className="pt-6 relative z-10">
                   <button
                     type="submit"
                     disabled={submitting || !isFormValid}
-                    className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white rounded-xl font-bold text-sm uppercase tracking-wider shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/10"
                   >
                     {submitting ? (
                       <>
-                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                        <svg className="animate-spin w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
@@ -984,9 +1025,9 @@ export default function LandingPage() {
                       </>
                     ) : (
                       <>
-                        <Lock className="w-4 h-4" />
+                        <Lock className="w-5 h-5" />
                         <span>{t('Submit Finance Request', 'लोन आवेदन जमा करें')}</span>
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-5 h-5" />
                       </>
                     )}
                   </button>
