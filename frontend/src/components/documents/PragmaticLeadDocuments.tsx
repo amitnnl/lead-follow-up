@@ -120,7 +120,7 @@ export default function PragmaticLeadDocuments({
       
       {/* 1. UNIFIED DRAG-AND-DROP VAULT TOP BAR */}
       <div 
-        className={`card p-6 border-2 border-dashed ${dragActive === 'global' ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-900/10' : 'border-slate-200 dark:border-slate-800'} shadow-sm bg-white dark:bg-[#111827] transition-all relative overflow-hidden group`}
+        className={`card p-3 border-2 border-dashed ${dragActive === 'global' ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-900/10' : 'border-slate-200 dark:border-slate-800'} shadow-sm bg-white dark:bg-[#111827] transition-all relative overflow-hidden group`}
         onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive('global'); }}
         onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(null); }}
         onDrop={(e) => {
@@ -131,16 +131,16 @@ export default function PragmaticLeadDocuments({
           }
         }}
       >
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-4 text-center sm:text-left">
-            <div className="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center shrink-0">
-              <UploadCloud className="w-7 h-7 text-primary-500" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+          <div className="flex items-center gap-3 text-center sm:text-left">
+            <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center shrink-0">
+              <UploadCloud className="w-5 h-5 text-primary-500" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
                 Upload to Document Vault
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 max-w-sm">
                 Drag and drop any document here, or click to browse. We support PDF, JPG, and PNG files up to 10MB.
               </p>
             </div>
@@ -149,16 +149,16 @@ export default function PragmaticLeadDocuments({
           <button
             type="button"
             onClick={() => setShowUploadForm(!showUploadForm)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-md shadow-primary-500/20 transition-all cursor-pointer whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-sm transition-all cursor-pointer whitespace-nowrap"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             {showUploadForm ? 'Close Form' : 'Browse Files'}
           </button>
         </div>
 
         {isDisbursed && (
-          <div className="mt-5 p-3.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-450 rounded-xl text-xs font-bold flex items-center gap-2 relative z-10">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <div className="mt-2.5 p-2 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-450 rounded-lg text-xs font-bold flex items-center gap-2 relative z-10">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             Note: This lead is disbursed. You can still upload additional post-disbursal documents.
           </div>
         )}
@@ -315,14 +315,14 @@ export default function PragmaticLeadDocuments({
             key={tab.id}
             type="button"
             onClick={() => setActiveFilter(tab.id)}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-sm ${
+            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer shadow-sm ${
               activeFilter === tab.id
                 ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 ring-2 ring-slate-900/20 dark:ring-white/20'
                 : 'bg-white dark:bg-[#111827] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900'
             }`}
           >
             {tab.label}
-            <span className={`px-2 py-0.5 rounded-md text-[10px] font-black ${
+            <span className={`px-1.5 py-0.2 rounded text-[10px] font-black ${
               activeFilter === tab.id ? 'bg-white/20 dark:bg-slate-900/20 text-current' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
             }`}>
               {tab.count}
@@ -333,13 +333,13 @@ export default function PragmaticLeadDocuments({
 
       {/* 3. CLEAN & SPACIOUS DOCUMENT GRID */}
       {filteredDocs.length === 0 ? (
-        <div className="card p-12 text-center text-slate-400 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-white/50 dark:bg-[#111827]/50">
-          <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
-          <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">No documents found in this section</h4>
-          <p className="text-xs text-slate-500 mt-1">Click "Upload New Document" above to attach files easily.</p>
+        <div className="card p-6 text-center text-slate-400 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-white/50 dark:bg-[#111827]/50">
+          <FileText className="w-8 h-8 mx-auto mb-2 opacity-30" />
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300">No documents found in this section</h4>
+          <p className="text-[11px] text-slate-500 mt-0.5">Click "Upload New Document" above to attach files easily.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
           {filteredDocs.map(doc => {
             const isVerified = doc.verification_status === 'verified';
             const isRejected = doc.verification_status === 'rejected';
@@ -347,15 +347,15 @@ export default function PragmaticLeadDocuments({
             return (
               <div
                 key={doc.id}
-                className="card p-4 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between gap-4 bg-white dark:bg-[#111827] hover:border-primary-400/60 dark:hover:border-primary-500/40 transition-all shadow-sm group"
+                className="card p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-between gap-2.5 bg-white dark:bg-[#111827] hover:border-primary-400/60 dark:hover:border-primary-500/40 transition-all shadow-sm group"
               >
-                <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <div className={`p-3 rounded-xl shrink-0 ${
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className={`p-2 rounded-lg shrink-0 ${
                     isVerified ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
                     isRejected ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' :
                     'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
                   }`}>
-                    <FileText className="w-5 h-5" />
+                    <FileText className="w-4 h-4" />
                   </div>
 
                   <div className="min-w-0 flex-1">

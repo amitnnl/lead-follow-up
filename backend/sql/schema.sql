@@ -295,16 +295,6 @@ CREATE TABLE IF NOT EXISTS `lead_deductions` (
   FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Lead Notes
-CREATE TABLE IF NOT EXISTS `lead_notes` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `lead_id` INT UNSIGNED NOT NULL,
-  `user_id` INT UNSIGNED NOT NULL,
-  `note` TEXT NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
 
 -- Notifications
 CREATE TABLE IF NOT EXISTS `notifications` (

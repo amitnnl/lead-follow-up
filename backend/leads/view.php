@@ -87,13 +87,13 @@ if (empty($selectedCommissionAgentName) && !empty($lead['agent_name'])) {
     $selectedCommissionAgentName = $lead['agent_name'];
 }
 
-// Fetch team notes
+// Fetch team notes from lead followups
 $notesList = db_fetch_all($conn, "
-    SELECT n.*, u.name as user_name 
-    FROM lead_notes n 
-    JOIN users u ON n.user_id = u.id 
-    WHERE n.lead_id = ? 
-    ORDER BY n.created_at ASC
+    SELECT f.id, f.lead_id, f.created_by as user_id, f.remarks as note, f.created_at, COALESCE(u.name, 'System') as user_name 
+    FROM lead_followups f 
+    LEFT JOIN users u ON f.created_by = u.id 
+    WHERE f.lead_id = ? 
+    ORDER BY f.created_at ASC
 ", 'i', [$lead['id']]);
 
 // Handle add note
@@ -101,10 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!verify_csrf()) die('Invalid CSRF token');
     $noteText = trim($_POST['note_text'] ?? '');
     if ($noteText !== '') {
-        db_query($conn, "INSERT INTO lead_notes (lead_id, user_id, note) VALUES (?, ?, ?)", 'iis', [
+        db_query($conn, "INSERT INTO lead_followups (lead_id, followup_date, remarks, created_by) VALUES (?, CURDATE(), ?, ?)", 'isi', [
             $lead['id'],
-            current_user_id(),
-            $noteText
+            $noteText,
+            current_user_id()
         ]);
         
         // Notify the executive if they didn't write the note

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   AlertCircle, Phone, MessageCircle, RefreshCw, Plus,
   TrendingUp, Clock, CheckCircle, XCircle, Layers, ArrowRight,
-  Sparkles, Building, UserCheck, Trophy, ChevronDown, ChevronUp
+  Sparkles, Building, UserCheck, Trophy, ArrowUpRight
 } from 'lucide-react';
 import api from '../lib/axios';
 import { Link } from 'react-router-dom';
@@ -71,101 +71,113 @@ const formatCompact = (n: number) => {
   return `₹${n.toLocaleString('en-IN')}`;
 };
 
-function SparklineChart({ data, color = '#4f46e5', height = 40 }: { data: number[]; color?: string; height?: number }) {
-  if (!data?.length || data.length <= 1) return <div className="w-full h-[40px]" />;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const points = data.map((v, i) => ({
-    x: (i / (data.length - 1)) * 100,
-    y: 100 - ((v - min) / (max - min || 1)) * 80
-  })).map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(', ');
-  
-  return (
-    <svg className="w-full" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ height }}>
-      <defs>
-        <linearGradient id="sparklineGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polyline
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        points={points}
-      />
-      <polygon
-        fill="url(#sparklineGradient)"
-        stroke="none"
-        points={`${points}, 100 100, 0 100`}
-      />
-    </svg>
-  );
-}
+const KPI_COLOR_SCHEMES = {
+  indigo: {
+    topBar: 'bg-indigo-500',
+    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50',
+    badge: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-800/40',
+    hoverBorder: 'hover:border-indigo-300 dark:hover:border-indigo-500/50',
+  },
+  amber: {
+    topBar: 'bg-amber-500',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800/50',
+    badge: 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/40',
+    hoverBorder: 'hover:border-amber-300 dark:hover:border-amber-500/50',
+  },
+  blue: {
+    topBar: 'bg-blue-500',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/50',
+    badge: 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/40',
+    hoverBorder: 'hover:border-blue-300 dark:hover:border-blue-500/50',
+  },
+  emerald: {
+    topBar: 'bg-emerald-500',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50',
+    badge: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/40',
+    hoverBorder: 'hover:border-emerald-300 dark:hover:border-emerald-500/50',
+  },
+  rose: {
+    topBar: 'bg-rose-500',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-800/50',
+    badge: 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200/60 dark:border-rose-800/40',
+    hoverBorder: 'hover:border-rose-300 dark:hover:border-rose-500/50',
+  },
+  purple: {
+    topBar: 'bg-purple-500',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-800/50',
+    badge: 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200/60 dark:border-purple-800/40',
+    hoverBorder: 'hover:border-purple-300 dark:hover:border-purple-500/50',
+  },
+};
 
 function KPICard({ 
-  label, value, icon: Icon, color, trend, trendLabel, link,
-  sparklineData
+  label, 
+  value, 
+  subtitle, 
+  badge, 
+  icon: Icon, 
+  colorScheme, 
+  link 
 }: { 
   label: string; 
   value: string | number; 
+  subtitle: string; 
+  badge?: string; 
   icon: React.ElementType; 
-  color: string; 
-  trend?: number; 
-  trendLabel?: string; 
-  link?: string; 
-  sparklineData?: number[];
+  colorScheme: keyof typeof KPI_COLOR_SCHEMES; 
+  link: string; 
 }) {
-  const content = (
-    <Card 
-      hoverable 
-      className="p-4.5 flex flex-col justify-between h-[134px] group"
-      style={{ 
-        borderColor: `${color}40`, 
-        boxShadow: `0 8px 24px -10px ${color}50`,
-        background: `linear-gradient(145deg, rgba(255,255,255,1) 0%, ${color}08 100%)`
-      }}
+  const scheme = KPI_COLOR_SCHEMES[colorScheme] || KPI_COLOR_SCHEMES.indigo;
+
+  return (
+    <Link
+      to={link}
+      className="group block relative focus:outline-none focus:ring-2 focus:ring-primary-500/40 rounded-xl"
     >
-      <div className="relative flex items-start justify-between gap-1 z-10">
-        <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate pr-2">
-          {label}
-        </span>
-        <div className="p-1.5 rounded-lg bg-slate-100/50 dark:bg-slate-800/50 group-hover:scale-110 transition-transform">
-          <Icon className="w-4 h-4 shrink-0" style={{ color }} />
-        </div>
-      </div>
-      <div className="relative flex flex-col justify-between flex-1 mt-1 z-10">
-        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
-          {value}
-        </div>
-        {sparklineData && (
-          <div className="mt-1.5 h-8 w-full opacity-80 group-hover:opacity-100 transition-opacity">
-            <SparklineChart data={sparklineData} color={color} height={30} />
-          </div>
+      <div
+        className={clsx(
+          'relative flex flex-col justify-between p-3 sm:p-3.5 rounded-xl transition-all duration-200 min-h-[108px]',
+          'bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-xs',
+          'hover:shadow-md hover:-translate-y-0.5',
+          scheme.hoverBorder
         )}
-        {(trend !== undefined || trendLabel) && (
-          <div className="flex items-center gap-1.5 mt-1.5">
-            {trend !== undefined && (
-              <span className={clsx('flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md', trend >= 0 ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-500/20' : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-500/20')}>
-                {trend >= 0 ? <ChevronUp className="w-2.5 h-2.5 stroke-[3]" /> : <ChevronDown className="w-2.5 h-2.5 stroke-[3]" />}
-                {Math.abs(trend)}%
+      >
+        {/* Accent top stripe */}
+        <div className={clsx('absolute top-0 left-0 right-0 h-[3px] rounded-t-xl', scheme.topBar)} />
+
+        {/* Header: Label & Icon */}
+        <div className="flex items-center justify-between gap-1.5 pt-0.5">
+          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+            {label}
+          </span>
+          <div className={clsx('w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110', scheme.iconBg)}>
+            <Icon className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Metric */}
+        <div className="my-1">
+          <span className="text-2xl sm:text-[28px] font-extrabold text-slate-900 dark:text-white tracking-tight tabular-nums block leading-tight">
+            {value}
+          </span>
+        </div>
+
+        {/* Footer: Subtitle & Context Badge */}
+        <div className="flex items-center justify-between gap-1 text-[11px] pt-1.5 border-t border-slate-100/80 dark:border-slate-800/80">
+          <span className="text-slate-400 dark:text-slate-500 font-medium truncate text-[11px]">
+            {subtitle}
+          </span>
+          <div className="flex items-center gap-1 shrink-0">
+            {badge && (
+              <span className={clsx('px-1.5 py-0.2 rounded text-[10px] font-semibold border', scheme.badge)}>
+                {badge}
               </span>
             )}
-            {trendLabel && <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate">{trendLabel}</span>}
+            <ArrowUpRight className="w-3 h-3 text-slate-300 dark:text-slate-600 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" />
           </div>
-        )}
+        </div>
       </div>
-    </Card>
-  );
-
-  return link ? (
-    <Link to={link} className="block focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2 dark:focus:ring-offset-slate-900 rounded-xl">
-      {content}
     </Link>
-  ) : (
-    content
   );
 }
 
@@ -210,24 +222,69 @@ export default function Dashboard() {
 
   if (!stats) return null;
 
-  const disbursementTrend = stats.chartData?.monthlyDisbursements?.map(d => d.amount) || [];
-  const leadTrend = stats.chartData?.monthlyDisbursements?.map(d => d.count) || [];
-
   const kpiCards = [
-    { label: 'Total Leads', value: stats.kpis.total, icon: Layers, color: '#4f46e5', trend: 12, trendLabel: 'vs last month', link: '/leads?assigned=all', sparklineData: leadTrend.slice(-6) },
-    { label: 'Pending', value: stats.kpis.pending, icon: Clock, color: '#f59e0b', trend: -5, trendLabel: 'vs last month', link: '/leads?status=pending', sparklineData: [3, 5, 2, 6, 4, stats.kpis.pending] },
-    { label: 'Approved', value: stats.kpis.approved, icon: CheckCircle, color: '#3b82f6', trend: 8, trendLabel: 'vs last month', link: '/leads?status=approved', sparklineData: [2, 4, 3, 5, 4, stats.kpis.approved] },
-    { label: 'Disbursed', value: stats.kpis.disbursed, icon: TrendingUp, color: '#10b981', trend: 15, trendLabel: 'vs last month', link: '/leads?status=disbursed', sparklineData: disbursementTrend.slice(-6) },
-    { label: 'Rejected', value: stats.kpis.rejected, icon: XCircle, color: '#f43f5e', trend: -3, trendLabel: 'vs last month', link: '/leads?status=rejected', sparklineData: [1, 2, 1, 0, 1, stats.kpis.rejected] },
-    { label: 'Conversion', value: `${stats.kpis.conversionRate}%`, icon: Sparkles, color: '#8b5cf6', trend: 2.5, trendLabel: 'improvement', link: '#', sparklineData: [12, 15, 18, 22, 20, stats.kpis.conversionRate] },
+    { 
+      label: 'Total Leads', 
+      value: stats.kpis.total, 
+      subtitle: 'Pipeline Total', 
+      badge: 'All', 
+      icon: Layers, 
+      colorScheme: 'indigo' as const, 
+      link: '/leads?assigned=all' 
+    },
+    { 
+      label: 'Pending', 
+      value: stats.kpis.pending, 
+      subtitle: 'In Review', 
+      badge: 'Active', 
+      icon: Clock, 
+      colorScheme: 'amber' as const, 
+      link: '/leads?status=pending' 
+    },
+    { 
+      label: 'Approved', 
+      value: stats.kpis.approved, 
+      subtitle: 'Sanctioned', 
+      badge: 'Ready', 
+      icon: CheckCircle, 
+      colorScheme: 'blue' as const, 
+      link: '/leads?status=approved' 
+    },
+    { 
+      label: 'Disbursed', 
+      value: stats.kpis.disbursed, 
+      subtitle: 'Completed', 
+      badge: 'Done', 
+      icon: TrendingUp, 
+      colorScheme: 'emerald' as const, 
+      link: '/leads?status=disbursed' 
+    },
+    { 
+      label: 'Rejected', 
+      value: stats.kpis.rejected, 
+      subtitle: 'Declined', 
+      badge: 'Closed', 
+      icon: XCircle, 
+      colorScheme: 'rose' as const, 
+      link: '/leads?status=rejected' 
+    },
+    { 
+      label: 'Conversion', 
+      value: `${stats.kpis.conversionRate}%`, 
+      subtitle: `${stats.kpis.disbursed} of ${stats.kpis.total} disbursed`, 
+      badge: stats.kpis.total > 0 ? `${stats.kpis.conversionRate}%` : '0%', 
+      icon: Sparkles, 
+      colorScheme: 'purple' as const, 
+      link: '/reports' 
+    },
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-3.5 pb-6">
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
-          <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+          <h1 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white tracking-tight">
             Welcome back, {user?.name || 'User'}
           </h1>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
@@ -241,13 +298,13 @@ export default function Dashboard() {
             onClick={fetchStats}
             disabled={refreshing}
             title="Refresh statistics"
-            className="p-2.5 h-10 w-10"
+            className="p-2 h-9 w-9"
           >
-            <RefreshCw className={clsx('w-4 h-4', refreshing && 'animate-spin text-primary-500')} />
+            <RefreshCw className={clsx('w-3.5 h-3.5', refreshing && 'animate-spin text-primary-500')} />
           </Button>
 
           {!isExecutive && (
-            <Button onClick={() => setIsNewLeadModalOpen(true)}>
+            <Button onClick={() => setIsNewLeadModalOpen(true)} className="h-9 text-xs">
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> New Lead
             </Button>
           )}
@@ -255,38 +312,38 @@ export default function Dashboard() {
       </div>
 
       {/* ── KPI Grid ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2.5 sm:gap-3">
         {kpiCards.map((card, i) => (
           <KPICard key={i} {...card} />
         ))}
       </div>
 
       {/* ── Action Banners ── */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         {stats.kpis.eligibleRetentions > 0 && isAdminOrManager && (
-          <Card className="p-4 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-600 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-500/20">
-              <AlertCircle className="w-5 h-5" />
+          <Card className="p-2.5 sm:p-3 border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-500/5 to-transparent flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-600 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-500/20">
+              <AlertCircle className="w-4 h-4" />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-bold text-slate-800 dark:text-white">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">
                 {stats.kpis.eligibleRetentions} payout{stats.kpis.eligibleRetentions !== 1 ? 's' : ''} eligible for release
               </h4>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                 Verified RC / Insurance files are ready for commission payout processing.
               </p>
             </div>
-            <Link to="/commissions" className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer shadow-sm">
+            <Link to="/commissions" className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-md transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer shadow-xs">
               Process <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </Card>
         )}
 
         {stats.dsaTiering && (
-          <Card className="p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-amber-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-sm transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20 shrink-0">
-                <Sparkles className="w-6 h-6 animate-pulse" />
+          <Card className="p-2.5 sm:p-3 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-amber-500/10 border border-emerald-500/30 dark:border-emerald-500/20 shadow-xs transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-500/20 shrink-0">
+                <Sparkles className="w-4 h-4 animate-pulse" />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -329,11 +386,11 @@ export default function Dashboard() {
 
 
       {/* ── Main Dashboard Split ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5" style={{ animationDelay: '150ms' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5" style={{ animationDelay: '150ms' }}>
         
         {/* Recent Leads Table */}
         <Card className="lg:col-span-2 flex flex-col p-0">
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/10">
+          <div className="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/10">
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500" />
               <h2 className="font-bold text-slate-800 dark:text-white text-xs uppercase tracking-wider">Recent Leads</h2>
@@ -344,15 +401,15 @@ export default function Dashboard() {
           </div>
 
           <div className="overflow-x-auto flex-1">
-            <table className="w-full text-sm text-left border-collapse">
+            <table className="w-full text-xs text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase tracking-wider">
-                  <th className="px-4 py-3">Lead ID</th>
-                  <th className="px-4 py-3">Customer</th>
-                  <th className="px-4 py-3 hidden sm:table-cell">Vehicle</th>
-                  <th className="px-4 py-3">Amount</th>
-                  <th className="px-4 py-3">Assigned To</th>
-                  <th className="px-4 py-3">Status</th>
+                  <th className="px-2 py-1.5">Lead ID</th>
+                  <th className="px-2 py-1.5">Customer</th>
+                  <th className="px-2 py-1.5 hidden sm:table-cell">Vehicle</th>
+                  <th className="px-2 py-1.5">Amount</th>
+                  <th className="px-2 py-1.5">Assigned To</th>
+                  <th className="px-2 py-1.5">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
@@ -362,14 +419,14 @@ export default function Dashboard() {
                     i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : '',
                     'hover:bg-primary-50/30 dark:hover:bg-primary-500/5'
                   )}>
-                    <td className="px-4 py-3">
+                    <td className="px-2 py-1.5">
                       <Link to={`/leads/${lead.id}`} className="text-primary-600 dark:text-primary-400 hover:underline font-mono text-xs font-bold">
                         {lead.lead_id}
                       </Link>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-800 dark:text-slate-100 text-[13px]">{lead.customer_name}</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                    <td className="px-2 py-1.5">
+                      <div className="font-semibold text-slate-800 dark:text-slate-100 text-[12px]">{lead.customer_name}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
                         <span className="font-mono">{lead.customer_mobile}</span>
                         {lead.customer_mobile && (
                           <a 
@@ -379,37 +436,37 @@ export default function Dashboard() {
                             className="text-emerald-500 hover:text-emerald-600 opacity-60 group-hover:opacity-100 transition-opacity"
                             title="WhatsApp"
                           >
-                            <MessageCircle className="w-3.5 h-3.5" />
+                            <MessageCircle className="w-3 h-3" />
                           </a>
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 hidden sm:table-cell truncate max-w-[140px] text-xs">
+                    <td className="px-2 py-1.5 text-slate-500 dark:text-slate-400 hidden sm:table-cell truncate max-w-[120px] text-[11px]">
                       <div className="flex items-center gap-1">
-                        <Building className="w-3 h-3 text-slate-300 dark:text-slate-600 shrink-0" />
+                        <Building className="w-2.5 h-2.5 text-slate-300 dark:text-slate-600 shrink-0" />
                         {lead.vehicle_make_model || '—'}
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">
+                    <td className="px-2 py-1.5 font-mono font-bold text-slate-700 dark:text-slate-300 text-xs">
                       {lead.loan_amount ? formatCurrency(Number(lead.loan_amount)) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-2 py-1.5 text-xs">
                       {lead.executive_name ? (
-                        <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">
+                        <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.2 rounded text-[11px] font-medium">
                           {lead.executive_name.split(' ')[0]}
                         </span>
                       ) : (
-                        <span className="text-amber-500 italic text-[11px]">Unassigned</span>
+                        <span className="text-amber-500 italic text-[10px]">Unassigned</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 py-1.5">
                       <Badge status={lead.status}>{STATUS_LABEL[lead.status] || lead.status}</Badge>
                     </td>
                   </tr>
                 ))}
                 {stats.recentLeads.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-slate-400 text-xs italic">No leads available.</td>
+                    <td colSpan={6} className="py-6 text-center text-slate-400 text-xs italic">No leads available.</td>
                   </tr>
                 )}
               </tbody>
@@ -418,27 +475,27 @@ export default function Dashboard() {
         </Card>
 
         {/* Right Sidebar */}
-        <div className="space-y-5">
+        <div className="space-y-2.5">
           
           {/* Due Follow-ups */}
           <Card className="flex flex-col p-0">
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/10">
-              <div className="flex items-center gap-2">
+            <div className="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/10">
+              <div className="flex items-center gap-1.5">
                 {stats.dueFollowups.length > 0 && <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />}
                 <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Due Follow-ups</h3>
                 {stats.dueFollowups.length > 0 && (
-                  <span className="bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded">{stats.dueFollowups.length}</span>
+                  <span className="bg-rose-500 text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded">{stats.dueFollowups.length}</span>
                 )}
               </div>
               <Link to="/followups" className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">All →</Link>
             </div>
 
-            <div className="divide-y divide-slate-50 dark:divide-slate-800/60 max-h-[380px] overflow-y-auto">
+            <div className="divide-y divide-slate-50 dark:divide-slate-800/60 max-h-[340px] overflow-y-auto">
               {stats.dueFollowups.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 text-xs italic">No overdue follow-ups</div>
+                <div className="p-4 text-center text-slate-400 text-xs italic">No overdue follow-ups</div>
               ) : (
                 stats.dueFollowups.map((f, i) => (
-                  <div key={i} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors border-b border-slate-100/50 dark:border-slate-800/50 last:border-0">
+                  <div key={i} className="px-2.5 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors border-b border-slate-100/50 dark:border-slate-800/50 last:border-0">
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0 flex-1">
                         <Link to={`/leads/${f.lead_real_id}`} className="text-xs font-bold text-slate-800 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 truncate block">
@@ -480,19 +537,19 @@ export default function Dashboard() {
           {isAdminOrManager && (
             <>
               {/* Top Executives */}
-              <Card className="p-5 flex flex-col gap-4">
+              <Card className="p-2.5 flex flex-col gap-1.5">
                 <div className="flex items-center gap-1.5">
-                  <UserCheck className="w-4 h-4 text-primary-500" />
+                  <UserCheck className="w-3.5 h-3.5 text-primary-500" />
                   <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Top Executives</h3>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-1.5">
                   {stats.topExecutives.map((ex, i) => {
                     const pct = ex.total > 0 ? Math.round((ex.disbursed / ex.total) * 100) : 0;
                     return (
-                      <div key={i} className="space-y-1.5">
+                      <div key={i} className="space-y-0.5">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-slate-700 dark:text-slate-300 truncate pr-2">{ex.name}</span>
-                          <span className="font-mono text-slate-400 shrink-0">{ex.disbursed}/{ex.total} ({pct}%)</span>
+                          <span className="text-slate-700 dark:text-slate-300 truncate pr-2 text-[11px]">{ex.name}</span>
+                          <span className="font-mono text-slate-400 shrink-0 text-[11px]">{ex.disbursed}/{ex.total} ({pct}%)</span>
                         </div>
                         <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                           <div 
@@ -507,19 +564,19 @@ export default function Dashboard() {
               </Card>
 
               {/* Top Financers */}
-              <Card className="p-5 flex flex-col gap-4">
+              <Card className="p-2.5 flex flex-col gap-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Building className="w-4 h-4 text-emerald-500" />
+                  <Building className="w-3.5 h-3.5 text-emerald-500" />
                   <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Top Financers</h3>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-1.5">
                   {stats.topFinancers.map((fn, i) => {
                     const pct = fn.total > 0 ? Math.round((fn.disbursed / fn.total) * 100) : 0;
                     return (
-                      <div key={i} className="space-y-1.5">
+                      <div key={i} className="space-y-0.5">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-slate-700 dark:text-slate-300 truncate pr-2">{fn.name}</span>
-                          <span className="font-mono text-slate-400 shrink-0">{fn.disbursed}/{fn.total} ({pct}%)</span>
+                          <span className="text-slate-700 dark:text-slate-300 truncate pr-2 text-[11px]">{fn.name}</span>
+                          <span className="font-mono text-slate-400 shrink-0 text-[11px]">{fn.disbursed}/{fn.total} ({pct}%)</span>
                         </div>
                         <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                           <div 
@@ -535,17 +592,17 @@ export default function Dashboard() {
 
               {/* Top DSA Partners Leaderboard */}
               {stats.topAgents && stats.topAgents.length > 0 && (
-                <Card className="p-5 flex flex-col gap-4 border-t-2 border-t-amber-500">
+                <Card className="p-2.5 sm:p-3 flex flex-col gap-2 border-t-2 border-t-amber-500">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <Trophy className="w-4 h-4 text-amber-500" />
+                      <Trophy className="w-3.5 h-3.5 text-amber-500" />
                       <h3 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-wider">DSA Leaderboard</h3>
                     </div>
-                    <span className="text-[10px] bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 font-extrabold px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/20">
+                    <span className="text-[9px] bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 font-extrabold px-1.5 py-0.2 rounded border border-amber-200 dark:border-amber-500/20">
                       Monthly Top
                     </span>
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     {stats.topAgents.map((ag, i) => {
                       const maxVol = stats.topAgents![0]?.disbursed_volume || 1;
                       const pct = Math.round((ag.disbursed_volume / maxVol) * 100);

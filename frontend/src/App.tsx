@@ -25,8 +25,8 @@ import FinanceDashboard from './pages/finance-dashboard/FinanceDashboard';
 import BankingTab from './pages/finance-dashboard/BankingTab';
 import PayoutTab from './pages/finance-dashboard/PayoutTab';
 import LedgerTab from './pages/finance-dashboard/LedgerTab';
-import OfficeExpensesTab from './pages/finance-dashboard/OfficeExpensesTab';
 import CustomerSettlementTab from './pages/finance-dashboard/CustomerSettlementTab';
+import ProfitLossTab from './pages/finance-dashboard/ProfitLossTab';
 const RouteLoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors">
     <div className="relative flex items-center justify-center">
@@ -99,9 +99,10 @@ function App() {
           <Route path="finance" element={<FinanceDashboard />}>
             <Route path="banking" element={<BankingTab />} />
             <Route path="payout" element={<PayoutTab />} />
+            <Route path="pnl" element={<ProfitLossTab />} />
             <Route path="ledger" element={<LedgerTab />} />
             <Route path="settlement" element={<CustomerSettlementTab />} />
-            <Route path="expenses" element={<OfficeExpensesTab />} />
+            <Route path="expenses" element={<Navigate to="/finance/pnl?view=expenses" replace />} />
             <Route index element={<Navigate to="banking" replace />} />
           </Route>
           

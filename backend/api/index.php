@@ -494,8 +494,11 @@ switch ($path) {
         break;
 
 
+    // ----------------------------------------------------
+    // IMPORT LEADS FROM CSV
+    // ----------------------------------------------------
     case 'leads/import':
-        api_require_role('admin', 'manager', 'staff');
+        api_require_role('admin', 'manager', 'staff', 'finance_manager');
         if ($method !== 'POST') json_error("Method not allowed", 405);
         if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
             json_error("Please upload a valid CSV file.");
@@ -506,31 +509,167 @@ switch ($path) {
             json_error("Failed to read the uploaded file.");
         }
 
-        // Expected headers mapping (normalize case/spaces for robustness)
-        $expected = [
-            'Customer Name' => 'customer_name',
-            'Address' => 'customer_address',
-            'Mobile' => 'customer_mobile',
-            'Make & Model' => 'vehicle_make_model',
-            'Reg No' => 'registration_number',
-            'Req. Loan Amount' => 'loan_amount',
-            'Lead Type' => 'loan_type',
-            'Insurance Company' => 'insurance_company',
-            'Insurance Policy No' => 'policy_number',
-            'Insurance Expiry Date' => 'insurance_expiry_date',
-        ];
-
         $headers = fgetcsv($handle, 1000, ",");
         if (!$headers) {
             json_error("CSV file is empty or invalid.");
         }
 
-        // Clean headers and find indexes
+        // Helper for robust date parsing (handles YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, DD-MM-YY, Excel serial dates)
+        $fnParseCsvDate = function($val) {
+            if ($val === null || $val === false) return null;
+            $val = trim((string)$val);
+            if ($val === '' || $val === '-' || strtolower($val) === 'null' || strtolower($val) === 'n/a') return null;
+
+            // Excel numeric serial date (e.g. 30000 to 70000)
+            if (is_numeric($val) && (float)$val > 30000 && (float)$val < 70000) {
+                $days = (int)$val;
+                $unix = ($days - 25569) * 86400;
+                return gmdate('Y-m-d', $unix);
+            }
+
+            // Split date part from timestamp if time is present
+            $parts = preg_split('/\s+/', $val);
+            $dateStr = $parts[0] ?? $val;
+
+            // 1. Check YYYY-MM-DD or YYYY/MM/DD
+            if (preg_match('/^(\d{4})[-\/\.](\d{1,2})[-\/\.](\d{1,2})$/', $dateStr, $m)) {
+                $y = (int)$m[1]; $mth = (int)$m[2]; $d = (int)$m[3];
+                if (checkdate($mth, $d, $y)) {
+                    return sprintf('%04d-%02d-%02d', $y, $mth, $d);
+                }
+            }
+
+            // 2. Check DD-MM-YYYY or DD/MM/YYYY (Standard in India and export CSVs)
+            if (preg_match('/^(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{4})$/', $dateStr, $m)) {
+                $d = (int)$m[1]; $mth = (int)$m[2]; $y = (int)$m[3];
+                if (checkdate($mth, $d, $y)) {
+                    return sprintf('%04d-%02d-%02d', $y, $mth, $d);
+                }
+                if (checkdate($d, $mth, $y)) {
+                    return sprintf('%04d-%02d-%02d', $y, $d, $mth);
+                }
+            }
+
+            // 3. Check DD-MM-YY or DD/MM/YY (2-digit year)
+            if (preg_match('/^(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{2})$/', $dateStr, $m)) {
+                $d = (int)$m[1]; $mth = (int)$m[2]; $yr = (int)$m[3];
+                $y = ($yr >= 50) ? (1900 + $yr) : (2000 + $yr);
+                if (checkdate($mth, $d, $y)) {
+                    return sprintf('%04d-%02d-%02d', $y, $mth, $d);
+                }
+                if (checkdate($d, $mth, $y)) {
+                    return sprintf('%04d-%02d-%02d', $y, $d, $mth);
+                }
+            }
+
+            // 4. Try strtotime fallback (handles "15 Jan 2024", "15-May-2024", etc.)
+            $clean = str_replace('/', '-', $dateStr);
+            $ts = strtotime($clean);
+            if ($ts && $ts > 0 && $ts < 2147483647) {
+                $parsed = date('Y-m-d', $ts);
+                if ($parsed !== '1970-01-01') return $parsed;
+            }
+
+            return null;
+        };
+
+        // Comprehensive dictionary of normalized header keys (alphanumeric lowercase)
+        $normalizedMap = [
+            // Lead Date
+            'date' => 'lead_date',
+            'leaddate' => 'lead_date',
+            'dateoflead' => 'lead_date',
+            'entrydate' => 'lead_date',
+            'createddate' => 'lead_date',
+            'creationdate' => 'lead_date',
+            'applicationdate' => 'lead_date',
+            'postdate' => 'lead_date',
+            'leadcreateddate' => 'lead_date',
+
+            // Lead ID (for updates or preserving system ID)
+            'leadid' => 'lead_id',
+            'leadno' => 'lead_id',
+            'leadnumber' => 'lead_id',
+            'id' => 'lead_id',
+
+            // Customer details
+            'customername' => 'customer_name',
+            'clientname' => 'customer_name',
+            'name' => 'customer_name',
+            'applicantname' => 'customer_name',
+
+            'mobile' => 'customer_mobile',
+            'customermobile' => 'customer_mobile',
+            'phone' => 'customer_mobile',
+            'mobilenumber' => 'customer_mobile',
+            'contact' => 'customer_mobile',
+            'customermob' => 'customer_mobile',
+            'mobile1' => 'customer_mobile',
+
+            'mobile2' => 'customer_mobile2',
+            'altmobile' => 'customer_mobile2',
+            'alternatephone' => 'customer_mobile2',
+
+            'address' => 'customer_address',
+            'customeraddress' => 'customer_address',
+            'city' => 'customer_address',
+            'location' => 'customer_address',
+
+            // Vehicle details
+            'makeandmodel' => 'vehicle_make_model',
+            'makemodel' => 'vehicle_make_model',
+            'vehiclemakemodel' => 'vehicle_make_model',
+            'vehicle' => 'vehicle_make_model',
+            'model' => 'vehicle_make_model',
+
+            'regno' => 'registration_number',
+            'registrationnumber' => 'registration_number',
+            'vehicleno' => 'registration_number',
+            'vehiclenumber' => 'registration_number',
+            'regnumber' => 'registration_number',
+
+            // Loan details
+            'reqloanamount' => 'loan_amount',
+            'loanamount' => 'loan_amount',
+            'requiredloanamount' => 'loan_amount',
+            'loan' => 'loan_amount',
+            'appliedamount' => 'loan_amount',
+
+            'disbursedamount' => 'final_loan_amount',
+            'finalloanamount' => 'final_loan_amount',
+            'approvedamount' => 'final_loan_amount',
+            'disbursementamount' => 'final_loan_amount',
+
+            'leadtype' => 'loan_type',
+            'loantype' => 'loan_type',
+            'product' => 'loan_type',
+
+            // Insurance details
+            'insurancecompany' => 'insurance_company',
+            'insurer' => 'insurance_company',
+
+            'insurancepolicyno' => 'policy_number',
+            'policyno' => 'policy_number',
+            'policynumber' => 'policy_number',
+
+            'insuranceexpirydate' => 'insurance_expiry_date',
+            'insuranceexpiry' => 'insurance_expiry_date',
+            'expirydate' => 'insurance_expiry_date',
+
+            // Status
+            'status' => 'status',
+            'leadstatus' => 'status'
+        ];
+
+        // Clean headers and build headerMap
         $headerMap = []; // target_field => column_index
         foreach ($headers as $index => $h) {
-            $h_clean = trim($h);
-            if (isset($expected[$h_clean])) {
-                $headerMap[$expected[$h_clean]] = $index;
+            $h_norm = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', (string)$h));
+            if (isset($normalizedMap[$h_norm])) {
+                $target = $normalizedMap[$h_norm];
+                if (!isset($headerMap[$target])) {
+                    $headerMap[$target] = $index;
+                }
             }
         }
 
@@ -539,29 +678,40 @@ switch ($path) {
         }
 
         $successCount = 0;
+        $updatedCount = 0;
         $failedCount = 0;
         $errors = [];
-        $rowNum = 1; // 1 for header
+        $rowNum = 1;
 
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             $rowNum++;
             // Skip empty rows
-            if (empty(array_filter($data))) continue;
+            if (empty(array_filter($data, fn($v) => trim((string)$v) !== ''))) continue;
 
+            $c_lead_id = isset($headerMap['lead_id']) ? trim($data[$headerMap['lead_id']]) : '';
+            $raw_lead_date = isset($headerMap['lead_date']) ? trim($data[$headerMap['lead_date']]) : '';
             $c_name = isset($headerMap['customer_name']) ? trim($data[$headerMap['customer_name']]) : '';
             $c_mobile = isset($headerMap['customer_mobile']) ? trim($data[$headerMap['customer_mobile']]) : '';
+            $c_mobile2 = isset($headerMap['customer_mobile2']) ? trim($data[$headerMap['customer_mobile2']]) : '';
             $c_address = isset($headerMap['customer_address']) ? trim($data[$headerMap['customer_address']]) : '';
             $v_make = isset($headerMap['vehicle_make_model']) ? trim($data[$headerMap['vehicle_make_model']]) : '';
             $v_reg = isset($headerMap['registration_number']) ? trim($data[$headerMap['registration_number']]) : '';
             $l_amount = isset($headerMap['loan_amount']) ? trim($data[$headerMap['loan_amount']]) : 0;
+            $disbursed_amount = isset($headerMap['final_loan_amount']) ? trim($data[$headerMap['final_loan_amount']]) : 0;
             $l_type = isset($headerMap['loan_type']) ? trim($data[$headerMap['loan_type']]) : '';
             $ins_comp = isset($headerMap['insurance_company']) ? trim($data[$headerMap['insurance_company']]) : '';
             $ins_pol = isset($headerMap['policy_number']) ? trim($data[$headerMap['policy_number']]) : '';
-            $ins_exp = isset($headerMap['insurance_expiry_date']) ? trim($data[$headerMap['insurance_expiry_date']]) : '';
+            $ins_exp_raw = isset($headerMap['insurance_expiry_date']) ? trim($data[$headerMap['insurance_expiry_date']]) : '';
+            $raw_status = isset($headerMap['status']) ? trim($data[$headerMap['status']]) : '';
 
             // Clean mobile
             $c_mobile = preg_replace('/\D/', '', $c_mobile);
             if (strlen($c_mobile) > 10) $c_mobile = substr($c_mobile, -10);
+
+            if (!empty($c_mobile2)) {
+                $c_mobile2 = preg_replace('/\D/', '', $c_mobile2);
+                if (strlen($c_mobile2) > 10) $c_mobile2 = substr($c_mobile2, -10);
+            }
 
             if (empty($c_name) || empty($c_mobile)) {
                 $failedCount++;
@@ -576,43 +726,141 @@ switch ($path) {
 
             // Normalization
             $l_amount = (float)str_replace(',', '', (string)$l_amount);
-            if (stripos($l_type, 'new') !== false) $l_type = 'new_loan';
-            elseif (stripos($l_type, 'used') !== false) $l_type = 'used_loan';
-            elseif (stripos($l_type, 'refinance') !== false) $l_type = 'refinance';
-            else $l_type = '';
+            $disbursed_amount = (float)str_replace(',', '', (string)$disbursed_amount);
 
-            if ($ins_exp) {
-                $date_parsed = strtotime(str_replace('/', '-', $ins_exp));
-                $ins_exp = $date_parsed ? date('Y-m-d', $date_parsed) : null;
+            if (stripos($l_type, 'refinance') !== false) {
+                $l_type = 'refinance';
             } else {
-                $ins_exp = null;
+                $l_type = 'new_loan';
             }
 
-            $lead_id = generate_lead_id($conn);
-            $lead_date = date('Y-m-d');
+            $ins_exp = $fnParseCsvDate($ins_exp_raw);
+
+            // Parse status if present
+            $valid_statuses = ['new', 'pending', 'initiated', 'approved', 'disbursed', 'rejected', 'on_hold'];
+            $c_status = '';
+            if (!empty($raw_status)) {
+                $s_clean = strtolower(str_replace([' ', '-'], '_', $raw_status));
+                if (in_array($s_clean, $valid_statuses)) {
+                    $c_status = $s_clean;
+                }
+            }
+
+            // CRITICAL: Parse lead date from the CSV!
+            $parsed_lead_date = $fnParseCsvDate($raw_lead_date);
+
+            // Check if existing lead by lead_id
+            $existingLead = null;
+            if (!empty($c_lead_id)) {
+                $existingLead = db_fetch_one($conn, "SELECT id, lead_id, lead_date, status FROM leads WHERE lead_id = ? LIMIT 1", "s", [$c_lead_id]);
+            }
+
             $created_by = current_user_id();
 
-            db_query($conn, "
-                INSERT INTO leads (
-                    lead_id, lead_date, customer_name, customer_mobile, customer_address,
-                    vehicle_condition, vehicle_make_model, registration_number, loan_amount, loan_type,
-                    insurance_company, policy_number, insurance_expiry_date,
-                    status, query_notes, created_by
-                ) VALUES (?, ?, ?, ?, ?, 'new', ?, ?, ?, ?, ?, ?, ?, 'new', 'Imported via CSV', ?)
-            ", 'ssssssssdssssi', [
-                $lead_id, $lead_date, $c_name, $c_mobile, $c_address,
-                $v_make, $v_reg, $l_amount, $l_type,
-                $ins_comp, $ins_pol, $ins_exp,
-                $created_by
-            ]);
+            if ($existingLead) {
+                // Update existing lead:
+                // Only update lead_date if a date was specified in the CSV; do NOT overwrite existing date with today!
+                $target_lead_date = $parsed_lead_date ? $parsed_lead_date : $existingLead['lead_date'];
+                $target_status = $c_status ? $c_status : $existingLead['status'];
 
-            $newId = $conn->insert_id;
-            if ($newId) {
-                log_lead_action($conn, $newId, 'Lead Created', 'Lead imported via CSV.', $created_by);
+                $updateFields = ["lead_date = ?", "customer_name = ?", "customer_mobile = ?"];
+                $updateTypes = "sss";
+                $updateParams = [$target_lead_date, $c_name, $c_mobile];
+
+                if ($c_mobile2 !== '') {
+                    $updateFields[] = "customer_mobile2 = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $c_mobile2;
+                }
+                if ($c_address !== '') {
+                    $updateFields[] = "customer_address = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $c_address;
+                }
+                if ($v_make !== '') {
+                    $updateFields[] = "vehicle_make_model = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $v_make;
+                }
+                if ($v_reg !== '') {
+                    $updateFields[] = "registration_number = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $v_reg;
+                }
+                if ($l_amount > 0) {
+                    $updateFields[] = "loan_amount = ?";
+                    $updateTypes .= "d";
+                    $updateParams[] = $l_amount;
+                }
+                if ($l_type !== '') {
+                    $updateFields[] = "loan_type = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $l_type;
+                }
+                if ($disbursed_amount > 0) {
+                    $updateFields[] = "final_loan_amount = ?";
+                    $updateTypes .= "d";
+                    $updateParams[] = $disbursed_amount;
+                }
+                if ($ins_comp !== '') {
+                    $updateFields[] = "insurance_company = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $ins_comp;
+                }
+                if ($ins_pol !== '') {
+                    $updateFields[] = "policy_number = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $ins_pol;
+                }
+                if ($ins_exp !== null) {
+                    $updateFields[] = "insurance_expiry_date = ?";
+                    $updateTypes .= "s";
+                    $updateParams[] = $ins_exp;
+                }
+                // Preserve existing lead status; workflow status cannot be bypassed via CSV import
+
+                $updateTypes .= "i";
+                $updateParams[] = $existingLead['id'];
+                $updateSql = "UPDATE leads SET " . implode(", ", $updateFields) . " WHERE id = ?";
+                db_query($conn, $updateSql, $updateTypes, $updateParams);
+
+                log_lead_action($conn, $existingLead['id'], 'Lead Updated', 'Lead updated via CSV import.', $created_by);
+                $updatedCount++;
                 $successCount++;
             } else {
-                $failedCount++;
-                $errors[] = "Row $rowNum: Database error.";
+                // New Lead:
+                // PRESERVE the lead_date from the CSV if present, otherwise default to today
+                $target_lead_date = $parsed_lead_date ? $parsed_lead_date : date('Y-m-d');
+                $lead_id = !empty($c_lead_id) ? $c_lead_id : generate_lead_id($conn);
+                // All new leads must strictly start with 'new' status (never bypass workflow to 'disbursed')
+                $target_status = 'new';
+                // Align created_at with the lead_date so chronological ordering stays accurate
+                $lead_created_at = $target_lead_date . ' ' . date('H:i:s');
+
+                db_query($conn, "
+                    INSERT INTO leads (
+                        lead_id, lead_date, customer_name, customer_mobile, customer_mobile2, customer_address,
+                        vehicle_condition, vehicle_make_model, registration_number, loan_amount, loan_type,
+                        final_loan_amount, insurance_company, policy_number, insurance_expiry_date,
+                        status, query_notes, created_by, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, 'new', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Imported via CSV', ?, ?)
+                ", 'ssssssssdsdssssis', [
+                    $lead_id, $target_lead_date, $c_name, $c_mobile, $c_mobile2, $c_address,
+                    $v_make, $v_reg, $l_amount, $l_type,
+                    $disbursed_amount, $ins_comp, $ins_pol, $ins_exp,
+                    $target_status,
+                    $created_by,
+                    $lead_created_at
+                ]);
+
+                $newId = $conn->insert_id;
+                if ($newId) {
+                    log_lead_action($conn, $newId, 'Lead Created', "Lead imported via CSV (Lead Date: $target_lead_date).", $created_by);
+                    $successCount++;
+                } else {
+                    $failedCount++;
+                    $errors[] = "Row $rowNum: Database insertion failed (" . $conn->error . ")";
+                }
             }
         }
         fclose($handle);
@@ -620,6 +868,7 @@ switch ($path) {
         json_response([
             'message' => 'Import completed',
             'success_count' => $successCount,
+            'updated_count' => $updatedCount,
             'failed_count' => $failedCount,
             'errors' => $errors
         ]);

@@ -17,7 +17,7 @@ export default function FinanceLayout() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 min-h-0 bg-white/40 dark:bg-slate-900/40 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-4 md:p-6 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 min-h-0 bg-white/40 dark:bg-slate-900/40 rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-2 sm:p-2.5 md:p-3 overflow-y-auto custom-scrollbar">
         <Outlet />
       </div>
     </div>

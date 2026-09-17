@@ -98,6 +98,7 @@ try {
             $conn->query("CREATE TABLE IF NOT EXISTS dealers (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(200) NOT NULL, contact_person VARCHAR(150) NULL, mobile VARCHAR(15) NULL, address TEXT NULL, is_active TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
             $conn->query("CREATE TABLE IF NOT EXISTS channels (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(200) NOT NULL, contact_person VARCHAR(150) NULL, mobile VARCHAR(15) NULL, email VARCHAR(150) NULL, notes TEXT NULL, is_active TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
             $conn->query("CREATE TABLE IF NOT EXISTS channel_executives (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, channel_id INT UNSIGNED NULL, name VARCHAR(150) NOT NULL, mobile VARCHAR(15) NOT NULL, email VARCHAR(150) NULL, is_active TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $conn->query("CREATE TABLE IF NOT EXISTS finance_other_income (id INT AUTO_INCREMENT PRIMARY KEY, income_date DATE NOT NULL, category VARCHAR(100) NOT NULL, amount DECIMAL(15,2) NOT NULL DEFAULT 0.00, reference_no VARCHAR(100) NULL, remarks TEXT NULL, created_by INT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
             
             $schema_network_tables = [
                 'financers' => [
@@ -238,6 +239,29 @@ try {
 
             try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN lead_id INT UNSIGNED NULL AFTER id"); } catch(Throwable $e) {}
             try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN transaction_type VARCHAR(50) NULL AFTER account_description"); } catch(Throwable $e) {}
+            try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN bank_account_id INT UNSIGNED NULL AFTER id"); } catch(Throwable $e) {}
+            try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN utr_number VARCHAR(150) NULL"); } catch(Throwable $e) {}
+            try { $conn->query("ALTER TABLE bank_ledger ADD COLUMN bank_name VARCHAR(150) NULL"); } catch(Throwable $e) {}
+
+            $conn->query("
+                CREATE TABLE IF NOT EXISTS `company_bank_accounts` (
+                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    `account_name` VARCHAR(200) NOT NULL,
+                    `entity_name` VARCHAR(200) NULL,
+                    `bank_name` VARCHAR(100) NOT NULL,
+                    `account_number` VARCHAR(50) NOT NULL,
+                    `ifsc_code` VARCHAR(20) NULL,
+                    `branch_name` VARCHAR(150) NULL,
+                    `account_type` ENUM('current', 'savings', 'od_cc') NOT NULL DEFAULT 'current',
+                    `opening_balance` DECIMAL(14,2) NOT NULL DEFAULT 0.00,
+                    `opening_date` DATE NOT NULL,
+                    `current_balance` DECIMAL(14,2) NOT NULL DEFAULT 0.00,
+                    `is_default` TINYINT(1) NOT NULL DEFAULT 0,
+                    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ");
 
             $conn->query("
                 CREATE TABLE IF NOT EXISTS `payouts` (
@@ -255,16 +279,6 @@ try {
                 ) ENGINE=InnoDB;
             ");
 
-            $conn->query("
-                CREATE TABLE IF NOT EXISTS `charge_masters` (
-                    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    `charge_name` VARCHAR(100) NOT NULL,
-                    `charge_type` ENUM('FIXED', 'PERCENTAGE') NOT NULL DEFAULT 'FIXED',
-                    `value` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-                    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB;
-            ");
 
             // Add performance indexes safely (catch if they already exist)
             try { $conn->query("CREATE INDEX idx_leads_status ON leads (status)"); } catch(Throwable $e) {}

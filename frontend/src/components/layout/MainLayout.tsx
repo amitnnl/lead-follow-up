@@ -84,6 +84,7 @@ export default function MainLayout() {
     if (path === '/dashboard') return { group: 'Overview', title: 'Dashboard' };
     if (path.startsWith('/leads')) return { group: 'Leads', title: 'Lead Management' };
     if (path === '/follow-ups') return { group: 'CRM', title: 'Follow-ups' };
+    if (path === '/finance/pnl') return { group: 'Finance', title: 'P&L Statement' };
     if (path.startsWith('/finance/')) return { group: 'Finance', title: 'Finance' };
     if (path === '/financers') return { group: 'Network', title: 'Financers' };
     if (path === '/executives') return { group: 'Network', title: 'Executives' };
@@ -139,7 +140,7 @@ export default function MainLayout() {
 
         {/* Main Content Area */}
         <main className={clsx(
-          "flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-8 custom-scrollbar",
+          "flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-2.5 md:p-3 custom-scrollbar",
           "bg-[#f5f6f8] dark:bg-[#0c0c14]",
           "print:p-0 print:border-none print:shadow-none print:bg-transparent print:rounded-none"
         )}>

@@ -66,6 +66,7 @@ if ($method === 'GET' && $action === 'list') {
     $payouts = [];
     while ($row = $res->fetch_assoc()) {
         $row['display_financer'] = $row['financer_name'] ?: $row['financer_name_rel'];
+        $row['channel_paid_amt'] = $row['agent_commission'] ?? '0.00';
         $payouts[] = $row;
     }
     echo json_encode(['payouts' => $payouts]);
@@ -116,11 +117,20 @@ $date = parse_date($r['payout_received_date'] ?? '');
         $igst = parse_currency($r['igst'] ?? 0);
         $sgst = parse_currency($r['sgst'] ?? 0);
         $gst_paid = parse_currency($r['gst_paid'] ?? 0);
+        if ($igst + $sgst > 0) {
+            $gst_paid = $igst + $sgst;
+        }
         $net_payout = parse_currency($r['net_payout'] ?? 0);
+        if ($net_payout <= 0 && $gross_payout_amount > 0) {
+            $net_payout = $gross_payout_amount - $tds_amt - $igst - $sgst;
+        }
         
         $channel_name = $r['channel_name'] ?? '';
         $channel_paid_amt = parse_currency($r['channel_paid_amt'] ?? 0);
         $balance_payout = parse_currency($r['balance_payout'] ?? 0);
+        if ($balance_payout <= 0 && $net_payout > 0) {
+            $balance_payout = $net_payout - $channel_paid_amt;
+        }
         
         $remarks = $r['remarks'] ?? '';
         $status = $r['status'] ?? '';
@@ -219,11 +229,20 @@ if ($method === 'POST' && in_array($action, ['add', 'edit'])) {
     $igst = floatval($input['igst'] ?? 0);
     $sgst = floatval($input['sgst'] ?? 0);
     $gst_paid = floatval($input['gst_paid'] ?? 0);
+    if ($igst + $sgst > 0) {
+        $gst_paid = $igst + $sgst;
+    }
     $net_payout = floatval($input['net_payout'] ?? 0);
+    if ($net_payout <= 0 && $gross_payout_amount > 0) {
+        $net_payout = $gross_payout_amount - $tds_amt - $igst - $sgst;
+    }
     
     $channel_name = $input['channel_name'] ?? '';
     $channel_paid_amt = floatval($input['channel_paid_amt'] ?? 0);
     $balance_payout = floatval($input['balance_payout'] ?? 0);
+    if ($balance_payout <= 0 && $net_payout > 0) {
+        $balance_payout = $net_payout - $channel_paid_amt;
+    }
     
     $date = $input['payout_received_date'] ?? date('Y-m-d');
     $remarks = $input['remarks'] ?? '';

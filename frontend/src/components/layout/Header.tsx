@@ -78,17 +78,17 @@ export default function Header({
   };
 
   return (
-    <header className="h-14 flex items-center justify-between px-4 lg:px-6 shrink-0 bg-[#f5f6f8] dark:bg-[#0c0c14] border-b border-slate-200/80 dark:border-[#1e2030] md:px-5 print:hidden z-30">
-      <div className="flex items-center gap-3 min-w-0">
+    <header className="h-10 flex items-center justify-between px-2.5 sm:px-3 lg:px-4 shrink-0 bg-[#f5f6f8] dark:bg-[#0c0c14] border-b border-slate-200/80 dark:border-[#1e2030] print:hidden z-30">
+      <div className="flex items-center gap-2 min-w-0">
         <button
           onClick={handleToggleSidebar}
-          className="p-1.5 rounded-md hover:bg-slate-200/60 dark:hover:bg-[#1c1a30] text-slate-500 dark:text-slate-400 transition-colors cursor-pointer shrink-0"
+          className="p-1 rounded-md hover:bg-slate-200/60 dark:hover:bg-[#1c1a30] text-slate-500 dark:text-slate-400 transition-colors cursor-pointer shrink-0"
           title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
-          {isSidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
+          {isSidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeftOpen className="w-3.5 h-3.5" />}
         </button>
 
-        <div className="flex items-center gap-2 text-[11px] font-semibold truncate tracking-tight">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold truncate tracking-tight">
           <span className="text-slate-400 dark:text-slate-500 hidden sm:inline">{pageMeta.group}</span>
           <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">/</span>
           <span className="text-slate-900 dark:text-slate-100 truncate">{pageMeta.title}</span>
@@ -98,15 +98,15 @@ export default function Header({
       {/* Center Search */}
       <form
         onSubmit={onSearchSubmit}
-        className="hidden md:flex items-center max-w-sm w-full mx-4 relative"
+        className="hidden md:flex items-center max-w-sm w-full mx-3 relative"
       >
-        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+        <Search className="w-3 h-3 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           value={searchVal}
           onChange={(e) => setSearchVal(e.target.value)}
           placeholder="Search..."
-          className="w-full pl-8 pr-12 py-1.5 text-xs bg-white dark:bg-[#121028]/40 focus:outline-none rounded-lg border border-slate-200 dark:border-[#1e2030] focus:border-[#673DE6] focus:ring-1 focus:ring-[#673DE6] placeholder:text-slate-400 text-slate-700 dark:text-slate-200 transition-all shadow-xs"
+          className="w-full pl-7 pr-10 py-1 text-xs bg-white dark:bg-[#121028]/40 focus:outline-none rounded-md border border-slate-200 dark:border-[#1e2030] focus:border-[#673DE6] focus:ring-1 focus:ring-[#673DE6] placeholder:text-slate-400 text-slate-700 dark:text-slate-200 transition-all shadow-xs"
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2">
           {searchVal ? (
@@ -115,10 +115,10 @@ export default function Header({
               onClick={() => { setSearchVal(''); navigate('/leads'); }}
               className="text-slate-400 hover:text-slate-600 cursor-pointer"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3" />
             </button>
           ) : (
-            <span className="text-[10px] font-mono font-medium text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded">
+            <span className="text-[9px] font-mono font-medium text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 px-1 py-0.2 rounded">
               ⌘K
             </span>
           )}
@@ -126,25 +126,25 @@ export default function Header({
       </form>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex items-center gap-1 shrink-0">
         <button
           onClick={onOpenCalculator}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+          className="flex items-center gap-1 px-2 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
           title="IRR Calculator"
         >
           <Calculator className="w-3.5 h-3.5" />
-          <span className="hidden lg:inline">Calc</span>
+          <span className="hidden lg:inline text-[11px]">Calc</span>
         </button>
 
-        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1" />
+        <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-0.5" />
 
         {/* Dark / Light Theme Mode Toggle */}
         <button
           onClick={toggleTheme}
-          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
+          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+          {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
         </button>
 
         {/* Notifications */}
@@ -155,10 +155,10 @@ export default function Header({
               setShowNotifications(next);
               if (next) { setShowProfileMenu(false); handleMarkRead(); }
             }}
-            className="relative p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
+            className="relative p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
             title="Notifications"
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-3.5 h-3.5" />
             {unreadCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white font-bold text-[9px] flex items-center justify-center ring-2 ring-white dark:ring-[#111622]">
                 {unreadCount}

@@ -93,17 +93,17 @@ function KPICard({ label, value, icon: Icon, color, subText, bgGradient }: {
   bgGradient?: string;
 }) {
   return (
-    <div className={clsx('relative overflow-hidden rounded-2xl border p-4 transition-all hover:shadow-lg', bgGradient || 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800')}>
+    <div className={clsx('relative overflow-hidden rounded-xl border p-2.5 sm:p-3 transition-all hover:shadow-md', bgGradient || 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800')}>
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400">{label}</span>
-        <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs" style={{ backgroundColor: `${color}18`, color }}>
-          <Icon className="w-4 h-4" />
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-xs" style={{ backgroundColor: `${color}18`, color }}>
+          <Icon className="w-3.5 h-3.5" />
         </div>
       </div>
-      <div className="mt-2">
-        <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">{value}</div>
+      <div className="mt-1">
+        <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">{value}</div>
         {subText && (
-          <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-400 mt-1 flex items-center gap-1">
+          <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-400 mt-0.5 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
             <span>{subText}</span>
           </div>
@@ -347,45 +347,45 @@ export default function Reports() {
   }, [records]);
 
   return (
-    <div className="space-y-5 pb-10 font-sans select-none">
+    <div className="space-y-2.5 pb-6 font-sans select-none">
 
       {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5 bg-white dark:bg-slate-900 p-2.5 sm:p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 flex items-center justify-center">
               <FileText className="w-4 h-4" />
             </div>
-            <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-base font-black text-slate-900 dark:text-white tracking-tight">
               MIS Reports & Analytics
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-primary-100 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
+            <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-primary-100 dark:bg-primary-950 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
               Live Register
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
             Generate audit-ready loan statements, commission registers, document logs, and conversion sheets.
           </p>
         </div>
 
         {/* Quick Date Presets + Export */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <div className="hidden lg:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700">
+        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+          <div className="hidden lg:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700">
             <button
               onClick={() => handleDatePreset('this_month')}
-              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer"
+              className="px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer"
             >
               This Month
             </button>
             <button
               onClick={() => handleDatePreset('last_month')}
-              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer"
+              className="px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer"
             >
               Last Month
             </button>
             <button
               onClick={() => handleDatePreset('ytd')}
-              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer"
+              className="px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer"
             >
               YTD
             </button>
@@ -395,10 +395,10 @@ export default function Reports() {
             <button 
               onClick={handleExportCSV} 
               disabled={exporting}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-500/20 transition-all cursor-pointer disabled:opacity-75"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-500/20 transition-all cursor-pointer disabled:opacity-75"
             >
               {exporting ? (
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <Download className="w-3.5 h-3.5" />
               )}
@@ -409,7 +409,7 @@ export default function Reports() {
           <button 
             onClick={() => setShowFilters(!showFilters)}
             className={clsx(
-              'inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border',
+              'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border',
               showFilters 
                 ? 'bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800' 
                 : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
@@ -422,7 +422,7 @@ export default function Reports() {
       </div>
 
       {/* ── Report Category Selector Tabs ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {reportTypes.map((opt) => {
           const isSelected = reportType === opt.value;
           const OptIcon = opt.icon;
@@ -432,21 +432,21 @@ export default function Reports() {
               type="button"
               onClick={() => setReportType(opt.value)}
               className={clsx(
-                'p-3.5 rounded-2xl border transition-all text-left cursor-pointer flex flex-col justify-between relative overflow-hidden group',
+                'p-2.5 rounded-xl border transition-all text-left cursor-pointer flex flex-col justify-between relative overflow-hidden group',
                 isSelected
                   ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
                   : 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-primary-300 dark:hover:border-primary-700'
               )}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1.5">
                 <div className={clsx(
-                  'w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105',
+                  'w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105',
                   isSelected ? 'bg-white/20 text-white' : 'bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400'
                 )}>
-                  <OptIcon className="w-4 h-4" />
+                  <OptIcon className="w-3.5 h-3.5" />
                 </div>
                 {isSelected && (
-                  <span className="w-2 h-2 rounded-full bg-white shadow-xs" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
                 )}
               </div>
               <div>
@@ -464,23 +464,23 @@ export default function Reports() {
 
       {/* ── Top Filter Control Panel ── */}
       {showFilters && (
-        <form onSubmit={handleGenerate} className="bg-white dark:bg-slate-900/90 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+        <form onSubmit={handleGenerate} className="bg-white dark:bg-slate-900/90 p-2.5 sm:p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-2.5">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               <SlidersHorizontal className="w-3.5 h-3.5 text-primary-500" />
               <span>Report Parameters & Filters</span>
             </div>
             <button
               type="button"
               onClick={handleResetFilters}
-              className="text-[11px] font-bold text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
+              className="text-[10px] font-bold text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <RefreshCw className="w-3 h-3" />
               <span>Reset All</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
             {/* Agent / DSA */}
             <div>
               <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-1">
@@ -489,7 +489,7 @@ export default function Reports() {
               <select
                 value={agentId}
                 onChange={(e) => setAgentId(e.target.value)}
-                className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
+                className="w-full h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
               >
                 <option value="">All Agents</option>
                 {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
@@ -504,7 +504,7 @@ export default function Reports() {
               <select
                 value={financerId}
                 onChange={(e) => setFinancerId(e.target.value)}
-                className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
+                className="w-full h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
               >
                 <option value="">All Financers</option>
                 {financers.map(fin => <option key={fin.id} value={fin.id}>{fin.name}</option>)}
@@ -519,7 +519,7 @@ export default function Reports() {
               <select
                 value={executiveId}
                 onChange={(e) => setExecutiveId(e.target.value)}
-                className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
+                className="w-full h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
               >
                 <option value="">All Executives</option>
                 {executives.map(ex => <option key={ex.id} value={ex.id}>{ex.name}</option>)}
@@ -535,7 +535,7 @@ export default function Reports() {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
+                className="w-full h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
               />
             </div>
 
@@ -548,19 +548,19 @@ export default function Reports() {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full h-9 px-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
+                className="w-full h-8 px-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-primary-500/30 font-medium"
               />
             </div>
           </div>
 
-          <div className="flex justify-end pt-1">
+          <div className="flex justify-end pt-0.5">
             <button 
               type="submit"
               disabled={loading}
-              className="px-5 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white rounded-xl font-extrabold text-xs transition-all cursor-pointer shadow-md shadow-primary-500/20 disabled:opacity-50 flex items-center gap-1.5"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white rounded-lg font-extrabold text-xs transition-all cursor-pointer shadow-sm shadow-primary-500/20 disabled:opacity-50 flex items-center gap-1.5"
             >
               {loading ? (
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <Filter className="w-3.5 h-3.5" />
               )}
@@ -571,7 +571,7 @@ export default function Reports() {
       )}
 
       {/* ── KPI Metric Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
         <KPICard 
           label="Total Loan Book" 
           value={<FormatCurrency value={summary?.totalLoanAmount || 0} color="indigo" />} 
@@ -604,20 +604,20 @@ export default function Reports() {
 
       {/* ── Visual Analytics Charts Row ── */}
       {records.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5">
           
           {/* Monthly Trend Area Chart */}
-          <div className="lg:col-span-7 bg-white dark:bg-slate-900/90 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-primary-500" />
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900/90 rounded-xl p-2.5 sm:p-3 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-primary-500" />
                 <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Monthly Loan Volume & Lead Count
                 </h3>
               </div>
               <span className="text-[10px] text-slate-400 font-mono">Real-Time Data</span>
             </div>
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={160}>
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="areaLoan" x1="0" y1="0" x2="0" y2="1">
@@ -628,29 +628,29 @@ export default function Reports() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} opacity={0.5} />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
                 <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={val => val >= 1e6 ? `₹${(val/1e6).toFixed(1)}Cr` : val >= 1e5 ? `₹${(val/1e5).toFixed(0)}L` : `₹${val}`} />
-                <Tooltip contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #334155', borderRadius: '12px', color: '#fff', fontSize: '11px' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }} />
                 <Area type="monotone" dataKey="amount" name="Loan Amount" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#areaLoan)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
           {/* Status Breakdown Bar Chart */}
-          <div className="lg:col-span-5 bg-white dark:bg-slate-900/90 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-emerald-500" />
+          <div className="lg:col-span-5 bg-white dark:bg-slate-900/90 rounded-xl p-2.5 sm:p-3 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <BarChart3 className="w-3.5 h-3.5 text-emerald-500" />
                 <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Lead Status Distribution
                 </h3>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={160}>
               <BarChart data={statusBreakdown} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} opacity={0.5} />
                 <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
                 <YAxis dataKey="status" type="category" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} width={70} />
-                <Tooltip contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #334155', borderRadius: '12px', color: '#fff', fontSize: '11px' }} />
-                <Bar dataKey="count" name="Count" radius={[0, 6, 6, 0]} maxBarSize={22}>
+                <Tooltip contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }} />
+                <Bar dataKey="count" name="Count" radius={[0, 4, 4, 0]} maxBarSize={18}>
                   {statusBreakdown.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -663,10 +663,10 @@ export default function Reports() {
       )}
 
       {/* ── High-Density Data Table ── */}
-      <div className="bg-white dark:bg-slate-900/90 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="card overflow-hidden">
         
         {/* Table Header Controls */}
-        <div className="p-3 sm:p-4 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/30">
+        <div className="p-2 sm:p-2.5 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50/50 dark:bg-slate-800/30">
           <div className="flex items-center gap-2">
             <activeReport.icon className="w-4 h-4 text-primary-500" />
             <h3 className="font-black text-xs text-slate-900 dark:text-white uppercase tracking-wider">
@@ -679,26 +679,26 @@ export default function Reports() {
 
           {/* Table Search Input */}
           <div className="relative max-w-xs w-full">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={tableSearch}
               onChange={(e) => setTableSearch(e.target.value)}
               placeholder="Search Lead ID, Name, Bank..."
-              className="w-full pl-9 pr-3 h-8 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary-500/30 text-slate-800 dark:text-slate-100 placeholder:text-slate-400"
+              className="w-full pl-8 pr-2.5 h-7 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-primary-500/30 text-slate-800 dark:text-slate-100 placeholder:text-slate-400"
             />
           </div>
         </div>
 
         {/* Table Body */}
         {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="py-12 flex flex-col items-center justify-center gap-2">
+            <div className="w-6 h-6 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
             <p className="text-xs text-slate-400 font-bold">Loading report data...</p>
           </div>
         ) : filteredRecords.length === 0 ? (
-          <div className="py-16 text-center space-y-2">
-            <XCircle className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto" />
+          <div className="py-12 text-center space-y-1.5">
+            <XCircle className="w-8 h-8 text-slate-300 dark:text-slate-700 mx-auto" />
             <p className="text-xs font-bold text-slate-600 dark:text-slate-400">No records found</p>
             <p className="text-[11px] text-slate-400 dark:text-slate-500">Try adjusting your filters or date selection.</p>
           </div>
@@ -709,44 +709,44 @@ export default function Reports() {
                 <tr className="bg-slate-100/70 dark:bg-slate-800/60 border-b border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   {reportType === 'disbursement' && (
                     <>
-                      <th className="px-3.5 py-2.5">Lead ID</th>
-                      <th className="px-3.5 py-2.5">Date</th>
-                      <th className="px-3.5 py-2.5">Customer Name</th>
-                      <th className="px-3.5 py-2.5">Vehicle</th>
-                      <th className="px-3.5 py-2.5">Financer Bank</th>
-                      <th className="px-3.5 py-2.5">Agent (DSA)</th>
-                      <th className="px-3.5 py-2.5 text-right">Loan Amount</th>
+                      <th className="px-2 py-1.5">Lead ID</th>
+                      <th className="px-2 py-1.5">Date</th>
+                      <th className="px-2 py-1.5">Customer Name</th>
+                      <th className="px-2 py-1.5">Vehicle</th>
+                      <th className="px-2 py-1.5">Financer Bank</th>
+                      <th className="px-2 py-1.5">Agent (DSA)</th>
+                      <th className="px-2 py-1.5 text-right">Loan Amount</th>
                     </>
                   )}
                   {reportType === 'payouts' && (
                     <>
-                      <th className="px-3.5 py-2.5">Lead ID</th>
-                      <th className="px-3.5 py-2.5">Customer Name</th>
-                      <th className="px-3.5 py-2.5">Agent (DSA)</th>
-                      <th className="px-3.5 py-2.5 text-right">Comm. Amount</th>
-                      <th className="px-3.5 py-2.5 text-right">Paid Amount</th>
-                      <th className="px-3.5 py-2.5 text-center">90% Payout</th>
-                      <th className="px-3.5 py-2.5 text-center">10% Retention</th>
+                      <th className="px-2 py-1.5">Lead ID</th>
+                      <th className="px-2 py-1.5">Customer Name</th>
+                      <th className="px-2 py-1.5">Agent (DSA)</th>
+                      <th className="px-2 py-1.5 text-right">Comm. Amount</th>
+                      <th className="px-2 py-1.5 text-right">Paid Amount</th>
+                      <th className="px-2 py-1.5 text-center">90% Payout</th>
+                      <th className="px-2 py-1.5 text-center">10% Retention</th>
                     </>
                   )}
                   {reportType === 'pending_docs' && (
                     <>
-                      <th className="px-3.5 py-2.5">Lead ID</th>
-                      <th className="px-3.5 py-2.5">Customer Name</th>
-                      <th className="px-3.5 py-2.5">Status</th>
-                      <th className="px-3.5 py-2.5 text-center">RC Book</th>
-                      <th className="px-3.5 py-2.5 text-center">Insurance</th>
-                      <th className="px-3.5 py-2.5 text-center">RTO File</th>
+                      <th className="px-2 py-1.5">Lead ID</th>
+                      <th className="px-2 py-1.5">Customer Name</th>
+                      <th className="px-2 py-1.5">Status</th>
+                      <th className="px-2 py-1.5 text-center">RC Book</th>
+                      <th className="px-2 py-1.5 text-center">Insurance</th>
+                      <th className="px-2 py-1.5 text-center">RTO File</th>
                     </>
                   )}
                   {reportType === 'executive_perf' && (
                     <>
-                      <th className="px-3.5 py-2.5">Lead ID</th>
-                      <th className="px-3.5 py-2.5">Date</th>
-                      <th className="px-3.5 py-2.5">Customer Name</th>
-                      <th className="px-3.5 py-2.5">Executive Name</th>
-                      <th className="px-3.5 py-2.5 text-right">Loan Amount</th>
-                      <th className="px-3.5 py-2.5 text-center">Status</th>
+                      <th className="px-2 py-1.5">Lead ID</th>
+                      <th className="px-2 py-1.5">Date</th>
+                      <th className="px-2 py-1.5">Customer Name</th>
+                      <th className="px-2 py-1.5">Executive Name</th>
+                      <th className="px-2 py-1.5 text-right">Loan Amount</th>
+                      <th className="px-2 py-1.5 text-center">Status</th>
                     </>
                   )}
                 </tr>
@@ -756,13 +756,13 @@ export default function Reports() {
                   <tr key={i} className="hover:bg-primary-50/20 dark:hover:bg-primary-950/20 transition-colors">
                     {reportType === 'disbursement' && (
                       <>
-                        <td className="px-3.5 py-2.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
-                        <td className="px-3.5 py-2.5 text-slate-400 font-mono text-[11px]">{r.lead_date}</td>
-                        <td className="px-3.5 py-2.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
-                        <td className="px-3.5 py-2.5 text-slate-600 dark:text-slate-300">{r.vehicle_make_model || '—'}</td>
-                        <td className="px-3.5 py-2.5 font-bold text-primary-600 dark:text-primary-400">{r.financer_name || '—'}</td>
-                        <td className="px-3.5 py-2.5 text-slate-600 dark:text-slate-300">{r.agent_name || 'Direct'}</td>
-                        <td className="px-3.5 py-2.5 text-right font-mono font-black text-emerald-600 dark:text-emerald-400">
+                        <td className="px-2 py-1.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
+                        <td className="px-2 py-1.5 text-slate-400 font-mono text-[11px]">{r.lead_date}</td>
+                        <td className="px-2 py-1.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
+                        <td className="px-2 py-1.5 text-slate-600 dark:text-slate-300">{r.vehicle_make_model || '—'}</td>
+                        <td className="px-2 py-1.5 font-bold text-primary-600 dark:text-primary-400">{r.financer_name || '—'}</td>
+                        <td className="px-2 py-1.5 text-slate-600 dark:text-slate-300">{r.agent_name || 'Direct'}</td>
+                        <td className="px-2 py-1.5 text-right font-mono font-black text-emerald-600 dark:text-emerald-400">
                           <FormatCurrency value={r.loan_amount || 0} color="emerald" />
                         </td>
                       </>
@@ -770,19 +770,19 @@ export default function Reports() {
 
                     {reportType === 'payouts' && (
                       <>
-                        <td className="px-3.5 py-2.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
-                        <td className="px-3.5 py-2.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
-                        <td className="px-3.5 py-2.5 text-slate-600 dark:text-slate-300">{r.agent_name || 'Direct'}</td>
-                        <td className="px-3.5 py-2.5 text-right font-mono font-bold text-slate-800 dark:text-slate-200">
+                        <td className="px-2 py-1.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
+                        <td className="px-2 py-1.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
+                        <td className="px-2 py-1.5 text-slate-600 dark:text-slate-300">{r.agent_name || 'Direct'}</td>
+                        <td className="px-2 py-1.5 text-right font-mono font-bold text-slate-800 dark:text-slate-200">
                           <FormatCurrency value={r.commission_amount || 0} color="slate" />
                         </td>
-                        <td className="px-3.5 py-2.5 text-right font-mono font-black text-emerald-600 dark:text-emerald-400">
+                        <td className="px-2 py-1.5 text-right font-mono font-black text-emerald-600 dark:text-emerald-400">
                           <FormatCurrency value={r.paid_amount || 0} color="emerald" />
                         </td>
-                        <td className="px-3.5 py-2.5 text-center">
+                        <td className="px-2 py-1.5 text-center">
                           <StatusBadge status={r.payout_90_status || 'pending'} />
                         </td>
-                        <td className="px-3.5 py-2.5 text-center">
+                        <td className="px-2 py-1.5 text-center">
                           <StatusBadge status={r.payout_10_status || 'pending'} />
                         </td>
                       </>
@@ -790,18 +790,18 @@ export default function Reports() {
 
                     {reportType === 'pending_docs' && (
                       <>
-                        <td className="px-3.5 py-2.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
-                        <td className="px-3.5 py-2.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
-                        <td className="px-3.5 py-2.5">
+                        <td className="px-2 py-1.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
+                        <td className="px-2 py-1.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
+                        <td className="px-2 py-1.5">
                           <StatusBadge status={r.status} />
                         </td>
-                        <td className="px-3.5 py-2.5 text-center">
+                        <td className="px-2 py-1.5 text-center">
                           <StatusBadge status={r.rc_status === 'received' ? 'received' : 'missing'} />
                         </td>
-                        <td className="px-3.5 py-2.5 text-center">
+                        <td className="px-2 py-1.5 text-center">
                           <StatusBadge status={r.insurance_status === 'received' ? 'received' : 'missing'} />
                         </td>
-                        <td className="px-3.5 py-2.5 text-center">
+                        <td className="px-2 py-1.5 text-center">
                           <StatusBadge status={r.rto_status === 'done' ? 'done' : 'missing'} />
                         </td>
                       </>
@@ -809,14 +809,14 @@ export default function Reports() {
 
                     {reportType === 'executive_perf' && (
                       <>
-                        <td className="px-3.5 py-2.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
-                        <td className="px-3.5 py-2.5 text-slate-400 font-mono text-[11px]">{r.lead_date}</td>
-                        <td className="px-3.5 py-2.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
-                        <td className="px-3.5 py-2.5 text-slate-700 dark:text-slate-300 font-semibold">{r.executive_name || 'Unassigned'}</td>
-                        <td className="px-3.5 py-2.5 text-right font-mono font-black text-slate-900 dark:text-white">
+                        <td className="px-2 py-1.5 font-mono font-bold text-primary-600 dark:text-primary-400">{r.lead_id}</td>
+                        <td className="px-2 py-1.5 text-slate-400 font-mono text-[11px]">{r.lead_date}</td>
+                        <td className="px-2 py-1.5 font-bold text-slate-900 dark:text-white">{r.customer_name}</td>
+                        <td className="px-2 py-1.5 text-slate-700 dark:text-slate-300 font-semibold">{r.executive_name || 'Unassigned'}</td>
+                        <td className="px-2 py-1.5 text-right font-mono font-black text-slate-900 dark:text-white">
                           <FormatCurrency value={r.loan_amount || 0} color="slate" />
                         </td>
-                        <td className="px-3.5 py-2.5 text-center">
+                        <td className="px-2 py-1.5 text-center">
                           <StatusBadge status={r.status} />
                         </td>
                       </>
@@ -829,7 +829,7 @@ export default function Reports() {
         )}
 
         {/* Table Footer */}
-        <div className="p-3 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 font-medium">
+        <div className="p-2 sm:p-2.5 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 font-medium">
           <div>
             Showing <span className="font-bold text-slate-800 dark:text-white">{filteredRecords.length}</span> of <span className="font-bold text-slate-800 dark:text-white">{records.length}</span> entries
           </div>

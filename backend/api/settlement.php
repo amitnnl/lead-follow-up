@@ -168,30 +168,52 @@ if ($method === 'POST' && $action === 'save') {
         if ($status === 'Paid' && (!$existing || $existing['status'] !== 'Paid')) {
             $date = $payment_date ?? date('Y-m-d');
             
+            // Determine active bank account
+            $bank_acc_id = !empty($input['bank_account_id']) ? intval($input['bank_account_id']) : 0;
+            if (!$bank_acc_id) {
+                $defAcc = $conn->query("SELECT id FROM company_bank_accounts WHERE is_default = 1 AND is_active = 1 LIMIT 1");
+                if ($defAcc && ($dRow = $defAcc->fetch_assoc())) {
+                    $bank_acc_id = intval($dRow['id']);
+                }
+            }
+            $accVal = $bank_acc_id > 0 ? $bank_acc_id : "NULL";
+
             // Insert Deductions
-            if ($total_insurance > 0) $conn->query("INSERT INTO bank_ledger (lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($lead_id, '$date', 'Insurance Deduction (Base + {$insurance_gst}% GST)', $total_insurance, 'SETTLEMENT_DEDUCTION')");
-            if ($rc_charge > 0) $conn->query("INSERT INTO bank_ledger (lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($lead_id, '$date', 'Vehicle RC Deduction', $rc_charge, 'SETTLEMENT_DEDUCTION')");
-            if ($rto_charge > 0) $conn->query("INSERT INTO bank_ledger (lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($lead_id, '$date', 'RTO Deduction (Base + {$rto_gst}% GST)', $total_rto, 'SETTLEMENT_DEDUCTION')");
-            if ($other_charges > 0) $conn->query("INSERT INTO bank_ledger (lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($lead_id, '$date', 'Other Charges Deduction', $other_charges, 'SETTLEMENT_DEDUCTION')");
+            if ($total_insurance > 0) $conn->query("INSERT INTO bank_ledger (bank_account_id, lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($accVal, $lead_id, '$date', 'Insurance Deduction (Base + {$insurance_gst}% GST)', $total_insurance, 'SETTLEMENT_DEDUCTION')");
+            if ($rc_charge > 0) $conn->query("INSERT INTO bank_ledger (bank_account_id, lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($accVal, $lead_id, '$date', 'Vehicle RC Deduction', $rc_charge, 'SETTLEMENT_DEDUCTION')");
+            if ($rto_charge > 0) $conn->query("INSERT INTO bank_ledger (bank_account_id, lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($accVal, $lead_id, '$date', 'RTO Deduction (Base + {$rto_gst}% GST)', $total_rto, 'SETTLEMENT_DEDUCTION')");
+            if ($other_charges > 0) $conn->query("INSERT INTO bank_ledger (bank_account_id, lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($accVal, $lead_id, '$date', 'Other Charges Deduction', $other_charges, 'SETTLEMENT_DEDUCTION')");
             
-            // Client Commission - This is kept by the company, so we treat it as an expense on the customer's loan, but we don't need a separate "income" ledger entry since it's just less money we send out. But wait, if we want to track it as company profit, maybe we should log it explicitly.
-            // In the bank_ledger, all of these debits are reducing the amount paid to the client.
             if ($client_comm_amount > 0) {
-                 $conn->query("INSERT INTO bank_ledger (lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($lead_id, '$date', 'Client Commission Deduction ($client_comm_type)', $client_comm_amount, 'SETTLEMENT_DEDUCTION')");
+                 $conn->query("INSERT INTO bank_ledger (bank_account_id, lead_id, post_date, account_description, debit_amount, transaction_type) VALUES ($accVal, $lead_id, '$date', 'Client Commission Deduction ($client_comm_type)', $client_comm_amount, 'SETTLEMENT_DEDUCTION')");
             }
             
             // Insert Customer Payment
             if ($net_payable > 0) {
                 $rem = $conn->real_escape_string($remarks);
-                $conn->query("INSERT INTO bank_ledger (lead_id, post_date, account_description, debit_amount, transaction_type, remarks) VALUES ($lead_id, '$date', 'Customer Settlement Payment', $net_payable, 'CUSTOMER_PAYMENT', '$rem')");
+                $conn->query("INSERT INTO bank_ledger (bank_account_id, lead_id, post_date, account_description, debit_amount, transaction_type, remarks) VALUES ($accVal, $lead_id, '$date', 'Customer Settlement Payment', $net_payable, 'CUSTOMER_PAYMENT', '$rem')");
             }
             
-            // Recalculate ledger balances
-            $res = $conn->query("SELECT id, debit_amount, credit_amount FROM bank_ledger ORDER BY post_date ASC, id ASC");
-            $balance = 0;
+            // Recalculate isolated ledger balances for that account
+            $opening = 0.0;
+            if ($bank_acc_id > 0) {
+                $accInfo = $conn->query("SELECT opening_balance FROM company_bank_accounts WHERE id = $bank_acc_id");
+                if ($accInfo && ($r = $accInfo->fetch_assoc())) {
+                    $opening = floatval($r['opening_balance']);
+                }
+                $where = "bank_account_id = $bank_acc_id";
+            } else {
+                $where = "bank_account_id IS NULL OR bank_account_id = 0";
+            }
+
+            $res = $conn->query("SELECT id, debit_amount, credit_amount FROM bank_ledger WHERE $where ORDER BY post_date ASC, id ASC");
+            $balance = $opening;
             while ($row = $res->fetch_assoc()) {
-                $balance = $balance + $row['credit_amount'] - $row['debit_amount'];
+                $balance = $balance + floatval($row['credit_amount']) - floatval($row['debit_amount']);
                 $conn->query("UPDATE bank_ledger SET running_balance = $balance WHERE id = " . $row['id']);
+            }
+            if ($bank_acc_id > 0) {
+                $conn->query("UPDATE company_bank_accounts SET current_balance = $balance WHERE id = $bank_acc_id");
             }
         }
         echo json_encode(['success' => true]);

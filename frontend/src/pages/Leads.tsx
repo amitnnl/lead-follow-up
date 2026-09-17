@@ -7,7 +7,7 @@ import {
   Phone, ChevronDown,
   CircleDot, Filter, TrendingUp,
   Clock, CheckCircle2, PauseCircle,
-  XCircle, Sparkles, Loader2, Upload
+  XCircle, Sparkles, Loader2, Upload, FileSpreadsheet
 } from 'lucide-react';
 import NewLeadModal from '../components/NewLeadModal';
 import AssignmentModal from '../components/AssignmentModal';
@@ -83,84 +83,84 @@ function LeadTableRow({
       isSelected ? "bg-primary-50/50 dark:bg-primary-900/20" : ""
     )}>
       {/* Checkbox */}
-      <td className="w-12 px-4 py-4 text-center">
+      <td className="w-9 px-1.5 py-1.5 text-center">
         <input
           type="checkbox"
           checked={isSelected}
           onChange={onToggleSelect}
-          className="rounded border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500/20 w-4 h-4 cursor-pointer"
+          className="rounded border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500/20 w-3.5 h-3.5 cursor-pointer"
         />
       </td>
 
-      <td className="px-3 py-2 whitespace-nowrap">
+      <td className="px-2 py-1.5 whitespace-nowrap">
         <button onClick={() => onOpenPreview(lead.id)} className="font-mono text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer">
           {lead.lead_id}
         </button>
       </td>
 
-      <td className="px-3 py-2 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-medium">
+      <td className="px-2 py-1.5 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-medium">
         {lead.lead_date}
       </td>
 
-      <td className="px-3 py-2">
-        <span className="font-bold text-slate-800 dark:text-white text-xs truncate max-w-[150px] block" title={lead.customer_name}>
+      <td className="px-2 py-1.5">
+        <span className="font-bold text-slate-800 dark:text-white text-xs truncate max-w-[140px] block" title={lead.customer_name}>
           {lead.customer_name}
         </span>
       </td>
 
-      <td className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]" title={lead.customer_address}>
+      <td className="px-2 py-1.5 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[140px]" title={lead.customer_address}>
         {lead.customer_address || '—'}
       </td>
 
-      <td className="px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300">
-        <div className="flex items-center gap-1.5">
+      <td className="px-2 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+        <div className="flex items-center gap-1">
           <span>{lead.customer_mobile}</span>
-          <div className="flex items-center gap-1 opacity-100">
-            <a href={getWhatsAppLink(lead.customer_mobile, lead.customer_name)} target="_blank" rel="noreferrer" className="text-emerald-600 hover:text-emerald-500"><MessageCircle className="w-3.5 h-3.5" /></a>
-            <a href={`tel:${lead.customer_mobile}`} className="text-primary-600 hover:text-primary-500"><Phone className="w-3.5 h-3.5" /></a>
+          <div className="flex items-center gap-0.5 opacity-100">
+            <a href={getWhatsAppLink(lead.customer_mobile, lead.customer_name)} target="_blank" rel="noreferrer" className="text-emerald-600 hover:text-emerald-500"><MessageCircle className="w-3 h-3" /></a>
+            <a href={`tel:${lead.customer_mobile}`} className="text-primary-600 hover:text-primary-500"><Phone className="w-3 h-3" /></a>
           </div>
         </div>
       </td>
 
-      <td className="px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]" title={lead.vehicle_make_model}>
+      <td className="px-2 py-1.5 text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[140px]" title={lead.vehicle_make_model}>
         {lead.vehicle_make_model || '—'}
       </td>
 
-      <td className="px-3 py-2 text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
+      <td className="px-2 py-1.5 text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase">
         {lead.registration_number || '—'}
       </td>
 
-      <td className="px-3 py-2 font-mono text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums text-right">
+      <td className="px-2 py-1.5 font-mono text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums text-right">
         ₹{(lead.loan_amount || 0).toLocaleString('en-IN')}
       </td>
 
-      <td className="px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+      <td className="px-2 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[130px]">
         {lead.financer_name || '—'}
       </td>
 
-      <td className="px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+      <td className="px-2 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[130px]">
         {lead.executive_name || '—'}
       </td>
 
-      <td className="px-3 py-2 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+      <td className="px-2 py-1.5 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
         {lead.loan_type ? (lead.loan_type === 'new_loan' ? 'New Loan' : (lead.loan_type === 'used_loan' ? 'Used Loan' : lead.loan_type)) : '—'}
       </td>
 
-      <td className="px-3 py-2 whitespace-nowrap text-xs">
+      <td className="px-2 py-1.5 whitespace-nowrap text-xs">
         {lead.channel_name || lead.channel_executive_name ? (
-          <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.channel_name || lead.channel_executive_name || undefined}>{lead.channel_name || lead.channel_executive_name}</div>
+          <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[120px]" title={lead.channel_name || lead.channel_executive_name || undefined}>{lead.channel_name || lead.channel_executive_name}</div>
         ) : <span className="text-slate-400">—</span>}
       </td>
 
-      <td className="px-3 py-2 whitespace-nowrap text-xs">
+      <td className="px-2 py-1.5 whitespace-nowrap text-xs">
         {lead.dealer_name || lead.agent_name ? (
-          <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[130px]" title={lead.dealer_name || lead.agent_name || undefined}>{lead.dealer_name || lead.agent_name}</div>
+          <div className="font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[120px]" title={lead.dealer_name || lead.agent_name || undefined}>{lead.dealer_name || lead.agent_name}</div>
         ) : <span className="text-slate-400">—</span>}
       </td>
 
-      <td className="px-3 py-2">
+      <td className="px-2 py-1.5">
         <span className={clsx(
-          "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide",
+          "inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.2 rounded uppercase tracking-wide",
           STATUS_CONFIG[lead.status]?.bg, STATUS_CONFIG[lead.status]?.text
         )}>
           <span className={clsx('w-1.5 h-1.5 rounded-full', STATUS_CONFIG[lead.status]?.dot || 'bg-slate-400')} />
@@ -257,8 +257,13 @@ export default function Leads() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      const { success_count, failed_count, errors } = res.data;
-      let msg = `Import Complete!\n\nSuccessfully imported: ${success_count}\nFailed: ${failed_count}`;
+      const { success_count, updated_count, failed_count, errors } = res.data;
+      const createdCount = success_count - (updated_count || 0);
+      let msg = `Import Complete!\n\nSuccessfully processed: ${success_count}`;
+      if (updated_count && updated_count > 0) {
+        msg += ` (${createdCount} new, ${updated_count} updated)`;
+      }
+      msg += `\nFailed: ${failed_count}`;
       if (failed_count > 0 && errors && errors.length > 0) {
         msg += `\n\nErrors:\n${errors.slice(0, 5).join('\n')}`;
         if (errors.length > 5) msg += `\n...and ${errors.length - 5} more.`;
@@ -276,6 +281,33 @@ export default function Leads() {
         fileInputRef.current.value = '';
       }
     }
+  };
+
+  const downloadSampleTemplate = () => {
+    const headers = [
+      "Date", "Customer Name", "Mobile", "Address",
+      "Make & Model", "Reg No", "Req. Loan Amount", "Lead Type",
+      "Insurance Company", "Insurance Policy No", "Insurance Expiry Date", "Status"
+    ];
+    const sampleRow = [
+      new Date().toISOString().slice(0, 10),
+      "Ramesh Sharma",
+      "9876543210",
+      "Jaipur, Rajasthan",
+      "Maruti Swift VXi",
+      "RJ14CD1234",
+      "450000",
+      "New Loan",
+      "HDFC ERGO",
+      "POL12345678",
+      "2026-12-31",
+      "New"
+    ];
+    const csv = "data:text/csv;charset=utf-8," + [headers.join(","), sampleRow.join(",")].join("\n");
+    const a = document.createElement("a");
+    a.setAttribute("href", encodeURI(csv));
+    a.setAttribute("download", `Lead_Import_Template.csv`);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
   };
 
 
@@ -566,20 +598,20 @@ export default function Leads() {
   ];
 
   return (
-    <div className="space-y-4 select-none">
+    <div className="space-y-2.5 select-none">
 
       {/* ── Page Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">{getPageTitle()}</h1>
+            <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">{getPageTitle()}</h1>
             {hasActiveFilters && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-100 text-primary-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.2 bg-primary-100 text-primary-700 text-[9px] font-bold rounded-full uppercase tracking-wider">
                 <Filter className="w-2.5 h-2.5" /> Filtered
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-[11px] text-slate-400 mt-0.5">
             {loading ? 'Loading…' : (
               <>
                 <span className="font-semibold text-slate-600">{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}
@@ -591,17 +623,20 @@ export default function Leads() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5 flex-wrap">
           {isAdminOrManager && (
             <>
-              <Button variant="secondary" onClick={exportToCSV} disabled={!leads.length}>
-                <Download className="w-3.5 h-3.5" /> Export CSV
+              <Button variant="secondary" onClick={exportToCSV} disabled={!leads.length} className="h-8 text-xs px-2.5">
+                <Download className="w-3 h-3" /> Export CSV
               </Button>
               
-              <div className="flex items-center gap-2">
-                <Button variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isImporting}>
-                  {isImporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />} 
+              <div className="flex items-center gap-1.5">
+                <Button variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isImporting} className="h-8 text-xs px-2.5">
+                  {isImporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />} 
                   {isImporting ? 'Importing...' : 'Import CSV'}
+                </Button>
+                <Button variant="secondary" onClick={downloadSampleTemplate} title="Download sample import template with Date column" className="h-8 text-xs px-2.5 text-slate-600 dark:text-slate-300">
+                  <FileSpreadsheet className="w-3 h-3" /> Template
                 </Button>
                 <input 
                   type="file" 
@@ -614,21 +649,21 @@ export default function Leads() {
             </>
           )}
 
-          <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-            <Plus className="w-3.5 h-3.5" /> New Lead
+          <Button variant="primary" onClick={() => setIsModalOpen(true)} className="h-8 text-xs px-2.5">
+            <Plus className="w-3 h-3" /> New Lead
           </Button>
         </div>
       </div>
 
       {/* ── Status KPI Strip ─────────────────────────────────────────── */}
       {!loading && leads.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {STATUS_KEYS.map(key => (
             <KpiBadge key={key} statusKey={key} count={statusCounts[key] || 0} active={filterStatus === key}
               onClick={() => { setFilterStatus(key); setFilterAssigned(''); setSearchParams({ status: key }); }} />
           ))}
           {hasActiveFilters && (
-            <Button variant="ghost" onClick={clearFilters} className="text-rose-500 border-rose-200 hover:bg-rose-50">
+            <Button variant="ghost" onClick={clearFilters} className="text-rose-500 border-rose-200 hover:bg-rose-50 h-7 text-xs px-2">
               <X className="w-3 h-3" /> Clear
             </Button>
           )}
@@ -636,10 +671,10 @@ export default function Leads() {
       )}
 
       {/* ── Filter Bar ───────────────────────────────────────────────── */}
-      <Card className="overflow-hidden sticky top-14 z-30 mb-4 p-0">
+      <Card className="overflow-hidden sticky top-10 z-30 mb-2 p-0">
         <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-emerald-500" />
         {/* Tab row */}
-        <div className="flex items-center overflow-x-auto border-b border-slate-100 dark:border-slate-800 px-3 py-1.5 bg-slate-50/50 dark:bg-slate-900/20">
+        <div className="flex items-center overflow-x-auto border-b border-slate-100 dark:border-slate-800 px-2 py-1 bg-slate-50/50 dark:bg-slate-900/20">
           {QUICK_TABS.map(tab => {
             const isActive = tab.status
               ? filterStatus === tab.status && !filterAssigned
@@ -649,7 +684,7 @@ export default function Leads() {
           <div className="flex-1" />
           <button onClick={() => setShowFilters(!showFilters)}
             className={clsx(
-              'flex items-center gap-1.5 px-2 py-1 mx-2 rounded-md text-xs font-medium transition-colors cursor-pointer',
+              'flex items-center gap-1 px-2 py-0.5 mx-1 rounded text-xs font-medium transition-colors cursor-pointer',
               hasActiveFilters ? 'bg-primary-50 text-primary-700 border border-primary-200' : 'text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800'
             )}>
             <Filter className="w-3 h-3" />
@@ -659,20 +694,20 @@ export default function Leads() {
         </div>
 
         {/* Search + Filters */}
-        <div className="p-3">
+        <div className="p-2">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
             <input
               type="text"
               id="leads-search"
               placeholder="Search by name, mobile, lead ID, vehicle…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#111622] outline-none focus:border-primary-400 dark:focus:border-primary-500 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-500/20 focus:bg-white dark:focus:bg-[#162230] transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="w-full pl-8 pr-8 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#111622] outline-none focus:border-primary-400 dark:focus:border-primary-500 focus:ring-1 focus:ring-primary-100 dark:focus:ring-primary-500/20 focus:bg-white dark:focus:bg-[#162230] transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer">
-                <X className="w-3.5 h-3.5" />
+              <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer">
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -769,31 +804,31 @@ export default function Leads() {
         ) : (
           <div className="overflow-auto relative custom-scrollbar max-h-[600px]">
             <table className="w-full text-xs text-left border-collapse table-fixed min-w-[1150px]">
-              <thead className="sticky top-0 z-30 shadow-sm">
+              <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 dark:bg-[#192736] border-b border-slate-200 dark:border-slate-800">
-                  <th className="sticky left-0 bg-slate-50 dark:bg-[#192736] z-40 px-2 py-3 border-r border-slate-200/80 dark:border-slate-800 text-center w-12">
+                  <th className="sticky left-0 bg-slate-50 dark:bg-[#192736] z-40 px-1.5 py-1.5 border-r border-slate-200/80 dark:border-slate-800 text-center w-9">
                     <input
                       type="checkbox"
                       checked={leads.length > 0 && selectedLeadIds.length === leads.length}
                       onChange={handleSelectAll}
-                      className="rounded border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500/20 w-4 h-4 cursor-pointer"
+                      className="rounded border-slate-300 dark:border-slate-700 text-primary-600 focus:ring-primary-500/20 w-3.5 h-3.5 cursor-pointer"
                     />
                   </th>
-                  <th className="sticky left-12 bg-slate-50 dark:bg-[#192736] z-40 px-3 py-3 border-r border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead ID</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Date</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">Customer Name</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-40">Address</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Mobile</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">Make & Model</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Reg No</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-28">Loan Amount</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Financer</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Executive</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead Type</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Channel</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Dealer</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Status</th>
-                  <th className="px-3 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-24">Actions</th>
+                  <th className="sticky left-9 bg-slate-50 dark:bg-[#192736] z-40 px-2 py-1.5 border-r border-slate-200/80 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Lead ID</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-20">Date</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">Customer Name</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-36">Address</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Mobile</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-32">Make & Model</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Reg No</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-24">Loan Amount</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Financer</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Executive</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-20">Lead Type</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Channel</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-28">Dealer</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap w-24">Status</th>
+                  <th className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap text-right w-20">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -811,14 +846,14 @@ export default function Leads() {
                 ))}
               </tbody>
             </table>
-            <div className="px-5 py-3.5 bg-slate-50/60 dark:bg-slate-900/20 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <div className="px-3 py-1.5 bg-slate-50/60 dark:bg-slate-900/20 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                 Showing <span className="font-bold text-slate-800 dark:text-white">{leads.length}</span> lead{leads.length !== 1 ? 's' : ''}
-                {totalLoanValue > 0 && <> · Portfolio Value: <span className="font-mono font-black text-emerald-600 dark:text-emerald-400">₹{(totalLoanValue / 100000).toFixed(2)} Lakhs</span></>}
+                {totalLoanValue > 0 && <> · Portfolio: <span className="font-mono font-black text-emerald-600 dark:text-emerald-400">₹{(totalLoanValue / 100000).toFixed(2)}L</span></>}
               </p>
               {isAdminOrManager && leads.length > 0 && (
-                <button onClick={exportToCSV} className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-colors cursor-pointer">
-                  <Download className="w-3.5 h-3.5" /> Download Comprehensive CSV
+                <button onClick={exportToCSV} className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:text-primary-600 transition-colors cursor-pointer">
+                  <Download className="w-3 h-3" /> Download CSV
                 </button>
               )}
             </div>

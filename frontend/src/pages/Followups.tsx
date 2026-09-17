@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PhoneCall, Calendar, ChevronRight, MessageSquareDashed } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
@@ -45,12 +45,15 @@ export default function Followups() {
   }, []);
 
   return (
-    <div className="space-y-4 select-none">
+    <div className="space-y-2.5 select-none">
       
       {/* ── Header ── */}
       <div>
-        <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tight">
-          <PhoneCall className="text-primary-500 w-5 h-5"/> Follow-up Status Register
+        <h1 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tight">
+          <div className="w-7 h-7 rounded-lg bg-primary-500/15 flex items-center justify-center">
+            <PhoneCall className="text-primary-600 dark:text-primary-400 w-4 h-4"/>
+          </div>
+          Follow-up Status Register
         </h1>
         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
           Overview of the last recorded follow-up remarks and next action dates across all active leads.
@@ -63,22 +66,22 @@ export default function Followups() {
         <div className="h-0.5 bg-gradient-to-r from-primary-500 via-primary-400 to-teal-400" />
         
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left whitespace-nowrap">
+          <table className="w-full text-xs text-left whitespace-nowrap">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold uppercase tracking-wider text-slate-450 dark:text-slate-500">
-                <th className="px-4 py-3">Follow-up Date</th>
-                <th className="px-4 py-3">Lead ID</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Remarks</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-2 py-1.5 font-medium">Follow-up Date</th>
+                <th className="px-2 py-1.5 font-medium">Lead ID</th>
+                <th className="px-2 py-1.5 font-medium">Customer</th>
+                <th className="px-2 py-1.5 font-medium">Status</th>
+                <th className="px-2 py-1.5 font-medium">Remarks</th>
+                <th className="px-2 py-1.5 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center">
-                    <div className="relative w-8 h-8 mx-auto">
+                  <td colSpan={6} className="py-8 text-center">
+                    <div className="relative w-6 h-6 mx-auto">
                       <div className="absolute inset-0 rounded-full border-2 border-primary-100 dark:border-primary-500/20" />
                       <div className="absolute inset-0 rounded-full border-2 border-t-primary-600 animate-spin" />
                     </div>
@@ -86,8 +89,8 @@ export default function Followups() {
                 </tr>
               ) : followups.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-16 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2.5">
-                    <MessageSquareDashed className="w-10 h-10 text-slate-200 dark:text-slate-700" />
+                  <td colSpan={6} className="py-10 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
+                    <MessageSquareDashed className="w-8 h-8 text-slate-200 dark:text-slate-700" />
                     <span className="italic">No follow-ups recorded yet.</span>
                   </td>
                 </tr>
@@ -106,28 +109,28 @@ export default function Followups() {
                         i % 2 === 1 ? 'bg-slate-50/30 dark:bg-slate-800/5' : ''
                       )}
                     >
-                      <td className="px-4 py-3 font-mono text-xs text-slate-400">
+                      <td className="px-2 py-1.5 font-mono text-xs text-slate-400">
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
                           {f.followup_date || f.next_followup_date || '—'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs font-bold text-primary-650 dark:text-primary-400">
+                      <td className="px-2 py-1.5 font-mono text-xs font-bold text-primary-650 dark:text-primary-400">
                         {f.lead_id}
                       </td>
-                      <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white text-[13px]">
+                      <td className="px-2 py-1.5 font-semibold text-slate-800 dark:text-white text-xs">
                         {f.customer_name}
                       </td>
-                      <td className="px-4 py-3">
-                        <span className={clsx('inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold border capitalize', sbClass || 'sb-default')}>
-                          <span className={clsx('w-1.5 h-1.5 rounded-full', dot)} />
+                      <td className="px-2 py-1.5">
+                        <span className={clsx('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border capitalize', sbClass || 'sb-default')}>
+                          <span className={clsx('w-1 h-1 rounded-full', dot)} />
                           {label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-xs truncate italic">
+                      <td className="px-2 py-1.5 text-xs text-slate-500 dark:text-slate-400 max-w-xs truncate italic">
                         "{f.remarks || '—'}"
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right">
                         <button 
                           onClick={() => navigate(`/leads/${f.lead_real_id}`)} 
                           className="inline-flex items-center gap-0.5 text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"

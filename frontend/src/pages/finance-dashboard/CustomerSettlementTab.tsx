@@ -109,88 +109,88 @@ export default function CustomerSettlementTab() {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-2.5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <Settings2 className="w-5 h-5 text-indigo-500" /> Settlement
+          <h2 className="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+            <Settings2 className="w-4 h-4 text-indigo-500" /> Settlement
           </h2>
-          <p className="text-sm text-slate-500">Calculate and process final loan settlements for clients</p>
+          <p className="text-xs text-slate-500">Calculate and process final loan settlements for clients</p>
         </div>
-        <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative w-full sm:w-64">
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search clients..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500"
+            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary-500"
           />
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm whitespace-nowrap">
+          <table className="w-full text-left text-xs whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400">
               <tr>
-                <th className="px-6 py-4 font-semibold">Client Name & Lead</th>
-                <th className="px-6 py-4 font-semibold text-right">Gross Received</th>
-                <th className="px-6 py-4 font-semibold text-right">Total Deductions</th>
-                <th className="px-6 py-4 font-semibold text-right">Client Commission</th>
-                <th className="px-6 py-4 font-semibold text-right">Net Payable</th>
-                <th className="px-6 py-4 font-semibold">Status</th>
-                <th className="px-6 py-4 font-semibold text-right">Action</th>
+                <th className="px-2.5 py-1.5 font-semibold">Client Name & Lead</th>
+                <th className="px-2.5 py-1.5 font-semibold text-right">Gross Received</th>
+                <th className="px-2.5 py-1.5 font-semibold text-right">Total Deductions</th>
+                <th className="px-2.5 py-1.5 font-semibold text-right">Client Commission</th>
+                <th className="px-2.5 py-1.5 font-semibold text-right">Net Payable</th>
+                <th className="px-2.5 py-1.5 font-semibold">Status</th>
+                <th className="px-2.5 py-1.5 font-semibold text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                  <td colSpan={7} className="px-3 py-8 text-center text-slate-500">
+                    <Loader2 className="w-5 h-5 animate-spin mx-auto mb-1.5 text-indigo-500" />
                     Loading settlements...
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">No disbursed leads found.</td>
+                  <td colSpan={7} className="px-3 py-8 text-center text-slate-500">No disbursed leads found.</td>
                 </tr>
               ) : (
                 filtered.map((s) => (
                   <tr key={s.lead_id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                    <td className="px-6 py-4">
+                    <td className="px-2.5 py-1.5">
                       <div className="font-bold text-slate-900 dark:text-white">{s.customer_name}</div>
-                      <div className="text-xs text-slate-500 font-mono mt-0.5">{s.lead_code}</div>
+                      <div className="text-[10px] text-slate-500 font-mono">{s.lead_code}</div>
                     </td>
-                    <td className="px-6 py-4 text-right font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                    <td className="px-2.5 py-1.5 text-right font-mono font-medium text-emerald-600 dark:text-emerald-400">
                       ₹{s.loan_amount_received.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono text-rose-600 dark:text-rose-400">
+                    <td className="px-2.5 py-1.5 text-right font-mono text-rose-600 dark:text-rose-400">
                       ₹{s.total_deduction.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono text-indigo-600 dark:text-indigo-400">
+                    <td className="px-2.5 py-1.5 text-right font-mono text-indigo-600 dark:text-indigo-400">
                       ₹{s.client_comm_amount.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono font-bold text-primary-600 dark:text-primary-400">
+                    <td className="px-2.5 py-1.5 text-right font-mono font-bold text-primary-600 dark:text-primary-400">
                       ₹{s.net_payable.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
+                    <td className="px-2.5 py-1.5">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         s.status === 'Paid' 
                           ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' 
                           : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
                       }`}>
-                        {s.status === 'Paid' ? <CheckCircle className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                        {s.status === 'Paid' ? <CheckCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
                         {s.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-2.5 py-1.5 text-right">
                       <button
                         onClick={() => setEditing({ ...s, payment_date: s.payment_date || new Date().toISOString().split('T')[0] })}
-                        className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded-lg transition-colors"
+                        className="p-1 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded transition-colors"
                         title="Edit Settlement"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>
@@ -202,38 +202,38 @@ export default function CustomerSettlementTab() {
       </div>
 
       {editing && (
-        <Modal isOpen={true} onClose={() => setEditing(null)} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-4xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[95vh] flex flex-col">
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-              <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                <Calculator className="w-4.5 h-4.5 text-primary-500" /> Client Settlement: {editing.customer_name}
+        <Modal isOpen={true} onClose={() => setEditing(null)} zClassName="z-[9999]" className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-4xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-[95vh] flex flex-col">
+            <div className="p-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+              <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-sm sm:text-base">
+                <Calculator className="w-4 h-4 text-primary-500" /> Client Settlement: {editing.customer_name}
               </h3>
               <button onClick={() => setEditing(null)} className="text-slate-400 hover:text-slate-600 p-1">
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
             
-            <form onSubmit={handleSave} className="p-6 overflow-y-auto space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                  <div className="text-xs font-semibold text-slate-500 uppercase">Gross Loan Amount Received</div>
-                  <div className="text-2xl font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            <form onSubmit={handleSave} className="p-3 sm:p-4 overflow-y-auto space-y-3">
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                  <div className="text-[10px] font-semibold text-slate-500 uppercase">Gross Loan Amount Received</div>
+                  <div className="text-lg sm:text-xl font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
                     ₹{editing.loan_amount_received.toLocaleString()}
                   </div>
                 </div>
-                <div className="bg-primary-50 dark:bg-primary-500/10 p-4 rounded-xl border border-primary-100 dark:border-primary-500/20">
-                  <div className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase">Net Amount Payable</div>
-                  <div className="text-2xl font-mono font-bold text-primary-700 dark:text-primary-300 mt-1">
+                <div className="bg-primary-50 dark:bg-primary-500/10 p-2.5 rounded-lg border border-primary-100 dark:border-primary-500/20">
+                  <div className="text-[10px] font-semibold text-primary-600 dark:text-primary-400 uppercase">Net Amount Payable</div>
+                  <div className="text-lg sm:text-xl font-mono font-bold text-primary-700 dark:text-primary-300 mt-0.5">
                     ₹{editing.net_payable.toLocaleString()}
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Itemized Deductions</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 border-b border-slate-200 dark:border-slate-700 pb-1">Itemized Deductions</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                   {/* Insurance */}
-                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div className="flex justify-between items-center mb-1.5">
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Insurance Amount</label>
                         <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">
                             ₹{(editing.insurance_charge + (editing.insurance_charge * editing.insurance_gst / 100)).toLocaleString()}
@@ -241,19 +241,19 @@ export default function CustomerSettlementTab() {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <span className="text-[10px] text-slate-500 block mb-1">Base Amount (₹)</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.insurance_charge} onChange={(e) => handleDeductionChange('insurance_charge', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm" />
+                            <span className="text-[10px] text-slate-500 block mb-0.5">Base Amount (₹)</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.insurance_charge} onChange={(e) => handleDeductionChange('insurance_charge', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-xs" />
                         </div>
                         <div>
-                            <span className="text-[10px] text-slate-500 block mb-1">Applicable GST (%)</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.insurance_gst} onChange={(e) => handleDeductionChange('insurance_gst', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm" />
+                            <span className="text-[10px] text-slate-500 block mb-0.5">Applicable GST (%)</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.insurance_gst} onChange={(e) => handleDeductionChange('insurance_gst', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-xs" />
                         </div>
                     </div>
                   </div>
 
                   {/* RTO */}
-                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div className="flex justify-between items-center mb-1.5">
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300">RTO Amount</label>
                         <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">
                             ₹{(editing.rto_charge + (editing.rto_charge * editing.rto_gst / 100)).toLocaleString()}
@@ -261,36 +261,36 @@ export default function CustomerSettlementTab() {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <span className="text-[10px] text-slate-500 block mb-1">Base Amount (₹)</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.rto_charge} onChange={(e) => handleDeductionChange('rto_charge', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm" />
+                            <span className="text-[10px] text-slate-500 block mb-0.5">Base Amount (₹)</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.rto_charge} onChange={(e) => handleDeductionChange('rto_charge', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-xs" />
                         </div>
                         <div>
-                            <span className="text-[10px] text-slate-500 block mb-1">Applicable GST (%)</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.rto_gst} onChange={(e) => handleDeductionChange('rto_gst', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm" />
+                            <span className="text-[10px] text-slate-500 block mb-0.5">Applicable GST (%)</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.rto_gst} onChange={(e) => handleDeductionChange('rto_gst', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-xs" />
                         </div>
                     </div>
                   </div>
 
                   {/* Vehicle RC & Others */}
-                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div className="flex justify-between items-center mb-1.5">
                         <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Vehicle RC & Other</label>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <span className="text-[10px] text-slate-500 block mb-1">RC Amount (₹)</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.rc_charge} onChange={(e) => handleDeductionChange('rc_charge', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm" />
+                            <span className="text-[10px] text-slate-500 block mb-0.5">RC Amount (₹)</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.rc_charge} onChange={(e) => handleDeductionChange('rc_charge', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-xs" />
                         </div>
                         <div>
-                            <span className="text-[10px] text-slate-500 block mb-1">Other Charges (₹)</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.other_charges} onChange={(e) => handleDeductionChange('other_charges', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm" />
+                            <span className="text-[10px] text-slate-500 block mb-0.5">Other Charges (₹)</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.other_charges} onChange={(e) => handleDeductionChange('other_charges', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-xs" />
                         </div>
                     </div>
                   </div>
 
                   {/* Client Commission */}
-                  <div className="bg-indigo-50 dark:bg-indigo-900/10 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800/50">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-indigo-50 dark:bg-indigo-900/10 p-2.5 rounded-lg border border-indigo-200 dark:border-indigo-800/50">
+                    <div className="flex justify-between items-center mb-1.5">
                         <label className="text-xs font-bold text-indigo-700 dark:text-indigo-300">Client Commission (Retained)</label>
                         <span className="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-400">
                             ₹{editing.client_comm_amount.toLocaleString()}
@@ -298,15 +298,15 @@ export default function CustomerSettlementTab() {
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                         <div>
-                            <span className="text-[10px] text-indigo-600 block mb-1">Type</span>
-                            <select disabled={editing.status === 'Paid'} value={editing.client_comm_type} onChange={(e) => handleDeductionChange('client_comm_type', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded text-sm">
+                            <span className="text-[10px] text-indigo-600 block mb-0.5">Type</span>
+                            <select disabled={editing.status === 'Paid'} value={editing.client_comm_type} onChange={(e) => handleDeductionChange('client_comm_type', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded text-xs">
                                 <option value="Percentage">Percentage (%)</option>
                                 <option value="Fixed">Fixed Amount (₹)</option>
                             </select>
                         </div>
                         <div>
-                            <span className="text-[10px] text-indigo-600 block mb-1">Value</span>
-                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.client_comm_value} onChange={(e) => handleDeductionChange('client_comm_value', e.target.value)} className="w-full px-2 py-1.5 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded text-sm" />
+                            <span className="text-[10px] text-indigo-600 block mb-0.5">Value</span>
+                            <input type="number" min="0" step="0.01" disabled={editing.status === 'Paid'} required value={editing.client_comm_value} onChange={(e) => handleDeductionChange('client_comm_value', e.target.value)} className="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-800 rounded text-xs" />
                         </div>
                     </div>
                   </div>
@@ -314,11 +314,11 @@ export default function CustomerSettlementTab() {
               </div>
 
               <div>
-                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">Final Payment Status</h4>
-                <div className="grid grid-cols-2 gap-4">
+                <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 border-b border-slate-200 dark:border-slate-700 pb-1">Final Payment Status</h4>
+                <div className="grid grid-cols-2 gap-2.5">
                   <div>
                     <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Status</label>
-                    <select value={editing.status} disabled={editing.status === 'Paid' && false} onChange={(e) => setEditing({...editing, status: e.target.value as any})} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                    <select value={editing.status} disabled={editing.status === 'Paid' && false} onChange={(e) => setEditing({...editing, status: e.target.value as any})} className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs">
                       <option value="Pending">Pending</option>
                       <option value="Paid">Paid</option>
                     </select>
@@ -327,21 +327,21 @@ export default function CustomerSettlementTab() {
                     <>
                       <div>
                         <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Payment Date</label>
-                        <input type="date" required value={editing.payment_date || ''} onChange={(e) => setEditing({...editing, payment_date: e.target.value})} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" />
+                        <input type="date" required value={editing.payment_date || ''} onChange={(e) => setEditing({...editing, payment_date: e.target.value})} className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs" />
                       </div>
                       <div className="col-span-2">
                         <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Remarks / Reference</label>
-                        <input type="text" value={editing.remarks || ''} onChange={(e) => setEditing({...editing, remarks: e.target.value})} placeholder="UTR or notes..." className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm" />
+                        <input type="text" value={editing.remarks || ''} onChange={(e) => setEditing({...editing, remarks: e.target.value})} placeholder="UTR or notes..." className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs" />
                       </div>
                     </>
                   )}
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors">Cancel</button>
-                <button type="submit" disabled={saving} className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors shadow-lg shadow-primary-500/30">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors">Cancel</button>
+                <button type="submit" disabled={saving} className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors shadow-xs">
+                  {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                   Save Client Settlement
                 </button>
               </div>

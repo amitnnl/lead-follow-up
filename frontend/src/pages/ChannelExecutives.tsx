@@ -43,69 +43,69 @@ function AgentModal({
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} zClassName="z-[9999]" className="relative w-full max-w-3xl max-h-[96vh] my-auto bg-white dark:bg-[#0F1420] rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-500">
-              <UsersRound className="w-5 h-5" />
+    <Modal isOpen={isOpen} onClose={onClose} zClassName="z-[9999]" className="relative w-full max-w-2xl max-h-[96vh] my-auto bg-white dark:bg-[#0F1420] rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/90 dark:bg-slate-900/80 shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 flex items-center justify-center text-primary-500">
+              <UsersRound className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-800 dark:text-white">
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white">
                 {editingExec ? 'Edit Channels Agent Profile' : 'Add Channels Partner'}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Configure channel partner details, bank payout KYC & portal access</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Configure channel partner details, bank payout KYC & portal access</p>
             </div>
           </div>
-          <button onClick={onClose} type="button" className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} type="button" className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="p-6 space-y-5 overflow-y-auto flex-1">
+          <div className="p-3 sm:p-4 space-y-3 overflow-y-auto flex-1">
             {/* Basic Info Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Agent Full Name *</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Agent Full Name *</label>
                 <input 
                   required 
                   type="text" 
                   value={formData.name} 
                   onChange={e => setFormData({...formData, name: e.target.value})} 
-                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-medium" 
+                  className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-medium" 
                   placeholder="e.g. Rahul Sharma" 
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mobile Number *</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Mobile Number *</label>
                 <input 
                   required 
                   type="text" 
                   value={formData.mobile} 
                   onChange={e => setFormData({...formData, mobile: e.target.value})} 
-                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" 
+                  className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" 
                   placeholder="10 digits" 
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
                 <input 
                   type="email" 
                   value={formData.email} 
                   onChange={e => setFormData({...formData, email: e.target.value})} 
-                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" 
+                  className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" 
                   placeholder="agent@example.com" 
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Status</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
                 <select 
                   value={formData.is_active} 
                   onChange={e => setFormData({...formData, is_active: parseInt(e.target.value)})} 
-                  className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-semibold"
+                  className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-semibold"
                 >
                   <option value={1}>Active</option>
                   <option value={0}>Inactive</option>
@@ -114,20 +114,20 @@ function AgentModal({
             </div>
 
             {/* Portal Login Access Card */}
-            <div className="p-4 rounded-xl bg-primary-50/70 dark:bg-primary-950/20 border border-primary-200/80 dark:border-primary-800/40 space-y-3.5 transition-all">
+            <div className="p-2.5 rounded-lg bg-primary-50/70 dark:bg-primary-950/20 border border-primary-200/80 dark:border-primary-800/40 space-y-2 transition-all">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400">
-                    <ShieldCheck className="w-5 h-5" />
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400">
+                    <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
                       Portal Login Access
                       {formData.enable_portal_access && (
-                        <span className="text-[10px] bg-emerald-500 text-white font-semibold px-1.5 py-0.5 rounded uppercase">Active</span>
+                        <span className="text-[9px] bg-emerald-500 text-white font-semibold px-1.5 py-0.5 rounded uppercase">Active</span>
                       )}
                     </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Allow this agent to log in and submit/track their own leads</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Allow this agent to log in and submit/track their own leads</p>
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -137,15 +137,15 @@ function AgentModal({
                     onChange={e => setFormData({...formData, enable_portal_access: e.target.checked})} 
                     className="sr-only peer" 
                   />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary-600"></div>
+                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-primary-600"></div>
                 </label>
               </div>
 
               {formData.enable_portal_access && (
-                <div className="pt-3 border-t border-primary-200/50 dark:border-primary-800/40 space-y-3">
+                <div className="pt-2 border-t border-primary-200/50 dark:border-primary-800/40 space-y-2">
                   <div>
-                    <div className="flex justify-between items-center mb-1.5">
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="block text-[10px] font-bold text-slate-700 dark:text-slate-300">
                         {editingExec && (editingExec.user_id || editingExec.user_email) ? 'Reset Portal Password (optional)' : 'Set Portal Password *'}
                       </label>
                       <button 
@@ -154,7 +154,7 @@ function AgentModal({
                           const randomPwd = 'Agent@' + Math.floor(1000 + Math.random() * 9000);
                           setFormData({...formData, portal_password: randomPwd});
                         }} 
-                        className="text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1"
+                        className="text-[10px] font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-1"
                       >
                         <span>Auto-Generate</span>
                       </button>
@@ -163,11 +163,11 @@ function AgentModal({
                       type="text" 
                       value={formData.portal_password} 
                       onChange={e => setFormData({...formData, portal_password: e.target.value})} 
-                      className="w-full h-[42px] px-3 bg-white dark:bg-slate-900 border border-primary-200 dark:border-primary-800/60 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono text-sm shadow-sm" 
+                      className="w-full h-[34px] px-2.5 text-xs bg-white dark:bg-slate-900 border border-primary-200 dark:border-primary-800/60 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono text-xs shadow-sm" 
                       placeholder={editingExec && (editingExec.user_id || editingExec.user_email) ? "Leave blank to keep current password" : "Enter secure password (e.g. Agent@1234)"} 
                     />
                   </div>
-                  <div className="text-[11px] text-primary-700 dark:text-primary-300 bg-white/60 dark:bg-slate-900/40 p-2.5 rounded-lg border border-primary-100 dark:border-primary-800/30 flex items-center gap-1.5">
+                  <div className="text-[10px] text-primary-700 dark:text-primary-300 bg-white/60 dark:bg-slate-900/40 p-2 rounded-lg border border-primary-100 dark:border-primary-800/30 flex items-center gap-1.5">
                     <span>ℹ️</span>
                     <span>Agent will log into the portal using <strong>{formData.email || 'their email address'}</strong> and this password.</span>
                   </div>
@@ -176,36 +176,36 @@ function AgentModal({
             </div>
 
             {/* Bank & Tax Details Section */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-              <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wider flex items-center gap-1.5">
-                <CreditCard className="w-4 h-4 text-primary-500" /> Payout Banking & KYC Details
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+              <h3 className="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                <CreditCard className="w-3.5 h-3.5 text-primary-500" /> Payout Banking & KYC Details
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bank Name</label>
-                  <input type="text" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Bank Name</label>
+                  <input type="text" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white" placeholder="e.g. HDFC Bank" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">PAN Number</label>
-                  <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value.toUpperCase()})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. ABCDE1234F" />
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">PAN Number</label>
+                  <input type="text" value={formData.pan_number} onChange={e => setFormData({...formData, pan_number: e.target.value.toUpperCase()})} className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. ABCDE1234F" />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Account Number</label>
-                  <input type="text" value={formData.bank_account} onChange={e => setFormData({...formData, bank_account: e.target.value})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" placeholder="Account Number" />
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Account Number</label>
+                  <input type="text" value={formData.bank_account} onChange={e => setFormData({...formData, bank_account: e.target.value})} className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white font-mono" placeholder="Account Number" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">IFSC Code</label>
-                  <input type="text" value={formData.ifsc_code} onChange={e => setFormData({...formData, ifsc_code: e.target.value.toUpperCase()})} className="w-full h-[42px] px-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. HDFC0001234" />
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">IFSC Code</label>
+                  <input type="text" value={formData.ifsc_code} onChange={e => setFormData({...formData, ifsc_code: e.target.value.toUpperCase()})} className="w-full h-[34px] px-2.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-800 dark:text-white uppercase font-mono" placeholder="e.g. HDFC0001234" />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2 shrink-0">
-            <button type="button" onClick={onClose} className="px-4 py-2.5 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200 dark:border-slate-700">Cancel</button>
-            <button type="submit" className="px-5 py-2.5 font-semibold text-sm bg-primary-600 text-white hover:bg-primary-700 rounded-lg shadow-sm transition-colors cursor-pointer">
+          <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2 shrink-0">
+            <button type="button" onClick={onClose} className="px-3.5 py-1.5 font-semibold text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200 dark:border-slate-700">Cancel</button>
+            <button type="submit" className="px-3.5 py-1.5 font-semibold text-xs bg-primary-600 text-white hover:bg-primary-700 rounded-lg shadow-sm transition-colors cursor-pointer">
               {editingExec ? 'Save Profile' : 'Add Channels'}
             </button>
           </div>
@@ -229,43 +229,43 @@ function AgentRow({
 }) {
   return (
     <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
-      <td className="px-4 py-3.5 align-top">
-        <div className="font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+      <td className="px-2 py-1.5 align-top">
+        <div className="font-semibold text-slate-800 dark:text-white text-xs flex items-center gap-2">
           {ex.name}
         </div>
-        <div className="text-[11px] text-slate-400 mt-0.5">Authorized Channels</div>
+        <div className="text-[10px] text-slate-400 mt-0.5">Authorized Channels</div>
       </td>
-      <td className="px-4 py-3.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
-        <div className="font-semibold text-slate-800 dark:text-slate-200">{ex.mobile}</div>
-        {ex.email && <div className="text-slate-400 font-sans mt-0.5">{ex.email}</div>}
+      <td className="px-2 py-1.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
+        <div className="font-semibold text-slate-800 dark:text-slate-200 text-xs">{ex.mobile}</div>
+        {ex.email && <div className="text-slate-400 font-sans text-[11px] mt-0.5">{ex.email}</div>}
       </td>
-      <td className="px-4 py-3.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
+      <td className="px-2 py-1.5 align-top text-xs font-mono text-slate-600 dark:text-slate-300">
         {ex.bank_account ? (
           <div>
-            <div className="font-sans font-medium text-slate-800 dark:text-slate-200">{ex.bank_name || 'Bank'}</div>
-            <div className="text-slate-500">{ex.bank_account} ({ex.ifsc_code})</div>
+            <div className="font-sans font-medium text-slate-800 dark:text-slate-200 text-xs">{ex.bank_name || 'Bank'}</div>
+            <div className="text-slate-500 text-[11px]">{ex.bank_account} ({ex.ifsc_code})</div>
             {ex.pan_number && <div className="text-[10px] text-slate-400 mt-0.5">PAN: {ex.pan_number}</div>}
           </div>
-        ) : <span className="text-slate-400 font-sans italic">Not configured</span>}
+        ) : <span className="text-slate-400 font-sans italic text-xs">Not configured</span>}
       </td>
-      <td className="px-4 py-3.5 align-top">
+      <td className="px-2 py-1.5 align-top">
         {ex.user_id ? (
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200/50 dark:border-emerald-800/30">
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded border border-emerald-200/50 dark:border-emerald-800/30">
             <CheckCircle2 className="w-3 h-3" /> Enabled
           </span>
         ) : <span className="text-slate-400 text-xs italic">Disabled</span>}
       </td>
-      <td className="px-4 py-3.5 align-top">
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border ${ex.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' : 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${ex.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
+      <td className="px-2 py-1.5 align-top">
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${ex.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' : 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
+          <span className={`w-1 h-1 rounded-full ${ex.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
           {ex.is_active ? 'Active' : 'Inactive'}
         </span>
       </td>
-      <td className="px-4 py-3.5 align-top text-right">
+      <td className="px-2 py-1.5 align-top text-right">
         {isAdminOrManager && (
           <div className="flex items-center justify-end gap-1">
-            <button onClick={() => onEdit(ex)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded-lg transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
-            <button onClick={() => onDelete(ex.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
+            <button onClick={() => onEdit(ex)} className="p-1 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/10 rounded transition-colors cursor-pointer" title="Edit"><Edit className="w-3.5 h-3.5" /></button>
+            <button onClick={() => onDelete(ex.id)} className="p-1 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded transition-colors cursor-pointer" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
           </div>
         )}
       </td>
@@ -371,92 +371,95 @@ export default function ChannelExecutives() {
   const bankConfigured = executives.filter(ex => ex.bank_account && ex.ifsc_code).length;
 
   return (
-    <div className="space-y-6 select-none">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-2.5 select-none">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
-            <UsersRound className="text-primary-500 w-6 h-6" /> Channels
+          <h1 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-primary-500/15 flex items-center justify-center">
+              <UsersRound className="text-primary-600 dark:text-primary-400 w-4 h-4" />
+            </div>
+            Channels
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Manage your sourcing channels & agents, capture payout bank accounts & KYC details, and enable DSA portal logins.
           </p>
         </div>
-        <button onClick={() => handleOpenModal()} className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer">
-          <Plus className="w-4 h-4" /> Add Channel / Agent
+        <button onClick={() => handleOpenModal()} className="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:shadow-md cursor-pointer">
+          <Plus className="w-3.5 h-3.5 stroke-[2.5]" /> Add Channel / Agent
         </button>
       </div>
 
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-[#111827] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <div className="bg-white dark:bg-[#111827] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Agents</p>
-            <p className="text-2xl font-extrabold text-slate-800 dark:text-white mt-1">{totalAgents}</p>
+            <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Agents</p>
+            <p className="text-xl font-extrabold text-slate-800 dark:text-white mt-0.5">{totalAgents}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center">
-            <UsersRound className="w-6 h-6" />
+          <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center">
+            <UsersRound className="w-4 h-4" />
           </div>
         </div>
-        <div className="bg-white dark:bg-[#111827] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-[#111827] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Status</p>
-            <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">{activeAgents}</p>
+            <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Status</p>
+            <p className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">{activeAgents}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <ShieldCheck className="w-6 h-6" />
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
-        <div className="bg-white dark:bg-[#111827] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-[#111827] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Portal Logins</p>
-            <p className="text-2xl font-extrabold text-primary-600 dark:text-primary-400 mt-1">{portalEnabled}</p>
+            <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Portal Logins</p>
+            <p className="text-xl font-extrabold text-primary-600 dark:text-primary-400 mt-0.5">{portalEnabled}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center">
-            <Lock className="w-6 h-6" />
+          <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center">
+            <Lock className="w-4 h-4" />
           </div>
         </div>
-        <div className="bg-white dark:bg-[#111827] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-[#111827] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bank Configured</p>
-            <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">{bankConfigured}</p>
+            <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bank Configured</p>
+            <p className="text-xl font-extrabold text-amber-600 dark:text-amber-400 mt-0.5">{bankConfigured}</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-            <CreditCard className="w-6 h-6" />
+          <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <CreditCard className="w-4 h-4" />
           </div>
         </div>
       </div>
 
       {/* Search Toolbar */}
-      <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex justify-between items-center gap-4">
+      <div className="card p-2 sm:p-2.5 flex justify-between items-center gap-2.5">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input 
             type="text" 
             placeholder="Search by agent name, mobile or email..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white transition-all"
+            className="w-full pl-8 pr-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-white transition-all"
           />
         </div>
       </div>
 
       {/* Main Content Area - Table View */}
-      <div className="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 text-xs uppercase tracking-wider">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase tracking-wider font-bold">
               <tr>
-                <th className="px-4 py-3 font-medium">Agent Name</th>
-                <th className="px-4 py-3 font-medium">Contact Details</th>
-                <th className="px-4 py-3 font-medium">Payout Bank & A/C</th>
-                <th className="px-4 py-3 font-medium">Portal Access</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium text-right">Actions</th>
+                <th className="px-2 py-1.5 font-medium">Agent Name</th>
+                <th className="px-2 py-1.5 font-medium">Contact Details</th>
+                <th className="px-2 py-1.5 font-medium">Payout Bank & A/C</th>
+                <th className="px-2 py-1.5 font-medium">Portal Access</th>
+                <th className="px-2 py-1.5 font-medium">Status</th>
+                <th className="px-2 py-1.5 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
-                <tr><td colSpan={6} className="py-8 text-center text-slate-400 text-sm">Loading agents...</td></tr>
+                <tr><td colSpan={6} className="py-8 text-center text-slate-400 text-xs">Loading agents...</td></tr>
               ) : filteredExecutives.map(ex => (
                 <AgentRow
                   key={ex.id}
@@ -467,7 +470,7 @@ export default function ChannelExecutives() {
                 />
               ))}
               {!loading && filteredExecutives.length === 0 && (
-                <tr><td colSpan={6} className="py-8 text-center text-slate-400 text-sm">No channels found. Add one above.</td></tr>
+                <tr><td colSpan={6} className="py-8 text-center text-slate-400 text-xs">No channels found. Add one above.</td></tr>
               )}
             </tbody>
           </table>

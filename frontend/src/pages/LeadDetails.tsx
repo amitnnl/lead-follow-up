@@ -556,7 +556,7 @@ export default function LeadDetails() {
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-6xl mx-auto space-y-5 pb-20 animate-fade-in select-none">
+    <div className="max-w-6xl mx-auto space-y-2.5 pb-8 animate-fade-in select-none">
 
       {/* ── Dynamic, Ink-Saving Print-Only Voucher (Fits exactly on 1 Page) ── */}
       <div className="hidden print:block w-full text-black font-sans bg-white p-2 text-xs leading-tight">
@@ -730,18 +730,18 @@ export default function LeadDetails() {
         {/* Top gradient strip */}
         <div className="h-1.5 bg-gradient-to-r from-primary-600 via-primary-600 to-emerald-500" />
 
-        <div className="p-6 lg:p-7">
+        <div className="p-3 sm:p-3.5">
           {/* Row 1: Avatar + Info + Badges + Actions */}
-          <div className="flex flex-col lg:flex-row gap-5">
+          <div className="flex flex-col lg:flex-row gap-3">
 
             {/* Avatar + primary info */}
-            <div className="flex items-start gap-4 flex-1 min-w-0">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center text-white font-bold text-xl shrink-0 shadow-lg shadow-primary-500/25">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md shadow-primary-500/20">
                 {getInitials(lead.customer_name)}
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight truncate">{lead.customer_name}</h1>
-                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight truncate">{lead.customer_name}</h1>
+                <div className="flex flex-wrap items-center gap-1.5 mt-1">
                   <span className="font-mono text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/30 px-2 py-0.5 rounded">
                     {lead.lead_id}
                   </span>
@@ -851,7 +851,7 @@ export default function LeadDetails() {
           </div>
 
           {/* Row 2: Quick info grid */}
-          <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-5">
+          <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             <InfoRow label="Mobile" value={lead.customer_mobile} mono />
             <InfoRow label="Vehicle" value={lead.vehicle_make_model} />
             <InfoRow label="Loan Amount" value={lead.loan_amount ? `₹${Number(lead.loan_amount).toLocaleString('en-IN')}` : null} accent />
@@ -882,28 +882,28 @@ export default function LeadDetails() {
 
       {/* ── Automated Sanction / Disbursal Certificate & WhatsApp Dispatch Card ── */}
       {(lead.status === 'approved' || lead.status === 'disbursed') && (
-        <div className="no-print card p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border-2 border-emerald-500/40 dark:border-emerald-500/30 shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 shrink-0">
-              <BadgeCheck className="w-6 h-6 animate-pulse" />
+        <div className="no-print card p-2.5 sm:p-3 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border-2 border-emerald-500/40 dark:border-emerald-500/30 shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0">
+              <BadgeCheck className="w-4 h-4 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-[10px] tracking-wider uppercase shadow-sm">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-[9px] tracking-wider uppercase shadow-sm">
                   {lead.status === 'disbursed' ? 'Disbursal Verified' : 'Sanction Approved'}
                 </span>
-                <h4 className="text-sm font-bold text-slate-800 dark:text-white tracking-tight">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-white tracking-tight">
                   {lead.status === 'disbursed' ? 'Official Loan Disbursal Certificate Ready' : 'Official Loan Sanction Letter Ready'}
                 </h4>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                 {lead.status === 'disbursed'
                   ? `Loan of ₹${Number(lead.loan_amount).toLocaleString('en-IN')} has been disbursed. Dispatch official certificate directly to the customer via WhatsApp.`
                   : `Loan of ₹${Number(lead.loan_amount).toLocaleString('en-IN')} is approved. Send instant sanction alert or download printable official letter.`}
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full md:w-auto justify-end">
+          <div className="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto justify-end">
             <a
               href={`https://wa.me/91${lead.customer_mobile.replace(/\D/g, '')}?text=${encodeURIComponent(
                 lead.status === 'disbursed'
@@ -913,18 +913,18 @@ export default function LeadDetails() {
               target="_blank"
               rel="noreferrer"
               onClick={() => handleLogInteraction('WhatsApp Notification')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-3.5 h-3.5" />
               <span>Send WhatsApp Alert</span>
             </a>
             <a
               href={`http://localhost/lead-follow-up/backend/api/sanction_pdf.php?id=${lead.id}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer border border-slate-700 dark:border-slate-300"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-bold shadow-md transition-all cursor-pointer border border-slate-700 dark:border-slate-300"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-3.5 h-3.5" />
               <span>{lead.status === 'disbursed' ? 'View Disbursal Certificate' : 'View Sanction Letter'}</span>
             </a>
           </div>
@@ -934,8 +934,8 @@ export default function LeadDetails() {
       {/* ════════════════════════════════════════════════════════════════════════
           CONNECTED STATUS STEPPER
       ════════════════════════════════════════════════════════════════════════ */}
-      <div className="no-print card p-5">
-        <div className="flex items-center justify-between mb-4">
+      <div className="no-print card p-3">
+        <div className="flex items-center justify-between mb-2.5">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5 text-primary-500" /> Lead Lifecycle
           </span>
@@ -1028,13 +1028,13 @@ export default function LeadDetails() {
       {/* ════════════════════════════════════════════════════════════════════════
           TWO-COLUMN LAYOUT: Tabs | Right Rail
       ════════════════════════════════════════════════════════════════════════ */}
-      <div className="no-print grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+      <div className="no-print grid grid-cols-1 lg:grid-cols-3 gap-2.5 items-start">
 
         {/* ── LEFT: Tab System ── */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-2.5">
 
           {/* Tab Bar */}
-          <div className="no-print card px-1 py-1 flex overflow-x-auto gap-0.5">
+          <div className="no-print card p-0.5 flex overflow-x-auto gap-0.5">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -1043,7 +1043,7 @@ export default function LeadDetails() {
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={clsx(
-                    'relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer',
+                    'relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer',
                     isActive
                       ? 'bg-primary-600 text-white shadow-sm shadow-primary-500/30'
                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
@@ -1064,14 +1064,14 @@ export default function LeadDetails() {
 
           {/* ─────────────── OVERVIEW TAB ─────────────── */}
           {activeTab === 'overview' && (
-            <div className="space-y-4 animate-fade-in">
+            <div className="space-y-2.5 animate-fade-in">
 
               {/* Customer & Loan Summary */}
-              <div className="card p-5">
-                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+              <div className="card p-3">
+                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5" /> Customer & Loan Details
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                   <InfoRow label="Customer Name" value={lead.customer_name} />
                   <InfoRow label="Mobile" value={lead.customer_mobile} mono />
                   <InfoRow label="Occupation" value={lead.customer_occupation} />
@@ -1092,8 +1092,8 @@ export default function LeadDetails() {
               </div>
 
               {/* Credit Profile (CIBIL) */}
-              <div className="card p-5">
-                <div className="flex items-center justify-between mb-4">
+              <div className="card p-3">
+                <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5" /> Credit Profile (CIBIL)
                   </h3>
@@ -1137,8 +1137,8 @@ export default function LeadDetails() {
               </div>
 
               {/* Assignment & Sourcing */}
-              <div className="card p-5">
-                <div className="flex items-center justify-between mb-4">
+              <div className="card p-3">
+                <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                     <Building className="w-3.5 h-3.5" /> Assignment & Sourcing
                   </h3>
@@ -1169,8 +1169,8 @@ export default function LeadDetails() {
               </div>
 
               {/* KYC Documents Gate */}
-              <div className="card p-5">
-                <div className="flex items-center justify-between mb-4">
+              <div className="card p-3">
+                <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5" /> KYC Disbursal Gate
                   </h3>
@@ -1270,8 +1270,8 @@ export default function LeadDetails() {
 
           {/* ─────────────── ASSIGN LEAD TAB ─────────────── */}
           {activeTab === 'assignment' && lead?.status !== 'disbursed' && (user?.role === 'admin' || user?.role === 'staff') && (
-            <div className="card p-6 space-y-6 animate-fade-in">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="card p-3 space-y-3 animate-fade-in">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 dark:text-white">Lead Assignment Details</h3>
                   <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Assign the target financer and bank executive for this vehicle finance lead.</p>
@@ -1526,11 +1526,11 @@ export default function LeadDetails() {
                   <p className="text-xs text-slate-400">This loan has been successfully disbursed. No new follow-ups can be added.</p>
                 </div>
               ) : (
-                <div className="card p-5">
-                  <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-primary-500" /> Log Interaction
+                <div className="card p-3">
+                  <h3 className="text-xs font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2">
+                    <MessageCircle className="w-3.5 h-3.5 text-primary-500" /> Log Interaction
                   </h3>
-                  <form onSubmit={handleAddFollowup} className="space-y-4">
+                  <form onSubmit={handleAddFollowup} className="space-y-2.5">
                     <textarea
                       required value={remarks} onChange={(e) => setRemarks(e.target.value)}
                       placeholder="Enter discussion remarks, updates, or next steps…"
@@ -1700,8 +1700,8 @@ export default function LeadDetails() {
 
               {/* Timeline */}
               {followups && followups.length > 0 && (
-                <div className="card p-5">
-                  <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-5 flex items-center gap-1.5">
+                <div className="card p-3">
+                  <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" /> Activity Timeline
                   </h3>
                   <div className="relative">
@@ -1784,8 +1784,8 @@ export default function LeadDetails() {
           )}
           {/* ─────────────── AUDIT LOGS TAB ─────────────── */}
           {activeTab === 'logs' && (
-            <div className="card p-5 animate-fade-in">
-              <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-5 flex items-center gap-2">
+            <div className="card p-3 animate-fade-in">
+              <h3 className="text-xs font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-slate-400" /> Audit Trail
               </h3>
               <div className="space-y-0 divide-y divide-slate-50 dark:divide-slate-800/60">
@@ -1834,11 +1834,11 @@ export default function LeadDetails() {
         {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
             RIGHT RAIL
         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-        <div className="no-print space-y-4 lg:sticky lg:top-6">
+        <div className="no-print space-y-2.5 lg:sticky lg:top-4">
 
           {/* Quick Stats */}
-          <div className="card p-5 space-y-3">
-            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">
+          <div className="card p-3 space-y-1.5">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5">
               Loan Summary
             </h3>
 
@@ -1896,8 +1896,8 @@ export default function LeadDetails() {
           </div>
 
           {/* Mini stepper (vertical) */}
-          <div className="card p-5">
-            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4">Pipeline Stage</h3>
+          <div className="card p-3">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Pipeline Stage</h3>
             <div className="relative space-y-0">
               {STAGES.map((stage, idx) => {
                 const meta = STAGE_META[stage];
@@ -1947,8 +1947,8 @@ export default function LeadDetails() {
           </div>
 
           {/* Quick Actions */}
-          <div className="card p-5">
-            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 border-b border-slate-100 dark:border-slate-800 pb-2">
+          <div className="card p-3">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5 border-b border-slate-100 dark:border-slate-800 pb-1.5">
               Quick Actions
             </h3>
             <div className="space-y-2">
