@@ -37,7 +37,7 @@ jobs:
     - name: Sync files to Hostinger
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        server: "kasprgroup.in"
+        server: "ftp.kasprgroup.in"
         username: "u655360186"
         password: "Divine@56"
         local-dir: ./deploy_folder/
